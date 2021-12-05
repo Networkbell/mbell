@@ -33,6 +33,16 @@ abstract class View
 
     }
 
+    /**
+     * Lien vers racine du site 
+     * 
+     * @return string
+     */
+    public function getRoot()
+    {
+    $root = (!empty($_SERVER['HTTPS']) ? 'https' : 'http') . '://' . $_SERVER['HTTP_HOST'] . '/';
+    return $root;
+    }
 
 
     /**

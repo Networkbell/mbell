@@ -19,7 +19,7 @@ class PrefView extends View
             "MBELL_TITRE" => $this->l->trad('MBELL_TITRE_PREF'),
             "_CSS" => "maincolor",
             "_LOGO" => "1",
-            "_ROOT" => "1",
+            "_ROOT" => $this->getRoot(),
             "_LG" => $this->l->getLg()
         );
         $this->page =  $this->getHead($param);

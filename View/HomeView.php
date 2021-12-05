@@ -17,7 +17,7 @@ class HomeView extends View
             "MBELL_TITRE" => $this->l->trad('MBELL_TITRE_HOME'),
             "_CSS" => $this->getCSS($switch, $datas),
             "_LOGO" => "1",
-            "_ROOT" => "1",
+            "_ROOT" => $this->getRoot(),
             "_LG" => $this->l->getLg(),
             "_DRAP" => $this->langDrapMenu($this->l->lgList(), $this->l->getLg()),
         );
