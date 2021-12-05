@@ -1,0 +1,271 @@
+/*********/
+/*GENERAL*/
+/*********/
+
+body#body_home {
+	background: #fafbfc;
+}
+
+#header {
+	background: -webkit-linear-gradient(#d4dde7, #fafbfc); /* For Safari 5.1 to 6.0 */
+    background: -o-linear-gradient(#d4dde7, #fafbfc); /* For Opera 11.1 to 12.0 */
+    background: -moz-linear-gradient(#d4dde7, #fafbfc); /* For Firefox 3.6 to 15 */
+    background: linear-gradient(#d4dde7, #fafbfc); /* Standard syntax */
+}
+
+
+/********/
+/*FOOTER*/
+/********/
+
+body#body_home footer,
+body#body_home footer a:link,
+body#body_home footer a:visited {
+	color: #aebfd2;
+}
+
+body#body_home footer a:hover {
+	color: #202c3a;
+}
+
+body#body_home footer hr.custom-divider {
+	background-image: linear-gradient(to right, rgba(0, 0, 0, 0), #d4dde7, rgba(0, 0, 0, 0));
+}
+
+body#body_home footer a #cc {
+	color: #aebfd2;
+}
+
+body#body_home footer a:hover #cc {
+	color: #202c3a;
+}
+
+
+/********/
+/*HEADER*/
+/********/
+
+
+#header_home {
+	background: -webkit-linear-gradient(#d4dde7, #fafbfc); /* For Safari 5.1 to 6.0 */
+    background: -o-linear-gradient(#d4dde7, #fafbfc); /* For Opera 11.1 to 12.0 */
+    background: -moz-linear-gradient(#d4dde7, #fafbfc); /* For Firefox 3.6 to 15 */
+    background: linear-gradient(#d4dde7, #fafbfc); /* Standard syntax */
+}
+
+#compteur {
+	color: #517092;
+}
+
+
+.fa-sync-alt {
+	color: #517092;
+}
+
+
+
+/*************/
+/*MENU BOUTON*/
+/*************/
+
+.navbar-toggler {
+	background: #d4dde7;
+	color: #202c3a;
+}
+
+.navbar-top .navbar-toggler,
+.canvas-slid .navbar-toggler {
+	border: 1px solid #a1acb8;
+}
+
+.navbar-toggler:hover .navbar_hover {
+	color: #eef4fa;
+}
+
+.navbar-toggler:hover {
+	background: #e4e4d7;
+}
+
+.app-navbar .btn:focus {
+	-webkit-box-shadow: 0px 1px 3px rgb(32, 44, 58,1);
+	-moz-box-shadow: 0px 1px 3px rgb(32, 44, 58,1);
+	box-shadow: 0px 1px 3px rgb(32, 44, 58,1);
+}
+
+
+/******/
+/*MENU*/
+/******/
+
+.navmenu {
+	background: #fafbfc;
+	border-right: 1px solid #d4dde7;
+}
+
+
+/************/
+/*TITLE MENU*/
+/************/
+
+h1.title_menu {
+	color: #202c3a;
+}
+
+.border_top {
+	border-top: 1px solid #d4dde7;
+}
+
+
+
+/***********/
+/*LIEN MENU*/
+/***********/
+
+.navmenu-default .navbar-nav>li>a,
+.navbar-default .navbar-offcanvas .navbar-nav>li>a {
+	color: #517092;
+}
+
+.navmenu-default .navbar-nav>li>a:hover,
+.navbar-default .navbar-offcanvas .navbar-nav>li>a:hover,
+.navmenu-default .navbar-nav>li>a:focus,
+.navbar-default .navbar-offcanvas .navbar-nav>li>a:focus {
+	color: #4888c8;
+	background: #edf1f5;
+}
+
+
+/***********/
+/*SOUS-MENU*/
+/***********/
+
+.pushy-submenu-closed button:hover,
+.pushy-submenu a:hover {
+	color: #4888c8;
+	background: #edf1f5;
+}
+
+.pushy-submenu-open button {
+	color: #4888c8;
+	background: #edf1f5;
+	border-top: 1px solid #202c3a;
+}
+
+.pushy-submenu-open button:hover,
+.pushy-submenu-closed button {
+	color: #517092;
+}
+
+.pushy-submenu a {
+	color: #202c3a;
+
+}
+
+.pushy-submenu ul {
+	border-bottom: 1px solid #202c3a;
+}
+
+.pushy-active {
+	background: #d4dde7;
+
+}
+
+
+/*************/
+/* HOME TITLE*/
+/*************/
+
+#home_title #location {
+	color: #202c3a;
+}
+
+#home_title #date {
+	color: #517092;
+}
+
+.border_bottom {
+border-bottom: 1px solid #d4dde7;
+
+}
+
+
+/******/
+/*MAIN*/
+/******/
+
+
+
+.tab_inc {
+	background: #edf1f5;
+}
+
+.tab_up,
+.tab_up a {
+	color: #4888c8;
+}
+
+.tab_down,
+.tab_down a {
+	color: #517092;
+}
+
+
+.tab_inc {
+	border-top: 1px solid #d4dde7;
+}
+
+
+.tab_inc {
+	border-bottom: 1px solid #d4dde7;
+}
+
+.table_station {
+	color: #202c3a;
+	/*gris clair bleuté*/
+}
+
+#time {
+	color: #517092;
+}
+
+.tab_sur {
+	background: #253141;
+	border-top: 1px solid #d4dde7;
+}
+
+.tab_sous {
+	background: #253141;
+	border-bottom: 1px solid #d4dde7;
+
+}
+
+
+@media screen and (min-width:500px) {
+	.tab_inc {
+		border-left: 1px solid #d4dde7;
+		border-right: 1px solid #d4dde7;
+	}
+}
+
+@media screen and (max-width:500px) {
+
+	.tab_sur:nth-child(-n+2),
+	.tab_sous:nth-child(-n+2),
+	.tab_inc:nth-child(-n+2) {
+		border-right: 1px solid #d4dde7;
+	}
+}
+
+
+
+/*****/
+/*DMY*/
+/*****/
+
+.dmy_left.hover_left {
+	background-image: linear-gradient(to left, rgba(250,251,252,0), rgba(250,251,252,1));	
+	}
+	
+	.dmy_right.hover_right {
+	background-image: linear-gradient(to right, rgba(250,251,252,0), rgba(250,251,252,1));	
+	}

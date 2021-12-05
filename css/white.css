@@ -1,0 +1,271 @@
+/*********/
+/*GENERAL*/
+/*********/
+
+body#body_home {
+	background: #ffffff;
+}
+
+#header {
+    /* background: url('../images/bleu_nuit_endroit.gif') repeat-x;*/ /* For browsers that do not support gradients */
+    background: -webkit-linear-gradient(#ebebeb, #ffffff); /* For Safari 5.1 to 6.0 */
+    background: -o-linear-gradient(#ebebeb, #ffffff); /* For Opera 11.1 to 12.0 */
+    background: -moz-linear-gradient(#ebebeb, #ffffff); /* For Firefox 3.6 to 15 */
+    background: linear-gradient(#ebebeb, #ffffff); /* Standard syntax */
+}
+
+
+/********/
+/*FOOTER*/
+/********/
+
+body#body_home footer,
+body#body_home footer a:link,
+body#body_home footer a:visited {
+	color: #c6c9cd;
+}
+
+body#body_home footer a:hover {
+	color: #202c3a;
+}
+
+body#body_home footer hr.custom-divider {
+	background-image: linear-gradient(to right, rgba(0, 0, 0, 0), #c6c9cd, rgba(0, 0, 0, 0));
+}
+
+body#body_home footer a #cc {
+	color: #c6c9cd;
+}
+
+body#body_home footer a:hover #cc {
+	color: #202c3a;
+}
+
+
+/********/
+/*HEADER*/
+/********/
+
+
+#header_home {
+    /* background: url('../images/bleu_nuit_endroit.gif') repeat-x;*/ /* For browsers that do not support gradients */
+    background: -webkit-linear-gradient(#ebebeb, #ffffff); /* For Safari 5.1 to 6.0 */
+    background: -o-linear-gradient(#ebebeb, #ffffff); /* For Opera 11.1 to 12.0 */
+    background: -moz-linear-gradient(#ebebeb, #ffffff); /* For Firefox 3.6 to 15 */
+    background: linear-gradient(#ebebeb, #ffffff); /* Standard syntax */
+}
+
+#compteur {
+	color: #6b7178;
+}
+
+
+.fa-sync-alt {
+	color: #6b7178;
+}
+
+
+
+/*************/
+/*MENU BOUTON*/
+/*************/
+
+.navbar-toggler {
+	background: #e0e0e0;
+	color: #202c3a;
+}
+
+.navbar-top .navbar-toggler,
+.canvas-slid .navbar-toggler {
+	border: 1px solid #a1acb8;
+}
+
+.navbar-toggler:hover .navbar_hover {
+	color: #000000;
+}
+
+.navbar-toggler:hover {
+	background: #e4e4d7;
+}
+
+.app-navbar .btn:focus {
+	-webkit-box-shadow: 0px 1px 3px rgb(32, 44, 58,1);
+	-moz-box-shadow: 0px 1px 3px rgb(32, 44, 58,1);
+	box-shadow: 0px 1px 3px rgb(32, 44, 58,1);
+}
+
+
+/******/
+/*MENU*/
+/******/
+
+.navmenu {
+	background: #ffffff;
+	border-right: 1px solid #e0e0e0;
+}
+
+
+/************/
+/*TITLE MENU*/
+/************/
+
+h1.title_menu {
+	color: #202c3a;
+}
+
+.border_top {
+	border-top: 1px solid #e0e0e0;
+}
+
+
+
+/***********/
+/*LIEN MENU*/
+/***********/
+
+.navmenu-default .navbar-nav>li>a,
+.navbar-default .navbar-offcanvas .navbar-nav>li>a {
+	color: #6b7178;
+}
+
+.navmenu-default .navbar-nav>li>a:hover,
+.navbar-default .navbar-offcanvas .navbar-nav>li>a:hover,
+.navmenu-default .navbar-nav>li>a:focus,
+.navbar-default .navbar-offcanvas .navbar-nav>li>a:focus {
+	color: #7f8891;
+	background: #f5f5f5;
+}
+
+
+/***********/
+/*SOUS-MENU*/
+/***********/
+
+.pushy-submenu-closed button:hover,
+.pushy-submenu a:hover {
+	color: #7f8891;
+	background: #f5f5f5;
+}
+
+.pushy-submenu-open button {
+	color: #7f8891;
+	background: #ebebeb;
+	border-top: 1px solid #202c3a;
+}
+
+.pushy-submenu-open button:hover,
+.pushy-submenu-closed button {
+	color: #6b7178;
+}
+
+.pushy-submenu a {
+	color: #202c3a;
+
+}
+
+.pushy-submenu ul {
+	border-bottom: 1px solid #202c3a;
+}
+
+.pushy-active {
+	background: #e0e0e0;
+
+}
+
+
+/*************/
+/* HOME TITLE*/
+/*************/
+
+#home_title #location {
+	color: #202c3a;
+}
+
+#home_title #date {
+	color: #517092;
+}
+
+.border_bottom {
+border-bottom: 1px solid #d4dde7;
+
+}
+
+
+/******/
+/*MAIN*/
+/******/
+
+
+
+.tab_inc {
+	background: #f5f5f5;
+}
+
+.tab_up,
+.tab_up a {
+	color: #7f8891;
+}
+
+.tab_down,
+.tab_down a {
+	color: #517092;
+}
+
+
+.tab_inc {
+	border-top: 1px solid #e0e0e0;
+}
+
+
+.tab_inc {
+	border-bottom: 1px solid #e0e0e0;
+}
+
+.table_station {
+	color: #202c3a;
+}
+
+#time {
+	color: #517092;
+}
+
+.tab_sur {
+	background: #ebebeb;
+	border-top: 1px solid #e0e0e0;
+}
+
+.tab_sous {
+	background: #ebebeb;
+	border-bottom: 1px solid #e0e0e0;
+
+}
+
+
+@media screen and (min-width:500px) {
+	.tab_inc {
+		border-left: 1px solid #e0e0e0;
+		border-right: 1px solid #e0e0e0;
+	}
+}
+
+@media screen and (max-width:500px) {
+
+	.tab_sur:nth-child(-n+2),
+	.tab_sous:nth-child(-n+2),
+	.tab_inc:nth-child(-n+2) {
+		border-right: 1px solid #e0e0e0;
+	}
+}
+
+
+/*****/
+/*DMY*/
+/*****/
+
+.dmy_left.hover_left {
+	background-image: linear-gradient(to left, rgba(255,255,255,0), rgba(255,255,255,1));	
+	}
+	
+	.dmy_right.hover_right {
+	background-image: linear-gradient(to right, rgba(255,255,255,0), rgba(255,255,255,1));	
+	}

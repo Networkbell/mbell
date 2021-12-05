@@ -1,0 +1,197 @@
+/********************************************/
+/********************************************/
+/*********** INSTALL-PREF-LOGIN *************/
+/********************************************/
+/********************************************/
+
+
+/*********/
+/*GENERAL*/
+/*********/
+
+body {
+	background: #eef4fa;
+}
+
+
+#main_installer section,
+#main_login section,
+#main_pref section {
+	background: url('../images/bleu_nuit.gif') repeat-x;
+}
+
+
+/*******/
+/*TITLE*/
+/*******/
+
+#main_installer h1,
+#main_login h1,
+#main_pref h1,
+#main_installer h1 a,
+#main_login h1 a,
+#main_pref h1 a,
+#main_installer h1 a:link,
+#main_login h1 a:link,
+#main_pref h1 a:link,
+#main_installer h1 a:visited,
+#main_login h1 a:visited,
+#main_pref h1 a:visited {
+	color: #eef4fa;
+}
+
+#main_installer h1 a:hover,
+#main_login h1 a:hover,
+#main_pref h1 a:hover {
+	color: #4888c8;
+	background: #253141;
+}
+
+#main_installer .border_bottom,
+#main_login .border_bottom,
+#main_pref .border_bottom {
+	border-bottom: 1px solid #313d4b;
+}
+
+
+
+#main_pref h2 {
+	color: #e4e4d7;
+}
+
+
+/*******/
+/*MAIN*/
+/*******/
+
+
+.box_info {
+	color: #313d4b;
+	background: #eef4fa;
+}
+
+.tab_select,
+.tab_select a,
+.tab_select_pref,
+.tab_select_pref a {
+	color: #313d4b;
+}
+
+
+.tab_select,
+.tab_select_pref {
+	background: #eef4fa;
+}
+
+
+#main_installer section,
+#main_login section,
+#main_pref section {
+	border: 1px solid #a1acb8;
+}
+
+#main_installer .form-text,
+#main_login .form-text,
+#main_pref .form-text {
+
+	color: #a1acb8;
+}
+
+#main_installer .form-label,
+#main_login .form-label #main_pref .form-label {
+
+	color: #313d4b;
+}
+
+
+/********/
+/*HEADER*/
+/********/
+
+#header_pref  i{
+	color: #313d4b;;
+}
+
+#header_pref  input{
+	color: #313d4b;;
+}
+
+
+
+
+
+/************/
+/** FOOTER **/
+/************/
+
+#main_login+footer,
+#main_pref+footer,
+#main_installer+footer,
+#main_login+footer a:link,
+#main_pref+footer a:link,
+#main_installer+footer a:link,
+#main_login+footer a:visited,
+#main_pref+footer a:visited,
+#main_installer+footer a:visited {
+	color: #aebfd2;
+}
+
+#main_login+footer a:hover,
+#main_pref+footer a:hover,
+#main_installer+footer a:hover {
+	color: #202c3a;
+}
+
+
+#main_login+footer hr.custom-divider,
+#main_pref+footer hr.custom-divider,
+#main_installer+footer hr.custom-divider {
+	background-image: linear-gradient(to right, rgba(0, 0, 0, 0), #d4dde7, rgba(0, 0, 0, 0));
+}
+
+#main_login+footer a #cc,
+#main_pref+footer a #cc,
+#main_installer+footer a #cc {
+	color: #aebfd2;
+}
+
+#main_login+footer a:hover #cc,
+#main_pref+footer a:hover #cc,
+#main_installer+footer a:hover #cc {
+	color: #202c3a;
+}
+
+
+
+/**************************/
+/*ZONE PREF CONFIGURATION */
+/**************************/
+
+@media screen and (min-width:576px) {
+
+	.tab_select_pref,
+	.tab_select_pref {
+		border-left: 1px solid #313d4b;
+		border-right: 1px solid #313d4b;
+	}
+
+}
+
+@media screen and (max-width:576px) {
+
+
+	.tab_select_pref:nth-child(-n+2),
+	.tab_select_pref:nth-child(-n+2) {
+		border-right: 1px solid #313d4b;
+	}
+}
+
+
+/***********/
+/* TABLEAU */
+/***********/
+
+table{
+	color: #313d4b;
+	background: #eef4fa;
+}

@@ -1,0 +1,33 @@
+<header id="header_pref">
+    <div id="logo">
+        <a href="{_ROOT}" title="{_ROOT}">
+            <img src="images/logo_virga_{_LOGO}.png">
+        </a>
+    </div>
+    <div id="header_g">
+        <div class="small500">
+            <button title="{HOMEPAGE}" type="button" class="btn navbar-toggle"
+                onclick="window.location.href='index.php?lg={_LG}'">
+                <i class="fas fa-home"></i>
+            </button>
+        </div>
+        <div class="large500">
+            <i class="fas fa-chevron-left"></i>
+            <input type="button" class="header_input" value="{HOMESCREEN}"
+                onclick="window.location.href='index.php?lg={_LG}'" />
+        </div>
+    </div>
+    <div id="header_d">
+        <div class="small500">
+            <button title="{LOGOUT2}" type="button" class="btn navbar-toggle"
+                onclick="window.location.href='index.php?controller=login&action=logout&lg={_LG}'">
+                <i class="fas fa-times-circle"></i>
+            </button>
+        </div>
+        <div class="large500">
+            <input type="button" class="header_input" value="{LOGOUT1}"
+                onclick="window.location.href='index.php?controller=login&action=logout&lg={_LG}'" />
+            <i class="fas fa-chevron-right"></i>
+        </div>
+    </div>
+</header>

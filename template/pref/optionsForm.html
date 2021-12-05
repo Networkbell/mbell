@@ -1,0 +1,49 @@
+<ul class="list-group col-md-10 offset-md-1">
+
+    <li class="list-group-item">
+        <div class="form-check">
+            <input class="form-check-input" type="checkbox" name="var_sun[]" value="sun" {para1} id="check_sun">
+            <label class="form-check-label" for="check_sun">
+                <div class="small800">{SOLAR_AUX_1}</div>
+                <div class="large800">{SOLAR_AUX_2}</div>
+            </label>
+        </div>
+    </li>
+    <li class="list-group-item">
+        <div class="form-check">
+            <input class="form-check-input" type="checkbox" name="var_sun[]" value="uv" {para2} id="check_uv">
+            <label class="form-check-label" for="check_uv">
+                <div class="small800">{UV_AUX_1}</div>
+                <div class="large800">{UV_AUX_2}</div>
+            </label>
+        </div>
+    </li>
+    <li class="list-group-item">
+        <div class="form-check">
+            <input class="form-check-input" type="checkbox" name="var_aux1" {para3} id="var_aux1">
+            <label class="form-check-label" for="var_aux1">
+                <div class="small800">{AIR_WATER_GROUND_1}</div>
+                <div class="large800">{AIR_WATER_GROUND_2}</div>
+            </label>
+        </div>
+    </li>
+    <li class="list-group-item">
+        <div class="form-check">
+            <input class="form-check-input" type="checkbox" name="var_aux2" {para4} id="var_aux2">
+            <label class="form-check-label" for="var_aux2">
+                <div class="small800">{AIR_AUX_1}</div>
+                <div class="large800">{AIR_AUX_2}</div>
+            </label>
+        </div>
+    </li>
+    <li class="list-group-item">
+        <div class="form-check">
+            <input class="form-check-input" type="checkbox" name="var_aux3" {para5} id="var_aux3">
+            <label class="form-check-label" for="var_aux3">
+                <div class="small800">{LEAF_SOIL_1}</div>
+                <div class="large800">{LEAF_SOIL_2}</div>
+            </label>
+        </div>
+    </li>   
+</ul>
+<input type="hidden" name="config_id" value="{config_id}">

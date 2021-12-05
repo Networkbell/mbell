@@ -1,0 +1,1745 @@
+{
+  "META_KEY": [
+    {
+      "fr": "Station Météo, Données Météo",
+      "en": "Weather Station, Weather Data"
+    }
+  ],
+  "META_DESCRIPTION": [
+    { "fr": "La météo pro en 1 clic !", "en": "The pro weather in 1 click!" }
+  ],
+
+  "MBELL_TITRE_INSTALL": [
+    { "fr": "MBELL Installation", "en": "MBELL Installation" }
+  ],
+  "MBELL_TITRE_PREF": [
+    { "fr": "MBELL Préférences", "en": "MBELL Preferences" }
+  ],
+  "MBELL_TITRE_HOME": [{ "fr": "MBELL Index", "en": "MBELL Home" }],
+  "MBELL_TITRE_LOGIN": [{ "fr": "MBELL Connexion", "en": "MBELL Login" }],
+
+  "BY": [{ "fr": "par", "en": "by" }],
+
+  "DATA_FROM": [{ "fr": "Données issues de", "en": "Data from" }],
+
+  "MBELL_WELCOME": [
+    {
+      "fr": "Bienvenue sur MBell",
+      "en": "Welcome to MBell"
+    }
+  ],
+  "MBELL_INSTALLED": [
+    {
+      "fr": "MBell est Installé",
+      "en": "MBell is Installed"
+    }
+  ],
+  "INFO_REQUIRED": [
+    {
+      "fr": "Informations nécessaires",
+      "en": "Required information"
+    }
+  ],
+  "INFO_BDD": [
+    {
+      "fr": "Informations sur la Base de Données",
+      "en": "DataBase informations"
+    }
+  ],
+  "INFO_STATION": [
+    {
+      "fr": "Informations sur votre Station Météo",
+      "en": "Information about your Weather Station "
+    }
+  ],
+  "BDD_INSTALLED": [
+    {
+      "fr": "Base de Données Installée",
+      "en": "DataBase Installed"
+    }
+  ],
+  "BDD_NO_INSTALLED": [
+    {
+      "fr": "Base de Données Non Installée",
+      "en": "DataBase No Installed"
+    }
+  ],
+  "PB_INSTALLATION": [
+    {
+      "fr": "Problème d'Installation de MBell",
+      "en": "MBell Installation Problem"
+    }
+  ],
+
+  "LANG_CHOOSE": [
+    {
+      "fr": "Choisissez Votre Langue",
+      "en": "Choose your language"
+    }
+  ],
+  "STATION_CHOOSE": [
+    {
+      "fr": "Choisissez Votre Station Météo",
+      "en": "Choose your Weather Station"
+    }
+  ],
+  "_LANG_TEXT": [
+    {
+      "fr": "Français",
+      "en": "English"
+    }
+  ],
+  "LANG_TEXT_EN": [
+    {
+      "fr": "Anglais",
+      "en": "English"
+    }
+  ],
+  "LANG_TEXT_FR": [
+    {
+      "fr": "Français",
+      "en": "French"
+    }
+  ],
+
+  "CHOOSE_SELECT": [
+    {
+      "fr": "Choisir",
+      "en": "Choose"
+    }
+  ],
+
+  "STATION_SELECT_V1": [
+    {
+      "fr": "Weatherlink V1",
+      "en": "Weatherlink V1"
+    }
+  ],
+
+  "STATION_SELECT_V2": [
+    {
+      "fr": "Weatherlink V2",
+      "en": "Weatherlink V2"
+    }
+  ],
+
+  "CONNECT": [
+    {
+      "fr": "Se connecter",
+      "en": "To log in"
+    }
+  ],
+
+  "BDD_HOST_LABEL": [
+    { "fr": "Adresse de base de données", "en": "Database host" }
+  ],
+  "BDD_USER_LABEL": [
+    {
+      "fr": "Identifiant MySQL",
+      "en": "Database username"
+    }
+  ],
+  "BDD_PASSWORD_LABEL": [
+    {
+      "fr": "Mot de passe de base de données",
+      "en": "Database password"
+    }
+  ],
+  "BDD_NAME_LABEL": [
+    { "fr": "Nom de la base de données", "en": "Database name" }
+  ],
+
+  "LOCALHOST": [{ "fr": "localhost", "en": "localhost" }],
+  "MBELL_MIN": [{ "fr": "mbell", "en": "mbell" }],
+  "PASSWORD": [
+    {
+      "fr": "Mot de passe",
+      "en": "Password"
+    }
+  ],
+  "USERNAME": [
+    {
+      "fr": "Identifiant",
+      "en": "Username"
+    }
+  ],
+  "EMAIL": [
+    {
+      "fr": "Adresse E-mail",
+      "en": "E-mail adress"
+    }
+  ],
+  "USERNAME_EMAIL": [
+    {
+      "fr": "Identifiant ou E-mail",
+      "en": "Username or E-mail"
+    }
+  ],
+  "TAG_MBELL": [
+    {
+      "fr": "mb_",
+      "en": "mb_"
+    }
+  ],
+
+  "BDD_USER_TEXT": [
+    {
+      "fr": "Votre identifiant MySQL.",
+      "en": "Your database username."
+    }
+  ],
+  "BDD_PASSWORD_TEXT": [
+    {
+      "fr": "Votre mot de passe de base de données.",
+      "en": "Your database password."
+    }
+  ],
+  "BDD_NAME_TEXT": [
+    {
+      "fr": "Le nom de la base de données avec laquelle vous souhaitez utiliser MBell.",
+      "en": "The name of the database you want to use with MBell."
+    }
+  ],
+  "BDD_HOST_TEXT": [
+    {
+      "fr": "Si localhost ne fonctionne pas, demandez cette information à l’hébergeur de votre site.",
+      "en": "If localhost is not working, get this information from your site host."
+    }
+  ],
+
+  "BDD_META_LABEL": [
+    {
+      "fr": "Préfixe des tables",
+      "en": "Table Prefix"
+    }
+  ],
+  "BDD_META_TEXT_1": [
+    {
+      "fr": "Préfixe de table (si vous souhaitez avoir plusieurs Mbell sur une même base de données)",
+      "en": "Table prefix (if you want to have several Mbell on the same database)"
+    }
+  ],
+
+  "BDD_META_TEXT_2": [
+    {
+      "fr": "Modifiez, si vous souhaitez faire tourner plusieurs installations de MBell sur une même base de données.",
+      "en": "If you want to run multiple MBell installations in a single database, change it."
+    }
+  ],
+
+  "INSTALL_STEP1": [
+    {
+      "fr": "Allons-y !",
+      "en": "Let's go !"
+    }
+  ],
+
+  "INSTALL_STEP2": [
+    {
+      "fr": "Installer la BDD",
+      "en": "Install the DB "
+    }
+  ],
+  "RESTART": [
+    {
+      "fr": "Recommencer",
+      "en": "Restart"
+    }
+  ],
+  "INSTALL_STEP3": [
+    {
+      "fr": "Commencer l'installation",
+      "en": "Start the installation "
+    }
+  ],
+  "CONTINUE": [
+    {
+      "fr": "Continuer",
+      "en": "Continue"
+    }
+  ],
+  "INSTALL_STEP6": [
+    {
+      "fr": "Installer MBell",
+      "en": "Install MBell"
+    }
+  ],
+  "VALIDATE": [
+    {
+      "fr": "Valider",
+      "en": "Validate"
+    }
+  ],
+  "SAVE": [
+    {
+      "fr": "Sauvegarder",
+      "en": "Save Changes"
+    }
+  ],
+
+  "BDD_STEP1_P1": [
+    {
+      "fr": "Avant de commencer, nous avons besoin d'informations sur votre base de données. Vous devrez connaître les éléments suivants avant de continuer :",
+      "en": "Before getting started, we need some information on your database. You will need to know the following items before proceeding:"
+    }
+  ],
+  "BDD_STEP1_P2": [
+    {
+      "fr": "Nous allons utiliser ces informations pour créer le fichier <code>admin.php</code> situé dans votre dossier <code>/config</code>. Si pour une raison ou une autre, vous deviez réinstaller Mbell, il vous suffit donc de supprimer ce fichier et de relancer la procédure d'installation.",
+      "en": "We will use this information to create a <code>admin.php</code> file located in your <code>/config</code> folder. If for some reason you need to reinstall Mbell, then all you have to do is delete this file and start the installation process again."
+    }
+  ],
+  "BDD_STEP1_P3": [
+    {
+      "fr": "Si pour une raison quelconque la création automatique de fichier ne fonctionne pas, ne vous inquiétez pas. Sa seule action est d’ajouter les informations de la base de données dans un fichier de configuration. Vous pouvez aussi simplement ouvrir <code>admin_backup.php</code> dans un éditeur de texte, y remplir vos informations et l'enregistrer sous le nom de <code>admin.php</code>.",
+      "en": "If for some reason this automatic file creation doesn't work, don't worry. All of this just populates the database information into a configuration file. You can also just open <code>admin_backup.php</code> in a text editor, fill in your information and save it as <code>admin.php</code>."
+    }
+  ],
+  "BDD_STEP1_P4": [
+    {
+      "fr": "Vous devriez normalement avoir reçu ces informations de la part de votre hébergeur. Si vous ne les avez pas, il vous faudra contacter votre hébergeur afin de continuer. Si vous avez tout le nécessaire, alors...",
+      "en": "In all likelihood, these elements were provided to you by your host. If you do not have this information, you will need to contact them before you can continue. If you're ready, then... let's go!"
+    }
+  ],
+
+  "BDD_STEP2_P1": [
+    {
+      "fr": "Vous devez saisir ci-dessous les détails de connexion à votre base de données. Si vous ne les connaissez pas, contactez votre hébergeur.",
+      "en": "Below you should enter your database connection details. If you’re not sure about these, contact your host."
+    }
+  ],
+  "BDD_STEP2_P2": [
+    {
+      "fr": "Vérifiez que vous avez bien remplis correctement les champs, avant de valider. Seule la modification du préfixe de table n'est pas obligatoire.",
+      "en": "Check that you have filled in the fields correctly, before validating. Only the modification of the table prefix is not mandatory. "
+    }
+  ],
+
+  "BDD_STEP3_P1": [
+    {
+      "fr": "C’est parfait ! Vous avez passé la première partie de l’installation. MBell peut désormais communiquer avec votre base de données. Préparez-vous, il est maintenant temps de…",
+      "en": "It's perfect ! You have passed the first part of the installation. MBell can now communicate with your database. Get ready, now is the time to ..."
+    }
+  ],
+  "BDD_STEP3_P2": [
+    {
+      "fr": "Une erreur s'est produite. MBell ne parvient pas à créer le fichier <code>admin.php</code> dans votre dossier <code>/config</code>.",
+      "en": "An error has occurred. MBell cannot create the <code>admin.ph</code> file in your <code>/config</code> folder."
+    }
+  ],
+  "BDD_STEP3_P3": [
+    {
+      "fr": "Vérifiez que le fichier <code>admin_backup.php</code> existe et n'a pas été supprimé. MBell se sert en effet de ce fichier pour créer un nouveau fichier <code>admin.php</code> dont il se servira pour communiquer avec votre base de données.",
+      "en": "Check that the <code>admin_backup.php</code> file exists and has not been deleted. MBell in fact uses this file to create a new <code>admin.php</code> file which it will use to communicate with your database."
+    }
+  ],
+  "BDD_STEP3_P4": [
+    {
+      "fr": "Vous avez la possibilité de créer le fichier <code>admin.php</code> manuellement à partir de <code>admin_backup.php</code> en remplissant les champs demandés (avec une accolade <code>{...}</code>) et en l'enregistrant sous le nom <code>admin.php</code>. Pour autant, ne supprimez pas <code>admin_backup.php</code> ou ne l'enregistrez pas sous ce nom si vous l'avez modifié.",
+      "en": "You have the possibility to create the <code>admin.php</code> file manually from <code>admin_backup.php</code> by filling in the requested fields (with a brace <code>{...}</code>) and saving it under the name <code>admin.php</code>. However, do not delete <code> admin_backup.php </code> or save it under this name if you have modified it."
+    }
+  ],
+  "BDD_STEP3_P5": [
+    {
+      "fr": "Le problème peut venir également du fait que vous ne disposez pas des autorisations suffisantes pour écrire dans le répertoire dans lequel Mbell veut s'installer. Vous devez donc autoriser des droits CHMOD d'écriture pour que Mbell puisse écrire des fichiers sur votre FTP. Si vous utilisez Fillezilla, clic droit sur le dossier <code>/config</code> -> Droit d'accès au Fichier : Valeur CHMOD de 705 - 755 ou 775.",
+      "en": "The problem can also be that you do not have sufficient permissions to write to the directory where Mbell wants to install. You must therefore authorize CHMOD write rights so that Mbell can write files to your FTP. If you are using Fillezilla, right click on the <code>/config</code> folder -> File access right: CHMOD value of 705 - 755 or 775."
+    }
+  ],
+  "BDD_STEP3_P6": [
+    {
+      "fr": "Une erreur s'est produite. MBell ne parvient pas à se connecter à votre base de données.",
+      "en": "An error has occurred. MBell cannot connect to your database. "
+    }
+  ],
+  "BDD_STEP3_P7": [
+    {
+      "fr": "Vérifiez que vous avez correctement remplis les champs du formulaire de connexion à votre base de données et recommencez.",
+      "en": "Check that you have correctly filled in the fields of the connection form to your database and start again. "
+    }
+  ],
+  "BDD_STEP3_P8": [
+    {
+      "fr": "Si le problème persiste, renseignez-vous auprès de votre hébergeur que vous avez bien les informations nécéssaires et l'autorisation de créer une base de données sur votre hébergement.",
+      "en": "If the problem persists, check with your host that you have the necessary information and authorization to create a database on your hosting."
+    }
+  ],
+  "BDD_STEP3_P9": [
+    {
+      "fr": "Une erreur s'est produite. MBell parvient à se connecter à votre base de données, mais ne parvient pas à y créer les tables SQL nécéssaires.",
+      "en": "An error has occurred. MBell can connect to your database, but cannot create the necessary SQL tables there."
+    }
+  ],
+  "BDD_STEP3_P10": [
+    {
+      "fr": "Vérifiez que vous avez la bonne version de MySQL, que le charset dans <code>admin.php</code> est bien en utf8, que vous avez la possibilité d'utiliser InnoDB (Mbell n'utilise pas MyISAM, moins complet)",
+      "en": "Check that you have the correct version of MySQL, that the charset in <code>admin.php</code> is in utf8, that you can use InnoDB (Mbell does not use MyISAM, less complete)"
+    }
+  ],
+
+  "LOGIN_USER_LABEL": [
+    {
+      "fr": "Identifiant MBell",
+      "en": "MBell Username"
+    }
+  ],
+  "LOGIN_PASSWORD_LABEL": [
+    {
+      "fr": "Mot de Passe MBell",
+      "en": "MBell Password"
+    }
+  ],
+  "LOGIN_EMAIL_LABEL": [
+    {
+      "fr": "Email",
+      "en": "E-mail"
+    }
+  ],
+
+  "LOGIN_STEP4_P1": [
+    {
+      "fr": "Les informations demandées ci-dessous sont nécéssaires pour vous connecter à Mbell en tant qu'administrateur. Il ne s'agit pas des identifiants de votre station météo, bien que vous puissiez utiliser les mêmes si vous le désirez.",
+      "en": "The information requested below is necessary to log into Mbell as an administrator. These are not your weather station IDs, although you can use the same if you wish."
+    }
+  ],
+  "LOGIN_STEP4_P2": [
+    {
+      "fr": "Veuillez renseigner les informations suivantes :",
+      "en": "Please fill in the following information:"
+    }
+  ],
+
+  "LOGIN_USER_TEXT": [
+    {
+      "fr": "Cet identifiant ne vous sert qu'à vous connecter à Mbell.",
+      "en": "This username is only used to log in to Mbell."
+    }
+  ],
+  "LOGIN_PASSWORD_TEXT": [
+    {
+      "fr": "Vous aurez besoin de ce mot de passe pour vous connecter à MBell.",
+      "en": "You will need this password to log into MBell."
+    }
+  ],
+  "LOGIN_EMAIL_TEXT": [
+    {
+      "fr": "L'adresse Email est nécessaire pour le service d'alerte météo ou pour réactiver votre mot de passe en cas d'oubli.",
+      "en": "The Email address is required for the weather alert service or to reactivate your password if you forget it. "
+    }
+  ],
+  "LOGIN_STEP4_P3": [
+    {
+      "fr": "La prochaine étape de l'installation va concerner votre station météo. Aussi préparez les informations permettant d'identifier votre station.",
+      "en": "The next step of the installation will concern your weather station. Also prepare the information to identify your station."
+    }
+  ],
+
+  "STATION_STEP6_P1": [
+    {
+      "fr": "Il vous faut maintenant entrer les identifiants de votre station météo. ",
+      "en": "You must now enter the identifiers of your weather station. "
+    }
+  ],
+
+  "STATION_STEP6_P2": [
+    {
+      "fr": "Mbell permet actuellement 2 types de technologie : Weatherlink Version 1.0 ou Weatherlink version 2.0. Ne vous inquiétez pas, vous aurez toujours la possibilité de changer de version ou de station par la suite.",
+      "en": "Mbell currently allows 2 types of technology: Weatherlink Version 1.0 ou Weatherlink version 2.0. Don't worry, you will always be able to change version or station later."
+    }
+  ],
+  "STATION_STEP6_P3": [
+    {
+      "fr": "A l'heure actuelle, Weatherlink en version 1.0 fonctionne parfaitement si vous avez un datalogger IP et aucune date n'a été donné pour son arrêt, vous pouvez donc très bien rester en version 1.0 sans que vous ne voyez aucun changement. Depuis 2018, cependant, la version 2.0 fonctionne aussi en parallèle et permet à ceux ne disposant pas de datalogger IP de pouvoir utiliser MBell.",
+      "en": "At present, Weatherlink version 1.0 works fine if you have an IP datalogger and no date has been given for its shutdown, so you can very well stay in version 1.0 without seeing any changes. Since 2018, however, version 2.0 also works in parallel and allows those without an IP datalogger to be able to use MBell. "
+    }
+  ],
+  "STATION_STEP6_P4": [
+    {
+      "fr": "En revanche l'obligation d'utiliser les TokenID n'a pas encore été activé à ce jour et aucune date n'a encore été donné pour son activation de la part de Weatherlink. Si vous disposez d'un datalogger IP, il n'y a donc aucune obligation à passer en version 2.0, même si votre station a été migré pour l'accepter sur le site weatherlink.com.",
+      "en": "However, the obligation to use TokenID has not yet been activated and no date has yet been given for its activation by Weatherlink. If you have an IP datalogger, there is therefore no obligation to upgrade to version 2.0, even if your station has been migrated to accept it on the weatherlink.com site. "
+    }
+  ],
+  "STATION_STEP6_P5": [
+    {
+      "fr": "MBell est cependant prêt et parfaitement fonctionnel pour accepter Weatherlink 1.0 et Weatherlink 2.0 avec ou sans TokenID. Vous n'aurez donc rien à faire le jour où Weatherlink décidera d'activer ou de désactiver l'une ou l'autre version, vous n'aurez simplement qu'à changer dans les paramètres de MBell vos identifiants selon la version choisie.",
+      "en": "MBell is however ready and fully functional to accept Weatherlink 1.0 and Weatherlink 2.0 with or without TokenID. You will therefore have nothing to do the day Weatherlink decides to activate or deactivate one or the other version, you will simply have to change your identifiers in the MBell settings according to the version chosen. "
+    }
+  ],
+  "STATION_STEP6_P6": [
+    {
+      "fr": "Attention, à ce jour, MBell n'est pas compatible avec Weatherlink Live.",
+      "en": "Please note that MBell is not currently compatible with Weatherlink Live."
+    }
+  ],
+
+  "ERROR_MYSQL": [
+    {
+      "fr": "Information Complémentaire : Erreur MySQL -> Si le problème persiste, activez le mode déboguage dans <code>admin_backup.php</code> pour des infos supplémentaires sur l'erreur en cours et contactez l'admin de Mbell. <code>MB_DEBUG</code> sur <code>true</code>",
+      "en": "Additional Information: MySQL Error -> If the problem persists, enable debugging mode in <code>admin_backup.php</code> for additional info on the current error and contact the Mbell admin. <code>MB_DEBUG</code> on <code>true</code>"
+    }
+  ],
+
+  "VALIDATION": [
+    {
+      "fr": "Authentification",
+      "en": "Validation"
+    }
+  ],
+  "LOGIN_TEXT_1": [
+    {
+      "fr": "Zone réservée à l'administrateur de MBell : Veuillez vous connecter avec votre identifiant et votre mot de passe avant de poursuivre.",
+      "en": "MBell administrator's area: Please log in with your username and password before continuing. "
+    }
+  ],
+  "LOGIN_TEXT_2": [
+    {
+      "fr": "Vous allez accéder à l'interface d'administration de MBell. Si vous n'avez pas encore enregistré de stations météos, vous pourrez poursuivre l'installation.",
+      "en": "You will access the MBell administration interface. If you have not yet saved any weather stations, you can continue with the installation."
+    }
+  ],
+  "UPPERCASE": [
+    {
+      "fr": "MAJUSCULE",
+      "en": "UPPERCASE"
+    }
+  ],
+  "CASE_SENSITIVE": [
+    {
+      "fr": "Sensible aux majuscules et minuscules",
+      "en": "Case-Sensitive"
+    }
+  ],
+  "ANY": [
+    {
+      "fr": "Aucune",
+      "en": "Any"
+    }
+  ],
+
+  "NONE_CHOSEN": [
+    {
+      "fr": "Aucune Choisie",
+      "en": "None Chosen"
+    }
+  ],
+
+  "DAVIS_DID": [
+    {
+      "fr": "Référence ID",
+      "en": "Device ID"
+    }
+  ],
+  "DAVIS_DID_TEXT": [
+    {
+      "fr": "L'ID (appelé aussi DID) de votre station, est inscrit sur le cordon de votre datalogger IP branché à votre console. Vous pouvez aussi trouver ces informations en vous connectant à <a target=\"_blank\" href=\"https://www.weatherlink.com/account\">weatherlink.com</a>.",
+      "en": "The ID (also called DID) of your station, is written on the cord of your IP datalogger connected to your console. You can also find this information by connecting to <a target=\"_blank\" href=\"https://www.weatherlink.com/account\">weatherlink.com</a>."
+    }
+  ],
+  "DAVIS_KEY": [
+    {
+      "fr": "CLEF Davis",
+      "en": "Davis KEY"
+    }
+  ],
+  "DAVIS_KEY_TEXT": [
+    {
+      "fr": "La clef (appelé aussi KEY) de votre station, est inscrite sur le cordon de votre datalogger branché à votre console. Vous pouvez aussi trouver ces informations en vous connectant à <a target=\"_blank\" href=\"https://www.weatherlink.com/account\">weatherlink.com</a>.",
+      "en": "The KEY of your station, is written on the cord of your IP datalogger connected to your console. You can also find this information by connecting to <a target=\"_blank\" href=\"https://www.weatherlink.com/account\">weatherlink.com</a>."
+    }
+  ],
+  "DAVIS_PASS": [
+    {
+      "fr": "Mot de Passe Davis",
+      "en": "Davis Password"
+    }
+  ],
+  "DAVIS_PASS_TEXT": [
+    {
+      "fr": "Votre mot de passe Davis doit être le même que celui disponible sur <a target=\"_blank\" href=\"https://www.weatherlink.com/account\">weatherlink.com</a>.",
+      "en": "Your Davis password must be the same as the one available at <a target=\"_blank\" href=\"https://www.weatherlink.com/account\">weatherlink.com</a>. "
+    }
+  ],
+  "DAVIS_TOKEN": [
+    {
+      "fr": "API Token Davis",
+      "en": "Davis Token API"
+    }
+  ],
+  "DAVIS_TOKEN_TEXT": [
+    {
+      "fr": "Le numéro d'API Token (appelé aussi TokenID) doit être généré sur <a target=\"_blank\" href=\"https://www.weatherlink.com/account\">weatherlink.com</a>.",
+      "en": "The API Token number (also called TokenID) must be generated on <a target=\"_blank\" href=\"https://www.weatherlink.com/account\">weatherlink.com</a>."
+    }
+  ],
+  "NO_VALUE": [
+    {
+      "fr": "Aucune Valeur",
+      "en": "No Value"
+    }
+  ],
+  "STATION_STEP7_P1": [
+    {
+      "fr": "Félicitation, MBell est maintenant installé et dispose de toutes les informations nécéssaires pour fonctionner. Merci et profitez bien !",
+      "en": "Congratulations, MBell is now installed and has all the information needed to operate. Thank you and enjoy!"
+    }
+  ],
+  "STATION_TYPE": [
+    {
+      "fr": "Type d'API",
+      "en": "API Type"
+    }
+  ],
+  "STATION_LOCATION": [
+    {
+      "fr": "Localisation",
+      "en": "Location"
+    }
+  ],
+  "STATION_USER": [
+    {
+      "fr": "ID de Station",
+      "en": "Station ID"
+    }
+  ],
+  "USER_INFO": [
+    {
+      "fr": "Informations d'Utilisateur",
+      "en": "User Information"
+    }
+  ],
+  "STATION_INFO": [
+    {
+      "fr": "Informations de Station",
+      "en": "Station Information"
+    }
+  ],
+  "LOGOUT1": [
+    {
+      "fr": "Se déconnecter",
+      "en": "Logout"
+    }
+  ],
+  "LOGOUT2": [
+    {
+      "fr": "Déconnexion",
+      "en": "Logout"
+    }
+  ],
+  "HOMESCREEN": [
+    {
+      "fr": "Page d'Accueil",
+      "en": "Home Screen"
+    }
+  ],
+  "HOMEPAGE": [
+    {
+      "fr": "Accueil",
+      "en": "Homepage"
+    }
+  ],
+  "STATION_TITLE": [
+    {
+      "fr": "Station",
+      "en": "Station"
+    }
+  ],
+  "USER_TITLE": [
+    {
+      "fr": "Utilisateur",
+      "en": "User"
+    }
+  ],
+  "OPTION_TITLE": [
+    {
+      "fr": "Options",
+      "en": "Options"
+    }
+  ],
+  "SOLAR_AUX_1": [
+    {
+      "fr": "Capteur Solaire",
+      "en": "Solar Sensor"
+    }
+  ],
+
+  "SOLAR_AUX_2": [
+    {
+      "fr": "Capteur de Rayonnement Solaire (6450)",
+      "en": "Solar Radiation Sensor (6450)"
+    }
+  ],
+  "UV_AUX_1": [
+    {
+      "fr": "Sonde UV",
+      "en": "UV Sensor"
+    }
+  ],
+  "UV_AUX_2": [
+    {
+      "fr": "Sonde d'Indice UV (6490)",
+      "en": "UV Index Sensor (6490)"
+    }
+  ],
+  "AIR_WATER_GROUND_1": [
+    {
+      "fr": "Temp Air-Eau-Sol Auxiliaire",
+      "en": "Air-Water-Ground Temp Accessory"
+    }
+  ],
+  "AIR_WATER_GROUND_2": [
+    {
+      "fr": "Station Météo Auxiliaire de Température Air-Eau-Sol (6372)",
+      "en": "Auxiliary Air-Water-Ground Temperature Weather Station (6372)"
+    }
+  ],
+  "AIR_AUX_1": [
+    {
+      "fr": "Temp/Hum Air Auxiliaire",
+      "en": "Air Temp/Hum Accessory"
+    }
+  ],
+  "AIR_AUX_2": [
+    {
+      "fr": "Station Météo Auxiliaire de Température & Humidité de l'Air (6382)",
+      "en": "Auxiliary Air Temperature and Humidity Weather Station (6382)"
+    }
+  ],
+  "LEAF_SOIL_1": [
+    {
+      "fr": "Feuillage/Sol Temp/Hum",
+      "en": "Leaf/Soil Temp/hum"
+    }
+  ],
+  "LEAF_SOIL_2": [
+    {
+      "fr": "Station Météo Auxiliaire Humectation du Feuillage / Température & Humidité du Sol (6345)",
+      "en": "Foliage Moisture / Temperature & Soil Humidity Auxiliary Weather Station (6345)"
+    }
+  ],
+
+  "DEFAULT_CHOICE": [
+    {
+      "fr": "Choix par Défaut",
+      "en": "Default Choice"
+    }
+  ],
+
+  "LANGUAGE": [
+    {
+      "fr": "Langue",
+      "en": "Language"
+    }
+  ],
+
+  "TEMPERATURE": [
+    {
+      "fr": "Température",
+      "en": "Temperature"
+    }
+  ],
+
+  "WIND": [
+    {
+      "fr": "Vent",
+      "en": "Wind"
+    }
+  ],
+
+  "RAIN": [
+    {
+      "fr": "Pluie",
+      "en": "Rain"
+    }
+  ],
+
+  "PRESSURE": [
+    {
+      "fr": "Pression",
+      "en": "Pressure"
+    }
+  ],
+
+  "DESIGN": [
+    {
+      "fr": "Design",
+      "en": "Design"
+    }
+  ],
+
+  "DAY_NIGHT": [
+    {
+      "fr": "Jour / Nuit",
+      "en": "Day / Night"
+    }
+  ],
+
+  "COLOR": [
+    {
+      "fr": "Couleur",
+      "en": "Color"
+    }
+  ],
+
+  "ICONS": [
+    {
+      "fr": "Icônes",
+      "en": "Icons"
+    }
+  ],
+
+  "DARK_BLUE": [
+    {
+      "fr": "Bleu Sombre",
+      "en": "Dark Blue"
+    }
+  ],
+
+  "LIGHT_BLUE": [
+    {
+      "fr": "Bleu Clair",
+      "en": "Light Blue"
+    }
+  ],
+
+  "BLACK": [
+    {
+      "fr": "Noir",
+      "en": "Black"
+    }
+  ],
+
+  "WHITE": [
+    {
+      "fr": "Blanc",
+      "en": "White"
+    }
+  ],
+
+  "UNITS": [
+    {
+      "fr": "Unités",
+      "en": "Units"
+    }
+  ],
+
+  "ON": [
+    {
+      "fr": "Activer",
+      "en": "ON"
+    }
+  ],
+
+  "OFF": [
+    {
+      "fr": "Désactiver",
+      "en": "OFF"
+    }
+  ],
+  "NEUTRAL": [
+    {
+      "fr": "Neutre",
+      "en": "Neutral"
+    }
+  ],
+  "COLORED": [
+    {
+      "fr": "Coloré",
+      "en": "Colored"
+    }
+  ],
+  "DYNAMIC": [
+    {
+      "fr": "Dynamique",
+      "en": "Dynamic"
+    }
+  ],
+
+  "YES": [
+    {
+      "fr": "Oui",
+      "en": "Yes"
+    }
+  ],
+
+  "NO": [
+    {
+      "fr": "Non",
+      "en": "No"
+    }
+  ],
+
+  "CELSIUS": [
+    {
+      "fr": "Celsius [°C]",
+      "en": "Celsius [°C]"
+    }
+  ],
+
+  "FAHRENHEIT": [
+    {
+      "fr": "Fahrenheit [°F]",
+      "en": "Fahrenheit [°F]"
+    }
+  ],
+
+  "KPH": [
+    {
+      "fr": "Kilomètre par heure [km/h]",
+      "en": "Kilometer per hour [kph]"
+    }
+  ],
+
+  "KPH_2": [
+    {
+      "fr": "km/h",
+      "en": "kph"
+    }
+  ],
+
+  "MPH": [
+    {
+      "fr": "Mille par heure [mph]",
+      "en": "Miles per hour [mph]"
+    }
+  ],
+
+  "MM": [
+    {
+      "fr": "Millimètres [mm]",
+      "en": "Millimeters [mm]"
+    }
+  ],
+
+  "IN": [
+    {
+      "fr": "Pouces [in]",
+      "en": "Inches [in]"
+    }
+  ],
+
+  "HPA": [
+    {
+      "fr": "Hectopascal [hPa]",
+      "en": "Hectopascal [hPa]"
+    }
+  ],
+
+  "INHG": [
+    {
+      "fr": "Pouce de Mercure [inHg]",
+      "en": "Inch of Mercury [inHg]"
+    }
+  ],
+  "CONFIGURATION_TITLE": [
+    {
+      "fr": "Configuration",
+      "en": "Configuration"
+    }
+  ],
+  "LINE": [
+    {
+      "fr": "Ligne",
+      "en": "Line"
+    }
+  ],
+  "TEMP": [
+    {
+      "fr": "Temp.",
+      "en": "Temp."
+    }
+  ],
+  "TEMP_IN": [
+    {
+      "fr": "Temp. Int.",
+      "en": "In. Temp."
+    }
+  ],
+  "EXTRA_TEMP": [
+    {
+      "fr": "Temp. E.",
+      "en": "E. Temp."
+    }
+  ],
+  "TEMP_L": [
+    {
+      "fr": "Temp. Feuil.",
+      "en": "Leaf Temp."
+    }
+  ],
+
+  "LWET": [
+    {
+      "fr": "Hum Feuil",
+      "en": "Leaf Wet"
+    }
+  ],
+  "TEMP_S": [
+    {
+      "fr": "Temp. Sol",
+      "en": "Soil Temp."
+    }
+  ],
+  "SOIL": [
+    {
+      "fr": "Hum. Sol",
+      "en": "Soil RH"
+    }
+  ],
+  "TEMPERATURE_IN": [
+    {
+      "fr": "Température Intérieure",
+      "en": "Indoor Temperature"
+    }
+  ],
+  "EXTRA_TEMPERATURE": [
+    {
+      "fr": "Température Extra",
+      "en": "Extra Temperature"
+    }
+  ],
+  "TEMPERATURE_LEAF": [
+    {
+      "fr": "Température Feuillage",
+      "en": "Leaf Temperature"
+    }
+  ],
+  "TEMPERATURE_SOIL": [
+    {
+      "fr": "Température Sol",
+      "en": "Soil Temperature"
+    }
+  ],
+  "LEAF_WETNESS": [
+    {
+      "fr": "Humectation Feuillage",
+      "en": "Leaf Wetness"
+    }
+  ],
+  "SOIL_MOISTURE": [
+    {
+      "fr": "Humidité Sol",
+      "en": "Soil Moisture"
+    }
+  ],
+  "AVG_WIND": [
+    {
+      "fr": "Vent Moy.",
+      "en": "Avg. Wind"
+    }
+  ],
+  "AVERAGE_WIND": [
+    {
+      "fr": "Vent Moyen",
+      "en": "Average Wind"
+    }
+  ],
+  "EVAPOTRANSPIRATION": [
+    {
+      "fr": "Évapotranspiration",
+      "en": "Evapotranspiration"
+    }
+  ],
+  "EVAPOT": [
+    {
+      "fr": "Évapot",
+      "en": "Evapot"
+    }
+  ],
+  "RAINY_INTENSITY": [
+    {
+      "fr": "Intensité Pluvieuse",
+      "en": "Rainy Intensity"
+    }
+  ],
+  "RAIN_RATE": [
+    {
+      "fr": "Taux Pluie",
+      "en": "Rain Rate"
+    }
+  ],
+  "CUMULATIVE_RAINFALL": [
+    {
+      "fr": "Cumul de Pluie",
+      "en": "Cumulative Rainfall"
+    }
+  ],
+  "CUMULATIVE_RAIN": [
+    {
+      "fr": "Cumul Pluie",
+      "en": "Cumul. Rain"
+    }
+  ],
+  "MONTHLY_PRECIPITATION": [
+    {
+      "fr": "Précipitation Mensuelle",
+      "en": "Monthly Precipitation"
+    }
+  ],
+  "MONTH_PRECIP": [
+    {
+      "fr": "Pluie Mois",
+      "en": "Month Rain"
+    }
+  ],
+  "ANNUAL_PRECIPITATION": [
+    {
+      "fr": "Précipitation Annuelle",
+      "en": "Annual Precipitation"
+    }
+  ],
+  "YEAR_PRECIP": [
+    {
+      "fr": "Pluie Année",
+      "en": "Year Rain"
+    }
+  ],
+  "DEW_POINT": [
+    {
+      "fr": "Point de Rosée",
+      "en": "Dewpoint"
+    }
+  ],
+  "DEWPT": [
+    {
+      "fr": "Pt. Rosée",
+      "en": "Dew Pt."
+    }
+  ],
+  "RELATIVE_HUMIDITY": [
+    {
+      "fr": "Humidité Relative",
+      "en": "Relative Humidity"
+    }
+  ],
+  "HUMIDITY": [
+    {
+      "fr": "Humidité",
+      "en": "Humidity"
+    }
+  ],
+  "HUMIDITY_IN": [
+    {
+      "fr": "Humidité Relative Intérieure",
+      "en": "Indoor Relative Humidity"
+    }
+  ],
+  "RH_IN": [
+    {
+      "fr": "Hum. Int.",
+      "en": "In. RH"
+    }
+  ],
+  "FEELS_LIKE_TEMPERATURE": [
+    {
+      "fr": "Température Ressentie",
+      "en": "Feels Like Temperature"
+    }
+  ],
+  "FEELS_LIKE": [
+    {
+      "fr": "Ressenti",
+      "en": "Feels Like"
+    }
+  ],
+  "HIGHEST_GUST": [
+    {
+      "fr": "Plus Forte Rafale",
+      "en": "Highest Gust"
+    }
+  ],
+  "MAX_GUST": [
+    {
+      "fr": "Rafale Max",
+      "en": "Max Gust"
+    }
+  ],
+  "GUST_WIND": [
+    {
+      "fr": "Vent en Rafale",
+      "en": "Gust Wind"
+    }
+  ],
+  "GUST": [
+    {
+      "fr": "Rafale",
+      "en": "Gust"
+    }
+  ],
+  "SOLAR_RADIATIONS": [
+    {
+      "fr": "Radiations Solaires",
+      "en": "Solar Radiations"
+    }
+  ],
+  "SUN": [
+    {
+      "fr": "Soleil",
+      "en": "Sun"
+    }
+  ],
+  "UV_INDEX": [
+    {
+      "fr": "Indice UV",
+      "en": "UV Index"
+    }
+  ],
+  "UV": [
+    {
+      "fr": "UV",
+      "en": "UV"
+    }
+  ],
+  "MOON": [
+    {
+      "fr": "Lune",
+      "en": "Moon"
+    }
+  ],
+  "DAY": [
+    {
+      "fr": "Jour",
+      "en": "Day"
+    }
+  ],
+  "TODAY": [
+    {
+      "fr": "Aujourd'hui",
+      "en": "Today"
+    }
+  ],
+  "NIGHT": [
+    {
+      "fr": "Nuit",
+      "en": "Night"
+    }
+  ],
+  "MENU": [
+    {
+      "fr": "Menu",
+      "en": "Menu"
+    }
+  ],
+  "MENU_TITLE": [
+    {
+      "fr": "Ouvre le Menu",
+      "en": "Open the Menu"
+    }
+  ],
+  "ADMIN": [
+    {
+      "fr": "Admin",
+      "en": "Admin"
+    }
+  ],
+  "SETTINGS": [
+    {
+      "fr": "Paramètres",
+      "en": "Settings"
+    }
+  ],
+  "STYLES": [
+    {
+      "fr": "Styles",
+      "en": "Styles"
+    }
+  ],
+  "D": [
+    {
+      "fr": "J",
+      "en": "D"
+    }
+  ],
+  "M": [
+    {
+      "fr": "M",
+      "en": "M"
+    }
+  ],
+  "Y": [
+    {
+      "fr": "A",
+      "en": "Y"
+    }
+  ],
+  "AT": [
+    {
+      "fr": "à",
+      "en": "at"
+    }
+  ],
+  "ACCRUED": [
+    {
+      "fr": "cumulé",
+      "en": "accrued"
+    }
+  ],
+  "ACCUMULATED": [
+    {
+      "fr": "accumulé",
+      "en": "accumulated"
+    }
+  ],
+  "MINIMUM_TEMP": [
+    {
+      "fr": "Température Minimum",
+      "en": "Minimum Temperature"
+    }
+  ],
+  "MAXIMUM_TEMP": [
+    {
+      "fr": "Température Maximum",
+      "en": "Maximum Temperature"
+    }
+  ],
+  "TN": [
+    {
+      "fr": "Tn",
+      "en": "Tn"
+    }
+  ],
+  "TX": [
+    {
+      "fr": "Tx",
+      "en": "Tx"
+    }
+  ],
+  "DAILY": [
+    {
+      "fr": "Journalier",
+      "en": "Daily"
+    }
+  ],
+  "MONTHLY": [
+    {
+      "fr": "Mensuel",
+      "en": "Monthly"
+    }
+  ],
+  "YEARLY": [
+    {
+      "fr": "Annuel",
+      "en": "Yearly"
+    }
+  ],
+  "OF_THE_MONTH": [
+    {
+      "fr": "du Mois",
+      "en": "of the Month"
+    }
+  ],
+  "OF_THE_YEAR": [
+    {
+      "fr": "de l'Année",
+      "en": "of the Year"
+    }
+  ],
+  "ON_10_MN": [
+    {
+      "fr": "sur 10 mn",
+      "en": "on 10 mn"
+    }
+  ],
+  "LAST_10_MN": [
+    {
+      "fr": "10 dernières minutes",
+      "en": "last 10 minutes"
+    }
+  ],
+  "MAX": [
+    {
+      "fr": "Max",
+      "en": "Max"
+    }
+  ],
+  "MIN": [
+    {
+      "fr": "Mini",
+      "en": "Min"
+    }
+  ],
+
+  "WINDCHILL_SMALL": [
+    {
+      "fr": "Facteur Vent",
+      "en": "Windchill"
+    }
+  ],
+  "WINDCHILL_LARGE": [
+    {
+      "fr": "Refroidissement Éolien",
+      "en": "Windchill"
+    }
+  ],
+
+  "HEAT": [
+    {
+      "fr": "Chaleur",
+      "en": "Heat"
+    }
+  ],
+  "HEAT_INDEX": [
+    {
+      "fr": "Indice de Chaleur",
+      "en": "Heat Index"
+    }
+  ],
+
+  "FEEL_LIKE": [
+    {
+      "fr": "Ressenti",
+      "en": "Feels Like"
+    }
+  ],
+
+  "FEEL_LIKE_TEMP": [
+    {
+      "fr": "Température Ressentie",
+      "en": "Feels Like Temperature"
+    }
+  ],
+
+  "PRECIPITATION_TODAY": [
+    {
+      "fr": "Précipitation Aujourd'hui",
+      "en": "Precipitation Today"
+    }
+  ],
+
+  "DAY_RAIN": [
+    {
+      "fr": "Pluie Auj.",
+      "en": "Day Rain"
+    }
+  ],
+  "RAIN_TODAY": [
+    {
+      "fr": "Pluie Aujourd'hui",
+      "en": "Rain Today"
+    }
+  ],
+  "SUNRISE": [
+    {
+      "fr": "Lever du Soleil",
+      "en": "Sunrise"
+    }
+  ],
+  "SUNSET": [
+    {
+      "fr": "Coucher du Soleil",
+      "en": "Sunset"
+    }
+  ],
+  "FREEZING_FOG": [
+    {
+      "fr": "Brouillard Givrant",
+      "en": "Freezing Fog"
+    }
+  ],
+  "FROST_FOG": [
+    {
+      "fr": "Brouil. Givrant",
+      "en": "Frost Fog"
+    }
+  ],
+  "FREEZING_MIST": [
+    {
+      "fr": "Brume Givrante",
+      "en": "Freezing Mist"
+    }
+  ],
+  "FROST_MIST": [
+    {
+      "fr": "Brume Givrante",
+      "en": "Frost Mist"
+    }
+  ],
+  "ICING": [
+    {
+      "fr": "Verglas",
+      "en": "Icing"
+    }
+  ],
+  "SUNNY": [
+    {
+      "fr": "Ensoleillé",
+      "en": "Sunny"
+    }
+  ],
+  "CLOUDY": [
+    {
+      "fr": "Nuageux",
+      "en": "Cloudy"
+    }
+  ],
+  "NOUGHT": [
+    {
+      "fr": "Néant",
+      "en": "Nil"
+    }
+  ],
+  "FOG": [
+    {
+      "fr": "Brouillard",
+      "en": "Fog"
+    }
+  ],
+  "MIST": [
+    {
+      "fr": "Brume",
+      "en": "Mist"
+    }
+  ],
+  "PRECIPITATION": [
+    {
+      "fr": "Précipitation",
+      "en": "Precipitation"
+    }
+  ],
+  "RAIN_SNOW": [
+    {
+      "fr": "Pluie-Neige",
+      "en": "Rain-Snow"
+    }
+  ],
+  "SNOW": [
+    {
+      "fr": "Neige",
+      "en": "Snow"
+    }
+  ],
+  "PET": [
+    {
+      "fr": "ETP",
+      "en": "PET"
+    }
+  ],
+  "ETA": [
+    {
+      "fr": "ETR",
+      "en": "ETA"
+    }
+  ],
+  "POTENTIAL_EVAPO": [
+    {
+      "fr": "Évapotranspiration Potentielle",
+      "en": "Potential Evapotranspiration"
+    }
+  ],
+  "ACTUAL_EVAPO": [
+    {
+      "fr": "Évapotranspiration Réelle",
+      "en": "Actual Evapotranspiration"
+    }
+  ],
+  "MONTH_EVAPO": [
+    {
+      "fr": "Évapot /Mois",
+      "en": "Month Evapot"
+    }
+  ],
+  "MONTHLY_EVAPO": [
+    {
+      "fr": "Évapotranspiration Mensuelle",
+      "en": "Monthly Evapotranspiration"
+    }
+  ],
+  "YEAR_EVAPO": [
+    {
+      "fr": "Évapot /Année",
+      "en": "Year Evapot"
+    }
+  ],
+  "YEARLY_EVAPO": [
+    {
+      "fr": "Évapotranspiration Annuelle",
+      "en": "Annual Evapotranspiration"
+    }
+  ],
+  "MINIMUM_PRESSURE": [
+    {
+      "fr": "Pression Minimum",
+      "en": "Minimum Pressure"
+    }
+  ],
+  "MAXIMUM_PRESSURE": [
+    {
+      "fr": "Pression Maximum",
+      "en": "Maximum Pressure"
+    }
+  ],
+  "MINIMUM_HUMIDITY": [
+    {
+      "fr": "Humidité Minimum",
+      "en": "Minimum Humidity"
+    }
+  ],
+  "MAXIMUM_HUMIDITY": [
+    {
+      "fr": "Humidité Maximum",
+      "en": "Maximum Humidity"
+    }
+  ],
+  "MINIMUM_DEW_POINT": [
+    {
+      "fr": "Point de Rosée Minimum",
+      "en": "Minimum Dewpoint"
+    }
+  ],
+  "MAXIMUM_DEW_POINT": [
+    {
+      "fr": "Point de Rosée Maximum",
+      "en": "Maximum Dewpoint"
+    }
+  ],
+  "TDN": [
+    {
+      "fr": "Tdn",
+      "en": "Tdn"
+    }
+  ],
+  "TDX": [
+    {
+      "fr": "Tdx",
+      "en": "Tdx"
+    }
+  ]
+  ,
+  "RHN": [
+    {
+      "fr": "HRn",
+      "en": "RHn"
+    }
+  ],
+  "RHX": [
+    {
+      "fr": "HRx",
+      "en": "RHx"
+    }
+  ],
+  "MONTH_SUN": [
+    {
+      "fr": "Soleil Mois",
+      "en": "Month Sun"
+    }
+  ],
+  "MONTH_MAX_SOLAR_RADIATIONS": [
+    {
+      "fr": "Radiation Solaire Mensuelle Maximum",
+      "en": "Maximum Monthly Solar Radiation"
+    }
+  ],
+  "YEAR_SUN": [
+    {
+      "fr": "Soleil Année",
+      "en": "Year Sun"
+    }
+  ],
+  "YEAR_MAX_SOLAR_RADIATIONS": [
+    {
+      "fr": "Radiation Solaire Annuelle Maximum",
+      "en": "Maximum Yearly Solar Radiation"
+    }
+  ],
+  "MONTH_UV": [
+    {
+      "fr": "UV Mois",
+      "en": "Month UV"
+    }
+  ],
+  "MONTH_MAX_UV_INDEX": [
+    {
+      "fr": "Index UV Mensuel Maximum",
+      "en": "Maximum Monthly UV Index"
+    }
+  ],
+  "YEAR_UV": [
+    {
+      "fr": "UV Année",
+      "en": "Year UV"
+    }
+  ],
+  "YEAR_MAX_UV_INDEX": [
+    {
+      "fr": "Index UV Annuel Maximum",
+      "en": "Maximum Yearly UV Index"
+    }
+  ]
+  ,
+  "MIN_INDEX": [
+    {
+      "fr": "Indice Minimum",
+      "en": "Minimum Index"
+    }
+  ]
+  ,
+  "MAX_INDEX": [
+    {
+      "fr": "Indice Maximum",
+      "en": "Maximum Index"
+    }
+  ]
+  ,
+  "CHANGE_STATION": [
+    {
+      "fr": "CHANGER DE STATION",
+      "en": "CHANGE STATION"
+    }
+  ]  ,
+  "TITLE_CHANGE": [
+    {
+      "fr": "Autres Stations de :",
+      "en": "Other Stations of:"
+    }
+  ]
+  ,
+  "STATION_ACTIVE": [
+    {
+      "fr": "Station Active",
+      "en": "Active Station "
+    }
+  ]
+  ,
+  "ADD_STATION": [
+    {
+      "fr": "AJOUTER UNE STATION",
+      "en": "ADD A STATION"
+    }
+  ]
+  ,
+  "CHANGE_INFO_1": [
+    {
+      "fr": "Il ne peut y avoir qu'une seule station active à la fois par installation de Mbell. Si vous possédez plusieurs stations et voulez les afficher en même temps sur le même hébergement internet, une seule base de données suffit, mais vous devez réinstaller un autre mbell en utilisant un préfixe de table de bdd différent lors de cette nouvelle installation.",
+      "en": "There can only be one active station per Mbell installation at a time. If you have several stations and want to display them at the same time on the same internet hosting, a single database is sufficient, but you must reinstall another mbell using a different database table prefix during this new installation. "
+    }
+  ]
+  ,
+  "CHANGE_INFO_2": [
+    {
+      "fr": "Actuellement votre station active, a comme ID dans la BDD = ",
+      "en": "Currently your active station, has as ID in the database = "
+    }
+  ],
+  "UPDATE_STATION": [
+    {
+      "fr": "MODIFIER UNE STATION",
+      "en": "UPDATE A STATION"
+    }
+  ],
+  "UPDATE_INFO": [
+    {
+      "fr": "Éditer",
+      "en": "Edit"
+    }
+  ],
+  "DELETE_INFO": [
+    {
+      "fr": "Supprimer",
+      "en": "Delete"
+    }
+  ],
+  "ACTIVE_INFO": [
+    {
+      "fr": "Activer",
+      "en": "Activate"
+    }
+  ]
+}
