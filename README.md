@@ -43,8 +43,8 @@ NOTE 2 : les informations de connexions à votre base de données vous sont four
 
 ## Installation en localhost (FR)
 
-    Avec un logiciel de serveur virtuel (Wamp ou EasyPHP) aller à l'emplacement du dossier "mbell-main" sur votre disque dur
-    La procédure d'installation se lance automatiquement en vous guidant pas à pas
+3. Avec un logiciel de serveur virtuel (Wamp ou EasyPHP) aller à l'emplacement du dossier "mbell-main" sur votre disque dur
+4. La procédure d'installation se lance automatiquement en vous guidant pas à pas
 
 NOTE 1 : La base de données en local doit avoir comme propriétés : Adresse = localhost / Utilisateur = root / Pas besoin de mot de passe / Comme pour l'installation Internet, le nom de la base de données doit être créé au préalable avec PHPMyAdmin (même procédure)
 
