@@ -3,7 +3,7 @@ CMS for weather station (Davis-Weatherlink)
 # Lisez-Moi (FR) :
 CMS pour station météo (Davis-Weatherlink)
 
-Pour de plus amples détails aller sur le wiki de Mbell : https://github.com/Networkbell/mbell/wiki/MBell-fr
+Pour de plus amples détails, aller sur le wiki de Mbell : https://github.com/Networkbell/mbell/wiki/MBell-fr
 
 
 # Description (FR)
