@@ -35,7 +35,7 @@ NOTE 1 : le dossier "mbell-main" obtenus peut être renommé comme bon vous semb
 
 3. Avec un logiciel FTP (exemple FileZilla), installer le dossier "mbell-main" sur votre site internet
 4. Aller à l'adresse url de votre site à l'emplacement de mbell : http://www.votre-site.com/mbell-main/
-    La procédure d'installation se lance automatiquement en vous guidant pas à pas
+5. La procédure d'installation se lance automatiquement en vous guidant pas à pas
 
 NOTE 1 : vous pouvez placer le dossier "mbell-main" à n'importe quel endroit de votre site.
 
