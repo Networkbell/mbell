@@ -49,8 +49,9 @@ NOTE 2 : les informations de connexions à votre base de données vous sont four
 NOTE 1 : La base de données en local doit avoir comme propriétés : Adresse = localhost / Utilisateur = root / Pas besoin de mot de passe / Comme pour l'installation Internet, le nom de la base de données doit être créé au préalable avec PHPMyAdmin (même procédure)
 
 
- # Version 2.0b
+ # Version 2.1
  
  - 2.0  - Initial Release
  - 2.0a - Fix : Root Link - Change the root link
  - 2.0b - Fix : Github Footer Link - Change the footer link to Github
+ - 2.1  - Addon : Weatherlink Live
