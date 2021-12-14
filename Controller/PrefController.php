@@ -20,11 +20,12 @@ class PrefController extends Controller
 
     public function listAction()
     {
-        $station = $this->paramStat->getStationActive();
+        $active = $this->paramStat->getStationActive();
+        $liveStation = ($active['stat_type']=='live') ? $this->model->getLiveAPIStation($active['stat_livekey'], $active['stat_livesecret']): '';   
         $paramJson = $this->paramStat->getAPI();
         $config = $this->model->getConfigActive();
         $tab = $this->model->getTabActive();
-        $this->view->displayList($station, $paramJson, $config, $tab);
+        $this->view->displayList($active, $paramJson, $config, $tab, $liveStation);
     }
 
     public function configAction()

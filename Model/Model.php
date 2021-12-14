@@ -3,57 +3,57 @@
 abstract class Model
 {
 
-        protected $connexion;
-        protected $requete;
-        protected $file_admin;
-        protected $paramStat;
+    protected $connexion;
+    protected $requete;
+    protected $file_admin;
+    protected $paramStat;
 
-        public function __construct()
-        {
-                $this->l = new Lang();
-                $this->file_admin = 'config/admin.php';
-                
-                //CONNEXION BDD
-                if (file_exists($this->file_admin)) {
-                        require $this->file_admin;
-                        try {
-                                $this->connexion = new PDO("mysql:host=" .
-                                        DB_HOST . ";dbname=" .
-                                        DB_NAME, DB_USER, DB_PASSWORD);
-                                // Activation des erreurs PDO
-                                $this->connexion->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-                                // mode de fetch par défaut : FETCH_ASSOC / FETCH_OBJ / FETCH_BOTH
-                                //$this->connexion->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
-                        } catch (Exception $e) {
-                                if ($_GET['controller'] == "install") {
-                                        if (MB_DEBUG) {
-                                                die($e->getMessage());
-                                        }
-                                        unlink($this->file_admin);
-                                        $response = 2;
-                                        return ($response);
-                                }
-                                if (MB_DEBUG) {
-                                        die($e->getMessage());
-                                }
-                        }
+    public function __construct()
+    {
+        $this->l = new Lang();
+        $this->file_admin = 'config/admin.php';
+
+        //CONNEXION BDD
+        if (file_exists($this->file_admin)) {
+            require $this->file_admin;
+            try {
+                $this->connexion = new PDO("mysql:host=" .
+                    DB_HOST . ";dbname=" .
+                    DB_NAME, DB_USER, DB_PASSWORD);
+                // Activation des erreurs PDO
+                $this->connexion->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+                // mode de fetch par défaut : FETCH_ASSOC / FETCH_OBJ / FETCH_BOTH
+                //$this->connexion->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
+            } catch (Exception $e) {
+                if ($_GET['controller'] == "install") {
+                    if (MB_DEBUG) {
+                        die($e->getMessage());
+                    }
+                    unlink($this->file_admin);
+                    $response = 2;
+                    return ($response);
                 }
+                if (MB_DEBUG) {
+                    die($e->getMessage());
+                }
+            }
         }
+    }
 
-     /**
+    /**
      * Type de station
      * 
      * @return string
      */
-        public function getStation()
-        {
-                $station = (isset($_GET['station']) ? ((in_array($_GET['station'], array('v0', 'v1', 'v2'))) ? $_GET['station'] : 'v0') : 'v0');
-                return $station;
-        }
+    public function getStation()
+    {
+        $station = (isset($_GET['station']) ? ((in_array($_GET['station'], array('v0', 'v1', 'v2', 'live'))) ? $_GET['station'] : 'v0') : 'v0');
+        return $station;
+    }
 
 
 
-            /**
+    /**
      * Créé une clef ssl 32bit aléatoire en hexa
      * 
      * @return string
@@ -108,7 +108,7 @@ abstract class Model
     }
 
 
-/**
+    /**
      * Ajout dans la BDD config avec valeurs par défaut
      * 
      * @return void
@@ -181,16 +181,16 @@ abstract class Model
         $tab_2a = 4;
         $tab_2b = 5;
         $tab_2c = 6;
-        $tab_3a = 7;
+        $tab_3a = ($info['stat_type'] == "live") ? 12 : 7;
         $tab_3b = 8;
-        $tab_3c = 9;
+        $tab_3c = ($info['stat_type'] == "live") ? 13 : 9;
         $tab_4a = 10;
         $tab_4b = 11;
-        $tab_4c = 12;
+        $tab_4c = ($info['stat_type'] == "live") ? 14 : 12;
         $tab_5a = 43;
         $tab_5b = 44;
-        $tab_5c = 13;
-        $tab_6a = 14;
+        $tab_5c = ($info['stat_type'] == "live") ? 9 : 13;
+        $tab_6a = ($info['stat_type'] == "live") ? 7 : 14;
         $tab_6b = 15;
         $tab_6c = 16;
         $tab_7a = 30;
@@ -255,5 +255,101 @@ abstract class Model
     }
 
 
+    /**
+     * Retourne l'URL de l'API Live station : https://api.weatherlink.com/v2/stations/
+     * 
+     * 
+     */
+    public function getLiveURLStation($key, $secret)
+    {
+        $parameters = array(
+            "api-key" => $key,
+            "api-secret" => $secret,
+            "t" => time()
+        );
 
+        ksort($parameters);
+        $apiSecret = $parameters["api-secret"];
+        unset($parameters["api-secret"]);
+
+        $data = "";
+        foreach ($parameters as $key => $value) {
+            $data = $data . $key . $value;
+        }
+
+        $apiSignature = hash_hmac("sha256", $data, $apiSecret);
+        $apiStation = "https://api.weatherlink.com/v2/stations/?api-key=" . $parameters["api-key"] . "&api-signature=" . $apiSignature . "&t=" . $parameters["t"];
+
+        return $apiStation;
+    }
+
+
+
+    /**
+     * Retourne les datas dans l'URL Live station : https://api.weatherlink.com/v2/stations/
+     * 
+     *
+     */
+    public function getLiveAPIStation($key, $secret)
+    {
+        $data = @file_get_contents($this->getLiveURLStation($key, $secret));
+        $json = json_decode($data, true);
+        $this->jsonDebug();
+        return $json;
+    }
+
+    /**
+     * Retourne l'id_station dans l'URL Live station : https://api.weatherlink.com/v2/stations/ si le stat_type est "weatherlink live"
+     * Attention le json retourné est sous forme d'array
+     * 
+     *
+     */
+    public function getStationID($key, $secret, $type)
+    {
+        $zero = '';
+        if ($type == 'live') {
+            $stationDatas = $this->getLiveAPIStation($key, $secret);
+
+            $station_id = isset($stationDatas['stations'][0]['station_id']) ? $stationDatas['stations'][0]['station_id'] : $zero;
+        } else {
+            $station_id = $zero;
+        }
+        return $station_id;
+    }
+
+
+
+    public function jsonDebug()
+    {
+        require $this->file_admin;
+        if (MB_DEBUG) {
+            if (json_last_error()) {
+                $jsDebug = '';
+                switch (json_last_error()) {
+                    case JSON_ERROR_NONE:
+                        $jsDebug .= ' - Aucune erreur';
+                        break;
+                    case JSON_ERROR_DEPTH:
+                        $jsDebug .= ' - Profondeur maximale atteinte';
+                        break;
+                    case JSON_ERROR_STATE_MISMATCH:
+                        $jsDebug .= ' - Inadéquation des modes ou underflow';
+                        break;
+                    case JSON_ERROR_CTRL_CHAR:
+                        $jsDebug .= ' - Erreur lors du contrôle des caractères';
+                        break;
+                    case JSON_ERROR_SYNTAX:
+                        $jsDebug .= " - Erreur de syntaxe ; JSON malformé ; Erreur d'API ; Mauvais identifiants vers votre API";
+                        break;
+                    case JSON_ERROR_UTF8:
+                        $jsDebug .= ' - Caractères UTF-8 malformés, probablement une erreur d\'encodage';
+                        break;
+                    default:
+                        $jsDebug .= ' - Erreur inconnue';
+                        break;
+                }
+                return var_dump($jsDebug);
+            }
+        }
+    }
 }

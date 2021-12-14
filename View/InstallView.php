@@ -27,11 +27,11 @@ class InstallView extends View
         $this->page .= $this->getHeader($param);
     }
 
-    public function InstallMain8($info, $datas)
+    public function InstallMain8($info, $datas, $livestation)
     {
-        $zero = '&#8709;';
-        $location = isset($datas->location) ? $datas->location : $zero;
-        $station_id = isset($datas->station_id) ? $datas->station_id : $zero;
+      
+        $location = $this->statview->getAPIDatas($datas, $info, $livestation)['location'];
+        $station_id = $this->statview->getAPIDatas($datas, $info, $livestation)['station_id'];
 
         $param = array(
             "1" => $info['user_login'],
@@ -43,6 +43,8 @@ class InstallView extends View
             "7" => $info['stat_key'],
             "8" => $info['stat_password'],
             "9" => $info['stat_token'],
+            "10" => $info['stat_livekey'],
+            "11" => $info['stat_livesecret'],
             "MBELL_INSTALLED" => $this->l->trad('MBELL_INSTALLED'),
             "STATION_STEP7_P1" => $this->l->trad('STATION_STEP7_P1'),
             "USER_INFO" => $this->l->trad('USER_INFO'),
@@ -63,6 +65,9 @@ class InstallView extends View
         if ($info['stat_type'] == 'v2') {
             $this->page .= $this->getListInfov2($param);
         }
+        if ($info['stat_type'] == 'live') {
+            $this->page .= $this->getListInfoLive($param);
+        }
         $this->page .= $this->getButton($this->l->getLg(), 'install', 'step9', $param['VALIDATE']);
         $this->page .= '</section>';
         $this->page .= '</main>';
@@ -80,6 +85,7 @@ class InstallView extends View
             "2" => $this->l->trad('CHOOSE_SELECT'),
             "3" => $this->l->trad('STATION_SELECT_V1'),
             "4" => $this->l->trad('STATION_SELECT_V2'),
+            "5" => $this->l->trad('STATION_SELECT_LIVE'),
             "STATION_STEP6_P1" => $this->l->trad('STATION_STEP6_P1'),
             "STATION_STEP6_P2" => $this->l->trad('STATION_STEP6_P2'),
             "INFO_STATION" => $this->l->trad('INFO_STATION'),
@@ -92,6 +98,9 @@ class InstallView extends View
             "_VAL_STAT_USERS" => '',
             "_VAL_STAT_PASSWORD" => '',
             "_VAL_STAT_TOKEN" => '',
+            "_VAL_STAT_LIVEKEY" => '',
+            "_VAL_STAT_LIVESECRET" => '',
+            "_VAL_STAT_LIVEID" => '',
             "_VAL_STAT_ID" => '',
             "STATION_BUTTON" => $this->l->trad('INSTALL_STEP6')
 

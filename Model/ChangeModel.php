@@ -9,26 +9,27 @@ class ChangeModel extends Model
 
 
     /**
-     * Selection de toute la liste dans BDD station et user associé de user connecté avec stations non-activé
+     * Selection de toute la liste dans BDD station et user associé de user connecté avec stations non-activé et stat_type == v1/v2/live
      * 
      * @return type(string, int)
      */
-    public function getAllStationUserLogin()
+    public function getAllStationUserLogin($stat_type)
     {
         require $this->file_admin;
         $user_tab = $table_prefix . 'user';
         $station_tab = $table_prefix . 'station';
         $id_stat_user = $user_tab . '.user_id';
         $id_stat_station = $station_tab . '.user_id';
-        $stat_active = 0;
+        $stat_active = 0;      
 
         try {
 
-            $req = "SELECT stat_id, stat_type, stat_did, stat_key, stat_users, stat_password, stat_token, $id_stat_station FROM $station_tab INNER JOIN $user_tab ON $id_stat_station = $id_stat_user WHERE user_login = :user_login AND stat_active = :stat_active";
+            $req = "SELECT stat_id, stat_type, stat_did, stat_key, stat_users, stat_password, stat_token, stat_livekey, stat_livesecret, stat_liveid, $id_stat_station FROM $station_tab INNER JOIN $user_tab ON $id_stat_station = $id_stat_user WHERE user_login = :user_login AND stat_active = :stat_active AND stat_type = :stat_type";
 
             $this->requete = $this->connexion->prepare($req);
             $this->requete->bindParam(':user_login', $_SESSION['user_login']);
             $this->requete->bindParam(':stat_active', $stat_active);
+            $this->requete->bindParam(':stat_type', $stat_type);
             $result = $this->requete->execute();
 
             if ($result) {
@@ -82,21 +83,30 @@ class ChangeModel extends Model
 
         require $this->file_admin;
         $station_tab = $table_prefix . 'station';
+
+        $stat_type = $paramPost['stat_type'];
+        $live_key = $paramPost['stat_livekey'];
+        $live_secret = $paramPost['stat_livesecret'];
+        $live_id = $this->getStationID($live_key, $live_secret, $stat_type);
         $stat_active = 0;
 
         try {
             $req = "INSERT INTO $station_tab VALUES(
-            NULL, :stat_type, :stat_did, :stat_key, :stat_users, 
-            :stat_password, :stat_token, :stat_active, :user_id
+            NULL, :stat_type, :stat_did, :stat_key, 
+            :stat_users, :stat_password, :stat_token,  
+            :stat_livekey, :stat_livesecret, :stat_liveid, :stat_active, :user_id
             )";
 
             $this->requete = $this->connexion->prepare($req);
-            $this->requete->bindParam(':stat_type', $paramPost['stat_type']);
+            $this->requete->bindParam(':stat_type', $stat_type);
             $this->requete->bindParam(':stat_did', $paramPost['stat_did']);
             $this->requete->bindParam(':stat_key', $paramPost['stat_key']);
             $this->requete->bindParam(':stat_users', $paramPost['stat_users']);
             $this->requete->bindParam(':stat_password', $paramPost['stat_password']);
             $this->requete->bindParam(':stat_token', $paramPost['stat_token']);
+            $this->requete->bindParam(':stat_livekey', $live_key);
+            $this->requete->bindParam(':stat_livesecret', $live_secret);
+            $this->requete->bindParam(':stat_liveid', $live_id);
             $this->requete->bindParam(':stat_active', $stat_active);
             $this->requete->bindParam(':user_id', $paramPost['user_id']);
 
@@ -168,22 +178,34 @@ class ChangeModel extends Model
      * 
      * @return boolean
      */
-    public function updateBDD($station){
+    public function updateBDD($paramPost){
 
         require $this->file_admin;
         $station_tab = $table_prefix . 'station';
 
-        $req = "UPDATE $station_tab SET stat_did = :stat_did, stat_key = :stat_key, stat_users = :stat_users, stat_password = :stat_password, stat_token = :stat_token WHERE stat_id = :stat_id";
+        $stat_type = $paramPost['stat_type'];
+        $live_key = $paramPost['stat_livekey'];
+        $live_secret = $paramPost['stat_livesecret'];
+        $live_id = $this->getStationID($live_key, $live_secret, $stat_type);
+
+        $req = "UPDATE $station_tab SET stat_did = :stat_did, stat_key = :stat_key, stat_users = :stat_users, 
+        stat_password = :stat_password, stat_token = :stat_token,
+        stat_livekey = :stat_livekey, stat_livesecret = :stat_livesecret, stat_liveid = :stat_liveid
+        WHERE stat_id = :stat_id";
 
         
         try {
             $this->requete= $this->connexion->prepare($req);
-            $this->requete->bindParam(':stat_id', $station['stat_id']);
-            $this->requete->bindParam(':stat_did', $station['stat_did']);
-            $this->requete->bindParam(':stat_key', $station['stat_key']);
-            $this->requete->bindParam(':stat_users', $station['stat_users']);
-            $this->requete->bindParam(':stat_password', $station['stat_password']);
-            $this->requete->bindParam(':stat_token', $station['stat_token']);
+            $this->requete->bindParam(':stat_id', $paramPost['stat_id']);
+            $this->requete->bindParam(':stat_did', $paramPost['stat_did']);
+            $this->requete->bindParam(':stat_key', $paramPost['stat_key']);
+            $this->requete->bindParam(':stat_users', $paramPost['stat_users']);
+            $this->requete->bindParam(':stat_password', $paramPost['stat_password']);
+            $this->requete->bindParam(':stat_token', $paramPost['stat_token']);
+            $this->requete->bindParam(':stat_livekey', $live_key);
+            $this->requete->bindParam(':stat_livesecret', $live_secret);
+            $this->requete->bindParam(':stat_liveid', $live_id);
+            
             $result = $this->requete->execute(); 
             $row = ($result) ? 1 : null;
             return $row;

@@ -39,11 +39,11 @@ class ChangeView extends View
         $this->page = str_replace('{LOGOUT2}',  $this->l->trad('LOGOUT2'), $this->page);
     }
 
-    public function changeList($info, $station, $datas)
+    public function changeList($infoV1, $infoV2, $infoLive, $station, $datas, $livestation)
     {
-        $zero = '&#8709;';
-        $location = isset($datas->location) ? $datas->location : $zero;
-        $station_id = isset($datas->station_id) ? $datas->station_id : $zero;
+        $location = $this->statview->getAPIDatas($datas, $station, $livestation)['location'];
+        $station_id = $this->statview->getAPIDatas($datas, $station, $livestation)['station_id'];
+        $lg = $this->l->getLg();
 
         $param = array(
             "3" => $station['stat_type'],
@@ -53,9 +53,11 @@ class ChangeView extends View
             "7" => $station['stat_key'],
             "8" => $station['stat_password'],
             "9" => $station['stat_token'],
+            "10" => $station['stat_livekey'],
+            "11" => $station['stat_livesecret'],
             "CHANGE_INFO_1" => $this->l->trad('CHANGE_INFO_1'),
             "CHANGE_INFO_2" => $this->l->trad('CHANGE_INFO_2') . $station['stat_id'],
-           "UPDATE_INFO" => $this->l->trad('UPDATE_INFO'),
+            "UPDATE_INFO" => $this->l->trad('UPDATE_INFO'),
             "DELETE_INFO" => $this->l->trad('DELETE_INFO'),
             "ACTIVE_INFO" => $this->l->trad('ACTIVE_INFO')
         );
@@ -72,48 +74,115 @@ class ChangeView extends View
         if ($station['stat_type'] == 'v2') {
             $this->page .= $this->getListInfov2($param);
         }
+        if ($station['stat_type'] == 'live') {
+            $this->page .= $this->getListInfoLive($param);
+        }
         $this->page .= '</section>';
         $this->page .= '<section>';
         $this->page .= '<h1>' . $this->l->trad('TITLE_CHANGE') . ' ' . $_SESSION['user_login'] . '</h1>';
+        
         $this->page .= "<table class='table table-striped table-bordered'>";
-        $this->page .= "<thead>";
-        $this->page .= "<tr>";
-        $this->page .= "<th scope='col'>ID</th>";
-        $this->page .= "<th scope='col'>TYPE</th>";
-        $this->page .= "<th scope='col'>DID</th>";
-        $this->page .= "<th scope='col'>KEY</th>";
-        $this->page .= "<th scope='col'>USER</th>";
-        $this->page .= "<th scope='col'>PASSWORD</th>";
-        $this->page .= "<th scope='col'>TOKEN</th>";
-        $this->page .= "<th scope='col'>ACTIONS</th>";
-        $this->page .= "</tr>";
-        $this->page .= "</thead>";
-        $this->page .= "<tbody>";
-        foreach ($info as $list) {
-            $id = $list['stat_id'];
-            $lg = $this->l->getLg();
+        $x1 = 1;
+        //$lenght1 = count($infoV1); //compte si on est arrivé en bas du tableau
+        foreach ($infoV1 as $listv1 ) {          
+            $idv1  = $listv1 ['stat_id'];
+            if ($x1  === 1) {
+                $this->page .= "<thead>";
+                $this->page .= "<tr>";
+                $this->page .= "<th scope='col'>ID</th>";
+                $this->page .= "<th scope='col'>TYPE</th>";
+                $this->page .= "<th scope='col'>DID</th>";
+                $this->page .= "<th scope='col'>KEY</th>";
+                $this->page .= "<th scope='col'>USER</th>";
+                $this->page .= "<th scope='col'>ACTIONS</th>";
+                $this->page .= "</tr>";
+                $this->page .= "</thead>";
+            }
+            $this->page .= "<tbody>";
             $this->page .= "<tr>";
-            $this->page .= "<td>" . $id . "</td>";
-            $this->page .= "<td>" . $list['stat_type'] . "</td>";
-            $this->page .= "<td>" . $list['stat_did'] . "</td>";
-            $this->page .= "<td>" . $list['stat_key'] . "</td>";
-            $this->page .= "<td>" . $list['stat_users'] . "</td>";
-            $this->page .= "<td>" . $list['stat_password'] . "</td>";
-            $this->page .= "<td>" . $list['stat_token'] . "</td>";
-            $this->page .= "<td class='td_button' ><a title='".$param['UPDATE_INFO']."' class='text-primary' href='index.php?controller=change&action=update&stat_id=$id'><i class='fas fa-pen-square'></i></a> ";
-            $this->page .= "<a class='text-secondary' title='".$param['DELETE_INFO']."' href='index.php?controller=change&action=delete&stat_id=$id&lg=$lg'><i class='fas fa-trash-alt'></i></a>";
-            $this->page .= "<a class='lock_unlock text-danger' title='".$param['ACTIVE_INFO']."' href='index.php?controller=change&action=active&stat_id=$id&lg=$lg'><i class='fas fa-toggle-off icon-unlock'></i><i class='fas fa-toggle-on icon-lock'></i></a></td>";
+            $this->page .= "<td>" . $idv1  . "</td>";
+            $this->page .= "<td>" . $listv1 ['stat_type'] . "</td>";
+            $this->page .= "<td>" . $listv1 ['stat_did'] . "</td>";
+            $this->page .= "<td>" . $listv1 ['stat_key'] . "</td>";
+            $this->page .= "<td>" . $listv1 ['stat_users'] . "</td>";
+            $this->page .= "<td class='td_button' ><a title='" . $param['UPDATE_INFO'] . "' class='text-primary' href='index.php?controller=change&action=update&stat_id=$idv1'><i class='fas fa-pen-square'></i></a> ";
+            $this->page .= "<a class='text-secondary' title='" . $param['DELETE_INFO'] . "' href='index.php?controller=change&action=delete&stat_id=$idv1&lg=$lg'><i class='fas fa-trash-alt'></i></a>";
+            $this->page .= "<a class='lock_unlock text-danger' title='" . $param['ACTIVE_INFO'] . "' href='index.php?controller=change&action=active&stat_id=$idv1&lg=$lg'><i class='fas fa-toggle-off icon-unlock'></i><i class='fas fa-toggle-on icon-lock'></i></a></td>";
             $this->page .= "</tr>";
+            $this->page .= "</tbody>";
+            $x1++;
         }
-        $this->page .= "</tbody>";
         $this->page .= "</table>";
+        $this->page .= "<table class='table table-striped table-bordered'>";
+        $x2 = 1;
+        foreach ($infoV2 as $listv2) {          
+            $idv2 = $listv2['stat_id'];
+            if ($x2  === 1) {
+                $this->page .= "<thead>";
+                $this->page .= "<tr>";
+                $this->page .= "<th scope='col'>ID</th>";
+                $this->page .= "<th scope='col'>TYPE</th>";
+                $this->page .= "<th scope='col'>DID</th>";
+                /* $this->page .= "<th scope='col'>USER</th>";*/
+                $this->page .= "<th scope='col'>PASSWORD</th>";
+                $this->page .= "<th scope='col'>TOKEN</th>";
+                $this->page .= "<th scope='col'>ACTIONS</th>";
+                $this->page .= "</tr>";
+                $this->page .= "</thead>";
+            }
+            $this->page .= "<tbody>";
+            $this->page .= "<tr>";
+            $this->page .= "<td>" . $idv2 . "</td>";
+            $this->page .= "<td>" . $listv2['stat_type'] . "</td>";
+            $this->page .= "<td>" . $listv2['stat_did'] . "</td>";
+            /* $this->page .= "<td>" . $list['stat_users'] . "</td>";*/
+            $this->page .= "<td>" . $listv2['stat_password'] . "</td>";
+            $this->page .= "<td>" . $listv2['stat_token'] . "</td>";
+            $this->page .= "<td class='td_button' ><a title='" . $param['UPDATE_INFO'] . "' class='text-primary' href='index.php?controller=change&action=update&stat_id=$idv2'><i class='fas fa-pen-square'></i></a> ";
+            $this->page .= "<a class='text-secondary' title='" . $param['DELETE_INFO'] . "' href='index.php?controller=change&action=delete&stat_id=$idv2&lg=$lg'><i class='fas fa-trash-alt'></i></a>";
+            $this->page .= "<a class='lock_unlock text-danger' title='" . $param['ACTIVE_INFO'] . "' href='index.php?controller=change&action=active&stat_id=$idv2&lg=$lg'><i class='fas fa-toggle-off icon-unlock'></i><i class='fas fa-toggle-on icon-lock'></i></a></td>";
+            $this->page .= "</tr>";
+            $this->page .= "</tbody>";
+            $x2++;
+        }
+        $this->page .= "</table>";
+        $this->page .= "<table class='table table-striped table-bordered'>";
+        $x3 = 1;
+        foreach ($infoLive as $listv3) {         
+            $idv3 = $listv3['stat_id'];
+            if ($x3  === 1) {
+                $this->page .= "<thead>";
+                $this->page .= "<tr>";
+                $this->page .= "<th scope='col'>ID</th>";
+                $this->page .= "<th scope='col'>TYPE</th>";
+                $this->page .= "<th scope='col'>API V2</th>";
+                $this->page .= "<th scope='col'>API SECRET</th>";
+                $this->page .= "<th scope='col'>ID STATION</th>";
+                $this->page .= "<th scope='col'>ACTIONS</th>";
+                $this->page .= "</tr>";
+                $this->page .= "</thead>";
+            }
+            $this->page .= "<tbody>";
+            $this->page .= "<tr>";
+            $this->page .= "<td>" . $idv3 . "</td>";
+            $this->page .= "<td>" . $listv3['stat_type'] . "</td>";
+            $this->page .= "<td>" . $listv3['stat_livekey'] . "</td>";
+            $this->page .= "<td>" . $listv3['stat_livesecret'] . "</td>";
+            $this->page .= "<td>" . $listv3['stat_liveid'] . "</td>";
+            $this->page .= "<td class='td_button' ><a title='" . $param['UPDATE_INFO'] . "' class='text-primary' href='index.php?controller=change&action=update&stat_id=$idv3'><i class='fas fa-pen-square'></i></a> ";
+            $this->page .= "<a class='text-secondary' title='" . $param['DELETE_INFO'] . "' href='index.php?controller=change&action=delete&stat_id=$idv3&lg=$lg'><i class='fas fa-trash-alt'></i></a>";
+            $this->page .= "<a class='lock_unlock text-danger' title='" . $param['ACTIVE_INFO'] . "' href='index.php?controller=change&action=active&stat_id=$idv3&lg=$lg'><i class='fas fa-toggle-off icon-unlock'></i><i class='fas fa-toggle-on icon-lock'></i></a></td>";
+            $this->page .= "</tr>";
+            $this->page .= "</tbody>";
+            $x3++;
+        }
+        $this->page .= "</table>";     
+
         $this->page .= $this->getButton($this->l->getLg(), 'change', 'choose', $this->l->trad('ADD_STATION'));
         $this->page .= '</section>';
         $this->page .= '</main>';
         $this->display();
     }
-
-
 
     public function addStation($station, $paramGet)
     {
@@ -126,6 +195,7 @@ class ChangeView extends View
             "2" => $this->l->trad('CHOOSE_SELECT'),
             "3" => $this->l->trad('STATION_SELECT_V1'),
             "4" => $this->l->trad('STATION_SELECT_V2'),
+            "5" => $this->l->trad('STATION_SELECT_LIVE'),
             "STATION_STEP6_P1" => $this->l->trad('STATION_STEP6_P1'),
             "STATION_STEP6_P2" => $this->l->trad('STATION_STEP6_P2'),
             "INFO_STATION" => $this->l->trad('INFO_STATION'),
@@ -138,6 +208,9 @@ class ChangeView extends View
             "_VAL_STAT_USERS" => '',
             "_VAL_STAT_PASSWORD" => '',
             "_VAL_STAT_TOKEN" => '',
+            "_VAL_STAT_LIVEKEY" => '',
+            "_VAL_STAT_LIVESECRET" => '',
+            "_VAL_STAT_LIVEID" => '',
             "_VAL_STAT_ID" => '',
             "STATION_BUTTON" => $this->l->trad('ADD_STATION')
 
@@ -169,6 +242,7 @@ class ChangeView extends View
             "2" => $this->l->trad('CHOOSE_SELECT'),
             "3" => $this->l->trad('STATION_SELECT_V1'),
             "4" => $this->l->trad('STATION_SELECT_V2'),
+            "5" => $this->l->trad('STATION_SELECT_LIVE'),
             "STATION_STEP6_P1" => $this->l->trad('STATION_STEP6_P1'),
             "STATION_STEP6_P2" => $this->l->trad('STATION_STEP6_P2'),
             "INFO_STATION" => $this->l->trad('INFO_STATION'),
@@ -181,6 +255,9 @@ class ChangeView extends View
             "_VAL_STAT_USERS" => $station['stat_users'],
             "_VAL_STAT_PASSWORD" => $station['stat_password'],
             "_VAL_STAT_TOKEN" => $station['stat_token'],
+            "_VAL_STAT_LIVEKEY" => $station['stat_livekey'],
+            "_VAL_STAT_LIVESECRET" => $station['stat_livesecret'],
+            "_VAL_STAT_LIVEID" => $station['stat_liveid'],
             "_VAL_STAT_ID" => $station['stat_id'],
             "STATION_BUTTON" => $this->l->trad('UPDATE_STATION')
 

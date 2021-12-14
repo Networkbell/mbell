@@ -9,13 +9,13 @@ class HomeView extends View
         parent::__construct();
     }
 
-    public function constructHead($switch, $datas)
+    public function constructHead($switch, $datas,$info, $liveStation)
     {
         $param = array(
             "META_KEY" => $this->l->trad('META_KEY'),
             "META_DESCRIPTION" => $this->l->trad('META_DESCRIPTION'),
             "MBELL_TITRE" => $this->l->trad('MBELL_TITRE_HOME'),
-            "_CSS" => $this->getCSS($switch, $datas),
+            "_CSS" => $this->getCSS($switch, $datas,$info, $liveStation),
             "_LOGO" => "1",
             "_ROOT" => $this->getRoot(),
             "_LG" => $this->l->getLg(),
@@ -31,45 +31,66 @@ class HomeView extends View
 
 
 
-    public function displayHome($info, $datas, $config, $tab, $switch)
+    public function displayHome($info, $datas, $config, $tab, $switch, $liveStation)
     {
         $param = array(
             "_LG" => $this->l->getLg(),
         );
 
-        $this->constructHead($switch, $datas);
+        $this->constructHead($switch, $datas,$info, $liveStation);
         $this->page .= '<main id="main_index">';
         $this->page .= '<section class="container-fluid" id="home_title">';
-        $this->page .= $this->getTitle($param, $datas);
+        $this->page .= $this->getTitle($param, $datas, $info, $liveStation);
         $this->page .= '</section>';
         $this->page .= '<section class="container-fluid" id="home_main">';
         $this->page .= '<form id="formdmy" method="POST" action="index.php?controller=home&action=s_dmy&lg=' . $param['_LG'] . '">';
         $this->page .= '<input id="inputdmy" name="s_dmy" type="hidden">';
-        $this->page .= $this->getTab($param, $tab, $switch, $config, $datas);
+        $this->page .= $this->getTab($param, $tab, $switch, $config, $datas, $info, $liveStation);
         $this->page .= '</form>';
         $this->page .= '</section>';
         $this->page .= '</main>';
 
         $this->display();
+        if($info['stat_type']=='live'){
+           echo '<style>
+           /*on supprime le tab_down */
+           .tab_down{
+               display:none;
+            }
+           .tab_mid{
+               margin-bottom: 8px;
+            }
+            /*on supprime le DMY */
+            .dmy {
+                display:none;
+            }
+    .dmy_arrow_right.hover_arrow_right{
+        background:none;
+    }
+    .dmy_arrow_left.hover_arrow_left{
+        background:none;
+    }
+            </style>';
+        }
     }
 
 
-    public function getTab($param, $tab, $switch, $config, $datas)
+    public function getTab($param, $tab, $switch, $config, $datas, $info, $liveStation)
     {
         $page = '';
         for ($i = 1; $i <= $tab['tab_lines']; $i++) {
-            $page .=  $this->addRow($param, $tab, $i, $switch, $config, $datas);
+            $page .=  $this->addRow($param, $tab, $i, $switch, $config, $datas, $info, $liveStation);
         }
         return $page;
     }
 
 
-    public function addRow($param, $tab, $row_id, $switch, $config, $datas)
+    public function addRow($param, $tab, $row_id, $switch, $config, $datas, $info, $liveStation)
     {
         $page = '<div class="row row_espace row_espace_top" id="tab_row_' . $row_id . '">';
-        $page .= $this->getInc($param, $tab, $row_id, 'a',  $switch, $config, $datas);
-        $page .= $this->getInc($param, $tab, $row_id, 'b', $switch, $config, $datas);
-        $page .= $this->getInc($param, $tab, $row_id, 'c', $switch, $config, $datas);
+        $page .= $this->getInc($param, $tab, $row_id, 'a',  $switch, $config, $datas, $info, $liveStation);
+        $page .= $this->getInc($param, $tab, $row_id, 'b', $switch, $config, $datas, $info, $liveStation);
+        $page .= $this->getInc($param, $tab, $row_id, 'c', $switch, $config, $datas, $info, $liveStation);
         $page .= '</div>';
         return $page;
     }
@@ -77,244 +98,241 @@ class HomeView extends View
 
 
 
-    public function getInc($param, $tab, $row_id, $select_id, $switch, $config, $datas)
+    public function getInc($param, $tab, $row_id, $select_id, $switch, $config, $datas, $info, $liveStation)
     {
-
         $tab_n_abc = 'tab_' . $row_id . $select_id;
         $ntab = $tab[$tab_n_abc];
 
-
-
         switch ($ntab) {
             case '0':
-                $up = $this->modUp1('0', $config, $switch, $datas);
-                $mid = $this->modMid1('0', $config, $switch, $datas);
-                $down = $this->modDown1('0', $switch, $datas);
+                $up = $this->modUp1('0', $config, $switch, $datas, $info, $liveStation);
+                $mid = $this->modMid1('0', $config, $switch, $datas, $info, $liveStation);
+                $down = $this->modDown1('0', $datas, $info, $liveStation);
                 break;
             case '1':
-                $up = $this->modUp1('1', $config, $switch, $datas);
-                $mid = $this->modMid1('1', $config, $switch, $datas);
-                $down = $this->modDown1('1', $switch, $datas);
+                $up = $this->modUp1('1', $config, $switch, $datas, $info, $liveStation);
+                $mid = $this->modMid1('1', $config, $switch, $datas, $info, $liveStation);
+                $down = $this->modDown1('1', $datas, $info, $liveStation);
                 break;
             case '2':
-                $up = $this->modUp2('2', $config, $switch, $datas);
-                $mid = $this->modMid2('2', $switch, $config, $datas);
-                $down = $this->modDown2('2', $switch, $datas);
+                $up = $this->modUp2('2', $config, $switch, $datas, $info, $liveStation);
+                $mid = $this->modMid2('2', $switch, $config, $datas, $info, $liveStation);
+                $down = $this->modDown2('2', $switch, $datas, $info, $liveStation);
                 break;
             case '3':
-                $up = $this->modUp1('3', $config, $switch, $datas);
-                $mid = $this->modMid1('3', $config, $switch, $datas);
-                $down = $this->modDown7($config, $tab, $datas);
+                $up = $this->modUp1('3', $config, $switch, $datas, $info, $liveStation);
+                $mid = $this->modMid1('3', $config, $switch, $datas, $info, $liveStation);
+                $down = $this->modDown7($config, $tab, $datas, $info, $liveStation);
                 break;
             case '4':
-                $up = ($this->statview->is_tab($tab, '7') == true) ? $this->modUp1('4', $config, $switch, $datas) : $this->modUp2('4', $config, $switch, $datas);
-                $mid = ($this->statview->is_tab($tab, '7') == true) ? $this->modMid1('4', $config, $switch, $datas) : $this->modMid2('4', $switch, $config, $datas);
-                $down = ($this->statview->is_tab($tab, '7') == true) ? $this->modDown1('4', $switch, $datas) : $this->modDown3($param, $tab, $tab_n_abc, $switch, $config, $datas);
+                $up = ($this->statview->is_tab($tab, '7') == true) ? $this->modUp1('4', $config, $switch, $datas, $info, $liveStation) : $this->modUp2('4', $config, $switch, $datas, $info, $liveStation);
+                $mid = ($this->statview->is_tab($tab, '7') == true) ? $this->modMid1('4', $config, $switch, $datas, $info, $liveStation) : $this->modMid2('4', $switch, $config, $datas, $info, $liveStation);
+                $down = ($this->statview->is_tab($tab, '7') == true) ? $this->modDown1('4', $datas, $info, $liveStation) : $this->modDown3($param, $tab, $tab_n_abc, $switch, $config, $datas, $info, $liveStation);
                 break;
             case '5':
-                $up =  $this->modUp2('5', $config, $switch, $datas);
-                $mid = $this->modMid2('5', $switch, $config, $datas);
-                $down = $this->modDown4($switch, $datas);
+                $up =  $this->modUp2('5', $config, $switch, $datas, $info, $liveStation);
+                $mid = $this->modMid2('5', $switch, $config, $datas, $info, $liveStation);
+                $down = $this->modDown4($switch, $datas, $info, $liveStation);
                 break;
             case '6':
-                $up = ($this->statview->is_tab($tab, '13') == false && $this->statview->is_tab($tab, '14') == false) ? $this->modUp1('6', $config, $switch, $datas) : $this->modUp1('45', $config, $switch, $datas);
-                $mid = $this->modMid1($ntab, $config, $switch, $datas);
-                $down = ($this->statview->is_tab($tab, '13') == false && $this->statview->is_tab($tab, '14') == false) ? $this->modDown5('6', $config, $switch, $datas) : $this->modDown1('6', $switch, $datas);
+                $up = ($this->statview->is_tab($tab, '13') == false && $this->statview->is_tab($tab, '14') == false) ? $this->modUp1('6', $config, $switch, $datas, $info, $liveStation) : $this->modUp1('45', $config, $switch, $datas, $info, $liveStation);
+                $mid = $this->modMid1($ntab, $config, $switch, $datas, $info, $liveStation);
+                $down = ($this->statview->is_tab($tab, '13') == false && $this->statview->is_tab($tab, '14') == false) ? $this->modDown5('6', $config, $switch, $datas, $info, $liveStation) : $this->modDown1('6', $switch, $datas, $info, $liveStation);
                 break;
             case '7':
-                $up = $this->modUp1('7', $config, $switch, $datas);
-                $mid = $this->modMid1('7', $config, $switch, $datas);
-                $down = $this->modDown1('7', $switch, $datas);
+                $up = $this->modUp1('7', $config, $switch, $datas, $info, $liveStation);
+                $mid = $this->modMid1('7', $config, $switch, $datas, $info, $liveStation);
+                $down = $this->modDown1('7', $datas, $info, $liveStation);
                 break;
             case '8':
-                $up = $this->modUp3($switch, $config, $tab, $datas);
-                $mid = $this->modMid3($switch, $config, $tab, $datas);
-                $down = $this->modDown6($config, $tab, $datas);
+                $up = $this->modUp3($switch, $config, $tab, $datas, $info, $liveStation);
+                $mid = $this->modMid3($switch, $config, $tab, $datas, $info, $liveStation);
+                $down = $this->modDown6($config, $tab, $datas, $info, $liveStation);
                 break;
             case '9':
-                $up = $this->modUp1('9', $config, $switch, $datas);
-                $mid = $this->modMid1('9', $config, $switch, $datas);
-                $down = $this->modDown5('9', $config, $switch, $datas);
+                $up = $this->modUp1('9', $config, $switch, $datas, $info, $liveStation);
+                $mid = $this->modMid1('9', $config, $switch, $datas, $info, $liveStation);
+                $down = $this->modDown5('9', $config, $switch, $datas, $info, $liveStation);
                 break;
             case '10':
-                $up = $this->modUp2('10', $config, $switch, $datas);
-                $mid = $this->modMid4('10', $switch, $datas);
-                $down = $this->modDown2('10', $switch, $datas);
+                $up = $this->modUp2('10', $config, $switch, $datas, $info, $liveStation);
+                $mid = $this->modMid4('10', $switch, $datas, $info, $liveStation);
+                $down = $this->modDown2('10', $switch, $datas, $info, $liveStation);
                 break;
             case '11':
-                $up = $this->modUp2('11', $config, $switch, $datas);
-                $mid = $this->modMid2('11', $switch, $config, $datas);
-                $down = $this->modDown2('11', $switch, $datas);
+                $up = $this->modUp2('11', $config, $switch, $datas, $info, $liveStation);
+                $mid = $this->modMid2('11', $switch, $config, $datas, $info, $liveStation);
+                $down = $this->modDown2('11', $switch, $datas, $info, $liveStation);
                 break;
             case '12':
-                $up = $this->modUp2('12', $config, $switch, $datas);
-                $mid = $this->modMid2('12', $switch, $config, $datas);
-                $down = $this->modDown2('12', $switch, $datas);
+                $up = $this->modUp2('12', $config, $switch, $datas, $info, $liveStation);
+                $mid = $this->modMid2('12', $switch, $config, $datas, $info, $liveStation);
+                $down = $this->modDown2('12', $switch, $datas, $info, $liveStation);
                 break;
             case '13':
-                $up = $this->modUp1('13', $config, $switch, $datas);
-                $mid = $this->modMid1('13', $config, $switch, $datas);
-                $down = $this->modDown1('13', $switch, $datas);
+                $up = $this->modUp1('13', $config, $switch, $datas, $info, $liveStation);
+                $mid = $this->modMid1('13', $config, $switch, $datas, $info, $liveStation);
+                $down = $this->modDown1('13', $datas, $info, $liveStation);
                 break;
             case '14':
-                $up = $this->modUp1('14', $config, $switch, $datas);
-                $mid = $this->modMid1('14', $config, $switch, $datas);
-                $down = $this->modDown1('14', $switch, $datas);
+                $up = $this->modUp1('14', $config, $switch, $datas, $info, $liveStation);
+                $mid = $this->modMid1('14', $config, $switch, $datas, $info, $liveStation);
+                $down = $this->modDown1('14', $datas, $info, $liveStation);
                 break;
             case '15':
-                $up = $this->modUp2('15', $config, $switch, $datas);
-                $mid = $this->modMid2('15', $switch, $config, $datas);
-                $down = $this->modDown2('15', $switch, $datas);
+                $up = $this->modUp2('15', $config, $switch, $datas, $info, $liveStation);
+                $mid = $this->modMid2('15', $switch, $config, $datas, $info, $liveStation);
+                $down = $this->modDown2('15', $switch, $datas, $info, $liveStation);
                 break;
             case '16':
-                $up = $this->modUp2('16', $config, $switch, $datas);
-                $mid = $this->modMid2('16', $switch, $config, $datas);
-                $down = $this->modDown2('16', $switch, $datas);
+                $up = $this->modUp2('16', $config, $switch, $datas, $info, $liveStation);
+                $mid = $this->modMid2('16', $switch, $config, $datas, $info, $liveStation);
+                $down = $this->modDown2('16', $switch, $datas, $info, $liveStation);
                 break;
             case '17':
-                $up = $this->modUp2('17', $config, $switch, $datas);
-                $mid = $this->modMid2('17', $switch, $config, $datas);
-                $down = $this->modDown2('17', $switch, $datas);
+                $up = $this->modUp2('17', $config, $switch, $datas, $info, $liveStation);
+                $mid = $this->modMid2('17', $switch, $config, $datas, $info, $liveStation);
+                $down = $this->modDown2('17', $switch, $datas, $info, $liveStation);
                 break;
             case '18':
-                $up = $this->modUp2('18', $config, $switch, $datas);
-                $mid = $this->modMid2('18', $switch, $config, $datas);
-                $down = $this->modDown2('18', $switch, $datas);
+                $up = $this->modUp2('18', $config, $switch, $datas, $info, $liveStation);
+                $mid = $this->modMid2('18', $switch, $config, $datas, $info, $liveStation);
+                $down = $this->modDown2('18', $switch, $datas, $info, $liveStation);
                 break;
             case '19':
-                $up = $this->modUp2('19', $config, $switch, $datas);
-                $mid = $this->modMid2('19', $switch, $config, $datas);
-                $down = $this->modDown2('19', $switch, $datas);
+                $up = $this->modUp2('19', $config, $switch, $datas, $info, $liveStation);
+                $mid = $this->modMid2('19', $switch, $config, $datas, $info, $liveStation);
+                $down = $this->modDown2('19', $switch, $datas, $info, $liveStation);
                 break;
             case '20':
-                $up = $this->modUp2('20', $config, $switch, $datas);
-                $mid = $this->modMid2('20', $switch, $config, $datas);
-                $down = $this->modDown2('20', $switch, $datas);
+                $up = $this->modUp2('20', $config, $switch, $datas, $info, $liveStation);
+                $mid = $this->modMid2('20', $switch, $config, $datas, $info, $liveStation);
+                $down = $this->modDown2('20', $switch, $datas, $info, $liveStation);
                 break;
             case '21':
-                $up = $this->modUp2('21', $config, $switch, $datas);
-                $mid = $this->modMid2('21', $switch, $config, $datas);
-                $down = $this->modDown2('21', $switch, $datas);
+                $up = $this->modUp2('21', $config, $switch, $datas, $info, $liveStation);
+                $mid = $this->modMid2('21', $switch, $config, $datas, $info, $liveStation);
+                $down = $this->modDown2('21', $switch, $datas, $info, $liveStation);
                 break;
             case '22':
-                $up = $this->modUp1('22', $config, $switch, $datas);
-                $mid = $this->modMid5('22', $switch, $datas);
-                $down = $this->modDown5('22', $config, $switch, $datas);
+                $up = $this->modUp1('22', $config, $switch, $datas, $info, $liveStation);
+                $mid = $this->modMid5('22', $switch, $datas, $info, $liveStation);
+                $down = $this->modDown5('22', $config, $switch, $datas, $info, $liveStation);
                 break;
             case '23':
-                $up = $this->modUp1('23', $config, $switch, $datas);
-                $mid = $this->modMid5('23', $switch, $datas);
-                $down = $this->modDown5('23', $config, $switch, $datas);
+                $up = $this->modUp1('23', $config, $switch, $datas, $info, $liveStation);
+                $mid = $this->modMid5('23', $switch, $datas, $info, $liveStation);
+                $down = $this->modDown5('23', $config, $switch, $datas, $info, $liveStation);
                 break;
             case '24':
-                $up = $this->modUp2('24', $config, $switch, $datas);
-                $mid = $this->modMid2('24', $switch, $config, $datas);
-                $down = $this->modDown2('24', $switch, $datas);
+                $up = $this->modUp2('24', $config, $switch, $datas, $info, $liveStation);
+                $mid = $this->modMid2('24', $switch, $config, $datas, $info, $liveStation);
+                $down = $this->modDown2('24', $switch, $datas, $info, $liveStation);
                 break;
             case '25':
-                $up = $this->modUp2('25', $config, $switch, $datas);
-                $mid = $this->modMid2('25', $switch, $config, $datas);
-                $down = $this->modDown2('25', $switch, $datas);
+                $up = $this->modUp2('25', $config, $switch, $datas, $info, $liveStation);
+                $mid = $this->modMid2('25', $switch, $config, $datas, $info, $liveStation);
+                $down = $this->modDown2('25', $switch, $datas, $info, $liveStation);
                 break;
             case '26':
-                $up = $this->modUp2('26', $config, $switch, $datas);
-                $mid = $this->modMid2('26', $switch, $config, $datas);
-                $down = $this->modDown2('26', $switch, $datas);
+                $up = $this->modUp2('26', $config, $switch, $datas, $info, $liveStation);
+                $mid = $this->modMid2('26', $switch, $config, $datas, $info, $liveStation);
+                $down = $this->modDown2('26', $switch, $datas, $info, $liveStation);
                 break;
             case '27':
-                $up = $this->modUp2('27', $config, $switch, $datas);
-                $mid = $this->modMid2('27', $switch, $config, $datas);
-                $down = $this->modDown2('27', $switch, $datas);
+                $up = $this->modUp2('27', $config, $switch, $datas, $info, $liveStation);
+                $mid = $this->modMid2('27', $switch, $config, $datas, $info, $liveStation);
+                $down = $this->modDown2('27', $switch, $datas, $info, $liveStation);
                 break;
             case '28':
-                $up = $this->modUp2('28', $config, $switch, $datas);
-                $mid = $this->modMid2('28', $switch, $config, $datas);
-                $down = $this->modDown2('28', $switch, $datas);
+                $up = $this->modUp2('28', $config, $switch, $datas, $info, $liveStation);
+                $mid = $this->modMid2('28', $switch, $config, $datas, $info, $liveStation);
+                $down = $this->modDown2('28', $switch, $datas, $info, $liveStation);
                 break;
             case '29':
-                $up = $this->modUp2('29', $config, $switch, $datas);
-                $mid = $this->modMid2('29', $switch, $config, $datas);
-                $down = $this->modDown2('29', $switch, $datas);
+                $up = $this->modUp2('29', $config, $switch, $datas, $info, $liveStation);
+                $mid = $this->modMid2('29', $switch, $config, $datas, $info, $liveStation);
+                $down = $this->modDown2('29', $switch, $datas, $info, $liveStation);
                 break;
             case '30':
-                $up = $this->modUp2('30', $config, $switch, $datas);
-                $mid = $this->modMid2('30', $switch, $config, $datas);
-                $down = $this->modDown2('30', $switch, $datas);
+                $up = $this->modUp2('30', $config, $switch, $datas, $info, $liveStation);
+                $mid = $this->modMid2('30', $switch, $config, $datas, $info, $liveStation);
+                $down = $this->modDown2('30', $switch, $datas, $info, $liveStation);
                 break;
             case '31':
-                $up = $this->modUp2('31', $config, $switch, $datas);
-                $mid = $this->modMid2('31', $switch, $config, $datas);
-                $down = $this->modDown2('31', $switch, $datas);
+                $up = $this->modUp2('31', $config, $switch, $datas, $info, $liveStation);
+                $mid = $this->modMid2('31', $switch, $config, $datas, $info, $liveStation);
+                $down = $this->modDown2('31', $switch, $datas, $info, $liveStation);
                 break;
             case '32':
-                $up = $this->modUp2('32', $config, $switch, $datas);
-                $mid = $this->modMid2('32', $switch, $config, $datas);
-                $down = $this->modDown2('32', $switch, $datas);
+                $up = $this->modUp2('32', $config, $switch, $datas, $info, $liveStation);
+                $mid = $this->modMid2('32', $switch, $config, $datas, $info, $liveStation);
+                $down = $this->modDown2('32', $switch, $datas, $info, $liveStation);
                 break;
             case '33':
-                $up = $this->modUp2('33', $config, $switch, $datas);
-                $mid = $this->modMid2('33', $switch, $config, $datas);
-                $down = $this->modDown2('33', $switch, $datas);
+                $up = $this->modUp2('33', $config, $switch, $datas, $info, $liveStation);
+                $mid = $this->modMid2('33', $switch, $config, $datas, $info, $liveStation);
+                $down = $this->modDown2('33', $switch, $datas, $info, $liveStation);
                 break;
             case '34':
-                $up = $this->modUp2('34', $config, $switch, $datas);
-                $mid = $this->modMid2('34', $switch, $config, $datas);
-                $down = $this->modDown2('34', $switch, $datas);
+                $up = $this->modUp2('34', $config, $switch, $datas, $info, $liveStation);
+                $mid = $this->modMid2('34', $switch, $config, $datas, $info, $liveStation);
+                $down = $this->modDown2('34', $switch, $datas, $info, $liveStation);
                 break;
             case '35':
-                $up = $this->modUp2('35', $config, $switch, $datas);
-                $mid = $this->modMid2('35', $switch, $config, $datas);
-                $down = $this->modDown2('35', $switch, $datas);
+                $up = $this->modUp2('35', $config, $switch, $datas, $info, $liveStation);
+                $mid = $this->modMid2('35', $switch, $config, $datas, $info, $liveStation);
+                $down = $this->modDown2('35', $switch, $datas, $info, $liveStation);
                 break;
             case '36':
-                $up = $this->modUp2('36', $config, $switch, $datas);
-                $mid = $this->modMid2('36', $switch, $config, $datas);
-                $down = $this->modDown2('36', $switch, $datas);
+                $up = $this->modUp2('36', $config, $switch, $datas, $info, $liveStation);
+                $mid = $this->modMid2('36', $switch, $config, $datas, $info, $liveStation);
+                $down = $this->modDown2('36', $switch, $datas, $info, $liveStation);
                 break;
             case '37':
-                $up = $this->modUp2('37', $config, $switch, $datas);
-                $mid = $this->modMid2('37', $switch, $config, $datas);
-                $down = $this->modDown2('37', $switch, $datas);
+                $up = $this->modUp2('37', $config, $switch, $datas, $info, $liveStation);
+                $mid = $this->modMid2('37', $switch, $config, $datas, $info, $liveStation);
+                $down = $this->modDown2('37', $switch, $datas, $info, $liveStation);
                 break;
             case '38':
-                $up = $this->modUp2('38', $config, $switch, $datas);
-                $mid = $this->modMid2('38', $switch, $config, $datas);
-                $down = $this->modDown2('38', $switch, $datas);
+                $up = $this->modUp2('38', $config, $switch, $datas, $info, $liveStation);
+                $mid = $this->modMid2('38', $switch, $config, $datas, $info, $liveStation);
+                $down = $this->modDown2('38', $switch, $datas, $info, $liveStation);
                 break;
             case '39':
-                $up = $this->modUp2('39', $config, $switch, $datas);
-                $mid = $this->modMid2('39', $switch, $config, $datas);
-                $down = $this->modDown2('39', $switch, $datas);
+                $up = $this->modUp2('39', $config, $switch, $datas, $info, $liveStation);
+                $mid = $this->modMid2('39', $switch, $config, $datas, $info, $liveStation);
+                $down = $this->modDown2('39', $switch, $datas, $info, $liveStation);
                 break;
             case '40':
-                $up = $this->modUp2('40', $config, $switch, $datas);
-                $mid = $this->modMid2('40', $switch, $config, $datas);
-                $down = $this->modDown2('40', $switch, $datas);
+                $up = $this->modUp2('40', $config, $switch, $datas, $info, $liveStation);
+                $mid = $this->modMid2('40', $switch, $config, $datas, $info, $liveStation);
+                $down = $this->modDown2('40', $switch, $datas, $info, $liveStation);
                 break;
             case '41':
-                $up = $this->modUp2('41', $config, $switch, $datas);
-                $mid = $this->modMid2('41', $switch, $config, $datas);
-                $down = $this->modDown2('41', $switch, $datas);
+                $up = $this->modUp2('41', $config, $switch, $datas, $info, $liveStation);
+                $mid = $this->modMid2('41', $switch, $config, $datas, $info, $liveStation);
+                $down = $this->modDown2('41', $switch, $datas, $info, $liveStation);
                 break;
             case '42':
-                $up = $this->modUp2('42', $config, $switch, $datas);
-                $mid = $this->modMid2('42', $switch, $config, $datas);
-                $down = $this->modDown2('42', $switch, $datas);
+                $up = $this->modUp2('42', $config, $switch, $datas, $info, $liveStation);
+                $mid = $this->modMid2('42', $switch, $config, $datas, $info, $liveStation);
+                $down = $this->modDown2('42', $switch, $datas, $info, $liveStation);
                 break;
             case '43':
-                $up = $this->modUp2('43', $config, $switch, $datas);
-                $mid = $this->modMid2('43', $switch, $config, $datas);
-                $down = $this->modDown2('43', $switch, $datas);
+                $up = $this->modUp2('43', $config, $switch, $datas, $info, $liveStation);
+                $mid = $this->modMid2('43', $switch, $config, $datas, $info, $liveStation);
+                $down = $this->modDown2('43', $switch, $datas, $info, $liveStation);
                 break;
             case '44':
-                $up = $this->modUp2('44', $config, $switch, $datas);
-                $mid = $this->modMid2('44', $switch, $config, $datas);
-                $down = $this->modDown2('44', $switch, $datas);
+                $up = $this->modUp2('44', $config, $switch, $datas, $info, $liveStation);
+                $mid = $this->modMid2('44', $switch, $config, $datas, $info, $liveStation);
+                $down = $this->modDown2('44', $switch, $datas, $info, $liveStation);
                 break;
             default:
-                $up = $this->modUp1('0', $config, $switch, $datas);
-                $mid = $this->modMid1('0', $config, $switch, $datas);
-                $down = $this->modDown1('0', $switch, $datas);
+                $up = $this->modUp1('0', $config, $switch, $datas, $info, $liveStation);
+                $mid = $this->modMid1('0', $config, $switch, $datas, $info, $liveStation);
+                $down = $this->modDown1('0', $datas, $info, $liveStation, $info, $liveStation);
                 break;
         }
 
@@ -334,9 +352,9 @@ class HomeView extends View
 
 
 
-    public function modUp1($ntab, $config, $switch, $datas)
+    public function modUp1($ntab, $config, $switch, $datas, $info, $liveStation)
     {
-        $valArray = $this->statview->incUp1($datas, $switch, $config)[$ntab];
+        $valArray = $this->statview->incUp1($datas, $switch, $config, $info, $liveStation)[$ntab];
 
         $page = $this->searchHTML('up_1', 'inc');
         $page = str_replace('{ICON_TOOLTIP}',  $valArray['ICON_TOOLTIP'], $page);
@@ -346,10 +364,10 @@ class HomeView extends View
         return $page;
     }
 
-    public function modUp2($ntab, $config, $switch, $datas)
+    public function modUp2($ntab, $config, $switch, $datas, $info, $liveStation)
     {
 
-        $valArray = $this->statview->incUp1($datas, $switch, $config)[$ntab];
+        $valArray = $this->statview->incUp1($datas, $switch, $config, $info, $liveStation)[$ntab];
 
         $page = $this->searchHTML('up_2', 'inc');
         $page = str_replace('{ICON_TOOLTIP}',  $valArray['ICON_TOOLTIP'], $page);
@@ -364,16 +382,16 @@ class HomeView extends View
 
 
     //Up Unique Sun-UV
-    public function modUp3($switch, $config, $tab, $datas)
+    public function modUp3($switch, $config, $tab, $datas,$info, $livestation)
     {
         $page = $this->searchHTML('up_3', 'inc');
-        $page = str_replace('{UP_SPECIAL}',  $this->statview->incUpSun($switch, $config, $tab, $datas), $page);
+        $page = str_replace('{UP_SPECIAL}',  $this->statview->incUpSun($switch, $config, $tab, $datas,$info, $livestation), $page);
         return $page;
     }
 
-    public function modMid1($ntab, $config, $switch, $datas)
+    public function modMid1($ntab, $config, $switch, $datas, $info, $liveStation)
     {
-        $valArray = $this->statview->incMid1($datas, $switch, $config)[$ntab];
+        $valArray = $this->statview->incMid1($datas, $switch, $config, $info, $liveStation)[$ntab];
 
         $page = $this->searchHTML('mid_1', 'inc');
         $page = str_replace('{_VALUE_MAIN}',  $valArray['_VALUE_MAIN'], $page);
@@ -384,9 +402,9 @@ class HomeView extends View
         return $page;
     }
 
-    public function modMid2($ntab, $switch, $config, $datas)
+    public function modMid2($ntab, $switch, $config, $datas, $info, $liveStation)
     {
-        $valArray = $this->statview->incMid1($datas, $switch, $config)[$ntab];
+        $valArray = $this->statview->incMid1($datas, $switch, $config, $info, $liveStation)[$ntab];
 
         $page = $this->searchHTML('mid_2', 'inc');
         $page = str_replace('{_VALUE_MAIN}',  $valArray['_VALUE_MAIN'], $page);
@@ -399,17 +417,17 @@ class HomeView extends View
     }
 
     //Mid Unique Sun-UV
-    public function modMid3($switch, $config, $tab, $datas)
+    public function modMid3($switch, $config, $tab, $datas, $info, $liveStation)
     {
         $page = $this->searchHTML('mid_3', 'inc');
-        $page = str_replace('{MID_SPECIAL}',  $this->statview->incMidSun($switch, $config, $tab, $datas), $page);
+        $page = str_replace('{MID_SPECIAL}',  $this->statview->incMidSun($switch, $config, $tab, $datas, $info, $liveStation), $page);
         return $page;
     }
 
-    public function modMid4($ntab, $switch, $datas)
+    public function modMid4($ntab, $switch, $datas, $info, $liveStation)
     {
 
-        $valArray = $this->statview->incMid2($datas, $switch)[$ntab];
+        $valArray = $this->statview->incMid2($datas, $switch, $info, $liveStation)[$ntab];
         $page = $this->searchHTML('mid_4', 'inc');
         $page = str_replace('{TEXT_TOOLTIP_S}',  $valArray['TEXT_TOOLTIP_S'], $page);
         $page = str_replace('{TEXT_TOOLTIP_M}',  $valArray['TEXT_TOOLTIP_M'], $page);
@@ -427,10 +445,10 @@ class HomeView extends View
         return $page;
     }
 
-    public function modMid5($ntab, $switch, $datas)
+    public function modMid5($ntab, $switch, $datas, $info, $liveStation)
     {
 
-        $valArray = $this->statview->incMid3($datas, $switch)[$ntab];
+        $valArray = $this->statview->incMid3($datas, $switch, $info, $liveStation)[$ntab];
         $page = $this->searchHTML('mid_5', 'inc');
         $page = str_replace('{TEXT_TOOLTIP_S}',  $valArray['TEXT_TOOLTIP_S'], $page);
         $page = str_replace('{TEXT_TOOLTIP_L}',  $valArray['TEXT_TOOLTIP_L'], $page);
@@ -443,9 +461,9 @@ class HomeView extends View
         return $page;
     }
 
-    public function modDown1($ntab, $switch, $datas)
+    public function modDown1($ntab, $datas, $info, $liveStation)
     {
-        $valArray = $this->statview->incDown1($datas, $switch)[$ntab];
+        $valArray = $this->statview->incDown1($datas, $info, $liveStation)[$ntab];
 
         $page = $this->searchHTML('down_1', 'inc');
         $page = str_replace('{_VALUE_DOWN_S}',  $valArray['_VALUE_DOWN_S'], $page);
@@ -455,10 +473,10 @@ class HomeView extends View
     }
 
 
-    public function modDown2($ntab, $switch, $datas)
+    public function modDown2($ntab, $switch, $datas, $info, $livestation)
     {
 
-        $valArray = $this->statview->incDown2($datas, $switch)[$ntab];
+        $valArray = $this->statview->incDown2($datas, $switch, $info, $livestation)[$ntab];
 
         $page = $this->searchHTML('down_2', 'inc');
 
@@ -482,10 +500,10 @@ class HomeView extends View
         return $page;
     }
 
-    public function modDown3($param, $tab, $tab_n_abc, $switch, $config, $datas)
+    public function modDown3($param, $tab, $tab_n_abc, $switch, $config, $datas, $info, $liveStation)
     {
         $ntab = $tab[$tab_n_abc];
-        $valArray = $this->statview->incDown3($datas, $switch)[$ntab];
+        $valArray = $this->statview->incDown3($datas, $switch, $info, $liveStation)[$ntab];
 
         $page = $this->searchHTML('down_3', 'inc');
         $page = str_replace('{_LG}',  $param['_LG'], $page);
@@ -510,19 +528,19 @@ class HomeView extends View
     }
 
     //Down Unique Heat-Windchill
-    public function modDown4($switch, $datas)
+    public function modDown4($switch, $datas, $info, $liveStation)
     {
         $page = $this->searchHTML('down_4', 'inc');
         $page = str_replace('{_DMY_3}',  $this->dmy3($switch), $page);
         $page = str_replace('{_DMY_4}',  $this->dmy1($switch), $page);
-        $page = str_replace('{DMY_SPECIAL}',  $this->statview->downHeatWind($switch, $datas), $page);
+        $page = str_replace('{DMY_SPECIAL}',  $this->statview->downHeatWind($switch, $datas, $info, $liveStation), $page);
         return $page;
     }
 
 
-    public function modDown5($ntab, $config, $switch, $datas)
+    public function modDown5($ntab, $config, $switch, $datas, $info, $liveStation)
     {
-        $valArray = $this->statview->incDown5($datas, $switch, $config)[$ntab];
+        $valArray = $this->statview->incDown5($datas, $switch, $config, $info, $liveStation)[$ntab];
 
         $page = $this->searchHTML('down_5', 'inc');
         $page = str_replace('{CSS_DOWN}',  $valArray['CSS_DOWN'], $page);
@@ -556,18 +574,18 @@ class HomeView extends View
     }
 
     //Down Unique Sun-UV
-    public function modDown6($config, $tab, $datas)
+    public function modDown6($config, $tab, $datas, $info, $liveStation)
     {
         $page = $this->searchHTML('down_6', 'inc');
-        $page = str_replace('{DOWN_SPECIAL}',  $this->statview->incDownSun($config, $tab, $datas), $page);
+        $page = str_replace('{DOWN_SPECIAL}',  $this->statview->incDownSun($config, $tab, $datas, $info, $liveStation), $page);
         return $page;
     }
 
     //Down Unique Rain-Rate-Cloudy
-    public function modDown7($config, $tab, $datas)
+    public function modDown7($config, $tab, $datas, $info, $liveStation)
     {
         $page = $this->searchHTML('down_6', 'inc');
-        $page = str_replace('{DOWN_SPECIAL}',  $this->statview->incDownCloudy($config, $datas), $page);
+        $page = str_replace('{DOWN_SPECIAL}',  $this->statview->incDownCloudy($config, $datas, $info, $liveStation), $page);
         return $page;
     }
 
@@ -668,12 +686,10 @@ class HomeView extends View
         return $addOptions;
     }
 
-    public function getTitle($param, $datas)
+    public function getTitle($param, $datas, $info, $liveStation)
     {
-        $zero = '&#8709;';
-        $dat = $datas->davis_current_observation;
-        $time = isset($datas->observation_time_rfc822) ? $datas->observation_time_rfc822 : $zero;
-        $station_name = isset($dat->station_name) ? $dat->station_name : $zero;
+        $time = $this->statview->getAPIDatasUp($datas, $info, $liveStation)['time'];
+        $station_name = $this->statview->getAPIDatas($datas, $info, $liveStation)['station_name'];
 
         $this->page .= $this->searchHTML('title', 'home');
         $this->page = str_replace('{_LG}',  $param['_LG'], $this->page);
@@ -813,15 +829,12 @@ class HomeView extends View
     }
 
 
-    public function getCSS($switch, $datas)
+    public function getCSS($switch, $datas,$info, $liveStation)
     {
 
-        $zero = '&#8709;';
-        $dat = $datas->davis_current_observation;
-
-        $time = isset($datas->observation_time_rfc822) ? $datas->observation_time_rfc822 : $zero;
-        $sunset = isset($dat->sunset) ? $dat->sunset : $zero;
-        $sunrise = isset($dat->sunrise) ? $dat->sunrise : $zero;
+        $time = $this->statview->getAPIDatasUp($datas, $info, $liveStation)['time'];
+        $sunset = $this->statview->getAPIDatasUp($datas, $info, $liveStation)['time_sunset'];
+        $sunrise = $this->statview->getAPIDatasUp($datas, $info, $liveStation)['time_sunrise'];
         $Ttime = $this->statview->TimeStation($time);
         $Tsunrise = $this->statview->TimeStation($sunrise);
         $Tsunset = $this->statview->TimeStation($sunset);

@@ -30,11 +30,10 @@ class PrefView extends View
 
 
 
-    public function displayList($info, $datas, $config, $tab)
+    public function displayList($info, $datas, $config, $tab, $livestation)
     {
-        $zero = '&#8709;';
-        $location = isset($datas->location) ? $datas->location : $zero;
-        $station_id = isset($datas->station_id) ? $datas->station_id : $zero;
+        $location = $this->statview->getAPIDatas($datas, $info, $livestation)['location'];
+        $station_id = $this->statview->getAPIDatas($datas, $info, $livestation)['station_id'];
 
         $param = array(
             "config_id" => $config['config_id'],
@@ -48,6 +47,8 @@ class PrefView extends View
             "7" => $info['stat_key'],
             "8" => $info['stat_password'],
             "9" => $info['stat_token'],
+            "10" => $info['stat_livekey'],
+            "11" => $info['stat_livesecret'],
             "_LG" => $this->l->getLg(),
             "SAVE" => $this->l->trad('SAVE'),
             "CHANGE_STATION" => $this->l->trad('CHANGE_STATION'),
@@ -68,6 +69,9 @@ class PrefView extends View
         }
         if ($info['stat_type'] == 'v2') {
             $this->page .= $this->getListInfov2($param);
+        }
+        if ($info['stat_type'] == 'live') {
+            $this->page .= $this->getListInfoLive($param);
         }
         $this->page .= $this->getButton($this->l->getLg(), 'change', 'list', $param['CHANGE_STATION']);
         $this->page .= '</div>';       

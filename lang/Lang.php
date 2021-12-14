@@ -3,7 +3,7 @@
 class Lang
 {
 
-    
+
 
     public function __construct()
     {
@@ -86,19 +86,22 @@ class Lang
     }
 
 
+
     public function pressTrad($value, $lg)
     {
-        if ($lg == 'en') {
-            $value = $value;
-        } else if ($lg == 'fr') {
-            $value = str_replace("Steady", "Stable", $value);
-            $value = str_replace("Falling Slowly", "Baisse Lentement", $value);
-            $value = str_replace("Rising Slowly", "Augmente Lentement", $value);
-            $value = str_replace("Falling Rapidly", "Baisse Rapidement", $value);
-            $value = str_replace("Rising Rapidly", "Augmente Rapidement", $value);
-        }
+            if ($lg == 'en') {
+                $value = $value;
+            } else if ($lg == 'fr') {
+                $value = str_replace("Steady", "Stable", $value);
+                $value = str_replace("Falling Slowly", "Baisse Lentement", $value);
+                $value = str_replace("Rising Slowly", "Augmente Lentement", $value);
+                $value = str_replace("Falling Rapidly", "Baisse Rapidement", $value);
+                $value = str_replace("Rising Rapidly", "Augmente Rapidement", $value);
+            }
+        
         return $value;
     }
+
 
 
     /*function MOON FR-EN

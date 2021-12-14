@@ -122,6 +122,12 @@
       "en": "Weatherlink V2"
     }
   ],
+  "STATION_SELECT_LIVE": [
+    {
+      "fr": "Weatherlink Live",
+      "en": "Weatherlink Live"
+    }
+  ],
 
   "CONNECT": [
     {
@@ -442,32 +448,38 @@
 
   "STATION_STEP6_P2": [
     {
-      "fr": "Mbell permet actuellement 2 types de technologie : Weatherlink Version 1.0 ou Weatherlink version 2.0. Ne vous inquiétez pas, vous aurez toujours la possibilité de changer de version ou de station par la suite.",
-      "en": "Mbell currently allows 2 types of technology: Weatherlink Version 1.0 ou Weatherlink version 2.0. Don't worry, you will always be able to change version or station later."
+      "fr": "Mbell permet actuellement 3 types de technologie : Weatherlink Version 1 (IP Datalogger), Weatherlink Version 2 (IP Datalogger et USB) et Weatherlink Live. Ne vous inquiétez pas, vous aurez toujours la possibilité de changer de version ou de station par la suite.",
+      "en": "Mbell currently allows 3 types of technology: Weatherlink Version 1 (IP Datalogger), Weatherlink Version 2 (IP Datalogger and USB) and Weatherlink Live. Don't worry, you will always have the option to change version or station later."
     }
   ],
   "STATION_STEP6_P3": [
     {
-      "fr": "A l'heure actuelle, Weatherlink en version 1.0 fonctionne parfaitement si vous avez un datalogger IP et aucune date n'a été donné pour son arrêt, vous pouvez donc très bien rester en version 1.0 sans que vous ne voyez aucun changement. Depuis 2018, cependant, la version 2.0 fonctionne aussi en parallèle et permet à ceux ne disposant pas de datalogger IP de pouvoir utiliser MBell.",
-      "en": "At present, Weatherlink version 1.0 works fine if you have an IP datalogger and no date has been given for its shutdown, so you can very well stay in version 1.0 without seeing any changes. Since 2018, however, version 2.0 also works in parallel and allows those without an IP datalogger to be able to use MBell. "
+      "fr": "A l'heure actuelle, Weatherlink en version 1 fonctionne parfaitement si vous avez un datalogger IP et aucune date n'a été donné pour son arrêt, vous pouvez donc très bien rester en version 1 sans que vous ne voyez aucun changement. Depuis 2018, cependant, la version 2 fonctionne aussi en parallèle et permet à ceux ne disposant pas de datalogger IP de pouvoir utiliser MBell.",
+      "en": "At present, Weatherlink version 1 works fine if you have an IP datalogger and no date has been given for its shutdown, so you can very well stay in version 1 without seeing any changes. Since 2018, however, version 2 also works in parallel and allows those without an IP datalogger to be able to use MBell."
     }
   ],
   "STATION_STEP6_P4": [
     {
-      "fr": "En revanche l'obligation d'utiliser les TokenID n'a pas encore été activé à ce jour et aucune date n'a encore été donné pour son activation de la part de Weatherlink. Si vous disposez d'un datalogger IP, il n'y a donc aucune obligation à passer en version 2.0, même si votre station a été migré pour l'accepter sur le site weatherlink.com.",
-      "en": "However, the obligation to use TokenID has not yet been activated and no date has yet been given for its activation by Weatherlink. If you have an IP datalogger, there is therefore no obligation to upgrade to version 2.0, even if your station has been migrated to accept it on the weatherlink.com site. "
+      "fr": "En revanche l'obligation d'utiliser les TokenID n'a pas encore été activé à ce jour et aucune date n'a encore été donné pour son activation de la part de Weatherlink. Si vous disposez d'un datalogger IP, il n'y a donc aucune obligation à passer en version 2, même si votre station a été migré pour l'accepter sur le site weatherlink.com.",
+      "en": "However, the obligation to use TokenID has not yet been activated and no date has yet been given for its activation by Weatherlink. If you have an IP datalogger, there is therefore no obligation to upgrade to version 2, even if your station has been migrated to accept it on the weatherlink.com site."
     }
   ],
   "STATION_STEP6_P5": [
     {
-      "fr": "MBell est cependant prêt et parfaitement fonctionnel pour accepter Weatherlink 1.0 et Weatherlink 2.0 avec ou sans TokenID. Vous n'aurez donc rien à faire le jour où Weatherlink décidera d'activer ou de désactiver l'une ou l'autre version, vous n'aurez simplement qu'à changer dans les paramètres de MBell vos identifiants selon la version choisie.",
-      "en": "MBell is however ready and fully functional to accept Weatherlink 1.0 and Weatherlink 2.0 with or without TokenID. You will therefore have nothing to do the day Weatherlink decides to activate or deactivate one or the other version, you will simply have to change your identifiers in the MBell settings according to the version chosen. "
+      "fr": "MBell est cependant prêt et parfaitement fonctionnel pour accepter Weatherlink 1 et Weatherlink 2 avec ou sans TokenID. Vous n'aurez donc rien à faire le jour où Weatherlink décidera d'activer ou de désactiver l'une ou l'autre version, vous n'aurez simplement qu'à changer dans les paramètres de MBell vos identifiants selon la version choisie.",
+      "en": "MBell is however ready and fully functional to accept Weatherlink 1 and Weatherlink 2 with or without TokenID. You will therefore have nothing to do the day Weatherlink decides to activate or deactivate one or the other version, you will simply have to change your identifiers in the MBell settings according to the version chosen."
     }
   ],
   "STATION_STEP6_P6": [
     {
-      "fr": "Attention, à ce jour, MBell n'est pas compatible avec Weatherlink Live.",
-      "en": "Please note that MBell is not currently compatible with Weatherlink Live."
+      "fr": "Mbell est compatible avec Weatherlink Live (depuis la version mbell 2.1). A ce jour, seul les données gratuites en temps réel de Weatherlink Live sont accessibles. Mbell ne peut donc pas avoir accès à votre historique si vous utilisez la version payante.",
+      "en": "Mbell is compatible with Weatherlink Live (since version mbell 2.1). To date, only free real-time data from Weatherlink Live is accessible. Mbell cannot therefore have access to your history if you are using the paid version."
+    }
+  ],
+  "STATION_STEP6_P7": [
+    {
+      "fr": "Weatherlink Live en version gratuite est une version très light par rapport aux versions précédentes. Ce sont donc plus de 300 données météos autrefois utilisés par Mbell qui ont disparus, notamment tous les records journaliers, mensuels et annuels. J'ai donc dû adapter le template de Mbell pour afficher moins d'informations avec Weatherlink Live que les versions précédentes. Pour toute réclamation à ce sujet, contactez Davis.",
+      "en": "Weatherlink Live in free version is a very light version compared to previous versions. More than 300 meteorological data formerly used by Mbell have therefore disappeared, including all daily, monthly and annual records. So I had to adapt the Mbell template to display less information with Weatherlink Live than previous versions. If you have any complaints about this, contact Davis. "
     }
   ],
 
@@ -560,14 +572,38 @@
   ],
   "DAVIS_TOKEN": [
     {
-      "fr": "API Token Davis",
-      "en": "Davis Token API"
+      "fr": "Jeton API v1",
+      "en": "V1 API Token"
     }
   ],
   "DAVIS_TOKEN_TEXT": [
     {
-      "fr": "Le numéro d'API Token (appelé aussi TokenID) doit être généré sur <a target=\"_blank\" href=\"https://www.weatherlink.com/account\">weatherlink.com</a>.",
-      "en": "The API Token number (also called TokenID) must be generated on <a target=\"_blank\" href=\"https://www.weatherlink.com/account\">weatherlink.com</a>."
+      "fr": "Le jeton d'API V1 (appelé aussi TokenID) doit être généré sur <a target=\"_blank\" href=\"https://www.weatherlink.com/account\">weatherlink.com</a>.",
+      "en": "The V1 API Token (also called TokenID) must be generated on <a target=\"_blank\" href=\"https://www.weatherlink.com/account\">weatherlink.com</a>."
+    }
+  ],
+  "DAVIS_LIVEKEY": [
+    {
+      "fr": "Clé API v2",
+      "en": "V2 API Key"
+    }
+  ],
+  "DAVIS_LIVEKEY_TEXT": [
+    {
+      "fr": "La clé API V2 (appelé aussi Live API-Key) doit être généré sur <a target=\"_blank\" href=\"https://www.weatherlink.com/account\">weatherlink.com</a>.",
+      "en": "The V2 API Key (also called Live API-Key) must be generated on <a target=\"_blank\" href=\"https://www.weatherlink.com/account\">weatherlink.com</a>."
+    }
+  ],
+  "DAVIS_LIVESECRET": [
+    {
+      "fr": "API Secret",
+      "en": "Secret API"
+    }
+  ],
+  "DAVIS_LIVESECRET_TEXT": [
+    {
+      "fr": "Le numéro d'API Secret (appelé aussi Live API-Secret) doit être généré sur <a target=\"_blank\" href=\"https://www.weatherlink.com/account\">weatherlink.com</a>.",
+      "en": "The Secret API (also called Live API-Secret) must be generated on <a target=\"_blank\" href=\"https://www.weatherlink.com/account\">weatherlink.com</a>."
     }
   ],
   "NO_VALUE": [

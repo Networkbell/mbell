@@ -227,7 +227,20 @@ abstract class View
         $this->page = str_replace('{STATION_PASSWORD}',  $this->l->trad('DAVIS_PASS'), $this->page);
         $this->page = str_replace('{STATION_TOKEN}',  $this->l->trad('DAVIS_TOKEN'), $this->page);
     }
-
+    public function getListInfoLive($param)
+    {
+        $this->page .= $this->searchHTML('listInfolive', '');
+        $this->page = str_replace('{_STATION_TYPE}',  $param['3'], $this->page);
+        $this->page = str_replace('{_STATION_LOCATION}',  $param['4'], $this->page);
+        $this->page = str_replace('{_STATION_USER}',  $param['5'], $this->page);        
+        $this->page = str_replace('{_STATION_LIVEKEY}',  $param['10'], $this->page);
+        $this->page = str_replace('{_STATION_LIVESECRET}',  $param['11'], $this->page);
+        $this->page = str_replace('{STATION_TYPE}',  $this->l->trad('STATION_TYPE'), $this->page);
+        $this->page = str_replace('{STATION_LOCATION}',  $this->l->trad('STATION_LOCATION'), $this->page);
+        $this->page = str_replace('{STATION_USER}',  $this->l->trad('STATION_USER'), $this->page);
+        $this->page = str_replace('{STATION_LIVEKEY}',  'API V2', $this->page);
+        $this->page = str_replace('{STATION_LIVESECRET}',  'API SECRET', $this->page);
+    }
 
     public function getFormStation($station, $param, $controll)
     {
@@ -237,6 +250,7 @@ abstract class View
                 $page .= $this->getInfo($this->l->trad('STATION_STEP6_P4'));
                 $page .= $this->getInfo($this->l->trad('STATION_STEP6_P5'));
                 $page .= $this->getInfo($this->l->trad('STATION_STEP6_P6'));
+                $page .= $this->getInfo($this->l->trad('STATION_STEP6_P7'));
                 break;
             case 'v1':
                 $page = $this->getStationV1($param);
@@ -246,11 +260,16 @@ abstract class View
                 $page = $this->getStationV2($param);
                 $page .= $this->getSubmit($controll, $param['STATION_BUTTON']);
                 break;
+            case 'live':
+                    $page = $this->getStationLive($param);
+                    $page .= $this->getSubmit($controll, $param['STATION_BUTTON']);
+                    break;
             default:
                 $page = $this->getInfo($this->l->trad('STATION_STEP6_P3'));
                 $page .= $this->getInfo($this->l->trad('STATION_STEP6_P4'));
                 $page .= $this->getInfo($this->l->trad('STATION_STEP6_P5'));
                 $page .= $this->getInfo($this->l->trad('STATION_STEP6_P6'));
+                $page .= $this->getInfo($this->l->trad('STATION_STEP6_P7'));
         }
         return $page;
     }
@@ -264,6 +283,7 @@ abstract class View
         $this->page = str_replace('{CHOOSE_SELECT}',  $param['2'], $this->page);
         $this->page = str_replace('{STATION_SELECT_V1}',  $param['3'], $this->page);
         $this->page = str_replace('{STATION_SELECT_V2}',  $param['4'], $this->page);
+        $this->page = str_replace('{STATION_SELECT_LIVE}',  $param['5'], $this->page);        
         $this->page = str_replace('{ANY}',  $this->l->trad('ANY'), $this->page);
         $this->page = str_replace('{_LG}',  $param['_LG'], $this->page);
         $this->page = str_replace('{_CONTROLLER}',  $param['_CONTROLLER'], $this->page);
@@ -287,7 +307,9 @@ abstract class View
         $this->page = str_replace('{_VAL_STAT_PASSWORD}',  $param['_VAL_STAT_PASSWORD'], $this->page);
         $this->page = str_replace('{_VAL_STAT_TOKEN}',  $param['_VAL_STAT_TOKEN'], $this->page);
         $this->page = str_replace('{_VAL_STAT_ID}',  $param['_VAL_STAT_ID'], $this->page);
-
+        $this->page = str_replace('{_VAL_STAT_LIVEKEY}',  $param['_VAL_STAT_LIVEKEY'], $this->page);
+        $this->page = str_replace('{_VAL_STAT_LIVESECRET}',  $param['_VAL_STAT_LIVESECRET'], $this->page);
+        $this->page = str_replace('{_VAL_STAT_LIVEID}',  $param['_VAL_STAT_LIVEID'], $this->page);
     }
     public function getStationV2($param)
     {
@@ -307,5 +329,28 @@ abstract class View
         $this->page = str_replace('{_VAL_STAT_PASSWORD}',  $param['_VAL_STAT_PASSWORD'], $this->page);
         $this->page = str_replace('{_VAL_STAT_TOKEN}',  $param['_VAL_STAT_TOKEN'], $this->page);
         $this->page = str_replace('{_VAL_STAT_ID}',  $param['_VAL_STAT_ID'], $this->page);
+        $this->page = str_replace('{_VAL_STAT_LIVEKEY}',  $param['_VAL_STAT_LIVEKEY'], $this->page);
+        $this->page = str_replace('{_VAL_STAT_LIVESECRET}',  $param['_VAL_STAT_LIVESECRET'], $this->page);
+        $this->page = str_replace('{_VAL_STAT_LIVEID}',  $param['_VAL_STAT_LIVEID'], $this->page);
+    }
+    public function getStationLive($param)
+    {
+        $this->page .= $this->searchHTML('stationlive', 'install');
+        $this->page = str_replace('{CASE_SENSITIVE}',  $this->l->trad('CASE_SENSITIVE'), $this->page);
+       /* $this->page = str_replace('{UPPERCASE}',  $this->l->trad('UPPERCASE'), $this->page);*/
+        $this->page = str_replace('{DAVIS_LIVEKEY}',  $this->l->trad('DAVIS_LIVEKEY'), $this->page);
+        $this->page = str_replace('{DAVIS_LIVEKEY_TEXT}',  $this->l->trad('DAVIS_LIVEKEY_TEXT'), $this->page);
+        $this->page = str_replace('{DAVIS_LIVESECRET}',  $this->l->trad('DAVIS_LIVESECRET'), $this->page);
+        $this->page = str_replace('{DAVIS_LIVESECRET_TEXT}',  $this->l->trad('DAVIS_LIVESECRET_TEXT'), $this->page);
+        $this->page = str_replace('{_USER_ID}',  $param['_USER_ID'], $this->page);
+        $this->page = str_replace('{_VAL_STAT_DID}',  $param['_VAL_STAT_DID'], $this->page);
+        $this->page = str_replace('{_VAL_STAT_KEY}',  $param['_VAL_STAT_KEY'], $this->page);
+        $this->page = str_replace('{_VAL_STAT_USERS}',  $param['_VAL_STAT_USERS'], $this->page);
+        $this->page = str_replace('{_VAL_STAT_PASSWORD}',  $param['_VAL_STAT_PASSWORD'], $this->page);
+        $this->page = str_replace('{_VAL_STAT_TOKEN}',  $param['_VAL_STAT_TOKEN'], $this->page);
+        $this->page = str_replace('{_VAL_STAT_ID}',  $param['_VAL_STAT_ID'], $this->page);
+        $this->page = str_replace('{_VAL_STAT_LIVEKEY}',  $param['_VAL_STAT_LIVEKEY'], $this->page);
+        $this->page = str_replace('{_VAL_STAT_LIVESECRET}',  $param['_VAL_STAT_LIVESECRET'], $this->page);
+        $this->page = str_replace('{_VAL_STAT_LIVEID}',  $param['_VAL_STAT_LIVEID'], $this->page);
     }
 }

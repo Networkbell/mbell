@@ -93,8 +93,9 @@ class InstallController extends Controller
 
     public function step7Action()
     {
-        $lg = $this->l->getLg();
+        $lg = $this->l->getLg();       
         $response = $this->model->addStation($this->paramPost);
+        //var_dump($response);
         if ($response) {
             header('location:index.php?controller=install&action=step7b&lg=' . $lg);
         } else {
@@ -130,8 +131,9 @@ class InstallController extends Controller
     public function step8Action()
     {
         $active = $this->paramStat->getStationActive();
-        $paramJson = $this->paramStat->getAPI();
-        $this->view->InstallMain8($active, $paramJson);
+        $paramJson = $this->paramStat->getAPI();       
+        $liveStation = ($active['stat_type']=='live') ? $this->model->getLiveAPIStation($active['stat_livekey'], $active['stat_livesecret']): '';    
+        $this->view->InstallMain8($active, $paramJson, $liveStation);
     }
 
     public function step9Action()

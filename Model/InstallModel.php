@@ -10,6 +10,15 @@ class InstallModel extends Model
         parent::__construct();
     }
 
+
+
+
+
+
+
+
+
+
     /**
      * Ajout dans la BDD user
      * 
@@ -54,21 +63,30 @@ class InstallModel extends Model
 
         require $this->file_admin;
         $station_tab = $table_prefix . 'station';
+
+        $stat_type = $paramPost['stat_type'];
+        $live_key = $paramPost['stat_livekey'];
+        $live_secret = $paramPost['stat_livesecret'];
+        $live_id = $this->getStationID($live_key, $live_secret, $stat_type);
         $stat_active = 1;
 
         try {
             $req = "INSERT INTO $station_tab VALUES(
-            NULL, :stat_type, :stat_did, :stat_key, :stat_users, 
-            :stat_password, :stat_token, :stat_active, :user_id
+            NULL, :stat_type, :stat_did, :stat_key,  
+            :stat_users, :stat_password, :stat_token, 
+            :stat_livekey, :stat_livesecret, :stat_liveid, :stat_active, :user_id
             )";
 
             $this->requete = $this->connexion->prepare($req);
-            $this->requete->bindParam(':stat_type', $paramPost['stat_type']);
+            $this->requete->bindParam(':stat_type', $stat_type);
             $this->requete->bindParam(':stat_did', $paramPost['stat_did']);
             $this->requete->bindParam(':stat_key', $paramPost['stat_key']);
             $this->requete->bindParam(':stat_users', $paramPost['stat_users']);
             $this->requete->bindParam(':stat_password', $paramPost['stat_password']);
             $this->requete->bindParam(':stat_token', $paramPost['stat_token']);
+            $this->requete->bindParam(':stat_livekey', $live_key);
+            $this->requete->bindParam(':stat_livesecret', $live_secret);
+            $this->requete->bindParam(':stat_liveid', $live_id);
             $this->requete->bindParam(':stat_active', $stat_active);
             $this->requete->bindParam(':user_id', $paramPost['user_id']);
 
@@ -85,7 +103,7 @@ class InstallModel extends Model
     }
 
 
-    
+
 
 
 
@@ -202,6 +220,9 @@ class InstallModel extends Model
                 stat_users varchar(100) NOT NULL default '',
                 stat_password varchar(255) NOT NULL default '',
                 stat_token varchar(60) NOT NULL default '',
+                stat_livekey varchar(60) NOT NULL default '',
+                stat_livesecret varchar(60) NOT NULL default '',
+                stat_liveid varchar(60) NOT NULL default '',
                 stat_active tinyint(1) NOT NULL default 0,
                 user_id int(11) NOT NULL,
                 CONSTRAINT PK_stat_id PRIMARY KEY (stat_id),
@@ -252,16 +273,16 @@ class InstallModel extends Model
                 tab_2a int(11) NOT NULL default 4,
                 tab_2b int(11) NOT NULL default 5,
                 tab_2c int(11) NOT NULL default 6,
-                tab_3a int(11) NOT NULL default 7,
+                tab_3a int(11) NOT NULL default 12,
                 tab_3b int(11) NOT NULL default 8,
-                tab_3c int(11) NOT NULL default 9,
+                tab_3c int(11) NOT NULL default 13,
                 tab_4a int(11) NOT NULL default 10,
                 tab_4b int(11) NOT NULL default 11,
-                tab_4c int(11) NOT NULL default 12,
+                tab_4c int(11) NOT NULL default 14,
                 tab_5a int(11) NOT NULL default 43,
                 tab_5b int(11) NOT NULL default 44,
-                tab_5c int(11) NOT NULL default 13,
-                tab_6a int(11) NOT NULL default 14,
+                tab_5c int(11) NOT NULL default 9,
+                tab_6a int(11) NOT NULL default 7,
                 tab_6b int(11) NOT NULL default 15,
                 tab_6c int(11) NOT NULL default 16,
                 tab_7a int(11) NOT NULL default 30,

@@ -10,6 +10,503 @@ class StationView extends View
     }
 
 
+    public function livePress($press)
+    {
+        //$in = round((floatval($press)), 2);
+        $mb = round(((floatval($press)) * 33.8639), 1);
+        return $mb;
+    }
+
+    /**
+     * Pour Weatherlink Live
+     * calcul sunset-sunrise à partir de timestamp
+     */
+    public function liveDateSun($time, $latitude, $longitude, $fuseau, $type)
+    {
+        date_default_timezone_set($fuseau);
+        $date = date("h:i a", date_sun_info($time, $latitude, $longitude)[$type]);
+        return $date;
+    }
+    
+
+    /**
+     * Pour API v1
+     * calcul time format RCF822 à partir de timestamp
+     */
+    public function liveDateRFC822($time, $fuseau)
+    {
+        date_default_timezone_set($fuseau);
+        $date = date(DATE_RFC822, $time);
+        return $date;
+    }
+
+    /**
+     * Pour API v1
+     * calcul fuseau horaire à partir de time format RCF822 
+     */
+    public function timeZone($timeRFC822)
+    {
+        $dt = new DateTime($timeRFC822);
+        /* $tz = $dt->getTimezone();
+        $fus = $tz->getName();*/
+        $offset =  $dt->getOffset();
+        $timezone = timezone_name_from_abbr("", $offset, 0);
+        return $timezone;
+    }
+
+    /* 
+    Pour Weatherlink Live
+    Calcul pressure string au format Api v1 à partir de bar_trend
+    
+    if bar_trend >= 0.060 then it is Rising Rapidly
+        if bar_trend >= 0.020 then it is Rising Slowly
+        if bar_trend < 0.020 and bar_trend > -0.020 then it is Steady
+        if bar_trend <= -0.020 then it is Falling Slowly
+        if bar_trend <= -0.060 then it is Falling Rapidly
+    */
+    public function livePressTrend($value)
+    {
+        if ($value >= '0.060') {
+            $value = str_replace($value, "Rising Rapidly", $value);
+        }
+        if ($value >= '0.020' && $value < '0.060') {
+            $value = str_replace($value, "Rising Slowly", $value);
+        }
+        if ($value > '-0.020' && $value < '0.020') {
+            $value = str_replace($value, "Steady", $value);
+        }
+        if ($value > '-0.060' && $value <= '-0.020') {
+            $value = str_replace($value, "Falling Slowly", $value);
+        }
+        if ($value <= '-0.060') {
+            $value = str_replace($value, "Falling Rapidly", $value);
+        }
+        return $value;
+    }
+
+    /* 
+    Remplace le string pressure par une image
+    */
+    function pressImg($value)
+    {
+        $value = str_replace("Steady", "images/stable.png", $value);
+        $value = str_replace("Falling Slowly", "images/fleche_bas.png", $value);
+        $value = str_replace("Rising Slowly", "images/fleche_haut.png", $value);
+        $value = str_replace("Falling Rapidly", "images/fleche_bas_1.png", $value);
+        $value = str_replace("Rising Rapidly", "images/fleche_haut_1.png", $value);
+
+        return $value;
+    }
+
+    /* 
+    Test de tous les datas Json
+    */
+    public function getAPIDatas($datas, $station, $livestation)
+    {
+        $zero = '&#8709;';
+        if ($station['stat_type'] == 'live') {
+            $dat0 = $datas['sensors'][0]['data'];
+            $dat1 = $datas['sensors'][1]['data'];
+            $dat2 = $datas['sensors'][2]['data'];
+            $dat3 = $datas['sensors'][3]['data'];
+        } else {
+            $dat = $datas->davis_current_observation;
+        }
+
+
+        $data = array(
+            //V1
+            "pressure_tendency_string" => ($station['stat_type'] == 'live') ? $zero : (isset($dat->pressure_tendency_string) ? $dat->pressure_tendency_string : $zero),          
+            "pressure_mb" => ($station['stat_type'] == 'live') ? $zero : ( isset($datas->pressure_mb) ? $datas->pressure_mb : $zero),
+            "time_RFC822" => ($station['stat_type'] == 'live') ? $zero : (isset($datas->observation_time_rfc822) ? $datas->observation_time_rfc822 : $zero),
+            "sunset" => ($station['stat_type'] == 'live') ? $zero : (isset($dat->sunset) ? $dat->sunset : $zero),
+            "sunrise" => ($station['stat_type'] == 'live') ? $zero : (isset($dat->sunrise) ? $dat->sunrise : $zero),
+            "wind_day_high_mph" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->wind_day_high_mph) ? $dat->wind_day_high_mph : $zero),
+            "wind_day_high_time" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->wind_day_high_time) ? $dat->wind_day_high_time : $zero),
+            "wind_month_high_mph" => ($station['stat_type'] == 'live') ?  $zero : ( isset($dat->wind_month_high_mph) ? $dat->wind_month_high_mph : $zero),
+            "wind_year_high_mph" => ($station['stat_type'] == 'live') ?  $zero : ( isset($dat->wind_year_high_mph) ? $dat->wind_year_high_mph : $zero),
+            "et_day" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->et_day) ? $dat->et_day : $zero),
+            "temp_day_high_f" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->temp_day_high_f) ? $dat->temp_day_high_f : $zero),
+            "temp_day_low_f" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->temp_day_low_f) ? $dat->temp_day_low_f : $zero),
+            "temp_extra_1" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->temp_extra_1) ? $dat->temp_extra_1 : $zero),
+            "temp_extra_2" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->temp_extra_2) ? $dat->temp_extra_2 : $zero),
+            "temp_extra_3" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->temp_extra_3) ? $dat->temp_extra_3 : $zero),
+            "temp_extra_4" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->temp_extra_4) ? $dat->temp_extra_4 : $zero),
+            "temp_extra_5" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->temp_extra_5) ? $dat->temp_extra_5 : $zero),
+            "temp_extra_6" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->temp_extra_6) ? $dat->temp_extra_6 : $zero),
+            "temp_extra_7" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->temp_extra_7) ? $dat->temp_extra_7 : $zero),
+            "relative_humidity_1" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->relative_humidity_1) ? $dat->relative_humidity_1 : $zero),
+            "relative_humidity_2" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->relative_humidity_2) ? $dat->relative_humidity_2 : $zero),
+            "relative_humidity_3" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->relative_humidity_3) ? $dat->relative_humidity_3 : $zero),
+            "relative_humidity_4" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->relative_humidity_4) ? $dat->relative_humidity_4 : $zero),
+            "relative_humidity_5" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->relative_humidity_5) ? $dat->relative_humidity_5 : $zero),
+            "relative_humidity_6" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->relative_humidity_6) ? $dat->relative_humidity_6 : $zero),
+            "relative_humidity_7" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->relative_humidity_7) ? $dat->relative_humidity_7 : $zero),
+            "temp_leaf_1" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->temp_leaf_1) ? $dat->temp_leaf_1 : $zero),
+            "temp_leaf_2" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->temp_leaf_2) ? $dat->temp_leaf_2 : $zero),
+            "temp_soil_1" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->temp_soil_1) ? $dat->temp_soil_1 : $zero),
+            "temp_soil_2" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->temp_soil_2) ? $dat->temp_soil_2 : $zero),
+            "temp_soil_3" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->temp_soil_3) ? $dat->temp_soil_3 : $zero),
+            "temp_soil_4" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->temp_soil_4) ? $dat->temp_soil_4 : $zero),
+            "leaf_wetness_1" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->leaf_wetness_1) ? $dat->leaf_wetness_1 : $zero),
+            "leaf_wetness_2" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->leaf_wetness_2) ? $dat->leaf_wetness_2 : $zero),
+            "soil_moisture_1" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->soil_moisture_1) ? $dat->soil_moisture_1 : $zero),
+            "soil_moisture_2" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->soil_moisture_2) ? $dat->soil_moisture_2 : $zero),
+            "soil_moisture_3" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->soil_moisture_3) ? $dat->soil_moisture_3 : $zero),
+            "soil_moisture_4" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->soil_moisture_4) ? $dat->soil_moisture_4 : $zero),
+            "temp_day_low_f" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->temp_day_low_f) ? $dat->temp_day_low_f : $zero),
+            "temp_month_low_f" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->temp_month_low_f) ? $dat->temp_month_low_f : $zero),
+            "temp_year_low_f" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->temp_year_low_f) ? $dat->temp_year_low_f : $zero),
+            "temp_day_high_f" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->temp_day_high_f) ? $dat->temp_day_high_f : $zero),
+            "temp_month_high_f" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->temp_month_high_f) ? $dat->temp_month_high_f : $zero),
+            "temp_year_high_f" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->temp_year_high_f) ? $dat->temp_year_high_f : $zero),
+            "temp_day_low_time" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->temp_day_low_time) ? $dat->temp_day_low_time : $zero),
+            "temp_day_high_time" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->temp_day_high_time) ? $dat->temp_day_high_time : $zero),
+            "pressure_day_low_in" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->pressure_day_low_in) ? $dat->pressure_day_low_in : $zero),
+            "pressure_month_low_in" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->pressure_month_low_in) ? $dat->pressure_month_low_in : $zero),
+            "pressure_year_low_in" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->pressure_year_low_in) ? $dat->pressure_year_low_in : $zero),
+            "pressure_day_high_in" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->pressure_day_high_in) ? $dat->pressure_day_high_in : $zero),
+            "pressure_month_high_in" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->pressure_month_high_in) ? $dat->pressure_month_high_in : $zero),
+            "pressure_year_high_in" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->pressure_year_high_in) ? $dat->pressure_year_high_in : $zero),
+            "pressure_day_low_time" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->pressure_day_low_time) ? $dat->pressure_day_low_time : $zero),
+            "pressure_day_high_time" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->pressure_day_high_time) ? $dat->pressure_day_high_time : $zero),
+            "dewpoint_day_low_f" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->dewpoint_day_low_f) ? $dat->dewpoint_day_low_f : $zero),
+            "dewpoint_month_low_f" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->dewpoint_month_low_f) ? $dat->dewpoint_month_low_f : $zero),
+            "dewpoint_year_low_f" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->dewpoint_year_low_f) ? $dat->dewpoint_year_low_f : $zero),
+            "dewpoint_day_high_f" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->dewpoint_day_high_f) ? $dat->dewpoint_day_high_f : $zero),
+            "dewpoint_month_high_f" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->dewpoint_month_high_f) ? $dat->dewpoint_month_high_f : $zero),
+            "dewpoint_year_high_f" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->dewpoint_year_high_f) ? $dat->dewpoint_year_high_f : $zero),
+            "dewpoint_day_low_time" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->dewpoint_day_low_time) ? $dat->dewpoint_day_low_time : $zero),
+            "dewpoint_day_high_time" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->dewpoint_day_high_time) ? $dat->dewpoint_day_high_time : $zero),
+            "relative_humidity_day_low" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->relative_humidity_day_low) ? $dat->relative_humidity_day_low : $zero),
+            "relative_humidity_month_low" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->relative_humidity_month_low) ? $dat->relative_humidity_month_low : $zero),
+            "relative_humidity_year_low" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->relative_humidity_year_low) ? $dat->relative_humidity_year_low : $zero),
+            "relative_humidity_day_high" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->relative_humidity_day_high) ? $dat->relative_humidity_day_high : $zero),
+            "relative_humidity_month_high" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->relative_humidity_month_high) ? $dat->relative_humidity_month_high : $zero),
+            "relative_humidity_year_high" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->relative_humidity_year_high) ? $dat->relative_humidity_year_high : $zero),
+            "relative_humidity_day_low_time" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->relative_humidity_day_low_time) ? $dat->relative_humidity_day_low_time : $zero),
+            "relative_humidity_day_high_time" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->relative_humidity_day_high_time) ? $dat->relative_humidity_day_high_time : $zero),
+            "temp_extra_1_day_low" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->temp_extra_1_day_low) ? $dat->temp_extra_1_day_low : $zero),
+            "temp_extra_1_month_low" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->temp_extra_1_month_low) ? $dat->temp_extra_1_month_low : $zero),
+            "temp_extra_1_year_low" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->temp_extra_1_year_low) ? $dat->temp_extra_1_year_low : $zero),
+            "temp_extra_1_day_high" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->temp_extra_1_day_high) ? $dat->temp_extra_1_day_high : $zero),
+            "temp_extra_1_month_high" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->temp_extra_1_month_high) ? $dat->temp_extra_1_month_high : $zero),
+            "temp_extra_1_year_high" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->temp_extra_1_year_high) ? $dat->temp_extra_1_year_high : $zero),
+            "temp_extra_1_day_low_time" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->temp_extra_1_day_low_time) ? $dat->temp_extra_1_day_low_time : $zero),
+            "temp_extra_1_day_high_time" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->temp_extra_1_day_high_time) ? $dat->temp_extra_1_day_high_time : $zero),
+            "temp_extra_2_day_low" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->temp_extra_2_day_low) ? $dat->temp_extra_2_day_low : $zero),
+            "temp_extra_2_month_low" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->temp_extra_2_month_low) ? $dat->temp_extra_2_month_low : $zero),
+            "temp_extra_2_year_low" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->temp_extra_2_year_low) ? $dat->temp_extra_2_year_low : $zero),
+            "temp_extra_2_day_high" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->temp_extra_2_day_high) ? $dat->temp_extra_2_day_high : $zero),
+            "temp_extra_2_month_high" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->temp_extra_2_month_high) ? $dat->temp_extra_2_month_high : $zero),
+            "temp_extra_2_year_high" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->temp_extra_2_year_high) ? $dat->temp_extra_2_year_high : $zero),
+            "temp_extra_2_day_low_time" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->temp_extra_2_day_low_time) ? $dat->temp_extra_2_day_low_time : $zero),
+            "temp_extra_2_day_high_time" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->temp_extra_2_day_high_time) ? $dat->temp_extra_2_day_high_time : $zero),
+            "temp_extra_3_day_low" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->temp_extra_3_day_low) ? $dat->temp_extra_3_day_low : $zero),
+            "temp_extra_3_month_low" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->temp_extra_3_month_low) ? $dat->temp_extra_3_month_low : $zero),
+            "temp_extra_3_year_low" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->temp_extra_3_year_low) ? $dat->temp_extra_3_year_low : $zero),
+            "temp_extra_3_day_high" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->temp_extra_3_day_high) ? $dat->temp_extra_3_day_high : $zero),
+            "temp_extra_3_month_high" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->temp_extra_3_month_high) ? $dat->temp_extra_3_month_high : $zero),
+            "temp_extra_3_year_high" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->temp_extra_3_year_high) ? $dat->temp_extra_3_year_high : $zero),
+            "temp_extra_3_day_low_time" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->temp_extra_3_day_low_time) ? $dat->temp_extra_3_day_low_time : $zero),
+            "temp_extra_3_day_high_time" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->temp_extra_3_day_high_time) ? $dat->temp_extra_3_day_high_time : $zero),
+            "temp_extra_4_day_low" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->temp_extra_4_day_low) ? $dat->temp_extra_4_day_low : $zero),
+            "temp_extra_4_month_low" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->temp_extra_4_month_low) ? $dat->temp_extra_4_month_low : $zero),
+            "temp_extra_4_year_low" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->temp_extra_4_year_low) ? $dat->temp_extra_4_year_low : $zero),
+            "temp_extra_4_day_high" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->temp_extra_4_day_high) ? $dat->temp_extra_4_day_high : $zero),
+            "temp_extra_4_month_high" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->temp_extra_4_month_high) ? $dat->temp_extra_4_month_high : $zero),
+            "temp_extra_4_year_high" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->temp_extra_4_year_high) ? $dat->temp_extra_4_year_high : $zero),
+            "temp_extra_4_day_low_time" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->temp_extra_4_day_low_time) ? $dat->temp_extra_4_day_low_time : $zero),
+            "temp_extra_4_day_high_time" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->temp_extra_4_day_high_time) ? $dat->temp_extra_4_day_high_time : $zero),
+            "temp_extra_5_day_low" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->temp_extra_5_day_low) ? $dat->temp_extra_5_day_low : $zero),
+            "temp_extra_5_month_low" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->temp_extra_5_month_low) ? $dat->temp_extra_5_month_low : $zero),
+            "temp_extra_5_year_low" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->temp_extra_5_year_low) ? $dat->temp_extra_5_year_low : $zero),
+            "temp_extra_5_day_high" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->temp_extra_5_day_high) ? $dat->temp_extra_5_day_high : $zero),
+            "temp_extra_5_month_high" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->temp_extra_5_month_high) ? $dat->temp_extra_5_month_high : $zero),
+            "temp_extra_5_year_high" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->temp_extra_5_year_high) ? $dat->temp_extra_5_year_high : $zero),
+            "temp_extra_5_day_low_time" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->temp_extra_5_day_low_time) ? $dat->temp_extra_5_day_low_time : $zero),
+            "temp_extra_5_day_high_time" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->temp_extra_5_day_high_time) ? $dat->temp_extra_5_day_high_time : $zero),
+            "temp_extra_6_day_low" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->temp_extra_6_day_low) ? $dat->temp_extra_6_day_low : $zero),
+            "temp_extra_6_month_low" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->temp_extra_6_month_low) ? $dat->temp_extra_6_month_low : $zero),
+            "temp_extra_6_year_low" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->temp_extra_6_year_low) ? $dat->temp_extra_6_year_low : $zero),
+            "temp_extra_6_day_high" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->temp_extra_6_day_high) ? $dat->temp_extra_6_day_high : $zero),
+            "temp_extra_6_month_high" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->temp_extra_6_month_high) ? $dat->temp_extra_6_month_high : $zero),
+            "temp_extra_6_year_high" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->temp_extra_6_year_high) ? $dat->temp_extra_6_year_high : $zero),
+            "temp_extra_6_day_low_time" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->temp_extra_6_day_low_time) ? $dat->temp_extra_6_day_low_time : $zero),
+            "temp_extra_6_day_high_time" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->temp_extra_6_day_high_time) ? $dat->temp_extra_6_day_high_time : $zero),
+            "temp_extra_7_day_low" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->temp_extra_7_day_low) ? $dat->temp_extra_7_day_low : $zero),
+            "temp_extra_7_month_low" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->temp_extra_7_month_low) ? $dat->temp_extra_7_month_low : $zero),
+            "temp_extra_7_year_low" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->temp_extra_7_year_low) ? $dat->temp_extra_7_year_low : $zero),
+            "temp_extra_7_day_high" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->temp_extra_7_day_high) ? $dat->temp_extra_7_day_high : $zero),
+            "temp_extra_7_month_high" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->temp_extra_7_month_high) ? $dat->temp_extra_7_month_high : $zero),
+            "temp_extra_7_year_high" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->temp_extra_7_year_high) ? $dat->temp_extra_7_year_high : $zero),
+            "temp_extra_7_day_low_time" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->temp_extra_7_day_low_time) ? $dat->temp_extra_7_day_low_time : $zero),
+            "temp_extra_7_day_high_time" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->temp_extra_7_day_high_time) ? $dat->temp_extra_7_day_high_time : $zero),
+            "temp_leaf_1_day_low" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->temp_leaf_1_day_low) ? $dat->temp_leaf_1_day_low : $zero),
+            "temp_leaf_1_month_low" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->temp_leaf_1_month_low) ? $dat->temp_leaf_1_month_low : $zero),
+            "temp_leaf_1_year_low" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->temp_leaf_1_year_low) ? $dat->temp_leaf_1_year_low : $zero),
+            "temp_leaf_1_day_high" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->temp_leaf_1_day_high) ? $dat->temp_leaf_1_day_high : $zero),
+            "temp_leaf_1_month_high" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->temp_leaf_1_month_high) ? $dat->temp_leaf_1_month_high : $zero),
+            "temp_leaf_1_year_high" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->temp_leaf_1_year_high) ? $dat->temp_leaf_1_year_high : $zero),
+            "temp_leaf_1_day_low_time" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->temp_leaf_1_day_low_time) ? $dat->temp_leaf_1_day_low_time : $zero),
+            "temp_leaf_1_day_high_time" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->temp_leaf_1_day_high_time) ? $dat->temp_leaf_1_day_high_time : $zero),
+            "temp_leaf_2_day_low" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->temp_leaf_2_day_low) ? $dat->temp_leaf_2_day_low : $zero),
+            "temp_leaf_2_month_low" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->temp_leaf_2_month_low) ? $dat->temp_leaf_2_month_low : $zero),
+            "temp_leaf_2_year_low" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->temp_leaf_2_year_low) ? $dat->temp_leaf_2_year_low : $zero),
+            "temp_leaf_2_day_high" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->temp_leaf_2_day_high) ? $dat->temp_leaf_2_day_high : $zero),
+            "temp_leaf_2_month_high" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->temp_leaf_2_month_high) ? $dat->temp_leaf_2_month_high : $zero),
+            "temp_leaf_2_year_high" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->temp_leaf_2_year_high) ? $dat->temp_leaf_2_year_high : $zero),
+            "temp_leaf_2_day_low_time" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->temp_leaf_2_day_low_time) ? $dat->temp_leaf_2_day_low_time : $zero),
+            "temp_leaf_2_day_high_time" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->temp_leaf_2_day_high_time) ? $dat->temp_leaf_2_day_high_time : $zero),
+            "temp_soil_1_day_low" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->temp_soil_1_day_low) ? $dat->temp_soil_1_day_low : $zero),
+            "temp_soil_1_month_low" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->temp_soil_1_month_low) ? $dat->temp_soil_1_month_low : $zero),
+            "temp_soil_1_year_low" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->temp_soil_1_year_low) ? $dat->temp_soil_1_year_low : $zero),
+            "temp_soil_1_day_high" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->temp_soil_1_day_high) ? $dat->temp_soil_1_day_high : $zero),
+            "temp_soil_1_month_high" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->temp_soil_1_month_high) ? $dat->temp_soil_1_month_high : $zero),
+            "temp_soil_1_year_high" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->temp_soil_1_year_high) ? $dat->temp_soil_1_year_high : $zero),
+            "temp_soil_1_day_low_time" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->temp_soil_1_day_low_time) ? $dat->temp_soil_1_day_low_time : $zero),
+            "temp_soil_1_day_high_time" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->temp_soil_1_day_high_time) ? $dat->temp_soil_1_day_high_time : $zero),
+            "temp_soil_2_day_low" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->temp_soil_2_day_low) ? $dat->temp_soil_2_day_low : $zero),
+            "temp_soil_2_month_low" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->temp_soil_2_month_low) ? $dat->temp_soil_2_month_low : $zero),
+            "temp_soil_2_year_low" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->temp_soil_2_year_low) ? $dat->temp_soil_2_year_low : $zero),
+            "temp_soil_2_day_high" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->temp_soil_2_day_high) ? $dat->temp_soil_2_day_high : $zero),
+            "temp_soil_2_month_high" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->temp_soil_2_month_high) ? $dat->temp_soil_2_month_high : $zero),
+            "temp_soil_2_year_high" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->temp_soil_2_year_high) ? $dat->temp_soil_2_year_high : $zero),
+            "temp_soil_2_day_low_time" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->temp_soil_2_day_low_time) ? $dat->temp_soil_2_day_low_time : $zero),
+            "temp_soil_2_day_high_time" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->temp_soil_2_day_high_time) ? $dat->temp_soil_2_day_high_time : $zero),
+            "temp_soil_3_day_low" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->temp_soil_3_day_low) ? $dat->temp_soil_3_day_low : $zero),
+            "temp_soil_3_month_low" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->temp_soil_3_month_low) ? $dat->temp_soil_3_month_low : $zero),
+            "temp_soil_3_year_low" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->temp_soil_3_year_low) ? $dat->temp_soil_3_year_low : $zero),
+            "temp_soil_3_day_high" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->temp_soil_3_day_high) ? $dat->temp_soil_3_day_high : $zero),
+            "temp_soil_3_month_high" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->temp_soil_3_month_high) ? $dat->temp_soil_3_month_high : $zero),
+            "temp_soil_3_year_high" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->temp_soil_3_year_high) ? $dat->temp_soil_3_year_high : $zero),
+            "temp_soil_3_day_low_time" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->temp_soil_3_day_low_time) ? $dat->temp_soil_3_day_low_time : $zero),
+            "temp_soil_3_day_high_time" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->temp_soil_3_day_high_time) ? $dat->temp_soil_3_day_high_time : $zero),
+            "temp_soil_4_day_low" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->temp_soil_4_day_low) ? $dat->temp_soil_4_day_low : $zero),
+            "temp_soil_4_month_low" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->temp_soil_4_month_low) ? $dat->temp_soil_4_month_low : $zero),
+            "temp_soil_4_year_low" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->temp_soil_4_year_low) ? $dat->temp_soil_4_year_low : $zero),
+            "temp_soil_4_day_high" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->temp_soil_4_day_high) ? $dat->temp_soil_4_day_high : $zero),
+            "temp_soil_4_month_high" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->temp_soil_4_month_high) ? $dat->temp_soil_4_month_high : $zero),
+            "temp_soil_4_year_high" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->temp_soil_4_year_high) ? $dat->temp_soil_4_year_high : $zero),
+            "temp_soil_4_day_low_time" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->temp_soil_4_day_low_time) ? $dat->temp_soil_4_day_low_time : $zero),
+            "temp_soil_4_day_high_time" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->temp_soil_4_day_high_time) ? $dat->temp_soil_4_day_high_time : $zero),
+            "relative_humidity_1_day_low" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->relative_humidity_1_day_low) ? $dat->relative_humidity_1_day_low : $zero),
+            "relative_humidity_1_month_low" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->relative_humidity_1_month_low) ? $dat->relative_humidity_1_month_low : $zero),
+            "relative_humidity_1_year_low" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->relative_humidity_1_year_low) ? $dat->relative_humidity_1_year_low : $zero),
+            "relative_humidity_1_day_high" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->relative_humidity_1_day_high) ? $dat->relative_humidity_1_day_high : $zero),
+            "relative_humidity_1_month_high" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->relative_humidity_1_month_high) ? $dat->relative_humidity_1_month_high : $zero),
+            "relative_humidity_1_year_high" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->relative_humidity_1_year_high) ? $dat->relative_humidity_1_year_high : $zero),
+            "relative_humidity_1_day_low_time" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->relative_humidity_1_day_low_time) ? $dat->relative_humidity_1_day_low_time : $zero),
+            "relative_humidity_1_day_high_time" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->relative_humidity_1_day_high_time) ? $dat->relative_humidity_1_day_high_time : $zero),
+            "relative_humidity_2_day_low" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->relative_humidity_2_day_low) ? $dat->relative_humidity_2_day_low : $zero),
+            "relative_humidity_2_month_low" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->relative_humidity_2_month_low) ? $dat->relative_humidity_2_month_low : $zero),
+            "relative_humidity_2_year_low" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->relative_humidity_2_year_low) ? $dat->relative_humidity_2_year_low : $zero),
+            "relative_humidity_2_day_high" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->relative_humidity_2_day_high) ? $dat->relative_humidity_2_day_high : $zero),
+            "relative_humidity_2_month_high" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->relative_humidity_2_month_high) ? $dat->relative_humidity_2_month_high : $zero),
+            "relative_humidity_2_year_high" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->relative_humidity_2_year_high) ? $dat->relative_humidity_2_year_high : $zero),
+            "relative_humidity_2_day_low_time" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->relative_humidity_2_day_low_time) ? $dat->relative_humidity_2_day_low_time : $zero),
+            "relative_humidity_2_day_high_time" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->relative_humidity_2_day_high_time) ? $dat->relative_humidity_2_day_high_time : $zero),
+            "relative_humidity_3_day_low" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->relative_humidity_3_day_low) ? $dat->relative_humidity_3_day_low : $zero),
+            "relative_humidity_3_month_low" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->relative_humidity_3_month_low) ? $dat->relative_humidity_3_month_low : $zero),
+            "relative_humidity_3_year_low" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->relative_humidity_3_year_low) ? $dat->relative_humidity_3_year_low : $zero),
+            "relative_humidity_3_day_high" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->relative_humidity_3_day_high) ? $dat->relative_humidity_3_day_high : $zero),
+            "relative_humidity_3_month_high" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->relative_humidity_3_month_high) ? $dat->relative_humidity_3_month_high : $zero),
+            "relative_humidity_3_year_high" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->relative_humidity_3_year_high) ? $dat->relative_humidity_3_year_high : $zero),
+            "relative_humidity_3_day_low_time" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->relative_humidity_3_day_low_time) ? $dat->relative_humidity_3_day_low_time : $zero),
+            "relative_humidity_3_day_high_time" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->relative_humidity_3_day_high_time) ? $dat->relative_humidity_3_day_high_time : $zero),
+            "relative_humidity_4_day_low" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->relative_humidity_4_day_low) ? $dat->relative_humidity_4_day_low : $zero),
+            "relative_humidity_4_month_low" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->relative_humidity_4_month_low) ? $dat->relative_humidity_4_month_low : $zero),
+            "relative_humidity_4_year_low" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->relative_humidity_4_year_low) ? $dat->relative_humidity_4_year_low : $zero),
+            "relative_humidity_4_day_high" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->relative_humidity_4_day_high) ? $dat->relative_humidity_4_day_high : $zero),
+            "relative_humidity_4_month_high" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->relative_humidity_4_month_high) ? $dat->relative_humidity_4_month_high : $zero),
+            "relative_humidity_4_year_high" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->relative_humidity_4_year_high) ? $dat->relative_humidity_4_year_high : $zero),
+            "relative_humidity_4_day_low_time" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->relative_humidity_4_day_low_time) ? $dat->relative_humidity_4_day_low_time : $zero),
+            "relative_humidity_4_day_high_time" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->relative_humidity_4_day_high_time) ? $dat->relative_humidity_4_day_high_time : $zero),
+            "relative_humidity_5_day_low" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->relative_humidity_5_day_low) ? $dat->relative_humidity_5_day_low : $zero),
+            "relative_humidity_5_month_low" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->relative_humidity_5_month_low) ? $dat->relative_humidity_5_month_low : $zero),
+            "relative_humidity_5_year_low" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->relative_humidity_5_year_low) ? $dat->relative_humidity_5_year_low : $zero),
+            "relative_humidity_5_day_high" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->relative_humidity_5_day_high) ? $dat->relative_humidity_5_day_high : $zero),
+            "relative_humidity_5_month_high" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->relative_humidity_5_month_high) ? $dat->relative_humidity_5_month_high : $zero),
+            "relative_humidity_5_year_high" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->relative_humidity_5_year_high) ? $dat->relative_humidity_5_year_high : $zero),
+            "relative_humidity_5_day_low_time" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->relative_humidity_5_day_low_time) ? $dat->relative_humidity_5_day_low_time : $zero),
+            "relative_humidity_5_day_high_time" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->relative_humidity_5_day_high_time) ? $dat->relative_humidity_5_day_high_time : $zero),
+            "relative_humidity_6_day_low" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->relative_humidity_6_day_low) ? $dat->relative_humidity_6_day_low : $zero),
+            "relative_humidity_6_month_low" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->relative_humidity_6_month_low) ? $dat->relative_humidity_6_month_low : $zero),
+            "relative_humidity_6_year_low" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->relative_humidity_6_year_low) ? $dat->relative_humidity_6_year_low : $zero),
+            "relative_humidity_6_day_high" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->relative_humidity_6_day_high) ? $dat->relative_humidity_6_day_high : $zero),
+            "relative_humidity_6_month_high" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->relative_humidity_6_month_high) ? $dat->relative_humidity_6_month_high : $zero),
+            "relative_humidity_6_year_high" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->relative_humidity_6_year_high) ? $dat->relative_humidity_6_year_high : $zero),
+            "relative_humidity_6_day_low_time" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->relative_humidity_6_day_low_time) ? $dat->relative_humidity_6_day_low_time : $zero),
+            "relative_humidity_6_day_high_time" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->relative_humidity_6_day_high_time) ? $dat->relative_humidity_6_day_high_time : $zero),
+            "relative_humidity_7_day_low" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->relative_humidity_7_day_low) ? $dat->relative_humidity_7_day_low : $zero),
+            "relative_humidity_7_month_low" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->relative_humidity_7_month_low) ? $dat->relative_humidity_7_month_low : $zero),
+            "relative_humidity_7_year_low" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->relative_humidity_7_year_low) ? $dat->relative_humidity_7_year_low : $zero),
+            "relative_humidity_7_day_high" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->relative_humidity_7_day_high) ? $dat->relative_humidity_7_day_high : $zero),
+            "relative_humidity_7_month_high" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->relative_humidity_7_month_high) ? $dat->relative_humidity_7_month_high : $zero),
+            "relative_humidity_7_year_high" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->relative_humidity_7_year_high) ? $dat->relative_humidity_7_year_high : $zero),
+            "relative_humidity_7_day_low_time" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->relative_humidity_7_day_low_time) ? $dat->relative_humidity_7_day_low_time : $zero),
+            "relative_humidity_7_day_high_time" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->relative_humidity_7_day_high_time) ? $dat->relative_humidity_7_day_high_time : $zero),
+            "leaf_wetness_1_day_low" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->leaf_wetness_1_day_low) ? $dat->leaf_wetness_1_day_low : $zero),
+            "leaf_wetness_1_month_low" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->leaf_wetness_1_month_low) ? $dat->leaf_wetness_1_month_low : $zero),
+            "leaf_wetness_1_year_low" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->leaf_wetness_1_year_low) ? $dat->leaf_wetness_1_year_low : $zero),
+            "leaf_wetness_1_day_high" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->leaf_wetness_1_day_high) ? $dat->leaf_wetness_1_day_high : $zero),
+            "leaf_wetness_1_month_high" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->leaf_wetness_1_month_high) ? $dat->leaf_wetness_1_month_high : $zero),
+            "leaf_wetness_1_year_high" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->leaf_wetness_1_year_high) ? $dat->leaf_wetness_1_year_high : $zero),
+            "leaf_wetness_1_day_low_time" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->leaf_wetness_1_day_low_time) ? $dat->leaf_wetness_1_day_low_time : $zero),
+            "leaf_wetness_1_day_high_time" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->leaf_wetness_1_day_high_time) ? $dat->leaf_wetness_1_day_high_time : $zero),
+            "leaf_wetness_2_day_low" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->leaf_wetness_2_day_low) ? $dat->leaf_wetness_2_day_low : $zero),
+            "leaf_wetness_2_month_low" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->leaf_wetness_2_month_low) ? $dat->leaf_wetness_2_month_low : $zero),
+            "leaf_wetness_2_year_low" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->leaf_wetness_2_year_low) ? $dat->leaf_wetness_2_year_low : $zero),
+            "leaf_wetness_2_day_high" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->leaf_wetness_2_day_high) ? $dat->leaf_wetness_2_day_high : $zero),
+            "leaf_wetness_2_month_high" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->leaf_wetness_2_month_high) ? $dat->leaf_wetness_2_month_high : $zero),
+            "leaf_wetness_2_year_high" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->leaf_wetness_2_year_high) ? $dat->leaf_wetness_2_year_high : $zero),
+            "leaf_wetness_2_day_low_time" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->leaf_wetness_2_day_low_time) ? $dat->leaf_wetness_2_day_low_time : $zero),
+            "leaf_wetness_2_day_high_time" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->leaf_wetness_2_day_high_time) ? $dat->leaf_wetness_2_day_high_time : $zero),
+            "soil_moisture_1_day_low" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->soil_moisture_1_day_low) ? $dat->soil_moisture_1_day_low : $zero),
+            "soil_moisture_1_month_low" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->soil_moisture_1_month_low) ? $dat->soil_moisture_1_month_low : $zero),
+            "soil_moisture_1_year_low" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->soil_moisture_1_year_low) ? $dat->soil_moisture_1_year_low : $zero),
+            "soil_moisture_1_day_high" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->soil_moisture_1_day_high) ? $dat->soil_moisture_1_day_high : $zero),
+            "soil_moisture_1_month_high" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->soil_moisture_1_month_high) ? $dat->soil_moisture_1_month_high : $zero),
+            "soil_moisture_1_year_high" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->soil_moisture_1_year_high) ? $dat->soil_moisture_1_year_high : $zero),
+            "soil_moisture_1_day_low_time" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->soil_moisture_1_day_low_time) ? $dat->soil_moisture_1_day_low_time : $zero),
+            "soil_moisture_1_day_high_time" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->soil_moisture_1_day_high_time) ? $dat->soil_moisture_1_day_high_time : $zero),
+            "soil_moisture_2_day_low" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->soil_moisture_2_day_low) ? $dat->soil_moisture_2_day_low : $zero),
+            "soil_moisture_2_month_low" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->soil_moisture_2_month_low) ? $dat->soil_moisture_2_month_low : $zero),
+            "soil_moisture_2_year_low" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->soil_moisture_2_year_low) ? $dat->soil_moisture_2_year_low : $zero),
+            "soil_moisture_2_day_high" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->soil_moisture_2_day_high) ? $dat->soil_moisture_2_day_high : $zero),
+            "soil_moisture_2_month_high" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->soil_moisture_2_month_high) ? $dat->soil_moisture_2_month_high : $zero),
+            "soil_moisture_2_year_high" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->soil_moisture_2_year_high) ? $dat->soil_moisture_2_year_high : $zero),
+            "soil_moisture_2_day_low_time" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->soil_moisture_2_day_low_time) ? $dat->soil_moisture_2_day_low_time : $zero),
+            "soil_moisture_2_day_high_time" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->soil_moisture_2_day_high_time) ? $dat->soil_moisture_2_day_high_time : $zero),
+            "soil_moisture_3_day_low" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->soil_moisture_3_day_low) ? $dat->soil_moisture_3_day_low : $zero),
+            "soil_moisture_3_month_low" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->soil_moisture_3_month_low) ? $dat->soil_moisture_3_month_low : $zero),
+            "soil_moisture_3_year_low" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->soil_moisture_3_year_low) ? $dat->soil_moisture_3_year_low : $zero),
+            "soil_moisture_3_day_high" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->soil_moisture_3_day_high) ? $dat->soil_moisture_3_day_high : $zero),
+            "soil_moisture_3_month_high" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->soil_moisture_3_month_high) ? $dat->soil_moisture_3_month_high : $zero),
+            "soil_moisture_3_year_high" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->soil_moisture_3_year_high) ? $dat->soil_moisture_3_year_high : $zero),
+            "soil_moisture_3_day_low_time" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->soil_moisture_3_day_low_time) ? $dat->soil_moisture_3_day_low_time : $zero),
+            "soil_moisture_3_day_high_time" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->soil_moisture_3_day_high_time) ? $dat->soil_moisture_3_day_high_time : $zero),
+            "soil_moisture_4_day_low" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->soil_moisture_4_day_low) ? $dat->soil_moisture_4_day_low : $zero),
+            "soil_moisture_4_month_low" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->soil_moisture_4_month_low) ? $dat->soil_moisture_4_month_low : $zero),
+            "soil_moisture_4_year_low" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->soil_moisture_4_year_low) ? $dat->soil_moisture_4_year_low : $zero),
+            "soil_moisture_4_day_high" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->soil_moisture_4_day_high) ? $dat->soil_moisture_4_day_high : $zero),
+            "soil_moisture_4_month_high" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->soil_moisture_4_month_high) ? $dat->soil_moisture_4_month_high : $zero),
+            "soil_moisture_4_year_high" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->soil_moisture_4_year_high) ? $dat->soil_moisture_4_year_high : $zero),
+            "soil_moisture_4_day_low_time" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->soil_moisture_4_day_low_time) ? $dat->soil_moisture_4_day_low_time : $zero),
+            "soil_moisture_4_day_high_time" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->soil_moisture_4_day_high_time) ? $dat->soil_moisture_4_day_high_time : $zero),
+            "temp_in_day_low_f" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->temp_in_day_low_f) ? $dat->temp_in_day_low_f : $zero),
+            "temp_in_month_low_f" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->temp_in_month_low_f) ? $dat->temp_in_month_low_f : $zero),
+            "temp_in_year_low_f" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->temp_in_year_low_f) ? $dat->temp_in_year_low_f : $zero),
+            "temp_in_day_high_f" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->temp_in_day_high_f) ? $dat->temp_in_day_high_f : $zero),
+            "temp_in_month_high_f" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->temp_in_month_high_f) ? $dat->temp_in_month_high_f : $zero),
+            "temp_in_year_high_f" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->temp_in_year_high_f) ? $dat->temp_in_year_high_f : $zero),
+            "temp_in_day_low_time" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->temp_in_day_low_time) ? $dat->temp_in_day_low_time : $zero),
+            "temp_in_day_high_time" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->temp_in_day_high_time) ? $dat->temp_in_day_high_time : $zero),
+            "relative_humidity_in_day_low" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->relative_humidity_in_day_low) ? $dat->relative_humidity_in_day_low : $zero),
+            "relative_humidity_in_month_low" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->relative_humidity_in_month_low) ? $dat->relative_humidity_in_month_low : $zero),
+            "relative_humidity_in_year_low" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->relative_humidity_in_year_low) ? $dat->relative_humidity_in_year_low : $zero),
+            "relative_humidity_in_day_high" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->relative_humidity_in_day_high) ? $dat->relative_humidity_in_day_high : $zero),
+            "relative_humidity_in_month_high" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->relative_humidity_in_month_high) ? $dat->relative_humidity_in_month_high : $zero),
+            "relative_humidity_in_year_high" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->relative_humidity_in_year_high) ? $dat->relative_humidity_in_year_high : $zero),
+            "relative_humidity_in_day_low_time" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->relative_humidity_in_day_low_time) ? $dat->relative_humidity_in_day_low_time : $zero),
+            "relative_humidity_in_day_high_time" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->relative_humidity_in_day_high_time) ? $dat->relative_humidity_in_day_high_time : $zero),
+            "temp_day_high_f" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->temp_day_high_f) ? $dat->temp_day_high_f : $zero),
+            "temp_month_high_f" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->temp_month_high_f) ? $dat->temp_month_high_f : $zero),
+            "temp_year_high_f" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->temp_year_high_f) ? $dat->temp_year_high_f : $zero),
+            "temp_day_low_f" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->temp_day_low_f) ? $dat->temp_day_low_f : $zero),
+            "temp_month_low_f" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->temp_month_low_f) ? $dat->temp_month_low_f : $zero),
+            "temp_year_low_f" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->temp_year_low_f) ? $dat->temp_year_low_f : $zero),
+            "windchill_day_low_f" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->windchill_day_low_f) ? $dat->windchill_day_low_f : $zero),
+            "windchill_day_low_time" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->windchill_day_low_time) ? $dat->windchill_day_low_time : $zero),
+            "windchill_month_low_f" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->windchill_month_low_f) ? $dat->windchill_month_low_f : $zero),
+            "windchill_year_low_f" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->windchill_year_low_f) ? $dat->windchill_year_low_f : $zero),
+            "heat_index_day_high_f" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->heat_index_day_high_f) ? $dat->heat_index_day_high_f : $zero),
+            "heat_index_day_high_time" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->heat_index_day_high_time) ? $dat->heat_index_day_high_time : $zero),
+            "heat_index_month_high_f" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->heat_index_month_high_f) ? $dat->heat_index_month_high_f : $zero),
+            "heat_index_year_high_f" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->heat_index_year_high_f) ? $dat->heat_index_year_high_f : $zero),
+            "solar_radiation_day_high" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->solar_radiation_day_high) ? $dat->solar_radiation_day_high : $zero),
+            "solar_radiation_day_high_time" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->solar_radiation_day_high_time) ? $dat->solar_radiation_day_high_time : $zero),
+            "uv_index_day_high" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->uv_index_day_high) ? $dat->uv_index_day_high : $zero),
+            "uv_index_day_high_time" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->uv_index_day_high_time) ? $dat->uv_index_day_high_time : $zero),
+            "et_month" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->et_month) ? $dat->et_month : $zero),
+            "temp_month_high_f" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->temp_month_high_f) ? $dat->temp_month_high_f : $zero),
+            "temp_month_low_f" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->temp_month_low_f) ? $dat->temp_month_low_f : $zero),
+            "et_year" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->et_year) ? $dat->et_year : $zero),
+            "temp_year_high_f" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->temp_year_high_f) ? $dat->temp_year_high_f : $zero),
+            "temp_year_low_f" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->temp_year_low_f) ? $dat->temp_year_low_f : $zero),
+            "solar_radiation_month_high" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->solar_radiation_month_high) ? $dat->solar_radiation_month_high : $zero),
+            "solar_radiation_year_high" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->solar_radiation_year_high) ? $dat->solar_radiation_year_high : $zero),
+            "uv_index_month_high" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->uv_index_month_high) ? $dat->uv_index_month_high : $zero),
+            "uv_index_year_high" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->uv_index_year_high) ? $dat->uv_index_year_high : $zero),
+
+            //V2
+            "time_unix" => ($station['stat_type'] == 'live') ? (isset($dat0[0]['ts']) ? $dat0[0]['ts'] : $zero) : $zero,
+            "time_zone" => ($station['stat_type'] == 'live') ? (isset($livestation['stations'][0]['time_zone']) ? $livestation['stations'][0]['time_zone'] : $zero) : $zero,
+            "bar_trend" => ($station['stat_type'] == 'live') ? (isset($dat1[0]['bar_trend']) ? $dat1[0]['bar_trend'] : $zero) : $zero,
+
+            //V1 + V2
+            "latitude" => ($station['stat_type'] == 'live') ? (isset($livestation['stations'][0]['latitude']) ? $livestation['stations'][0]['latitude'] : $zero) : (isset($datas->latitude) ? $datas->latitude : $zero),
+            "longitude" => ($station['stat_type'] == 'live') ? (isset($livestation['stations'][0]['longitude']) ? $livestation['stations'][0]['longitude'] : $zero) : (isset($datas->longitude) ? $datas->longitude : $zero),
+            "station_name" => ($station['stat_type'] == 'live') ? (isset($livestation['stations'][0]['station_name']) ? $livestation['stations'][0]['station_name'] : $zero) : (isset($dat->station_name) ? $dat->station_name : $zero),
+            "location" => ($station['stat_type'] == 'live') ? (isset($livestation['stations'][0]['city']) ? $livestation['stations'][0]['city'] : $zero) : (isset($datas->location) ? $datas->location : $zero),
+            "station_id" => ($station['stat_type'] == 'live') ? (isset($livestation['stations'][0]['station_id']) ? $livestation['stations'][0]['station_id'] : $zero) : (isset($datas->station_id) ? $datas->station_id : $zero),
+            
+            "pressure_in" => ($station['stat_type'] == 'live') ? (isset($dat1[0]['bar_absolute']) ? $dat1[0]['bar_absolute'] : $zero) : ( isset($datas->pressure_in) ? $datas->pressure_in : $zero),
+            "temp_f" => ($station['stat_type'] == 'live') ? (isset($dat0[0]['temp']) ? $dat0[0]['temp'] : $zero) : (isset($datas->temp_f) ? $datas->temp_f : $zero),
+            "temp_c" => ($station['stat_type'] == 'live') ? (isset($dat0[0]['temp']) ? $this->getTempFtoC($dat0[0]['temp']) : $zero) : (isset($datas->temp_c) ? $datas->temp_c : $zero),
+            "windchill_f" => ($station['stat_type'] == 'live') ? (isset($dat0[0]['wind_chill']) ? $dat0[0]['wind_chill'] : $zero) : (isset($datas->windchill_f) ? $datas->windchill_f : $zero),
+            "heat_index_f" => ($station['stat_type'] == 'live') ? (isset($dat0[0]['heat_index']) ? $dat0[0]['heat_index'] : $zero) : (isset($datas->heat_index_f) ? $datas->heat_index_f : $zero),
+            "dewpoint_f" => ($station['stat_type'] == 'live') ? (isset($dat0[0]['dew_point']) ? $dat0[0]['dew_point'] : $zero) : (isset($datas->dewpoint_f) ? $datas->dewpoint_f : $zero),
+            "relative_humidity" => ($station['stat_type'] == 'live') ? (isset($dat0[0]['hum']) ? $dat0[0]['hum'] : $zero) : (isset($datas->relative_humidity) ? $datas->relative_humidity : $zero),
+            "wind_ten_min_avg_mph" => ($station['stat_type'] == 'live') ? (isset($dat0[0]['wind_speed_avg_last_10_min']) ? $dat0[0]['wind_speed_avg_last_10_min'] : $zero) : (isset($dat->wind_ten_min_avg_mph) ? $dat->wind_ten_min_avg_mph : $zero),
+            "wind_ten_min_gust_mph" => ($station['stat_type'] == 'live') ? (isset($dat0[0]['wind_speed_hi_last_10_min']) ? $dat0[0]['wind_speed_hi_last_10_min'] : $zero) : (isset($dat->wind_ten_min_gust_mph) ? $dat->wind_ten_min_gust_mph : $zero),
+            "rain_rate_in_per_hr" => ($station['stat_type'] == 'live') ? (isset($dat0[0]['rainfall_last_60_min_in']) ? $dat0[0]['rainfall_last_60_min_in'] : $zero) : (isset($dat->rain_rate_in_per_hr) ? $dat->rain_rate_in_per_hr : $zero),
+            "rain_day_in" => ($station['stat_type'] == 'live') ? (isset($dat0[0]['rainfall_last_24_hr_in']) ? $dat0[0]['rainfall_last_24_hr_in'] : $zero) : (isset($dat->rain_day_in) ? $dat->rain_day_in : $zero),
+            "rain_month_in" => ($station['stat_type'] == 'live') ? (isset($dat0[0]['rainfall_monthly_in']) ? $dat0[0]['rainfall_monthly_in'] : $zero) : (isset($dat->rain_month_in) ? $dat->rain_month_in : $zero),
+            "rain_year_in" => ($station['stat_type'] == 'live') ? (isset($dat0[0]['rainfall_year_in']) ? $dat0[0]['rainfall_year_in'] : $zero) : (isset($dat->rain_year_in) ? $dat->rain_year_in : $zero),
+            "solar_radiation" => ($station['stat_type'] == 'live') ? (isset($dat0[0]['solar_rad']) ? $dat0[0]['solar_rad'] : $zero) : (isset($dat->solar_radiation) ? $dat->solar_radiation : $zero),
+            "uv_index" => ($station['stat_type'] == 'live') ? (isset($dat0[0]['uv_index']) ? $dat0[0]['uv_index'] : $zero) : (isset($dat->uv_index) ? $dat->uv_index : $zero),
+            "temp_in_f" => ($station['stat_type'] == 'live') ? (isset($dat2[0]['temp_in']) ? $dat2[0]['temp_in'] : $zero) : (isset($dat->temp_in_f) ? $dat->temp_in_f : $zero),
+            "relative_humidity_in" => ($station['stat_type'] == 'live') ? (isset($dat2[0]['hum_in']) ? $dat2[0]['hum_in'] : $zero) : (isset($dat->relative_humidity_in) ? $dat->relative_humidity_in : $zero),
+            "wind_degrees" => ($station['stat_type'] == 'live') ? (isset($dat0[0]['wind_dir_last']) ? $dat0[0]['wind_dir_last'] : $zero) : (isset($datas->wind_degrees) ? $datas->wind_degrees : $zero),
+        );
+
+        return $data;
+    }
+
+    /**
+     * Test datas Json amélioré pour uniformisé Apiv1 et Weatherlink Live
+     */
+    public function getAPIDatasUp($datas, $station, $livestation)
+    {
+
+        $timeunix = $this->getAPIDatas($datas, $station, $livestation)['time_unix'];
+        $timeRFC822 = $this->getAPIDatas($datas, $station, $livestation)['time_RFC822'];
+        $timezone = $this->getAPIDatas($datas, $station, $livestation)['time_zone'];
+        $sunset = $this->getAPIDatas($datas, $station, $livestation)['sunset'];
+        $sunrise = $this->getAPIDatas($datas, $station, $livestation)['sunrise'];
+        $latitude = $this->getAPIDatas($datas, $station, $livestation)['latitude'];
+        $longitude = $this->getAPIDatas($datas, $station, $livestation)['longitude'];
+
+        $bartrend = $this->getAPIDatas($datas, $station, $livestation)['bar_trend'];
+        $pressurestring = $this->getAPIDatas($datas, $station, $livestation)['pressure_tendency_string'];
+        $pressure_mb = $this->getAPIDatas($datas, $station, $livestation)['pressure_mb'];
+
+        $data = array(
+            "time" => ($station['stat_type'] == 'live') ? $this->liveDateRFC822($timeunix, $timezone) : $timeRFC822,
+            "pressure_tendency" => ($station['stat_type'] == 'live') ? $this->livePressTrend($bartrend) : $pressurestring,
+            "fuseau" => ($station['stat_type'] == 'live') ? $timezone : $this->timeZone($timeRFC822),
+            "time_sunset" => ($station['stat_type'] == 'live') ? $this->liveDateSun($timeunix, $latitude, $longitude, $timezone, 'sunset') : $sunset,
+            "time_sunrise" => ($station['stat_type'] == 'live') ? $this->liveDateSun($timeunix, $latitude, $longitude, $timezone, 'sunrise') : $sunrise,
+            "mb_pressure" => ($station['stat_type'] == 'live') ? $this->livePress( $pressure_mb) : $pressure_mb,
+        );
+        return $data;
+    }
+
+    /**
+     * TITRES CASES POUR SELECT PREF
+     */
+
     public function tabTxt($config)
     {
         $tab_txt = array(
@@ -199,13 +696,11 @@ class StationView extends View
         return $tab_txt;
     }
 
-    public function incUp1($datas, $switch, $config)
+    /**
+     * TITRES CASE POUR HOME version 1
+     */
+    public function incUp1($datas, $switch, $config, $info, $livestation)
     {
-
-
-        $zero = '&#8709;';
-        $dat = $datas->davis_current_observation;
-        $pressure_tendency_string = isset($dat->pressure_tendency_string) ? $dat->pressure_tendency_string : $zero ;
 
         $inc = array(
             "0" => array(
@@ -242,7 +737,7 @@ class StationView extends View
                 "H2_TXT" => $this->l->trad('FEEL_LIKE'),
                 "H2_TEXT" => $this->l->trad('FEEL_LIKE_TEMP'),
                 "ICON" => $this->getIcon($switch, '\'<i class="wi wi-thermometer-exterior"></i>\''),
-                "ICON_TOOLTIP" => ($this->is_Temp('59', $datas->temp_f) == true) ? $this->getIconTooltip($switch, '\'<i class="wi wi-thermometer-exterior"></i>\'', $this->l->trad('WINDCHILL_SMALL'), '') : $this->getIconTooltip($switch, '\'<i class="wi wi-thermometer-exterior"></i>\'', $this->l->trad('HEAT'), ''),
+                "ICON_TOOLTIP" => ($this->is_Temp('59', $this->getAPIDatas($datas, $info, $livestation)['temp_f']) == true) ? $this->getIconTooltip($switch, '\'<i class="wi wi-thermometer-exterior"></i>\'', $this->l->trad('WINDCHILL_SMALL'), '') : $this->getIconTooltip($switch, '\'<i class="wi wi-thermometer-exterior"></i>\'', $this->l->trad('HEAT'), ''),
             ),
             "6" => array(
                 "H2_TXT" => $this->l->trad('CUMULATIVE_RAIN'),
@@ -261,12 +756,12 @@ class StationView extends View
                 "H2_TEXT" => ($config['config_sun'] == 'sun' || $config['config_sun'] == 'sun_uv') ? $this->l->trad('POTENTIAL_EVAPO') : $this->l->trad('ACTUAL_EVAPO'),
                 "ICON" => $this->getIcon($switch, '<i class="wi wi-cloud-up"></i>'),
                 "ICON_TOOLTIP" => ($config['config_sun'] == 'sun' || $config['config_sun'] == 'sun_uv') ? $this->getIconTooltip($switch, '<i class="wi wi-cloud-up"></i>', $this->l->trad('PET'), '') : $this->getIconTooltip($switch, '<i class="wi wi-cloud-up"></i>', $this->l->trad('ETA'), ''),
-            ),            
+            ),
             "10" => array(
-                "H2_TXT" => '<img class="arrowpress" alt="arrow"  src="' . $this->pressImg($pressure_tendency_string)  . '" />',
+                "H2_TXT" => '<img class="arrowpress" alt="arrow"  src="' . $this->pressImg($this->getAPIDatasUp($datas, $info, $livestation)['pressure_tendency'])  . '" />',
                 "H2_TEXT" => $this->l->trad('PRESSURE'),
                 "ICON" => $this->getIcon($switch, '<i class="wi wi-barometer"></i>'),
-                "ICON_TOOLTIP" =>  $this->getIconTooltip($switch, '<i class="wi wi-barometer"></i>', $this->l->pressTrad($pressure_tendency_string, $this->l->getLg()), ' <img class="arrowpress" alt="arrow"  src="' . $this->pressImg($pressure_tendency_string)  . '" />'),
+                "ICON_TOOLTIP" =>  $this->getIconTooltip($switch, '<i class="wi wi-barometer"></i>', $this->l->pressTrad($this->getAPIDatasUp($datas, $info, $livestation)['pressure_tendency'], $this->l->getLg()), ' <img class="arrowpress" alt="arrow"  src="' . $this->pressImg($this->getAPIDatasUp($datas, $info, $livestation)['pressure_tendency'])  . '" />'),
             ),
             "11" => array(
                 "H2_TXT" => $this->l->trad('DEWPT'),
@@ -483,69 +978,65 @@ class StationView extends View
         return $inc;
     }
 
-    public function incMid1($datas, $switch, $config)
+    /**
+     * MILIEU CASE POUR HOME version 1
+     */
+    public function incMid1($datas, $switch, $config, $info, $livestation)
     {
+        $temp_f = $this->getAPIDatas($datas, $info, $livestation)['temp_f'];
+        $windchill_f = $this->getAPIDatas($datas, $info, $livestation)['windchill_f'];
 
-        
-        $zero = '&#8709;';
-        
-        $temp_f = isset($datas->temp_f) ? $datas->temp_f : $zero ;
-        $windchill_f  = isset($datas->windchill_f) ? $datas->windchill_f : $zero ;
-        $heat_index_f  = isset($datas->heat_index_f) ? $datas->heat_index_f : $zero ;
-        $dewpoint_f  = isset($datas->dewpoint_f) ? $datas->dewpoint_f : $zero ;
-        $relative_humidity  = isset($datas->relative_humidity) ? $datas->relative_humidity : $zero ;
+        $heat_index_f  = $this->getAPIDatas($datas, $info, $livestation)['heat_index_f'];
+        $dewpoint_f  = $this->getAPIDatas($datas, $info, $livestation)['dewpoint_f'];
+        $relative_humidity  = $this->getAPIDatas($datas, $info, $livestation)['relative_humidity'];
 
-        $dat = $datas->davis_current_observation;
+        $wind_ten_min_avg_mph = $this->getAPIDatas($datas, $info, $livestation)['wind_ten_min_avg_mph'];
+        $wind_ten_min_gust_mph = $this->getAPIDatas($datas, $info, $livestation)['wind_ten_min_gust_mph'];
+        $wind_day_high_mph = $this->getAPIDatas($datas, $info, $livestation)['wind_day_high_mph'];
 
-        $wind_ten_min_avg_mph = isset($dat->wind_ten_min_avg_mph) ? $dat->wind_ten_min_avg_mph : $zero ;        
-        $wind_ten_min_gust_mph = isset($dat->wind_ten_min_gust_mph) ? $dat->wind_ten_min_gust_mph : $zero ; 
-        $wind_day_high_mph = isset($dat->wind_day_high_mph) ? $dat->wind_day_high_mph : $zero ; 
+        $rain_rate_in_per_hr = $this->getAPIDatas($datas, $info, $livestation)['rain_rate_in_per_hr'];
+        $rain_day_in = $this->getAPIDatas($datas, $info, $livestation)['rain_day_in'];
+        $rain_month_in = $this->getAPIDatas($datas, $info, $livestation)['rain_month_in'];
+        $rain_year_in = $this->getAPIDatas($datas, $info, $livestation)['rain_year_in'];
 
-        $rain_rate_in_per_hr = isset($dat->rain_rate_in_per_hr) ? $dat->rain_rate_in_per_hr : $zero ;     
-        $rain_day_in = isset($dat->rain_day_in) ? $dat->rain_day_in : $zero ;
-        $rain_month_in = isset($dat->rain_month_in) ? $dat->rain_month_in : $zero ;
-        $rain_year_in = isset($dat->rain_year_in) ? $dat->rain_year_in : $zero ;
+        $et_day = $this->getAPIDatas($datas, $info, $livestation)['et_day'];
 
-        $et_day = isset($dat->et_day) ? $dat->et_day : $zero ; 
+        $temp_day_high_f = $this->getAPIDatas($datas, $info, $livestation)['temp_day_high_f'];
+        $temp_day_low_f = $this->getAPIDatas($datas, $info, $livestation)['temp_day_low_f'];
 
-        $temp_day_high_f = isset($dat->temp_day_high_f) ? $dat->temp_day_high_f : $zero ; 
-        $temp_day_low_f = isset($dat->temp_day_low_f) ? $dat->temp_day_low_f : $zero ;
-        
-        $temp_extra_1 = isset($dat->temp_extra_1) ? $dat->temp_extra_1 : $zero ;
-        $temp_extra_2 = isset($dat->temp_extra_2) ? $dat->temp_extra_2 : $zero ;
-        $temp_extra_3 = isset($dat->temp_extra_3) ? $dat->temp_extra_3 : $zero ;
-        $temp_extra_4 = isset($dat->temp_extra_4) ? $dat->temp_extra_4 : $zero ;
-        $temp_extra_5 = isset($dat->temp_extra_5) ? $dat->temp_extra_5 : $zero ;
-        $temp_extra_6 = isset($dat->temp_extra_6) ? $dat->temp_extra_6 : $zero ;
-        $temp_extra_7 = isset($dat->temp_extra_7) ? $dat->temp_extra_7 : $zero ;
+        $temp_extra_1 = $this->getAPIDatas($datas, $info, $livestation)['temp_extra_1'];
+        $temp_extra_2 = $this->getAPIDatas($datas, $info, $livestation)['temp_extra_2'];
+        $temp_extra_3 = $this->getAPIDatas($datas, $info, $livestation)['temp_extra_3'];
+        $temp_extra_4 = $this->getAPIDatas($datas, $info, $livestation)['temp_extra_4'];
+        $temp_extra_5 = $this->getAPIDatas($datas, $info, $livestation)['temp_extra_5'];
+        $temp_extra_6 = $this->getAPIDatas($datas, $info, $livestation)['temp_extra_6'];
+        $temp_extra_7 = $this->getAPIDatas($datas, $info, $livestation)['temp_extra_7'];
 
-        $temp_leaf_1 = isset($dat->temp_leaf_1) ? $dat->temp_leaf_1 : $zero ;
-        $temp_leaf_2 = isset($dat->temp_leaf_2) ? $dat->temp_leaf_2 : $zero ;
+        $temp_leaf_1 = $this->getAPIDatas($datas, $info, $livestation)['temp_leaf_1'];
+        $temp_leaf_2 = $this->getAPIDatas($datas, $info, $livestation)['temp_leaf_2'];
 
-        $temp_soil_1 = isset($dat->temp_soil_1) ? $dat->temp_soil_1 : $zero ;
-        $temp_soil_2 = isset($dat->temp_soil_2) ? $dat->temp_soil_2 : $zero ;
-        $temp_soil_3 = isset($dat->temp_soil_3) ? $dat->temp_soil_3 : $zero ;
-        $temp_soil_4 = isset($dat->temp_soil_4) ? $dat->temp_soil_4 : $zero ;
-        
-        $relative_humidity_1 = isset($dat->relative_humidity_1) ? $dat->relative_humidity_1 : $zero ;
-        $relative_humidity_2 = isset($dat->relative_humidity_2) ? $dat->relative_humidity_2 : $zero ;
-        $relative_humidity_3 = isset($dat->relative_humidity_3) ? $dat->relative_humidity_3 : $zero ;
-        $relative_humidity_4 = isset($dat->relative_humidity_4) ? $dat->relative_humidity_4 : $zero ;
-        $relative_humidity_5 = isset($dat->relative_humidity_5) ? $dat->relative_humidity_5 : $zero ;
-        $relative_humidity_6 = isset($dat->relative_humidity_6) ? $dat->relative_humidity_6 : $zero ;
-        $relative_humidity_7 = isset($dat->relative_humidity_7) ? $dat->relative_humidity_7 : $zero ;
+        $temp_soil_1 = $this->getAPIDatas($datas, $info, $livestation)['temp_soil_1'];
+        $temp_soil_2 = $this->getAPIDatas($datas, $info, $livestation)['temp_soil_2'];
+        $temp_soil_3 = $this->getAPIDatas($datas, $info, $livestation)['temp_soil_3'];
+        $temp_soil_4 = $this->getAPIDatas($datas, $info, $livestation)['temp_soil_4'];
 
-        $leaf_wetness_1 = isset($dat->leaf_wetness_1) ? $dat->leaf_wetness_1 : $zero ;
-        $leaf_wetness_2 = isset($dat->leaf_wetness_2) ? $dat->leaf_wetness_2 : $zero ;
-        
+        $relative_humidity_1 = $this->getAPIDatas($datas, $info, $livestation)['relative_humidity_1'];
+        $relative_humidity_2 = $this->getAPIDatas($datas, $info, $livestation)['relative_humidity_2'];
+        $relative_humidity_3 = $this->getAPIDatas($datas, $info, $livestation)['relative_humidity_3'];
+        $relative_humidity_4 = $this->getAPIDatas($datas, $info, $livestation)['relative_humidity_4'];
+        $relative_humidity_5 = $this->getAPIDatas($datas, $info, $livestation)['relative_humidity_5'];
+        $relative_humidity_6 = $this->getAPIDatas($datas, $info, $livestation)['relative_humidity_6'];
+        $relative_humidity_7 = $this->getAPIDatas($datas, $info, $livestation)['relative_humidity_7'];
+        $leaf_wetness_1 = $this->getAPIDatas($datas, $info, $livestation)['leaf_wetness_1'];
+        $leaf_wetness_2 = $this->getAPIDatas($datas, $info, $livestation)['leaf_wetness_2'];
 
-        $soil_moisture_1= isset($dat->soil_moisture_1) ? $dat->soil_moisture_1 : $zero ;
-        $soil_moisture_2= isset($dat->soil_moisture_2) ? $dat->soil_moisture_2 : $zero ;
-        $soil_moisture_3= isset($dat->soil_moisture_3) ? $dat->soil_moisture_3 : $zero ;
-        $soil_moisture_4= isset($dat->soil_moisture_4) ? $dat->soil_moisture_4 : $zero ;
+        $soil_moisture_1 = $this->getAPIDatas($datas, $info, $livestation)['soil_moisture_1'];
+        $soil_moisture_2 = $this->getAPIDatas($datas, $info, $livestation)['soil_moisture_2'];
+        $soil_moisture_3 = $this->getAPIDatas($datas, $info, $livestation)['soil_moisture_3'];
+        $soil_moisture_4 = $this->getAPIDatas($datas, $info, $livestation)['soil_moisture_4'];
 
-        $temp_in_f= isset($dat->temp_in_f) ? $dat->temp_in_f : $zero ;
-        $relative_humidity_in= isset($dat->relative_humidity_in) ? $dat->relative_humidity_in : $zero ;
+        $temp_in_f = $this->getAPIDatas($datas, $info, $livestation)['temp_in_f'];
+        $relative_humidity_in = $this->getAPIDatas($datas, $info, $livestation)['relative_humidity_in'];
 
         $inc = array(
             "0" => array(
@@ -560,347 +1051,346 @@ class StationView extends View
                 "_UNIT" => $this->getUnit($switch, 'wind'),
                 "_CLASS_UNIT_SMALL" => '05',
                 "_CLASS_UNIT_LARGE" => '06',
-                "color" => $this->col->colWind($switch, $wind_ten_min_avg_mph, $datas)
+                "color" => $this->col->colWind($switch, $wind_ten_min_avg_mph, $datas, $info, $livestation)
             ),
             "2" => array(
                 "_VALUE_MAIN" => $this->getTemp($switch, $temp_f),
                 "_UNIT" => $this->getUnit($switch, 'temp'),
                 "_CLASS_UNIT_SMALL" => '08',
                 "_CLASS_UNIT_LARGE" => '09',
-                "color" => $this->col->colTemp($switch, $temp_f, $datas)
+                "color" => $this->col->colTemp($switch, $temp_f, $datas, $info, $livestation)
             ),
             "3" => array(
                 "_VALUE_MAIN" => $this->getRain($switch, $rain_rate_in_per_hr),
-                "_UNIT" => $this->getUnit($switch, 'rain').'/h',
+                "_UNIT" => $this->getUnit($switch, 'rain') . '/h',
                 "_CLASS_UNIT_SMALL" => '05',
                 "_CLASS_UNIT_LARGE" => '06',
-                "color" => $this->col->colRain($switch, $rain_rate_in_per_hr, $datas)
+                "color" => $this->col->colRain($switch, $rain_rate_in_per_hr, $datas, $info, $livestation)
             ),
             "4" => array(
                 "_VALUE_MAIN" => $this->getWind($switch, $wind_ten_min_gust_mph),
                 "_UNIT" => $this->getUnit($switch, 'wind'),
                 "_CLASS_UNIT_SMALL" => '05',
                 "_CLASS_UNIT_LARGE" => '06',
-                "color" => $this->col->colWind($switch, $wind_ten_min_gust_mph, $datas)
+                "color" => $this->col->colWind($switch, $wind_ten_min_gust_mph, $datas, $info, $livestation)
             ),
             "5" => array(
                 "_VALUE_MAIN" => ($this->is_Temp('59', $temp_f) == true) ? $this->getTemp($switch, $windchill_f) : $this->getTemp($switch, $heat_index_f),
                 "_UNIT" => $this->getUnit($switch, 'temp'),
                 "_CLASS_UNIT_SMALL" => '08',
                 "_CLASS_UNIT_LARGE" => '09',
-                "color" => ($this->is_Temp('59', $temp_f) == true) ? $this->col->colWindchill($switch, $windchill_f, $datas) : $this->col->colHeat($switch, $heat_index_f, $datas)
+                "color" => ($this->is_Temp('59', $temp_f) == true) ? $this->col->colWindchill($switch, $windchill_f, $datas, $info, $livestation) : $this->col->colHeat($switch, $heat_index_f, $datas, $info, $livestation)
             ),
             "6" => array(
                 "_VALUE_MAIN" => $this->getRain($switch, $rain_day_in),
                 "_UNIT" => $this->getUnit($switch, 'rain'),
                 "_CLASS_UNIT_SMALL" => '05',
                 "_CLASS_UNIT_LARGE" => '06',
-                "color" => $this->col->colRain($switch, $rain_day_in, $datas)
+                "color" => $this->col->colRain($switch, $rain_day_in, $datas, $info, $livestation)
             ),
             "7" => array(
                 "_VALUE_MAIN" => $this->getWind($switch, $wind_day_high_mph),
                 "_UNIT" => $this->getUnit($switch, 'wind'),
                 "_CLASS_UNIT_SMALL" => '05',
                 "_CLASS_UNIT_LARGE" => '06',
-                "color" => $this->col->colWind($switch, $wind_day_high_mph, $datas)
+                "color" => $this->col->colWind($switch, $wind_day_high_mph, $datas, $info, $livestation)
             ),
             "9" => array(
                 "_VALUE_MAIN" => ($config['config_sun'] == 'sun' || $config['config_sun'] == 'sun_uv') ? $this->getRain($switch, $et_day) : $this->getRain($switch, $this->ETR_in($temp_day_high_f, $temp_day_low_f, $rain_day_in)),
                 "_UNIT" =>  $this->getUnit($switch, 'rain'),
                 "_CLASS_UNIT_SMALL" => '05',
                 "_CLASS_UNIT_LARGE" => '06',
-                "color" => ($config['config_sun'] == 'sun' || $config['config_sun'] == 'sun_uv') ? $this->col->colRain($switch, $et_day, $datas) : $this->col->colRain($switch, $this->ETR_in($temp_day_high_f, $temp_day_low_f, $rain_day_in), $datas)
+                "color" => ($config['config_sun'] == 'sun' || $config['config_sun'] == 'sun_uv') ? $this->col->colRain($switch, $et_day, $datas, $info, $livestation) : $this->col->colRain($switch, $this->ETR_in($temp_day_high_f, $temp_day_low_f, $rain_day_in), $datas, $info, $livestation)
             ),
             "11" => array(
                 "_VALUE_MAIN" => $this->getTemp($switch, $dewpoint_f),
                 "_UNIT" =>  $this->getUnit($switch, 'temp'),
                 "_CLASS_UNIT_SMALL" => '08',
                 "_CLASS_UNIT_LARGE" => '09',
-                "color" => $this->col->colTemp($switch, $dewpoint_f, $datas) 
+                "color" => $this->col->colTemp($switch, $dewpoint_f, $datas, $info, $livestation)
             ),
             "12" => array(
                 "_VALUE_MAIN" => $relative_humidity,
                 "_UNIT" =>  '%',
                 "_CLASS_UNIT_SMALL" => '06',
                 "_CLASS_UNIT_LARGE" => '08',
-                "color" => $this->col->colHumidity($switch, $relative_humidity, $datas) 
+                "color" => $this->col->colHumidity($switch, $relative_humidity, $datas, $info, $livestation)
             ),
             "13" => array(
                 "_VALUE_MAIN" => $this->getRain($switch, $rain_month_in),
                 "_UNIT" => $this->getUnit($switch, 'rain'),
                 "_CLASS_UNIT_SMALL" => '05',
                 "_CLASS_UNIT_LARGE" => '06',
-                "color" => $this->col->colRain($switch, $rain_month_in, $datas)
+                "color" => $this->col->colRain($switch, $rain_month_in, $datas, $info, $livestation)
             ),
             "14" => array(
                 "_VALUE_MAIN" => $this->getRain($switch, $rain_year_in),
                 "_UNIT" => $this->getUnit($switch, 'rain'),
                 "_CLASS_UNIT_SMALL" => '05',
                 "_CLASS_UNIT_LARGE" => '06',
-                "color" => $this->col->colRain($switch, $rain_year_in, $datas)
+                "color" => $this->col->colRain($switch, $rain_year_in, $datas, $info, $livestation)
             ),
             "15" => array(
                 "_VALUE_MAIN" => $this->getTemp($switch, $temp_extra_1),
                 "_UNIT" => $this->getUnit($switch, 'temp'),
                 "_CLASS_UNIT_SMALL" => '08',
                 "_CLASS_UNIT_LARGE" => '09',
-                "color" => $this->col->colTemp($switch, $temp_extra_1, $datas)
+                "color" => $this->col->colTemp($switch, $temp_extra_1, $datas, $info, $livestation)
             ),
             "16" => array(
                 "_VALUE_MAIN" => $this->getTemp($switch, $temp_extra_2),
                 "_UNIT" => $this->getUnit($switch, 'temp'),
                 "_CLASS_UNIT_SMALL" => '08',
                 "_CLASS_UNIT_LARGE" => '09',
-                "color" => $this->col->colTemp($switch, $temp_extra_2, $datas)
+                "color" => $this->col->colTemp($switch, $temp_extra_2, $datas, $info, $livestation)
             ),
             "17" => array(
                 "_VALUE_MAIN" => $this->getTemp($switch, $temp_extra_3),
                 "_UNIT" => $this->getUnit($switch, 'temp'),
                 "_CLASS_UNIT_SMALL" => '08',
                 "_CLASS_UNIT_LARGE" => '09',
-                "color" => $this->col->colTemp($switch, $temp_extra_3, $datas)
+                "color" => $this->col->colTemp($switch, $temp_extra_3, $datas, $info, $livestation)
             ),
             "18" => array(
                 "_VALUE_MAIN" => $this->getTemp($switch, $temp_extra_4),
                 "_UNIT" => $this->getUnit($switch, 'temp'),
                 "_CLASS_UNIT_SMALL" => '08',
                 "_CLASS_UNIT_LARGE" => '09',
-                "color" => $this->col->colTemp($switch, $temp_extra_4, $datas)
+                "color" => $this->col->colTemp($switch, $temp_extra_4, $datas, $info, $livestation)
             ),
             "19" => array(
                 "_VALUE_MAIN" => $this->getTemp($switch, $temp_extra_5),
                 "_UNIT" => $this->getUnit($switch, 'temp'),
                 "_CLASS_UNIT_SMALL" => '08',
                 "_CLASS_UNIT_LARGE" => '09',
-                "color" => $this->col->colTemp($switch, $temp_extra_5, $datas)
+                "color" => $this->col->colTemp($switch, $temp_extra_5, $datas, $info, $livestation)
             ),
             "20" => array(
                 "_VALUE_MAIN" => $this->getTemp($switch, $temp_extra_6),
                 "_UNIT" => $this->getUnit($switch, 'temp'),
                 "_CLASS_UNIT_SMALL" => '08',
                 "_CLASS_UNIT_LARGE" => '09',
-                "color" => $this->col->colTemp($switch, $temp_extra_6, $datas)
+                "color" => $this->col->colTemp($switch, $temp_extra_6, $datas, $info, $livestation)
             ),
             "21" => array(
                 "_VALUE_MAIN" => $this->getTemp($switch, $temp_extra_7),
                 "_UNIT" => $this->getUnit($switch, 'temp'),
                 "_CLASS_UNIT_SMALL" => '08',
                 "_CLASS_UNIT_LARGE" => '09',
-                "color" => $this->col->colTemp($switch, $temp_extra_7, $datas)
+                "color" => $this->col->colTemp($switch, $temp_extra_7, $datas, $info, $livestation)
             ),
             "24" => array(
                 "_VALUE_MAIN" => $this->getTemp($switch, $temp_leaf_1),
                 "_UNIT" => $this->getUnit($switch, 'temp'),
                 "_CLASS_UNIT_SMALL" => '08',
                 "_CLASS_UNIT_LARGE" => '09',
-                "color" => $this->col->colTemp($switch, $temp_leaf_1, $datas)
+                "color" => $this->col->colTemp($switch, $temp_leaf_1, $datas, $info, $livestation)
             ),
             "25" => array(
                 "_VALUE_MAIN" => $this->getTemp($switch, $temp_leaf_2),
                 "_UNIT" => $this->getUnit($switch, 'temp'),
                 "_CLASS_UNIT_SMALL" => '08',
                 "_CLASS_UNIT_LARGE" => '09',
-                "color" => $this->col->colTemp($switch, $temp_leaf_2, $datas)
+                "color" => $this->col->colTemp($switch, $temp_leaf_2, $datas, $info, $livestation)
             ),
             "26" => array(
                 "_VALUE_MAIN" => $this->getTemp($switch, $temp_soil_1),
                 "_UNIT" => $this->getUnit($switch, 'temp'),
                 "_CLASS_UNIT_SMALL" => '08',
                 "_CLASS_UNIT_LARGE" => '09',
-                "color" => $this->col->colTemp($switch, $temp_soil_1, $datas)
+                "color" => $this->col->colTemp($switch, $temp_soil_1, $datas, $info, $livestation)
             ),
             "27" => array(
                 "_VALUE_MAIN" => $this->getTemp($switch, $temp_soil_2),
                 "_UNIT" => $this->getUnit($switch, 'temp'),
                 "_CLASS_UNIT_SMALL" => '08',
                 "_CLASS_UNIT_LARGE" => '09',
-                "color" => $this->col->colTemp($switch, $temp_soil_2, $datas)
+                "color" => $this->col->colTemp($switch, $temp_soil_2, $datas, $info, $livestation)
             ),
             "28" => array(
                 "_VALUE_MAIN" => $this->getTemp($switch, $temp_soil_3),
                 "_UNIT" => $this->getUnit($switch, 'temp'),
                 "_CLASS_UNIT_SMALL" => '08',
                 "_CLASS_UNIT_LARGE" => '09',
-                "color" => $this->col->colTemp($switch, $temp_soil_3, $datas)
+                "color" => $this->col->colTemp($switch, $temp_soil_3, $datas, $info, $livestation)
             ),
             "29" => array(
                 "_VALUE_MAIN" => $this->getTemp($switch, $temp_soil_4),
                 "_UNIT" => $this->getUnit($switch, 'temp'),
                 "_CLASS_UNIT_SMALL" => '08',
                 "_CLASS_UNIT_LARGE" => '09',
-                "color" => $this->col->colTemp($switch, $temp_soil_4, $datas)
+                "color" => $this->col->colTemp($switch, $temp_soil_4, $datas, $info, $livestation)
             ),
             "30" => array(
                 "_VALUE_MAIN" => $relative_humidity_1,
                 "_UNIT" =>  '%',
                 "_CLASS_UNIT_SMALL" => '06',
                 "_CLASS_UNIT_LARGE" => '08',
-                "color" => $this->col->colHumidity($switch, $relative_humidity_1, $datas) 
+                "color" => $this->col->colHumidity($switch, $relative_humidity_1, $datas, $info, $livestation)
             ),
             "31" => array(
                 "_VALUE_MAIN" => $relative_humidity_2,
                 "_UNIT" =>  '%',
                 "_CLASS_UNIT_SMALL" => '06',
                 "_CLASS_UNIT_LARGE" => '08',
-                "color" => $this->col->colHumidity($switch, $relative_humidity_2, $datas) 
+                "color" => $this->col->colHumidity($switch, $relative_humidity_2, $datas, $info, $livestation)
             ),
             "32" => array(
                 "_VALUE_MAIN" => $relative_humidity_3,
                 "_UNIT" =>  '%',
                 "_CLASS_UNIT_SMALL" => '06',
                 "_CLASS_UNIT_LARGE" => '08',
-                "color" => $this->col->colHumidity($switch, $relative_humidity_3, $datas) 
+                "color" => $this->col->colHumidity($switch, $relative_humidity_3, $datas, $info, $livestation)
             ),
             "33" => array(
                 "_VALUE_MAIN" => $relative_humidity_4,
                 "_UNIT" =>  '%',
                 "_CLASS_UNIT_SMALL" => '06',
                 "_CLASS_UNIT_LARGE" => '08',
-                "color" => $this->col->colHumidity($switch, $relative_humidity_4, $datas) 
+                "color" => $this->col->colHumidity($switch, $relative_humidity_4, $datas, $info, $livestation)
             ),
             "34" => array(
                 "_VALUE_MAIN" => $relative_humidity_5,
                 "_UNIT" =>  '%',
                 "_CLASS_UNIT_SMALL" => '06',
                 "_CLASS_UNIT_LARGE" => '08',
-                "color" => $this->col->colHumidity($switch, $relative_humidity_5, $datas) 
+                "color" => $this->col->colHumidity($switch, $relative_humidity_5, $datas, $info, $livestation)
             ),
             "35" => array(
                 "_VALUE_MAIN" => $relative_humidity_6,
                 "_UNIT" =>  '%',
                 "_CLASS_UNIT_SMALL" => '06',
                 "_CLASS_UNIT_LARGE" => '08',
-                "color" => $this->col->colHumidity($switch, $relative_humidity_6, $datas) 
+                "color" => $this->col->colHumidity($switch, $relative_humidity_6, $datas, $info, $livestation)
             ),
             "36" => array(
                 "_VALUE_MAIN" => $relative_humidity_7,
                 "_UNIT" =>  '%',
                 "_CLASS_UNIT_SMALL" => '06',
                 "_CLASS_UNIT_LARGE" => '08',
-                "color" => $this->col->colHumidity($switch, $relative_humidity_7, $datas) 
+                "color" => $this->col->colHumidity($switch, $relative_humidity_7, $datas, $info, $livestation)
             ),
             "37" => array(
                 "_VALUE_MAIN" => $leaf_wetness_1,
                 "_UNIT" =>  '',
                 "_CLASS_UNIT_SMALL" => '06',
                 "_CLASS_UNIT_LARGE" => '08',
-                "color" => $this->col->colLeaf($switch, $leaf_wetness_1, $datas) 
+                "color" => $this->col->colLeaf($switch, $leaf_wetness_1, $datas, $info, $livestation)
             ),
             "38" => array(
                 "_VALUE_MAIN" => $leaf_wetness_2,
                 "_UNIT" =>  '',
                 "_CLASS_UNIT_SMALL" => '06',
                 "_CLASS_UNIT_LARGE" => '08',
-                "color" => $this->col->colLeaf($switch, $leaf_wetness_2, $datas) 
+                "color" => $this->col->colLeaf($switch, $leaf_wetness_2, $datas, $info, $livestation)
             ),
             "39" => array(
                 "_VALUE_MAIN" => $soil_moisture_1,
                 "_UNIT" =>  'cB',
                 "_CLASS_UNIT_SMALL" => '06',
                 "_CLASS_UNIT_LARGE" => '08',
-                "color" => $this->col->colSoil($switch, $soil_moisture_1, $datas) 
+                "color" => $this->col->colSoil($switch, $soil_moisture_1, $datas, $info, $livestation)
             ),
             "40" => array(
                 "_VALUE_MAIN" => $soil_moisture_2,
                 "_UNIT" =>  'cB',
                 "_CLASS_UNIT_SMALL" => '06',
                 "_CLASS_UNIT_LARGE" => '08',
-                "color" => $this->col->colSoil($switch, $soil_moisture_2, $datas) 
+                "color" => $this->col->colSoil($switch, $soil_moisture_2, $datas, $info, $livestation)
             ),
             "41" => array(
                 "_VALUE_MAIN" => $soil_moisture_3,
                 "_UNIT" =>  'cB',
                 "_CLASS_UNIT_SMALL" => '06',
                 "_CLASS_UNIT_LARGE" => '08',
-                "color" => $this->col->colSoil($switch, $soil_moisture_3, $datas) 
+                "color" => $this->col->colSoil($switch, $soil_moisture_3, $datas, $info, $livestation)
             ),
             "42" => array(
                 "_VALUE_MAIN" => $soil_moisture_4,
                 "_UNIT" =>  'cB',
                 "_CLASS_UNIT_SMALL" => '06',
                 "_CLASS_UNIT_LARGE" => '08',
-                "color" => $this->col->colSoil($switch, $soil_moisture_4, $datas) 
+                "color" => $this->col->colSoil($switch, $soil_moisture_4, $datas, $info, $livestation)
             ),
             "43" => array(
                 "_VALUE_MAIN" => $this->getTemp($switch, $temp_in_f),
                 "_UNIT" => $this->getUnit($switch, 'temp'),
                 "_CLASS_UNIT_SMALL" => '08',
                 "_CLASS_UNIT_LARGE" => '09',
-                "color" => $this->col->colTemp($switch, $temp_in_f, $datas)
+                "color" => $this->col->colTemp($switch, $temp_in_f, $datas, $info, $livestation)
             ),
             "44" => array(
                 "_VALUE_MAIN" => $relative_humidity_in,
                 "_UNIT" =>  '%',
                 "_CLASS_UNIT_SMALL" => '06',
                 "_CLASS_UNIT_LARGE" => '08',
-                "color" => $this->col->colHumidity($switch, $relative_humidity_in, $datas) 
+                "color" => $this->col->colHumidity($switch, $relative_humidity_in, $datas, $info, $livestation)
             ),
         );
 
         return $inc;
     }
 
-
-    public function incMid2($datas, $switch)
-    {        
-        $zero = '&#8709;';        
-        $pressure_in = isset($datas->pressure_in) ? $datas->pressure_in : $zero ;        
-        $pressure_mb = isset($datas->pressure_mb) ? $datas->pressure_mb : $zero ;
-        $dat = $datas->davis_current_observation;
-        $pressure_tendency_string = isset($dat->pressure_tendency_string) ? $dat->pressure_tendency_string : $zero ;
+    /**
+     * MILIEU CASE POUR HOME version 2
+     */
+    public function incMid2($datas, $switch, $info, $livestation)
+    {
+        $pressure_in = $this->getAPIDatas($datas, $info, $livestation)['pressure_in'];
+        $pressure_mb = $this->getAPIDatasUp($datas, $info, $livestation)['mb_pressure'];
 
         $inc = array(
             "10" => array(
                 "_VALUE_MAIN" => $this->getPress($switch, $pressure_in),
                 "TEXT_TOOLTIP_S" => $this->l->trad('PRESSURE'),
                 "TEXT_TOOLTIP_M" => $this->l->trad('PRESSURE'),
-                "TEXT_TOOLTIP_L" => $this->l->pressTrad($pressure_tendency_string, $this->l->getLg()),
+                "TEXT_TOOLTIP_L" => $this->l->pressTrad($this->getAPIDatasUp($datas, $info, $livestation)['pressure_tendency'], $this->l->getLg()),
                 "_UNIT_S" => '',
                 "_UNIT_M" =>  $this->getUnit($switch, 'press'),
                 "_UNIT_L" =>  $this->getUnit($switch, 'press'),
                 "_CLASS_UNIT_SMALL" => '05',
                 "_CLASS_UNIT_MIDDLE" => '05',
                 "_CLASS_UNIT_LARGE" => '06',
-                "TXT_ALTERN" => '&nbsp;<img class="arrowpress2" alt="arrow" src="' . $this->pressImg($pressure_tendency_string)  . '" />',               
-                "color" => $this->col->colPress($switch, $pressure_mb, $datas)
+                "TXT_ALTERN" => '&nbsp;<img class="arrowpress2" alt="arrow" src="' . $this->pressImg($this->getAPIDatasUp($datas, $info, $livestation)['pressure_tendency'])  . '" />',
+                "color" => $this->col->colPress($switch, $pressure_mb, $datas, $info, $livestation)
             ),
         );
 
         return $inc;
     }
 
-    public function incMid3($datas, $switch)
-    {        
-        $zero = '&#8709;';        
-        $dat = $datas->davis_current_observation;
+    /**
+     * MILIEU CASE POUR HOME version 3
+     */
+    public function incMid3($datas, $switch, $info, $livestation)
+    {
+        $solar_radiation = $this->getAPIDatas($datas, $info, $livestation)['solar_radiation'];
+        $solar_radiation_day_high = $this->getAPIDatas($datas, $info, $livestation)['solar_radiation_day_high'];
+        $solar_radiation_day_high_time = $this->getAPIDatas($datas, $info, $livestation)['solar_radiation_day_high_time'];
 
-        $solar_radiation = isset($dat->solar_radiation) ? $dat->solar_radiation : $zero ;
-        $solar_radiation_day_high = isset($dat->solar_radiation_day_high) ? $dat->solar_radiation_day_high : $zero ;
-        $solar_radiation_day_high_time = isset($dat->solar_radiation_day_high_time) ? $dat->solar_radiation_day_high_time : $zero ;
-
-        $uv_index = isset($dat->uv_index) ? $dat->uv_index : $zero ;
-        $uv_index_day_high = isset($dat->uv_index_day_high) ? $dat->uv_index_day_high : $zero ;
-        $uv_index_day_high_time = isset($dat->uv_index_day_high_time) ? $dat->uv_index_day_high_time : $zero ;
+        $uv_index = $this->getAPIDatas($datas, $info, $livestation)['uv_index'];
+        $uv_index_day_high = $this->getAPIDatas($datas, $info, $livestation)['uv_index_day_high'];
+        $uv_index_day_high_time = $this->getAPIDatas($datas, $info, $livestation)['uv_index_day_high_time'];
 
         $inc = array(
             "22" => array(
                 "_VALUE_MAIN" => $solar_radiation,
                 "TEXT_TOOLTIP_S" => $this->l->trad('MAX') . ' : ' . $solar_radiation_day_high . ' W/m² ' . $this->l->trad('AT') . ' ' . $this->l->timeTrad($solar_radiation_day_high_time, $this->l->getLg()),
-                "TEXT_TOOLTIP_L" => $this->l->trad('MAX') . ' : ' . $solar_radiation_day_high . ' W/m² ' . $this->l->trad('AT') . ' ' . $this->l->timeTrad($solar_radiation_day_high_time, $this->l->getLg()),            
+                "TEXT_TOOLTIP_L" => $this->l->trad('MAX') . ' : ' . $solar_radiation_day_high . ' W/m² ' . $this->l->trad('AT') . ' ' . $this->l->timeTrad($solar_radiation_day_high_time, $this->l->getLg()),
                 "_UNIT_S" => 'W/m²',
                 "_UNIT_L" =>  '&nbsp;W/m²',
                 "_CLASS_UNIT_SMALL" => '05',
-                "_CLASS_UNIT_LARGE" => '06',            
-                "color" => $this->col->colSun($switch, $solar_radiation, $datas)
+                "_CLASS_UNIT_LARGE" => '06',
+                "color" => $this->col->colSun($switch, $solar_radiation, $datas, $info, $livestation)
             ),
             "23" => array(
                 "_VALUE_MAIN" => $uv_index,
                 "TEXT_TOOLTIP_S" => $this->l->trad('MAX') . ' : ' . $uv_index_day_high . ' W/m² ' . $this->l->trad('AT') . ' ' . $this->l->timeTrad($uv_index_day_high_time, $this->l->getLg()),
-                "TEXT_TOOLTIP_L" => $this->l->trad('MAX') . ' : ' . $uv_index_day_high . ' W/m² ' . $this->l->trad('AT') . ' ' . $this->l->timeTrad($uv_index_day_high_time, $this->l->getLg()),            
+                "TEXT_TOOLTIP_L" => $this->l->trad('MAX') . ' : ' . $uv_index_day_high . ' W/m² ' . $this->l->trad('AT') . ' ' . $this->l->timeTrad($uv_index_day_high_time, $this->l->getLg()),
                 "_UNIT_S" => '',
                 "_UNIT_L" =>  '&nbsp;/16',
                 "_CLASS_UNIT_SMALL" => '05',
-                "_CLASS_UNIT_LARGE" => '06',            
+                "_CLASS_UNIT_LARGE" => '06',
                 "color" => $this->col->colUV($switch, $uv_index, $datas)
             ),
         );
@@ -908,13 +1398,15 @@ class StationView extends View
         return $inc;
     }
 
-    public function incDown1($datas, $switch)
+    /**
+     * BAS CASE POUR HOME version 1
+     */
+    public function incDown1($datas, $info, $livestation)
     {
 
-        $zero = '&#8709;';       
-        $wind_degrees = isset($datas->wind_degrees) ? $datas->wind_degrees : $zero ;                
-        $dat = $datas->davis_current_observation;
-        $wind_day_high_time = isset($dat->wind_day_high_time) ? $dat->wind_day_high_time : $zero ; 
+
+        $wind_degrees = $this->getAPIDatas($datas, $info, $livestation)['wind_degrees'];
+        $wind_day_high_time = $this->getAPIDatas($datas, $info, $livestation)['wind_day_high_time'];
 
         $inc = array(
             "0" => array(
@@ -959,335 +1451,332 @@ class StationView extends View
 
 
 
+    /**
+     * BAS CASE POUR HOME version 2
+     */
 
-
-    public function incDown2($datas, $switch)
+    public function incDown2($datas, $switch, $info, $livestation)
     {
-
-        $zero = '&#8709;'; 
-
-        $dat = $datas->davis_current_observation;
-
-        $temp_day_low_f = isset($dat->temp_day_low_f) ? $dat->temp_day_low_f : $zero ; 
-        $temp_month_low_f = isset($dat->temp_month_low_f) ? $dat->temp_month_low_f : $zero ; 
-        $temp_year_low_f = isset($dat->temp_year_low_f) ? $dat->temp_year_low_f : $zero ; 
-        $temp_day_high_f = isset($dat->temp_day_high_f) ? $dat->temp_day_high_f : $zero ; 
-        $temp_month_high_f = isset($dat->temp_month_high_f) ? $dat->temp_month_high_f : $zero ; 
-        $temp_year_high_f = isset($dat->temp_year_high_f) ? $dat->temp_year_high_f : $zero ; 
-
-        $temp_day_low_time = isset($dat->temp_day_low_time) ? $dat->temp_day_low_time : $zero ; 
-        $temp_day_high_time = isset($dat->temp_day_high_time) ? $dat->temp_day_high_time : $zero ;
-        
-        $pressure_day_low_in = isset($dat->pressure_day_low_in) ? $dat->pressure_day_low_in : $zero ;
-        $pressure_month_low_in = isset($dat->pressure_month_low_in) ? $dat->pressure_month_low_in : $zero ;
-        $pressure_year_low_in = isset($dat->pressure_year_low_in) ? $dat->pressure_year_low_in : $zero ;
-        $pressure_day_high_in = isset($dat->pressure_day_high_in) ? $dat->pressure_day_high_in : $zero ;
-        $pressure_month_high_in = isset($dat->pressure_month_high_in) ? $dat->pressure_month_high_in : $zero ;
-        $pressure_year_high_in = isset($dat->pressure_year_high_in) ? $dat->pressure_year_high_in : $zero ;
-        
-        $pressure_day_low_time = isset($dat->pressure_day_low_time) ? $dat->pressure_day_low_time : $zero ;
-        $pressure_day_high_time = isset($dat->pressure_day_high_time) ? $dat->pressure_day_high_time : $zero ;
-
-        $dewpoint_day_low_f = isset($dat->dewpoint_day_low_f) ? $dat->dewpoint_day_low_f : $zero ;
-        $dewpoint_month_low_f = isset($dat->dewpoint_month_low_f) ? $dat->dewpoint_month_low_f : $zero ;
-        $dewpoint_year_low_f = isset($dat->dewpoint_year_low_f) ? $dat->dewpoint_year_low_f : $zero ;
-        $dewpoint_day_high_f = isset($dat->dewpoint_day_high_f) ? $dat->dewpoint_day_high_f : $zero ;
-        $dewpoint_month_high_f = isset($dat->dewpoint_month_high_f) ? $dat->dewpoint_month_high_f : $zero ;
-        $dewpoint_year_high_f = isset($dat->dewpoint_year_high_f) ? $dat->dewpoint_year_high_f : $zero ;
-
-        $dewpoint_day_low_time = isset($dat->dewpoint_day_low_time) ? $dat->dewpoint_day_low_time : $zero ;
-        $dewpoint_day_high_time = isset($dat->dewpoint_day_high_time) ? $dat->dewpoint_day_high_time : $zero ;
-
-        $relative_humidity_day_low = isset($dat->relative_humidity_day_low) ? $dat->relative_humidity_day_low : $zero ;
-        $relative_humidity_month_low = isset($dat->relative_humidity_month_low) ? $dat->relative_humidity_month_low : $zero ;
-        $relative_humidity_year_low = isset($dat->relative_humidity_year_low) ? $dat->relative_humidity_year_low : $zero ;
-        $relative_humidity_day_high = isset($dat->relative_humidity_day_high) ? $dat->relative_humidity_day_high : $zero ;
-        $relative_humidity_month_high = isset($dat->relative_humidity_month_high) ? $dat->relative_humidity_month_high : $zero ;
-        $relative_humidity_year_high = isset($dat->relative_humidity_year_high) ? $dat->relative_humidity_year_high : $zero ;
-
-        $relative_humidity_day_low_time = isset($dat->relative_humidity_day_low_time) ? $dat->relative_humidity_day_low_time : $zero ;
-        $relative_humidity_day_high_time = isset($dat->relative_humidity_day_high_time) ? $dat->relative_humidity_day_high_time : $zero ;
-
-        $temp_extra_1_day_low = isset($dat->temp_extra_1_day_low) ? $dat->temp_extra_1_day_low : $zero ;
-        $temp_extra_1_month_low = isset($dat->temp_extra_1_month_low) ? $dat->temp_extra_1_month_low : $zero ;
-        $temp_extra_1_year_low = isset($dat->temp_extra_1_year_low) ? $dat->temp_extra_1_year_low : $zero ;
-        $temp_extra_1_day_high= isset($dat->temp_extra_1_day_high) ? $dat->temp_extra_1_day_high : $zero ;
-        $temp_extra_1_month_high = isset($dat->temp_extra_1_month_high) ? $dat->temp_extra_1_month_high : $zero ;
-        $temp_extra_1_year_high = isset($dat->temp_extra_1_year_high) ? $dat->temp_extra_1_year_high : $zero ;
-
-        $temp_extra_1_day_low_time = isset($dat->temp_extra_1_day_low_time) ? $dat->temp_extra_1_day_low_time : $zero ;
-        $temp_extra_1_day_high_time = isset($dat->temp_extra_1_day_high_time) ? $dat->temp_extra_1_day_high_time : $zero ;
-
-        $temp_extra_2_day_low = isset($dat->temp_extra_2_day_low) ? $dat->temp_extra_2_day_low : $zero ;
-        $temp_extra_2_month_low = isset($dat->temp_extra_2_month_low) ? $dat->temp_extra_2_month_low : $zero ;
-        $temp_extra_2_year_low = isset($dat->temp_extra_2_year_low) ? $dat->temp_extra_2_year_low : $zero ;
-        $temp_extra_2_day_high= isset($dat->temp_extra_2_day_high) ? $dat->temp_extra_2_day_high : $zero ;
-        $temp_extra_2_month_high = isset($dat->temp_extra_2_month_high) ? $dat->temp_extra_2_month_high : $zero ;
-        $temp_extra_2_year_high = isset($dat->temp_extra_2_year_high) ? $dat->temp_extra_2_year_high : $zero ;
-
-        $temp_extra_2_day_low_time = isset($dat->temp_extra_2_day_low_time) ? $dat->temp_extra_2_day_low_time : $zero ;
-        $temp_extra_2_day_high_time = isset($dat->temp_extra_2_day_high_time) ? $dat->temp_extra_2_day_high_time : $zero ;
-
-        $temp_extra_3_day_low = isset($dat->temp_extra_3_day_low) ? $dat->temp_extra_3_day_low : $zero ;
-        $temp_extra_3_month_low = isset($dat->temp_extra_3_month_low) ? $dat->temp_extra_3_month_low : $zero ;
-        $temp_extra_3_year_low = isset($dat->temp_extra_3_year_low) ? $dat->temp_extra_3_year_low : $zero ;
-        $temp_extra_3_day_high= isset($dat->temp_extra_3_day_high) ? $dat->temp_extra_3_day_high : $zero ;
-        $temp_extra_3_month_high = isset($dat->temp_extra_3_month_high) ? $dat->temp_extra_3_month_high : $zero ;
-        $temp_extra_3_year_high = isset($dat->temp_extra_3_year_high) ? $dat->temp_extra_3_year_high : $zero ;
-
-        $temp_extra_3_day_low_time = isset($dat->temp_extra_3_day_low_time) ? $dat->temp_extra_3_day_low_time : $zero ;
-        $temp_extra_3_day_high_time = isset($dat->temp_extra_3_day_high_time) ? $dat->temp_extra_3_day_high_time : $zero ;
-
-        $temp_extra_4_day_low = isset($dat->temp_extra_4_day_low) ? $dat->temp_extra_4_day_low : $zero ;
-        $temp_extra_4_month_low = isset($dat->temp_extra_4_month_low) ? $dat->temp_extra_4_month_low : $zero ;
-        $temp_extra_4_year_low = isset($dat->temp_extra_4_year_low) ? $dat->temp_extra_4_year_low : $zero ;
-        $temp_extra_4_day_high= isset($dat->temp_extra_4_day_high) ? $dat->temp_extra_4_day_high : $zero ;
-        $temp_extra_4_month_high = isset($dat->temp_extra_4_month_high) ? $dat->temp_extra_4_month_high : $zero ;
-        $temp_extra_4_year_high = isset($dat->temp_extra_4_year_high) ? $dat->temp_extra_4_year_high : $zero ;
-
-        $temp_extra_4_day_low_time = isset($dat->temp_extra_4_day_low_time) ? $dat->temp_extra_4_day_low_time : $zero ;
-        $temp_extra_4_day_high_time = isset($dat->temp_extra_4_day_high_time) ? $dat->temp_extra_4_day_high_time : $zero ;
-
-        $temp_extra_5_day_low = isset($dat->temp_extra_5_day_low) ? $dat->temp_extra_5_day_low : $zero ;
-        $temp_extra_5_month_low = isset($dat->temp_extra_5_month_low) ? $dat->temp_extra_5_month_low : $zero ;
-        $temp_extra_5_year_low = isset($dat->temp_extra_5_year_low) ? $dat->temp_extra_5_year_low : $zero ;
-        $temp_extra_5_day_high= isset($dat->temp_extra_5_day_high) ? $dat->temp_extra_5_day_high : $zero ;
-        $temp_extra_5_month_high = isset($dat->temp_extra_5_month_high) ? $dat->temp_extra_5_month_high : $zero ;
-        $temp_extra_5_year_high = isset($dat->temp_extra_5_year_high) ? $dat->temp_extra_5_year_high : $zero ;
-
-        $temp_extra_5_day_low_time = isset($dat->temp_extra_5_day_low_time) ? $dat->temp_extra_5_day_low_time : $zero ;
-        $temp_extra_5_day_high_time = isset($dat->temp_extra_5_day_high_time) ? $dat->temp_extra_5_day_high_time : $zero ;
-
-        $temp_extra_6_day_low = isset($dat->temp_extra_6_day_low) ? $dat->temp_extra_6_day_low : $zero ;
-        $temp_extra_6_month_low = isset($dat->temp_extra_6_month_low) ? $dat->temp_extra_6_month_low : $zero ;
-        $temp_extra_6_year_low = isset($dat->temp_extra_6_year_low) ? $dat->temp_extra_6_year_low : $zero ;
-        $temp_extra_6_day_high= isset($dat->temp_extra_6_day_high) ? $dat->temp_extra_6_day_high : $zero ;
-        $temp_extra_6_month_high = isset($dat->temp_extra_6_month_high) ? $dat->temp_extra_6_month_high : $zero ;
-        $temp_extra_6_year_high = isset($dat->temp_extra_6_year_high) ? $dat->temp_extra_6_year_high : $zero ;
-
-        $temp_extra_6_day_low_time = isset($dat->temp_extra_6_day_low_time) ? $dat->temp_extra_6_day_low_time : $zero ;
-        $temp_extra_6_day_high_time = isset($dat->temp_extra_6_day_high_time) ? $dat->temp_extra_6_day_high_time : $zero ;
-
-        $temp_extra_7_day_low = isset($dat->temp_extra_7_day_low) ? $dat->temp_extra_7_day_low : $zero ;
-        $temp_extra_7_month_low = isset($dat->temp_extra_7_month_low) ? $dat->temp_extra_7_month_low : $zero ;
-        $temp_extra_7_year_low = isset($dat->temp_extra_7_year_low) ? $dat->temp_extra_7_year_low : $zero ;
-        $temp_extra_7_day_high= isset($dat->temp_extra_7_day_high) ? $dat->temp_extra_7_day_high : $zero ;
-        $temp_extra_7_month_high = isset($dat->temp_extra_7_month_high) ? $dat->temp_extra_7_month_high : $zero ;
-        $temp_extra_7_year_high = isset($dat->temp_extra_7_year_high) ? $dat->temp_extra_7_year_high : $zero ;
-
-        $temp_extra_7_day_low_time = isset($dat->temp_extra_7_day_low_time) ? $dat->temp_extra_7_day_low_time : $zero ;
-        $temp_extra_7_day_high_time = isset($dat->temp_extra_7_day_high_time) ? $dat->temp_extra_7_day_high_time : $zero ;
-
-        $temp_leaf_1_day_low = isset($dat->temp_leaf_1_day_low) ? $dat->temp_leaf_1_day_low : $zero ;
-        $temp_leaf_1_month_low = isset($dat->temp_leaf_1_month_low) ? $dat->temp_leaf_1_month_low : $zero ;
-        $temp_leaf_1_year_low = isset($dat->temp_leaf_1_year_low) ? $dat->temp_leaf_1_year_low : $zero ;
-        $temp_leaf_1_day_high= isset($dat->temp_leaf_1_day_high) ? $dat->temp_leaf_1_day_high : $zero ;
-        $temp_leaf_1_month_high = isset($dat->temp_leaf_1_month_high) ? $dat->temp_leaf_1_month_high : $zero ;
-        $temp_leaf_1_year_high = isset($dat->temp_leaf_1_year_high) ? $dat->temp_leaf_1_year_high : $zero ;
-
-        $temp_leaf_1_day_low_time = isset($dat->temp_leaf_1_day_low_time) ? $dat->temp_leaf_1_day_low_time : $zero ;
-        $temp_leaf_1_day_high_time = isset($dat->temp_leaf_1_day_high_time) ? $dat->temp_leaf_1_day_high_time : $zero ;
-
-        $temp_leaf_2_day_low = isset($dat->temp_leaf_2_day_low) ? $dat->temp_leaf_2_day_low : $zero ;
-        $temp_leaf_2_month_low = isset($dat->temp_leaf_2_month_low) ? $dat->temp_leaf_2_month_low : $zero ;
-        $temp_leaf_2_year_low = isset($dat->temp_leaf_2_year_low) ? $dat->temp_leaf_2_year_low : $zero ;
-        $temp_leaf_2_day_high= isset($dat->temp_leaf_2_day_high) ? $dat->temp_leaf_2_day_high : $zero ;
-        $temp_leaf_2_month_high = isset($dat->temp_leaf_2_month_high) ? $dat->temp_leaf_2_month_high : $zero ;
-        $temp_leaf_2_year_high = isset($dat->temp_leaf_2_year_high) ? $dat->temp_leaf_2_year_high : $zero ;
-
-        $temp_leaf_2_day_low_time = isset($dat->temp_leaf_2_day_low_time) ? $dat->temp_leaf_2_day_low_time : $zero ;
-        $temp_leaf_2_day_high_time = isset($dat->temp_leaf_2_day_high_time) ? $dat->temp_leaf_2_day_high_time : $zero ;
-
-        $temp_soil_1_day_low = isset($dat->temp_soil_1_day_low) ? $dat->temp_soil_1_day_low : $zero ;
-        $temp_soil_1_month_low = isset($dat->temp_soil_1_month_low) ? $dat->temp_soil_1_month_low : $zero ;
-        $temp_soil_1_year_low = isset($dat->temp_soil_1_year_low) ? $dat->temp_soil_1_year_low : $zero ;
-        $temp_soil_1_day_high= isset($dat->temp_soil_1_day_high) ? $dat->temp_soil_1_day_high : $zero ;
-        $temp_soil_1_month_high = isset($dat->temp_soil_1_month_high) ? $dat->temp_soil_1_month_high : $zero ;
-        $temp_soil_1_year_high = isset($dat->temp_soil_1_year_high) ? $dat->temp_soil_1_year_high : $zero ;
-
-        $temp_soil_1_day_low_time = isset($dat->temp_soil_1_day_low_time) ? $dat->temp_soil_1_day_low_time : $zero ;
-        $temp_soil_1_day_high_time = isset($dat->temp_soil_1_day_high_time) ? $dat->temp_soil_1_day_high_time : $zero ;
-
-        $temp_soil_2_day_low = isset($dat->temp_soil_2_day_low) ? $dat->temp_soil_2_day_low : $zero ;
-        $temp_soil_2_month_low = isset($dat->temp_soil_2_month_low) ? $dat->temp_soil_2_month_low : $zero ;
-        $temp_soil_2_year_low = isset($dat->temp_soil_2_year_low) ? $dat->temp_soil_2_year_low : $zero ;
-        $temp_soil_2_day_high= isset($dat->temp_soil_2_day_high) ? $dat->temp_soil_2_day_high : $zero ;
-        $temp_soil_2_month_high = isset($dat->temp_soil_2_month_high) ? $dat->temp_soil_2_month_high : $zero ;
-        $temp_soil_2_year_high = isset($dat->temp_soil_2_year_high) ? $dat->temp_soil_2_year_high : $zero ;
-
-        $temp_soil_2_day_low_time = isset($dat->temp_soil_2_day_low_time) ? $dat->temp_soil_2_day_low_time : $zero ;
-        $temp_soil_2_day_high_time = isset($dat->temp_soil_2_day_high_time) ? $dat->temp_soil_2_day_high_time : $zero ;
-
-        $temp_soil_3_day_low = isset($dat->temp_soil_3_day_low) ? $dat->temp_soil_3_day_low : $zero ;
-        $temp_soil_3_month_low = isset($dat->temp_soil_3_month_low) ? $dat->temp_soil_3_month_low : $zero ;
-        $temp_soil_3_year_low = isset($dat->temp_soil_3_year_low) ? $dat->temp_soil_3_year_low : $zero ;
-        $temp_soil_3_day_high= isset($dat->temp_soil_3_day_high) ? $dat->temp_soil_3_day_high : $zero ;
-        $temp_soil_3_month_high = isset($dat->temp_soil_3_month_high) ? $dat->temp_soil_3_month_high : $zero ;
-        $temp_soil_3_year_high = isset($dat->temp_soil_3_year_high) ? $dat->temp_soil_3_year_high : $zero ;
-
-        $temp_soil_3_day_low_time = isset($dat->temp_soil_3_day_low_time) ? $dat->temp_soil_3_day_low_time : $zero ;
-        $temp_soil_3_day_high_time = isset($dat->temp_soil_3_day_high_time) ? $dat->temp_soil_3_day_high_time : $zero ;
-
-        $temp_soil_4_day_low = isset($dat->temp_soil_4_day_low) ? $dat->temp_soil_4_day_low : $zero ;
-        $temp_soil_4_month_low = isset($dat->temp_soil_4_month_low) ? $dat->temp_soil_4_month_low : $zero ;
-        $temp_soil_4_year_low = isset($dat->temp_soil_4_year_low) ? $dat->temp_soil_4_year_low : $zero ;
-        $temp_soil_4_day_high= isset($dat->temp_soil_4_day_high) ? $dat->temp_soil_4_day_high : $zero ;
-        $temp_soil_4_month_high = isset($dat->temp_soil_4_month_high) ? $dat->temp_soil_4_month_high : $zero ;
-        $temp_soil_4_year_high = isset($dat->temp_soil_4_year_high) ? $dat->temp_soil_4_year_high : $zero ;
-
-        $temp_soil_4_day_low_time = isset($dat->temp_soil_4_day_low_time) ? $dat->temp_soil_4_day_low_time : $zero ;
-        $temp_soil_4_day_high_time = isset($dat->temp_soil_4_day_high_time) ? $dat->temp_soil_4_day_high_time : $zero ;
-
-
-        $relative_humidity_1_day_low = isset($dat->relative_humidity_1_day_low) ? $dat->relative_humidity_1_day_low : $zero ;
-        $relative_humidity_1_month_low = isset($dat->relative_humidity_1_month_low) ? $dat->relative_humidity_1_month_low : $zero ;
-        $relative_humidity_1_year_low = isset($dat->relative_humidity_1_year_low) ? $dat->relative_humidity_1_year_low : $zero ;
-        $relative_humidity_1_day_high = isset($dat->relative_humidity_1_day_high) ? $dat->relative_humidity_1_day_high : $zero ;
-        $relative_humidity_1_month_high = isset($dat->relative_humidity_1_month_high) ? $dat->relative_humidity_1_month_high : $zero ;
-        $relative_humidity_1_year_high = isset($dat->relative_humidity_1_year_high) ? $dat->relative_humidity_1_year_high : $zero ;
-
-        $relative_humidity_1_day_low_time = isset($dat->relative_humidity_1_day_low_time) ? $dat->relative_humidity_1_day_low_time : $zero ;
-        $relative_humidity_1_day_high_time = isset($dat->relative_humidity_1_day_high_time) ? $dat->relative_humidity_1_day_high_time : $zero ;
-
-        $relative_humidity_2_day_low = isset($dat->relative_humidity_2_day_low) ? $dat->relative_humidity_2_day_low : $zero ;
-        $relative_humidity_2_month_low = isset($dat->relative_humidity_2_month_low) ? $dat->relative_humidity_2_month_low : $zero ;
-        $relative_humidity_2_year_low = isset($dat->relative_humidity_2_year_low) ? $dat->relative_humidity_2_year_low : $zero ;
-        $relative_humidity_2_day_high = isset($dat->relative_humidity_2_day_high) ? $dat->relative_humidity_2_day_high : $zero ;
-        $relative_humidity_2_month_high = isset($dat->relative_humidity_2_month_high) ? $dat->relative_humidity_2_month_high : $zero ;
-        $relative_humidity_2_year_high = isset($dat->relative_humidity_2_year_high) ? $dat->relative_humidity_2_year_high : $zero ;
-
-        $relative_humidity_2_day_low_time = isset($dat->relative_humidity_2_day_low_time) ? $dat->relative_humidity_2_day_low_time : $zero ;
-        $relative_humidity_2_day_high_time = isset($dat->relative_humidity_2_day_high_time) ? $dat->relative_humidity_2_day_high_time : $zero ;
-
-        $relative_humidity_3_day_low = isset($dat->relative_humidity_3_day_low) ? $dat->relative_humidity_3_day_low : $zero ;
-        $relative_humidity_3_month_low = isset($dat->relative_humidity_3_month_low) ? $dat->relative_humidity_3_month_low : $zero ;
-        $relative_humidity_3_year_low = isset($dat->relative_humidity_3_year_low) ? $dat->relative_humidity_3_year_low : $zero ;
-        $relative_humidity_3_day_high = isset($dat->relative_humidity_3_day_high) ? $dat->relative_humidity_3_day_high : $zero ;
-        $relative_humidity_3_month_high = isset($dat->relative_humidity_3_month_high) ? $dat->relative_humidity_3_month_high : $zero ;
-        $relative_humidity_3_year_high = isset($dat->relative_humidity_3_year_high) ? $dat->relative_humidity_3_year_high : $zero ;
-
-        $relative_humidity_3_day_low_time = isset($dat->relative_humidity_3_day_low_time) ? $dat->relative_humidity_3_day_low_time : $zero ;
-        $relative_humidity_3_day_high_time = isset($dat->relative_humidity_3_day_high_time) ? $dat->relative_humidity_3_day_high_time : $zero ;
-
-        $relative_humidity_4_day_low = isset($dat->relative_humidity_4_day_low) ? $dat->relative_humidity_4_day_low : $zero ;
-        $relative_humidity_4_month_low = isset($dat->relative_humidity_4_month_low) ? $dat->relative_humidity_4_month_low : $zero ;
-        $relative_humidity_4_year_low = isset($dat->relative_humidity_4_year_low) ? $dat->relative_humidity_4_year_low : $zero ;
-        $relative_humidity_4_day_high = isset($dat->relative_humidity_4_day_high) ? $dat->relative_humidity_4_day_high : $zero ;
-        $relative_humidity_4_month_high = isset($dat->relative_humidity_4_month_high) ? $dat->relative_humidity_4_month_high : $zero ;
-        $relative_humidity_4_year_high = isset($dat->relative_humidity_4_year_high) ? $dat->relative_humidity_4_year_high : $zero ;
-
-        $relative_humidity_4_day_low_time = isset($dat->relative_humidity_4_day_low_time) ? $dat->relative_humidity_4_day_low_time : $zero ;
-        $relative_humidity_4_day_high_time = isset($dat->relative_humidity_4_day_high_time) ? $dat->relative_humidity_4_day_high_time : $zero ;
-
-        $relative_humidity_5_day_low = isset($dat->relative_humidity_5_day_low) ? $dat->relative_humidity_5_day_low : $zero ;
-        $relative_humidity_5_month_low = isset($dat->relative_humidity_5_month_low) ? $dat->relative_humidity_5_month_low : $zero ;
-        $relative_humidity_5_year_low = isset($dat->relative_humidity_5_year_low) ? $dat->relative_humidity_5_year_low : $zero ;
-        $relative_humidity_5_day_high = isset($dat->relative_humidity_5_day_high) ? $dat->relative_humidity_5_day_high : $zero ;
-        $relative_humidity_5_month_high = isset($dat->relative_humidity_5_month_high) ? $dat->relative_humidity_5_month_high : $zero ;
-        $relative_humidity_5_year_high = isset($dat->relative_humidity_5_year_high) ? $dat->relative_humidity_5_year_high : $zero ;
-
-        $relative_humidity_5_day_low_time = isset($dat->relative_humidity_5_day_low_time) ? $dat->relative_humidity_5_day_low_time : $zero ;
-        $relative_humidity_5_day_high_time = isset($dat->relative_humidity_5_day_high_time) ? $dat->relative_humidity_5_day_high_time : $zero ;
-
-        $relative_humidity_6_day_low = isset($dat->relative_humidity_6_day_low) ? $dat->relative_humidity_6_day_low : $zero ;
-        $relative_humidity_6_month_low = isset($dat->relative_humidity_6_month_low) ? $dat->relative_humidity_6_month_low : $zero ;
-        $relative_humidity_6_year_low = isset($dat->relative_humidity_6_year_low) ? $dat->relative_humidity_6_year_low : $zero ;
-        $relative_humidity_6_day_high = isset($dat->relative_humidity_6_day_high) ? $dat->relative_humidity_6_day_high : $zero ;
-        $relative_humidity_6_month_high = isset($dat->relative_humidity_6_month_high) ? $dat->relative_humidity_6_month_high : $zero ;
-        $relative_humidity_6_year_high = isset($dat->relative_humidity_6_year_high) ? $dat->relative_humidity_6_year_high : $zero ;
-
-        $relative_humidity_6_day_low_time = isset($dat->relative_humidity_6_day_low_time) ? $dat->relative_humidity_6_day_low_time : $zero ;
-        $relative_humidity_6_day_high_time = isset($dat->relative_humidity_6_day_high_time) ? $dat->relative_humidity_6_day_high_time : $zero ;
-
-        $relative_humidity_7_day_low = isset($dat->relative_humidity_7_day_low) ? $dat->relative_humidity_7_day_low : $zero ;
-        $relative_humidity_7_month_low = isset($dat->relative_humidity_7_month_low) ? $dat->relative_humidity_7_month_low : $zero ;
-        $relative_humidity_7_year_low = isset($dat->relative_humidity_7_year_low) ? $dat->relative_humidity_7_year_low : $zero ;
-        $relative_humidity_7_day_high = isset($dat->relative_humidity_7_day_high) ? $dat->relative_humidity_7_day_high : $zero ;
-        $relative_humidity_7_month_high = isset($dat->relative_humidity_7_month_high) ? $dat->relative_humidity_7_month_high : $zero ;
-        $relative_humidity_7_year_high = isset($dat->relative_humidity_7_year_high) ? $dat->relative_humidity_7_year_high : $zero ;
-
-        $relative_humidity_7_day_low_time = isset($dat->relative_humidity_7_day_low_time) ? $dat->relative_humidity_7_day_low_time : $zero ;
-        $relative_humidity_7_day_high_time = isset($dat->relative_humidity_7_day_high_time) ? $dat->relative_humidity_7_day_high_time : $zero ;
-        
-        $leaf_wetness_1_day_low = isset($dat->leaf_wetness_1_day_low) ? $dat->leaf_wetness_1_day_low : $zero ;
-        $leaf_wetness_1_month_low = isset($dat->leaf_wetness_1_month_low) ? $dat->leaf_wetness_1_month_low : $zero ;
-        $leaf_wetness_1_year_low = isset($dat->leaf_wetness_1_year_low) ? $dat->leaf_wetness_1_year_low : $zero ;
-        $leaf_wetness_1_day_high= isset($dat->leaf_wetness_1_day_high) ? $dat->leaf_wetness_1_day_high : $zero ;
-        $leaf_wetness_1_month_high = isset($dat->leaf_wetness_1_month_high) ? $dat->leaf_wetness_1_month_high : $zero ;
-        $leaf_wetness_1_year_high = isset($dat->leaf_wetness_1_year_high) ? $dat->leaf_wetness_1_year_high : $zero ;
-
-        $leaf_wetness_1_day_low_time = isset($dat->leaf_wetness_1_day_low_time) ? $dat->leaf_wetness_1_day_low_time : $zero ;
-        $leaf_wetness_1_day_high_time = isset($dat->leaf_wetness_1_day_high_time) ? $dat->leaf_wetness_1_day_high_time : $zero ;
-
-        $leaf_wetness_2_day_low = isset($dat->leaf_wetness_2_day_low) ? $dat->leaf_wetness_2_day_low : $zero ;
-        $leaf_wetness_2_month_low = isset($dat->leaf_wetness_2_month_low) ? $dat->leaf_wetness_2_month_low : $zero ;
-        $leaf_wetness_2_year_low = isset($dat->leaf_wetness_2_year_low) ? $dat->leaf_wetness_2_year_low : $zero ;
-        $leaf_wetness_2_day_high= isset($dat->leaf_wetness_2_day_high) ? $dat->leaf_wetness_2_day_high : $zero ;
-        $leaf_wetness_2_month_high = isset($dat->leaf_wetness_2_month_high) ? $dat->leaf_wetness_2_month_high : $zero ;
-        $leaf_wetness_2_year_high = isset($dat->leaf_wetness_2_year_high) ? $dat->leaf_wetness_2_year_high : $zero ;
-
-        $leaf_wetness_2_day_low_time = isset($dat->leaf_wetness_2_day_low_time) ? $dat->leaf_wetness_2_day_low_time : $zero ;
-        $leaf_wetness_2_day_high_time = isset($dat->leaf_wetness_2_day_high_time) ? $dat->leaf_wetness_2_day_high_time : $zero ;
-
-        $soil_moisture_1_day_low = isset($dat->soil_moisture_1_day_low) ? $dat->soil_moisture_1_day_low : $zero ;
-        $soil_moisture_1_month_low = isset($dat->soil_moisture_1_month_low) ? $dat->soil_moisture_1_month_low : $zero ;
-        $soil_moisture_1_year_low = isset($dat->soil_moisture_1_year_low) ? $dat->soil_moisture_1_year_low : $zero ;
-        $soil_moisture_1_day_high= isset($dat->soil_moisture_1_day_high) ? $dat->soil_moisture_1_day_high : $zero ;
-        $soil_moisture_1_month_high = isset($dat->soil_moisture_1_month_high) ? $dat->soil_moisture_1_month_high : $zero ;
-        $soil_moisture_1_year_high = isset($dat->soil_moisture_1_year_high) ? $dat->soil_moisture_1_year_high : $zero ;
-
-        $soil_moisture_1_day_low_time = isset($dat->soil_moisture_1_day_low_time) ? $dat->soil_moisture_1_day_low_time : $zero ;
-        $soil_moisture_1_day_high_time = isset($dat->soil_moisture_1_day_high_time) ? $dat->soil_moisture_1_day_high_time : $zero ;
-
-        $soil_moisture_2_day_low = isset($dat->soil_moisture_2_day_low) ? $dat->soil_moisture_2_day_low : $zero ;
-        $soil_moisture_2_month_low = isset($dat->soil_moisture_2_month_low) ? $dat->soil_moisture_2_month_low : $zero ;
-        $soil_moisture_2_year_low = isset($dat->soil_moisture_2_year_low) ? $dat->soil_moisture_2_year_low : $zero ;
-        $soil_moisture_2_day_high= isset($dat->soil_moisture_2_day_high) ? $dat->soil_moisture_2_day_high : $zero ;
-        $soil_moisture_2_month_high = isset($dat->soil_moisture_2_month_high) ? $dat->soil_moisture_2_month_high : $zero ;
-        $soil_moisture_2_year_high = isset($dat->soil_moisture_2_year_high) ? $dat->soil_moisture_2_year_high : $zero ;
-
-        $soil_moisture_2_day_low_time = isset($dat->soil_moisture_2_day_low_time) ? $dat->soil_moisture_2_day_low_time : $zero ;
-        $soil_moisture_2_day_high_time = isset($dat->soil_moisture_2_day_high_time) ? $dat->soil_moisture_2_day_high_time : $zero ;
-
-        $soil_moisture_3_day_low = isset($dat->soil_moisture_3_day_low) ? $dat->soil_moisture_3_day_low : $zero ;
-        $soil_moisture_3_month_low = isset($dat->soil_moisture_3_month_low) ? $dat->soil_moisture_3_month_low : $zero ;
-        $soil_moisture_3_year_low = isset($dat->soil_moisture_3_year_low) ? $dat->soil_moisture_3_year_low : $zero ;
-        $soil_moisture_3_day_high= isset($dat->soil_moisture_3_day_high) ? $dat->soil_moisture_3_day_high : $zero ;
-        $soil_moisture_3_month_high = isset($dat->soil_moisture_3_month_high) ? $dat->soil_moisture_3_month_high : $zero ;
-        $soil_moisture_3_year_high = isset($dat->soil_moisture_3_year_high) ? $dat->soil_moisture_3_year_high : $zero ;
-
-        $soil_moisture_3_day_low_time = isset($dat->soil_moisture_3_day_low_time) ? $dat->soil_moisture_3_day_low_time : $zero ;
-        $soil_moisture_3_day_high_time = isset($dat->soil_moisture_3_day_high_time) ? $dat->soil_moisture_3_day_high_time : $zero ;
-
-        $soil_moisture_4_day_low = isset($dat->soil_moisture_4_day_low) ? $dat->soil_moisture_4_day_low : $zero ;
-        $soil_moisture_4_month_low = isset($dat->soil_moisture_4_month_low) ? $dat->soil_moisture_4_month_low : $zero ;
-        $soil_moisture_4_year_low = isset($dat->soil_moisture_4_year_low) ? $dat->soil_moisture_4_year_low : $zero ;
-        $soil_moisture_4_day_high= isset($dat->soil_moisture_4_day_high) ? $dat->soil_moisture_4_day_high : $zero ;
-        $soil_moisture_4_month_high = isset($dat->soil_moisture_4_month_high) ? $dat->soil_moisture_4_month_high : $zero ;
-        $soil_moisture_4_year_high = isset($dat->soil_moisture_4_year_high) ? $dat->soil_moisture_4_year_high : $zero ;
-
-        $soil_moisture_4_day_low_time = isset($dat->soil_moisture_4_day_low_time) ? $dat->soil_moisture_4_day_low_time : $zero ;
-        $soil_moisture_4_day_high_time = isset($dat->soil_moisture_4_day_high_time) ? $dat->soil_moisture_4_day_high_time : $zero ;
-
-        $temp_in_day_low_f = isset($dat->temp_in_day_low_f) ? $dat->temp_in_day_low_f : $zero ; 
-        $temp_in_month_low_f = isset($dat->temp_in_month_low_f) ? $dat->temp_in_month_low_f : $zero ; 
-        $temp_in_year_low_f = isset($dat->temp_in_year_low_f) ? $dat->temp_in_year_low_f : $zero ; 
-        $temp_in_day_high_f = isset($dat->temp_in_day_high_f) ? $dat->temp_in_day_high_f : $zero ; 
-        $temp_in_month_high_f = isset($dat->temp_in_month_high_f) ? $dat->temp_in_month_high_f : $zero ; 
-        $temp_in_year_high_f = isset($dat->temp_in_year_high_f) ? $dat->temp_in_year_high_f : $zero ; 
-
-        $temp_in_day_low_time = isset($dat->temp_in_day_low_time) ? $dat->temp_in_day_low_time : $zero ; 
-        $temp_in_day_high_time = isset($dat->temp_in_day_high_time) ? $dat->temp_in_day_high_time : $zero ;
-
-        $relative_humidity_in_day_low = isset($dat->relative_humidity_in_day_low) ? $dat->relative_humidity_in_day_low : $zero ;
-        $relative_humidity_in_month_low = isset($dat->relative_humidity_in_month_low) ? $dat->relative_humidity_in_month_low : $zero ;
-        $relative_humidity_in_year_low = isset($dat->relative_humidity_in_year_low) ? $dat->relative_humidity_in_year_low : $zero ;
-        $relative_humidity_in_day_high = isset($dat->relative_humidity_in_day_high) ? $dat->relative_humidity_in_day_high : $zero ;
-        $relative_humidity_in_month_high = isset($dat->relative_humidity_in_month_high) ? $dat->relative_humidity_in_month_high : $zero ;
-        $relative_humidity_in_year_high = isset($dat->relative_humidity_in_year_high) ? $dat->relative_humidity_in_year_high : $zero ;
-
-        $relative_humidity_in_day_low_time = isset($dat->relative_humidity_in_day_low_time) ? $dat->relative_humidity_in_day_low_time : $zero ;
-        $relative_humidity_in_day_high_time = isset($dat->relative_humidity_in_day_high_time) ? $dat->relative_humidity_in_day_high_time : $zero ;
+        $temp_day_low_f = $this->getAPIDatas($datas, $info, $livestation)['temp_day_low_f'];
+        $temp_month_low_f = $this->getAPIDatas($datas, $info, $livestation)['temp_month_low_f'];
+        $temp_year_low_f = $this->getAPIDatas($datas, $info, $livestation)['temp_year_low_f'];
+        $temp_day_high_f = $this->getAPIDatas($datas, $info, $livestation)['temp_day_high_f'];
+        $temp_month_high_f = $this->getAPIDatas($datas, $info, $livestation)['temp_month_high_f'];
+        $temp_year_high_f = $this->getAPIDatas($datas, $info, $livestation)['temp_year_high_f'];
+
+        $temp_day_low_time = $this->getAPIDatas($datas, $info, $livestation)['temp_day_low_time'];
+        $temp_day_high_time = $this->getAPIDatas($datas, $info, $livestation)['temp_day_high_time'];
+
+        $pressure_day_low_in = $this->getAPIDatas($datas, $info, $livestation)['pressure_day_low_in'];
+        $pressure_month_low_in = $this->getAPIDatas($datas, $info, $livestation)['pressure_month_low_in'];
+        $pressure_year_low_in = $this->getAPIDatas($datas, $info, $livestation)['pressure_year_low_in'];
+        $pressure_day_high_in = $this->getAPIDatas($datas, $info, $livestation)['pressure_day_high_in'];
+        $pressure_month_high_in = $this->getAPIDatas($datas, $info, $livestation)['pressure_month_high_in'];
+        $pressure_year_high_in = $this->getAPIDatas($datas, $info, $livestation)['pressure_year_high_in'];
+
+        $pressure_day_low_time = $this->getAPIDatas($datas, $info, $livestation)['pressure_day_low_time'];
+        $pressure_day_high_time = $this->getAPIDatas($datas, $info, $livestation)['pressure_day_high_time'];
+
+        $dewpoint_day_low_f = $this->getAPIDatas($datas, $info, $livestation)['dewpoint_day_low_f'];
+        $dewpoint_month_low_f = $this->getAPIDatas($datas, $info, $livestation)['dewpoint_month_low_f'];
+        $dewpoint_year_low_f = $this->getAPIDatas($datas, $info, $livestation)['dewpoint_year_low_f'];
+        $dewpoint_day_high_f = $this->getAPIDatas($datas, $info, $livestation)['dewpoint_day_high_f'];
+        $dewpoint_month_high_f = $this->getAPIDatas($datas, $info, $livestation)['dewpoint_month_high_f'];
+        $dewpoint_year_high_f = $this->getAPIDatas($datas, $info, $livestation)['dewpoint_year_high_f'];
+
+        $dewpoint_day_low_time = $this->getAPIDatas($datas, $info, $livestation)['dewpoint_day_low_time'];
+        $dewpoint_day_high_time = $this->getAPIDatas($datas, $info, $livestation)['dewpoint_day_high_time'];
+
+        $relative_humidity_day_low = $this->getAPIDatas($datas, $info, $livestation)['relative_humidity_day_low'];
+        $relative_humidity_month_low = $this->getAPIDatas($datas, $info, $livestation)['relative_humidity_month_low'];
+        $relative_humidity_year_low = $this->getAPIDatas($datas, $info, $livestation)['relative_humidity_year_low'];
+        $relative_humidity_day_high = $this->getAPIDatas($datas, $info, $livestation)['relative_humidity_day_high'];
+        $relative_humidity_month_high = $this->getAPIDatas($datas, $info, $livestation)['relative_humidity_month_high'];
+        $relative_humidity_year_high = $this->getAPIDatas($datas, $info, $livestation)['relative_humidity_year_high'];
+
+        $relative_humidity_day_low_time = $this->getAPIDatas($datas, $info, $livestation)['relative_humidity_day_low_time'];
+        $relative_humidity_day_high_time = $this->getAPIDatas($datas, $info, $livestation)['relative_humidity_day_high_time'];
+
+        $temp_extra_1_day_low = $this->getAPIDatas($datas, $info, $livestation)['temp_extra_1_day_low'];
+        $temp_extra_1_month_low = $this->getAPIDatas($datas, $info, $livestation)['temp_extra_1_month_low'];
+        $temp_extra_1_year_low = $this->getAPIDatas($datas, $info, $livestation)['temp_extra_1_year_low'];
+        $temp_extra_1_day_high = $this->getAPIDatas($datas, $info, $livestation)['temp_extra_1_day_high'];
+        $temp_extra_1_month_high = $this->getAPIDatas($datas, $info, $livestation)['temp_extra_1_month_high'];
+        $temp_extra_1_year_high = $this->getAPIDatas($datas, $info, $livestation)['temp_extra_1_year_high'];
+
+        $temp_extra_1_day_low_time = $this->getAPIDatas($datas, $info, $livestation)['temp_extra_1_day_low_time'];
+        $temp_extra_1_day_high_time = $this->getAPIDatas($datas, $info, $livestation)['temp_extra_1_day_high_time'];
+
+        $temp_extra_2_day_low = $this->getAPIDatas($datas, $info, $livestation)['temp_extra_2_day_low'];
+        $temp_extra_2_month_low = $this->getAPIDatas($datas, $info, $livestation)['temp_extra_2_month_low'];
+        $temp_extra_2_year_low = $this->getAPIDatas($datas, $info, $livestation)['temp_extra_2_year_low'];
+        $temp_extra_2_day_high = $this->getAPIDatas($datas, $info, $livestation)['temp_extra_2_day_high'];
+        $temp_extra_2_month_high = $this->getAPIDatas($datas, $info, $livestation)['temp_extra_2_month_high'];
+        $temp_extra_2_year_high = $this->getAPIDatas($datas, $info, $livestation)['temp_extra_2_year_high'];
+
+        $temp_extra_2_day_low_time = $this->getAPIDatas($datas, $info, $livestation)['temp_extra_2_day_low_time'];
+        $temp_extra_2_day_high_time = $this->getAPIDatas($datas, $info, $livestation)['temp_extra_2_day_high_time'];
+
+        $temp_extra_3_day_low = $this->getAPIDatas($datas, $info, $livestation)['temp_extra_3_day_low'];
+        $temp_extra_3_month_low = $this->getAPIDatas($datas, $info, $livestation)['temp_extra_3_month_low'];
+        $temp_extra_3_year_low = $this->getAPIDatas($datas, $info, $livestation)['temp_extra_3_year_low'];
+        $temp_extra_3_day_high = $this->getAPIDatas($datas, $info, $livestation)['temp_extra_3_day_high'];
+        $temp_extra_3_month_high = $this->getAPIDatas($datas, $info, $livestation)['temp_extra_3_month_high'];
+        $temp_extra_3_year_high = $this->getAPIDatas($datas, $info, $livestation)['temp_extra_3_year_high'];
+
+        $temp_extra_3_day_low_time = $this->getAPIDatas($datas, $info, $livestation)['temp_extra_3_day_low_time'];
+        $temp_extra_3_day_high_time = $this->getAPIDatas($datas, $info, $livestation)['temp_extra_3_day_high_time'];
+
+        $temp_extra_4_day_low = $this->getAPIDatas($datas, $info, $livestation)['temp_extra_4_day_low'];
+        $temp_extra_4_month_low = $this->getAPIDatas($datas, $info, $livestation)['temp_extra_4_month_low'];
+        $temp_extra_4_year_low = $this->getAPIDatas($datas, $info, $livestation)['temp_extra_4_year_low'];
+        $temp_extra_4_day_high = $this->getAPIDatas($datas, $info, $livestation)['temp_extra_4_day_high'];
+        $temp_extra_4_month_high = $this->getAPIDatas($datas, $info, $livestation)['temp_extra_4_month_high'];
+        $temp_extra_4_year_high = $this->getAPIDatas($datas, $info, $livestation)['temp_extra_4_year_high'];
+
+        $temp_extra_4_day_low_time = $this->getAPIDatas($datas, $info, $livestation)['temp_extra_4_day_low_time'];
+        $temp_extra_4_day_high_time = $this->getAPIDatas($datas, $info, $livestation)['temp_extra_4_day_high_time'];
+
+        $temp_extra_5_day_low = $this->getAPIDatas($datas, $info, $livestation)['temp_extra_5_day_low'];
+        $temp_extra_5_month_low = $this->getAPIDatas($datas, $info, $livestation)['temp_extra_5_month_low'];
+        $temp_extra_5_year_low = $this->getAPIDatas($datas, $info, $livestation)['temp_extra_5_year_low'];
+        $temp_extra_5_day_high = $this->getAPIDatas($datas, $info, $livestation)['temp_extra_5_day_high'];
+        $temp_extra_5_month_high = $this->getAPIDatas($datas, $info, $livestation)['temp_extra_5_month_high'];
+        $temp_extra_5_year_high = $this->getAPIDatas($datas, $info, $livestation)['temp_extra_5_year_high'];
+
+        $temp_extra_5_day_low_time = $this->getAPIDatas($datas, $info, $livestation)['temp_extra_5_day_low_time'];
+        $temp_extra_5_day_high_time = $this->getAPIDatas($datas, $info, $livestation)['temp_extra_5_day_high_time'];
+
+        $temp_extra_6_day_low = $this->getAPIDatas($datas, $info, $livestation)['temp_extra_6_day_low'];
+        $temp_extra_6_month_low = $this->getAPIDatas($datas, $info, $livestation)['temp_extra_6_month_low'];
+        $temp_extra_6_year_low = $this->getAPIDatas($datas, $info, $livestation)['temp_extra_6_year_low'];
+        $temp_extra_6_day_high = $this->getAPIDatas($datas, $info, $livestation)['temp_extra_6_day_high'];
+        $temp_extra_6_month_high = $this->getAPIDatas($datas, $info, $livestation)['temp_extra_6_month_high'];
+        $temp_extra_6_year_high = $this->getAPIDatas($datas, $info, $livestation)['temp_extra_6_year_high'];
+
+        $temp_extra_6_day_low_time = $this->getAPIDatas($datas, $info, $livestation)['temp_extra_6_day_low_time'];
+        $temp_extra_6_day_high_time = $this->getAPIDatas($datas, $info, $livestation)['temp_extra_6_day_high_time'];
+
+        $temp_extra_7_day_low = $this->getAPIDatas($datas, $info, $livestation)['temp_extra_7_day_low'];
+        $temp_extra_7_month_low = $this->getAPIDatas($datas, $info, $livestation)['temp_extra_7_month_low'];
+        $temp_extra_7_year_low = $this->getAPIDatas($datas, $info, $livestation)['temp_extra_7_year_low'];
+        $temp_extra_7_day_high = $this->getAPIDatas($datas, $info, $livestation)['temp_extra_7_day_high'];
+        $temp_extra_7_month_high = $this->getAPIDatas($datas, $info, $livestation)['temp_extra_7_month_high'];
+        $temp_extra_7_year_high = $this->getAPIDatas($datas, $info, $livestation)['temp_extra_7_year_high'];
+
+        $temp_extra_7_day_low_time = $this->getAPIDatas($datas, $info, $livestation)['temp_extra_7_day_low_time'];
+        $temp_extra_7_day_high_time = $this->getAPIDatas($datas, $info, $livestation)['temp_extra_7_day_high_time'];
+
+        $temp_leaf_1_day_low = $this->getAPIDatas($datas, $info, $livestation)['temp_leaf_1_day_low'];
+        $temp_leaf_1_month_low = $this->getAPIDatas($datas, $info, $livestation)['temp_leaf_1_month_low'];
+        $temp_leaf_1_year_low = $this->getAPIDatas($datas, $info, $livestation)['temp_leaf_1_year_low'];
+        $temp_leaf_1_day_high = $this->getAPIDatas($datas, $info, $livestation)['temp_leaf_1_day_high'];
+        $temp_leaf_1_month_high = $this->getAPIDatas($datas, $info, $livestation)['temp_leaf_1_month_high'];
+        $temp_leaf_1_year_high = $this->getAPIDatas($datas, $info, $livestation)['temp_leaf_1_year_high'];
+
+        $temp_leaf_1_day_low_time = $this->getAPIDatas($datas, $info, $livestation)['temp_leaf_1_day_low_time'];
+        $temp_leaf_1_day_high_time = $this->getAPIDatas($datas, $info, $livestation)['temp_leaf_1_day_high_time'];
+
+        $temp_leaf_2_day_low = $this->getAPIDatas($datas, $info, $livestation)['temp_leaf_2_day_low'];
+        $temp_leaf_2_month_low = $this->getAPIDatas($datas, $info, $livestation)['temp_leaf_2_month_low'];
+        $temp_leaf_2_year_low = $this->getAPIDatas($datas, $info, $livestation)['temp_leaf_2_year_low'];
+        $temp_leaf_2_day_high = $this->getAPIDatas($datas, $info, $livestation)['temp_leaf_2_day_high'];
+        $temp_leaf_2_month_high = $this->getAPIDatas($datas, $info, $livestation)['temp_leaf_2_month_high'];
+        $temp_leaf_2_year_high = $this->getAPIDatas($datas, $info, $livestation)['temp_leaf_2_year_high'];
+
+        $temp_leaf_2_day_low_time = $this->getAPIDatas($datas, $info, $livestation)['temp_leaf_2_day_low_time'];
+        $temp_leaf_2_day_high_time = $this->getAPIDatas($datas, $info, $livestation)['temp_leaf_2_day_high_time'];
+
+        $temp_soil_1_day_low = $this->getAPIDatas($datas, $info, $livestation)['temp_soil_1_day_low'];
+        $temp_soil_1_month_low = $this->getAPIDatas($datas, $info, $livestation)['temp_soil_1_month_low'];
+        $temp_soil_1_year_low = $this->getAPIDatas($datas, $info, $livestation)['temp_soil_1_year_low'];
+        $temp_soil_1_day_high = $this->getAPIDatas($datas, $info, $livestation)['temp_soil_1_day_high'];
+        $temp_soil_1_month_high = $this->getAPIDatas($datas, $info, $livestation)['temp_soil_1_month_high'];
+        $temp_soil_1_year_high = $this->getAPIDatas($datas, $info, $livestation)['temp_soil_1_year_high'];
+
+        $temp_soil_1_day_low_time = $this->getAPIDatas($datas, $info, $livestation)['temp_soil_1_day_low_time'];
+        $temp_soil_1_day_high_time = $this->getAPIDatas($datas, $info, $livestation)['temp_soil_1_day_high_time'];
+
+        $temp_soil_2_day_low = $this->getAPIDatas($datas, $info, $livestation)['temp_soil_2_day_low'];
+        $temp_soil_2_month_low = $this->getAPIDatas($datas, $info, $livestation)['temp_soil_2_month_low'];
+        $temp_soil_2_year_low = $this->getAPIDatas($datas, $info, $livestation)['temp_soil_2_year_low'];
+        $temp_soil_2_day_high = $this->getAPIDatas($datas, $info, $livestation)['temp_soil_2_day_high'];
+        $temp_soil_2_month_high = $this->getAPIDatas($datas, $info, $livestation)['temp_soil_2_month_high'];
+        $temp_soil_2_year_high = $this->getAPIDatas($datas, $info, $livestation)['temp_soil_2_year_high'];
+
+        $temp_soil_2_day_low_time = $this->getAPIDatas($datas, $info, $livestation)['temp_soil_2_day_low_time'];
+        $temp_soil_2_day_high_time = $this->getAPIDatas($datas, $info, $livestation)['temp_soil_2_day_high_time'];
+
+        $temp_soil_3_day_low = $this->getAPIDatas($datas, $info, $livestation)['temp_soil_3_day_low'];
+        $temp_soil_3_month_low = $this->getAPIDatas($datas, $info, $livestation)['temp_soil_3_month_low'];
+        $temp_soil_3_year_low = $this->getAPIDatas($datas, $info, $livestation)['temp_soil_3_year_low'];
+        $temp_soil_3_day_high = $this->getAPIDatas($datas, $info, $livestation)['temp_soil_3_day_high'];
+        $temp_soil_3_month_high = $this->getAPIDatas($datas, $info, $livestation)['temp_soil_3_month_high'];
+        $temp_soil_3_year_high = $this->getAPIDatas($datas, $info, $livestation)['temp_soil_3_year_high'];
+
+        $temp_soil_3_day_low_time = $this->getAPIDatas($datas, $info, $livestation)['temp_soil_3_day_low_time'];
+        $temp_soil_3_day_high_time = $this->getAPIDatas($datas, $info, $livestation)['temp_soil_3_day_high_time'];
+
+        $temp_soil_4_day_low = $this->getAPIDatas($datas, $info, $livestation)['temp_soil_4_day_low'];
+        $temp_soil_4_month_low = $this->getAPIDatas($datas, $info, $livestation)['temp_soil_4_month_low'];
+        $temp_soil_4_year_low = $this->getAPIDatas($datas, $info, $livestation)['temp_soil_4_year_low'];
+        $temp_soil_4_day_high = $this->getAPIDatas($datas, $info, $livestation)['temp_soil_4_day_high'];
+        $temp_soil_4_month_high = $this->getAPIDatas($datas, $info, $livestation)['temp_soil_4_month_high'];
+        $temp_soil_4_year_high = $this->getAPIDatas($datas, $info, $livestation)['temp_soil_4_year_high'];
+
+        $temp_soil_4_day_low_time = $this->getAPIDatas($datas, $info, $livestation)['temp_soil_4_day_low_time'];
+        $temp_soil_4_day_high_time = $this->getAPIDatas($datas, $info, $livestation)['temp_soil_4_day_high_time'];
+
+
+        $relative_humidity_1_day_low = $this->getAPIDatas($datas, $info, $livestation)['relative_humidity_1_day_low'];
+        $relative_humidity_1_month_low = $this->getAPIDatas($datas, $info, $livestation)['relative_humidity_1_month_low'];
+        $relative_humidity_1_year_low = $this->getAPIDatas($datas, $info, $livestation)['relative_humidity_1_year_low'];
+        $relative_humidity_1_day_high = $this->getAPIDatas($datas, $info, $livestation)['relative_humidity_1_day_high'];
+        $relative_humidity_1_month_high = $this->getAPIDatas($datas, $info, $livestation)['relative_humidity_1_month_high'];
+        $relative_humidity_1_year_high = $this->getAPIDatas($datas, $info, $livestation)['relative_humidity_1_year_high'];
+
+        $relative_humidity_1_day_low_time = $this->getAPIDatas($datas, $info, $livestation)['relative_humidity_1_day_low_time'];
+        $relative_humidity_1_day_high_time = $this->getAPIDatas($datas, $info, $livestation)['relative_humidity_1_day_high_time'];
+
+        $relative_humidity_2_day_low = $this->getAPIDatas($datas, $info, $livestation)['relative_humidity_2_day_low'];
+        $relative_humidity_2_month_low = $this->getAPIDatas($datas, $info, $livestation)['relative_humidity_2_month_low'];
+        $relative_humidity_2_year_low = $this->getAPIDatas($datas, $info, $livestation)['relative_humidity_2_year_low'];
+        $relative_humidity_2_day_high = $this->getAPIDatas($datas, $info, $livestation)['relative_humidity_2_day_high'];
+        $relative_humidity_2_month_high = $this->getAPIDatas($datas, $info, $livestation)['relative_humidity_2_month_high'];
+        $relative_humidity_2_year_high = $this->getAPIDatas($datas, $info, $livestation)['relative_humidity_2_year_high'];
+
+        $relative_humidity_2_day_low_time = $this->getAPIDatas($datas, $info, $livestation)['relative_humidity_2_day_low_time'];
+        $relative_humidity_2_day_high_time = $this->getAPIDatas($datas, $info, $livestation)['relative_humidity_2_day_high_time'];
+
+        $relative_humidity_3_day_low = $this->getAPIDatas($datas, $info, $livestation)['relative_humidity_3_day_low'];
+        $relative_humidity_3_month_low = $this->getAPIDatas($datas, $info, $livestation)['relative_humidity_3_month_low'];
+        $relative_humidity_3_year_low = $this->getAPIDatas($datas, $info, $livestation)['relative_humidity_3_year_low'];
+        $relative_humidity_3_day_high = $this->getAPIDatas($datas, $info, $livestation)['relative_humidity_3_day_high'];
+        $relative_humidity_3_month_high = $this->getAPIDatas($datas, $info, $livestation)['relative_humidity_3_month_high'];
+        $relative_humidity_3_year_high = $this->getAPIDatas($datas, $info, $livestation)['relative_humidity_3_year_high'];
+
+        $relative_humidity_3_day_low_time = $this->getAPIDatas($datas, $info, $livestation)['relative_humidity_3_day_low_time'];
+        $relative_humidity_3_day_high_time = $this->getAPIDatas($datas, $info, $livestation)['relative_humidity_3_day_high_time'];
+
+        $relative_humidity_4_day_low = $this->getAPIDatas($datas, $info, $livestation)['relative_humidity_4_day_low'];
+        $relative_humidity_4_month_low = $this->getAPIDatas($datas, $info, $livestation)['relative_humidity_4_month_low'];
+        $relative_humidity_4_year_low = $this->getAPIDatas($datas, $info, $livestation)['relative_humidity_4_year_low'];
+        $relative_humidity_4_day_high = $this->getAPIDatas($datas, $info, $livestation)['relative_humidity_4_day_high'];
+        $relative_humidity_4_month_high = $this->getAPIDatas($datas, $info, $livestation)['relative_humidity_4_month_high'];
+        $relative_humidity_4_year_high = $this->getAPIDatas($datas, $info, $livestation)['relative_humidity_4_year_high'];
+
+        $relative_humidity_4_day_low_time = $this->getAPIDatas($datas, $info, $livestation)['relative_humidity_4_day_low_time'];
+        $relative_humidity_4_day_high_time = $this->getAPIDatas($datas, $info, $livestation)['relative_humidity_4_day_high_time'];
+
+        $relative_humidity_5_day_low = $this->getAPIDatas($datas, $info, $livestation)['relative_humidity_5_day_low'];
+        $relative_humidity_5_month_low = $this->getAPIDatas($datas, $info, $livestation)['relative_humidity_5_month_low'];
+        $relative_humidity_5_year_low = $this->getAPIDatas($datas, $info, $livestation)['relative_humidity_5_year_low'];
+        $relative_humidity_5_day_high = $this->getAPIDatas($datas, $info, $livestation)['relative_humidity_5_day_high'];
+        $relative_humidity_5_month_high = $this->getAPIDatas($datas, $info, $livestation)['relative_humidity_5_month_high'];
+        $relative_humidity_5_year_high = $this->getAPIDatas($datas, $info, $livestation)['relative_humidity_5_year_high'];
+
+        $relative_humidity_5_day_low_time = $this->getAPIDatas($datas, $info, $livestation)['relative_humidity_5_day_low_time'];
+        $relative_humidity_5_day_high_time = $this->getAPIDatas($datas, $info, $livestation)['relative_humidity_5_day_high_time'];
+
+        $relative_humidity_6_day_low = $this->getAPIDatas($datas, $info, $livestation)['relative_humidity_6_day_low'];
+        $relative_humidity_6_month_low = $this->getAPIDatas($datas, $info, $livestation)['relative_humidity_6_month_low'];
+        $relative_humidity_6_year_low = $this->getAPIDatas($datas, $info, $livestation)['relative_humidity_6_year_low'];
+        $relative_humidity_6_day_high = $this->getAPIDatas($datas, $info, $livestation)['relative_humidity_6_day_high'];
+        $relative_humidity_6_month_high = $this->getAPIDatas($datas, $info, $livestation)['relative_humidity_6_month_high'];
+        $relative_humidity_6_year_high = $this->getAPIDatas($datas, $info, $livestation)['relative_humidity_6_year_high'];
+
+        $relative_humidity_6_day_low_time = $this->getAPIDatas($datas, $info, $livestation)['relative_humidity_6_day_low_time'];
+        $relative_humidity_6_day_high_time = $this->getAPIDatas($datas, $info, $livestation)['relative_humidity_6_day_high_time'];
+
+        $relative_humidity_7_day_low = $this->getAPIDatas($datas, $info, $livestation)['relative_humidity_7_day_low'];
+        $relative_humidity_7_month_low = $this->getAPIDatas($datas, $info, $livestation)['relative_humidity_7_month_low'];
+        $relative_humidity_7_year_low = $this->getAPIDatas($datas, $info, $livestation)['relative_humidity_7_year_low'];
+        $relative_humidity_7_day_high = $this->getAPIDatas($datas, $info, $livestation)['relative_humidity_7_day_high'];
+        $relative_humidity_7_month_high = $this->getAPIDatas($datas, $info, $livestation)['relative_humidity_7_month_high'];
+        $relative_humidity_7_year_high = $this->getAPIDatas($datas, $info, $livestation)['relative_humidity_7_year_high'];
+
+        $relative_humidity_7_day_low_time = $this->getAPIDatas($datas, $info, $livestation)['relative_humidity_7_day_low_time'];
+        $relative_humidity_7_day_high_time = $this->getAPIDatas($datas, $info, $livestation)['relative_humidity_7_day_high_time'];
+
+        $leaf_wetness_1_day_low = $this->getAPIDatas($datas, $info, $livestation)['leaf_wetness_1_day_low'];
+        $leaf_wetness_1_month_low = $this->getAPIDatas($datas, $info, $livestation)['leaf_wetness_1_month_low'];
+        $leaf_wetness_1_year_low = $this->getAPIDatas($datas, $info, $livestation)['leaf_wetness_1_year_low'];
+        $leaf_wetness_1_day_high = $this->getAPIDatas($datas, $info, $livestation)['leaf_wetness_1_day_high'];
+        $leaf_wetness_1_month_high = $this->getAPIDatas($datas, $info, $livestation)['leaf_wetness_1_month_high'];
+        $leaf_wetness_1_year_high = $this->getAPIDatas($datas, $info, $livestation)['leaf_wetness_1_year_high'];
+
+        $leaf_wetness_1_day_low_time = $this->getAPIDatas($datas, $info, $livestation)['leaf_wetness_1_day_low_time'];
+        $leaf_wetness_1_day_high_time = $this->getAPIDatas($datas, $info, $livestation)['leaf_wetness_1_day_high_time'];
+
+        $leaf_wetness_2_day_low = $this->getAPIDatas($datas, $info, $livestation)['leaf_wetness_2_day_low'];
+        $leaf_wetness_2_month_low = $this->getAPIDatas($datas, $info, $livestation)['leaf_wetness_2_month_low'];
+        $leaf_wetness_2_year_low = $this->getAPIDatas($datas, $info, $livestation)['leaf_wetness_2_year_low'];
+        $leaf_wetness_2_day_high = $this->getAPIDatas($datas, $info, $livestation)['leaf_wetness_2_day_high'];
+        $leaf_wetness_2_month_high = $this->getAPIDatas($datas, $info, $livestation)['leaf_wetness_2_month_high'];
+        $leaf_wetness_2_year_high = $this->getAPIDatas($datas, $info, $livestation)['leaf_wetness_2_year_high'];
+
+        $leaf_wetness_2_day_low_time = $this->getAPIDatas($datas, $info, $livestation)['leaf_wetness_2_day_low_time'];
+        $leaf_wetness_2_day_high_time = $this->getAPIDatas($datas, $info, $livestation)['leaf_wetness_2_day_high_time'];
+
+        $soil_moisture_1_day_low = $this->getAPIDatas($datas, $info, $livestation)['soil_moisture_1_day_low'];
+        $soil_moisture_1_month_low = $this->getAPIDatas($datas, $info, $livestation)['soil_moisture_1_month_low'];
+        $soil_moisture_1_year_low = $this->getAPIDatas($datas, $info, $livestation)['soil_moisture_1_year_low'];
+        $soil_moisture_1_day_high = $this->getAPIDatas($datas, $info, $livestation)['soil_moisture_1_day_high'];
+        $soil_moisture_1_month_high = $this->getAPIDatas($datas, $info, $livestation)['soil_moisture_1_month_high'];
+        $soil_moisture_1_year_high = $this->getAPIDatas($datas, $info, $livestation)['soil_moisture_1_year_high'];
+
+        $soil_moisture_1_day_low_time = $this->getAPIDatas($datas, $info, $livestation)['soil_moisture_1_day_low_time'];
+        $soil_moisture_1_day_high_time = $this->getAPIDatas($datas, $info, $livestation)['soil_moisture_1_day_high_time'];
+
+        $soil_moisture_2_day_low = $this->getAPIDatas($datas, $info, $livestation)['soil_moisture_2_day_low'];
+        $soil_moisture_2_month_low = $this->getAPIDatas($datas, $info, $livestation)['soil_moisture_2_month_low'];
+        $soil_moisture_2_year_low = $this->getAPIDatas($datas, $info, $livestation)['soil_moisture_2_year_low'];
+        $soil_moisture_2_day_high = $this->getAPIDatas($datas, $info, $livestation)['soil_moisture_2_day_high'];
+        $soil_moisture_2_month_high = $this->getAPIDatas($datas, $info, $livestation)['soil_moisture_2_month_high'];
+        $soil_moisture_2_year_high = $this->getAPIDatas($datas, $info, $livestation)['soil_moisture_2_year_high'];
+
+        $soil_moisture_2_day_low_time = $this->getAPIDatas($datas, $info, $livestation)['soil_moisture_2_day_low_time'];
+        $soil_moisture_2_day_high_time = $this->getAPIDatas($datas, $info, $livestation)['soil_moisture_2_day_high_time'];
+
+        $soil_moisture_3_day_low = $this->getAPIDatas($datas, $info, $livestation)['soil_moisture_3_day_low'];
+        $soil_moisture_3_month_low = $this->getAPIDatas($datas, $info, $livestation)['soil_moisture_3_month_low'];
+        $soil_moisture_3_year_low = $this->getAPIDatas($datas, $info, $livestation)['soil_moisture_3_year_low'];
+        $soil_moisture_3_day_high = $this->getAPIDatas($datas, $info, $livestation)['soil_moisture_3_day_high'];
+        $soil_moisture_3_month_high = $this->getAPIDatas($datas, $info, $livestation)['soil_moisture_3_month_high'];
+        $soil_moisture_3_year_high = $this->getAPIDatas($datas, $info, $livestation)['soil_moisture_3_year_high'];
+
+        $soil_moisture_3_day_low_time = $this->getAPIDatas($datas, $info, $livestation)['soil_moisture_3_day_low_time'];
+        $soil_moisture_3_day_high_time = $this->getAPIDatas($datas, $info, $livestation)['soil_moisture_3_day_high_time'];
+
+        $soil_moisture_4_day_low = $this->getAPIDatas($datas, $info, $livestation)['soil_moisture_4_day_low'];
+        $soil_moisture_4_month_low = $this->getAPIDatas($datas, $info, $livestation)['soil_moisture_4_month_low'];
+        $soil_moisture_4_year_low = $this->getAPIDatas($datas, $info, $livestation)['soil_moisture_4_year_low'];
+        $soil_moisture_4_day_high = $this->getAPIDatas($datas, $info, $livestation)['soil_moisture_4_day_high'];
+        $soil_moisture_4_month_high = $this->getAPIDatas($datas, $info, $livestation)['soil_moisture_4_month_high'];
+        $soil_moisture_4_year_high = $this->getAPIDatas($datas, $info, $livestation)['soil_moisture_4_year_high'];
+
+        $soil_moisture_4_day_low_time = $this->getAPIDatas($datas, $info, $livestation)['soil_moisture_4_day_low_time'];
+        $soil_moisture_4_day_high_time = $this->getAPIDatas($datas, $info, $livestation)['soil_moisture_4_day_high_time'];
+
+        $temp_in_day_low_f = $this->getAPIDatas($datas, $info, $livestation)['temp_in_day_low_f'];
+        $temp_in_month_low_f = $this->getAPIDatas($datas, $info, $livestation)['temp_in_month_low_f'];
+        $temp_in_year_low_f = $this->getAPIDatas($datas, $info, $livestation)['temp_in_year_low_f'];
+        $temp_in_day_high_f = $this->getAPIDatas($datas, $info, $livestation)['temp_in_day_high_f'];
+        $temp_in_month_high_f = $this->getAPIDatas($datas, $info, $livestation)['temp_in_month_high_f'];
+        $temp_in_year_high_f = $this->getAPIDatas($datas, $info, $livestation)['temp_in_year_high_f'];
+
+        $temp_in_day_low_time = $this->getAPIDatas($datas, $info, $livestation)['temp_in_day_low_time'];
+        $temp_in_day_high_time = $this->getAPIDatas($datas, $info, $livestation)['temp_in_day_high_time'];
+
+        $relative_humidity_in_day_low = $this->getAPIDatas($datas, $info, $livestation)['relative_humidity_in_day_low'];
+        $relative_humidity_in_month_low = $this->getAPIDatas($datas, $info, $livestation)['relative_humidity_in_month_low'];
+        $relative_humidity_in_year_low = $this->getAPIDatas($datas, $info, $livestation)['relative_humidity_in_year_low'];
+        $relative_humidity_in_day_high = $this->getAPIDatas($datas, $info, $livestation)['relative_humidity_in_day_high'];
+        $relative_humidity_in_month_high = $this->getAPIDatas($datas, $info, $livestation)['relative_humidity_in_month_high'];
+        $relative_humidity_in_year_high = $this->getAPIDatas($datas, $info, $livestation)['relative_humidity_in_year_high'];
+
+        $relative_humidity_in_day_low_time = $this->getAPIDatas($datas, $info, $livestation)['relative_humidity_in_day_low_time'];
+        $relative_humidity_in_day_high_time = $this->getAPIDatas($datas, $info, $livestation)['relative_humidity_in_day_high_time'];
 
         $inc = array(
             "2" => array(
@@ -1305,520 +1794,517 @@ class StationView extends View
                 "DMY_OF_DOWN_n" =>  $this->getDMY($switch, $this->l->trad('AT') . ' ' . $this->l->timeTrad($temp_day_low_time, $this->l->getLg()), $this->l->trad('OF_THE_MONTH'), $this->l->trad('OF_THE_YEAR')),
                 "DMY_OF_DOWN_x" =>  $this->getDMY($switch, $this->l->trad('AT') . ' ' . $this->l->timeTrad($temp_day_high_time, $this->l->getLg()), $this->l->trad('OF_THE_MONTH'), $this->l->trad('OF_THE_YEAR')),
                 "DMY_TXT_TOOLTIP" => $this->getDMY($switch, $this->l->trad('DAILY'), $this->l->trad('MONTHLY'), $this->l->trad('YEARLY'))
-            ),            
-                "10" => array(
-                    "CSS_DOWN" => '800',
-                    "TEXT_DOWN_SMALL_n" => $this->l->trad('MIN'),
-                    "TEXT_DOWN_LARGE_n" => $this->l->trad('MINIMUM_PRESSURE'),
-                    "TEXT_DOWN_SMALL_x" => $this->l->trad('MAX'),
-                    "TEXT_DOWN_LARGE_x" => $this->l->trad('MAXIMUM_PRESSURE'),
-                    "CLASS_UNIT_DOWN_SMALL" => '08',
-                    "CLASS_UNIT_DOWN_LARGE" => '08',
-                    "_UNIT_DOWN_SMALL" => '',
-                    "_UNIT_DOWN_LARGE" => $this->getUnit($switch, 'press'),
-                    "_DMY_VALUE_n" => $this->getDMY($switch, $this->getPress($switch, $pressure_day_low_in), $this->getPress($switch, $pressure_month_low_in), $this->getPress($switch, $pressure_year_low_in)),
-                    "_DMY_VALUE_x" => $this->getDMY($switch, $this->getPress($switch, $pressure_day_high_in), $this->getPress($switch, $pressure_month_high_in), $this->getPress($switch, $pressure_year_high_in)),
-                    "DMY_OF_DOWN_n" =>  $this->getDMY($switch, $this->l->trad('AT') . ' ' . $this->l->timeTrad($pressure_day_low_time, $this->l->getLg()), $this->l->trad('OF_THE_MONTH'), $this->l->trad('OF_THE_YEAR')),
-                    "DMY_OF_DOWN_x" =>  $this->getDMY($switch, $this->l->trad('AT') . ' ' . $this->l->timeTrad($pressure_day_high_time, $this->l->getLg()), $this->l->trad('OF_THE_MONTH'), $this->l->trad('OF_THE_YEAR')),
-                    "DMY_TXT_TOOLTIP" => $this->getDMY($switch, $this->l->trad('DAILY'), $this->l->trad('MONTHLY'), $this->l->trad('YEARLY'))
-                ),
-                "11" => array(
-                    "CSS_DOWN" => '500',
-                    "TEXT_DOWN_SMALL_n" => $this->l->trad('TDN'),
-                    "TEXT_DOWN_LARGE_n" => $this->l->trad('MINIMUM_DEW_POINT'),
-                    "TEXT_DOWN_SMALL_x" => $this->l->trad('TDX'),
-                    "TEXT_DOWN_LARGE_x" => $this->l->trad('MAXIMUM_DEW_POINT'),
-                    "CLASS_UNIT_DOWN_SMALL" => '09',
-                    "CLASS_UNIT_DOWN_LARGE" => '09',
-                    "_UNIT_DOWN_SMALL" => '°',
-                    "_UNIT_DOWN_LARGE" => $this->getUnit($switch, 'temp'),
-                    "_DMY_VALUE_n" => $this->getDMY($switch, $this->getTemp($switch, $dewpoint_day_low_f), $this->getTemp($switch, $dewpoint_month_low_f), $this->getTemp($switch, $dewpoint_year_low_f)),
-                    "_DMY_VALUE_x" => $this->getDMY($switch, $this->getTemp($switch, $dewpoint_day_high_f), $this->getTemp($switch, $dewpoint_month_high_f), $this->getTemp($switch, $dewpoint_year_high_f)),
-                    "DMY_OF_DOWN_n" =>  $this->getDMY($switch, $this->l->trad('AT') . ' ' . $this->l->timeTrad($dewpoint_day_low_time, $this->l->getLg()), $this->l->trad('OF_THE_MONTH'), $this->l->trad('OF_THE_YEAR')),
-                    "DMY_OF_DOWN_x" =>  $this->getDMY($switch, $this->l->trad('AT') . ' ' . $this->l->timeTrad($dewpoint_day_high_time, $this->l->getLg()), $this->l->trad('OF_THE_MONTH'), $this->l->trad('OF_THE_YEAR')),
-                    "DMY_TXT_TOOLTIP" => $this->getDMY($switch, $this->l->trad('DAILY'), $this->l->trad('MONTHLY'), $this->l->trad('YEARLY'))
-                ),
-                "12" => array(
-                    "CSS_DOWN" => '500',
-                    "TEXT_DOWN_SMALL_n" => $this->l->trad('MIN'),
-                    "TEXT_DOWN_LARGE_n" => $this->l->trad('MINIMUM_HUMIDITY'),
-                    "TEXT_DOWN_SMALL_x" => $this->l->trad('MAX'),
-                    "TEXT_DOWN_LARGE_x" => $this->l->trad('MAXIMUM_HUMIDITY'),
-                    "CLASS_UNIT_DOWN_SMALL" => '08',
-                    "CLASS_UNIT_DOWN_LARGE" => '08',
-                    "_UNIT_DOWN_SMALL" => '%',
-                    "_UNIT_DOWN_LARGE" => '%',
-                    "_DMY_VALUE_n" => $this->getDMY($switch, $relative_humidity_day_low, $relative_humidity_month_low, $relative_humidity_year_low),
-                    "_DMY_VALUE_x" => $this->getDMY($switch, $relative_humidity_day_high, $relative_humidity_month_high, $relative_humidity_year_high),
-                    "DMY_OF_DOWN_n" =>  $this->getDMY($switch, $this->l->trad('AT') . ' ' . $this->l->timeTrad($relative_humidity_day_low_time, $this->l->getLg()), $this->l->trad('OF_THE_MONTH'), $this->l->trad('OF_THE_YEAR')),
-                    "DMY_OF_DOWN_x" =>  $this->getDMY($switch, $this->l->trad('AT') . ' ' . $this->l->timeTrad($relative_humidity_day_high_time, $this->l->getLg()), $this->l->trad('OF_THE_MONTH'), $this->l->trad('OF_THE_YEAR')),
-                    "DMY_TXT_TOOLTIP" => $this->getDMY($switch, $this->l->trad('DAILY'), $this->l->trad('MONTHLY'), $this->l->trad('YEARLY'))
-                ),
-                "15" => array(
-                    "CSS_DOWN" => '500',
-                    "TEXT_DOWN_SMALL_n" => $this->l->trad('TN'),
-                    "TEXT_DOWN_LARGE_n" => $this->l->trad('MINIMUM_TEMP'),
-                    "TEXT_DOWN_SMALL_x" => $this->l->trad('TX'),
-                    "TEXT_DOWN_LARGE_x" => $this->l->trad('MAXIMUM_TEMP'),
-                    "CLASS_UNIT_DOWN_SMALL" => '09',
-                    "CLASS_UNIT_DOWN_LARGE" => '09',
-                    "_UNIT_DOWN_SMALL" => '°',
-                    "_UNIT_DOWN_LARGE" => $this->getUnit($switch, 'temp'),
-                    "_DMY_VALUE_n" => $this->getDMY($switch, $this->getTemp($switch, $temp_extra_1_day_low), $this->getTemp($switch, $temp_extra_1_month_low), $this->getTemp($switch, $temp_extra_1_year_low)),
-                    "_DMY_VALUE_x" => $this->getDMY($switch, $this->getTemp($switch, $temp_extra_1_day_high), $this->getTemp($switch, $temp_extra_1_month_high), $this->getTemp($switch, $temp_extra_1_year_high)),
-                    "DMY_OF_DOWN_n" =>  $this->getDMY($switch, $this->l->trad('AT') . ' ' . $this->l->timeTrad($temp_extra_1_day_low_time, $this->l->getLg()), $this->l->trad('OF_THE_MONTH'), $this->l->trad('OF_THE_YEAR')),
-                    "DMY_OF_DOWN_x" =>  $this->getDMY($switch, $this->l->trad('AT') . ' ' . $this->l->timeTrad($temp_extra_1_day_high_time, $this->l->getLg()), $this->l->trad('OF_THE_MONTH'), $this->l->trad('OF_THE_YEAR')),
-                    "DMY_TXT_TOOLTIP" => $this->getDMY($switch, $this->l->trad('DAILY'), $this->l->trad('MONTHLY'), $this->l->trad('YEARLY'))
-                ),
-                "16" => array(
-                    "CSS_DOWN" => '500',
-                    "TEXT_DOWN_SMALL_n" => $this->l->trad('TN'),
-                    "TEXT_DOWN_LARGE_n" => $this->l->trad('MINIMUM_TEMP'),
-                    "TEXT_DOWN_SMALL_x" => $this->l->trad('TX'),
-                    "TEXT_DOWN_LARGE_x" => $this->l->trad('MAXIMUM_TEMP'),
-                    "CLASS_UNIT_DOWN_SMALL" => '09',
-                    "CLASS_UNIT_DOWN_LARGE" => '09',
-                    "_UNIT_DOWN_SMALL" => '°',
-                    "_UNIT_DOWN_LARGE" => $this->getUnit($switch, 'temp'),
-                    "_DMY_VALUE_n" => $this->getDMY($switch, $this->getTemp($switch, $temp_extra_2_day_low ), $this->getTemp($switch, $temp_extra_2_month_low ), $this->getTemp($switch, $temp_extra_2_year_low )),
-                    "_DMY_VALUE_x" => $this->getDMY($switch, $this->getTemp($switch, $temp_extra_2_day_high ), $this->getTemp($switch,  $temp_extra_2_month_high ), $this->getTemp($switch, $temp_extra_2_year_high )),
-                    "DMY_OF_DOWN_n" =>  $this->getDMY($switch, $this->l->trad('AT') . ' ' . $this->l->timeTrad($temp_extra_2_day_low_time , $this->l->getLg()), $this->l->trad('OF_THE_MONTH'), $this->l->trad('OF_THE_YEAR')),
-                    "DMY_OF_DOWN_x" =>  $this->getDMY($switch, $this->l->trad('AT') . ' ' . $this->l->timeTrad($temp_extra_2_day_high_time , $this->l->getLg()), $this->l->trad('OF_THE_MONTH'), $this->l->trad('OF_THE_YEAR')),
-                    "DMY_TXT_TOOLTIP" => $this->getDMY($switch, $this->l->trad('DAILY'), $this->l->trad('MONTHLY'), $this->l->trad('YEARLY'))
-                ),
-                "17" => array(
-                    "CSS_DOWN" => '500',
-                    "TEXT_DOWN_SMALL_n" => $this->l->trad('TN'),
-                    "TEXT_DOWN_LARGE_n" => $this->l->trad('MINIMUM_TEMP'),
-                    "TEXT_DOWN_SMALL_x" => $this->l->trad('TX'),
-                    "TEXT_DOWN_LARGE_x" => $this->l->trad('MAXIMUM_TEMP'),
-                    "CLASS_UNIT_DOWN_SMALL" => '09',
-                    "CLASS_UNIT_DOWN_LARGE" => '09',
-                    "_UNIT_DOWN_SMALL" => '°',
-                    "_UNIT_DOWN_LARGE" => $this->getUnit($switch, 'temp'),
-                    "_DMY_VALUE_n" => $this->getDMY($switch, $this->getTemp($switch, $temp_extra_3_day_low ), $this->getTemp($switch, $temp_extra_3_month_low ), $this->getTemp($switch, $temp_extra_3_year_low )),
-                    "_DMY_VALUE_x" => $this->getDMY($switch, $this->getTemp($switch, $temp_extra_3_day_high ), $this->getTemp($switch, $temp_extra_3_month_high ), $this->getTemp($switch, $temp_extra_3_year_high )),
-                    "DMY_OF_DOWN_n" =>  $this->getDMY($switch, $this->l->trad('AT') . ' ' . $this->l->timeTrad($temp_extra_3_day_low_time , $this->l->getLg()), $this->l->trad('OF_THE_MONTH'), $this->l->trad('OF_THE_YEAR')),
-                    "DMY_OF_DOWN_x" =>  $this->getDMY($switch, $this->l->trad('AT') . ' ' . $this->l->timeTrad($temp_extra_3_day_high_time , $this->l->getLg()), $this->l->trad('OF_THE_MONTH'), $this->l->trad('OF_THE_YEAR')),
-                    "DMY_TXT_TOOLTIP" => $this->getDMY($switch, $this->l->trad('DAILY'), $this->l->trad('MONTHLY'), $this->l->trad('YEARLY'))
-                ),
-                "18" => array(
-                    "CSS_DOWN" => '500',
-                    "TEXT_DOWN_SMALL_n" => $this->l->trad('TN'),
-                    "TEXT_DOWN_LARGE_n" => $this->l->trad('MINIMUM_TEMP'),
-                    "TEXT_DOWN_SMALL_x" => $this->l->trad('TX'),
-                    "TEXT_DOWN_LARGE_x" => $this->l->trad('MAXIMUM_TEMP'),
-                    "CLASS_UNIT_DOWN_SMALL" => '09',
-                    "CLASS_UNIT_DOWN_LARGE" => '09',
-                    "_UNIT_DOWN_SMALL" => '°',
-                    "_UNIT_DOWN_LARGE" => $this->getUnit($switch, 'temp'),
-                    "_DMY_VALUE_n" => $this->getDMY($switch, $this->getTemp($switch, $temp_extra_4_day_low ), $this->getTemp($switch, $temp_extra_4_month_low ), $this->getTemp($switch, $temp_extra_4_year_low )),
-                    "_DMY_VALUE_x" => $this->getDMY($switch, $this->getTemp($switch, $temp_extra_4_day_high ), $this->getTemp($switch,  $temp_extra_4_month_high ), $this->getTemp($switch, $temp_extra_4_year_high )),
-                    "DMY_OF_DOWN_n" =>  $this->getDMY($switch, $this->l->trad('AT') . ' ' . $this->l->timeTrad($temp_extra_4_day_low_time , $this->l->getLg()), $this->l->trad('OF_THE_MONTH'), $this->l->trad('OF_THE_YEAR')),
-                    "DMY_OF_DOWN_x" =>  $this->getDMY($switch, $this->l->trad('AT') . ' ' . $this->l->timeTrad($temp_extra_4_day_high_time , $this->l->getLg()), $this->l->trad('OF_THE_MONTH'), $this->l->trad('OF_THE_YEAR')),
-                    "DMY_TXT_TOOLTIP" => $this->getDMY($switch, $this->l->trad('DAILY'), $this->l->trad('MONTHLY'), $this->l->trad('YEARLY'))
-                ),
-                "19" => array(
-                    "CSS_DOWN" => '500',
-                    "TEXT_DOWN_SMALL_n" => $this->l->trad('TN'),
-                    "TEXT_DOWN_LARGE_n" => $this->l->trad('MINIMUM_TEMP'),
-                    "TEXT_DOWN_SMALL_x" => $this->l->trad('TX'),
-                    "TEXT_DOWN_LARGE_x" => $this->l->trad('MAXIMUM_TEMP'),
-                    "CLASS_UNIT_DOWN_SMALL" => '09',
-                    "CLASS_UNIT_DOWN_LARGE" => '09',
-                    "_UNIT_DOWN_SMALL" => '°',
-                    "_UNIT_DOWN_LARGE" => $this->getUnit($switch, 'temp'),
-                    "_DMY_VALUE_n" => $this->getDMY($switch, $this->getTemp($switch, $temp_extra_5_day_low ), $this->getTemp($switch, $temp_extra_5_month_low ), $this->getTemp($switch, $temp_extra_5_year_low )),
-                    "_DMY_VALUE_x" => $this->getDMY($switch, $this->getTemp($switch,  $temp_extra_5_day_high ), $this->getTemp($switch, $temp_extra_5_month_high), $this->getTemp($switch, $temp_extra_5_year_high )),
-                    "DMY_OF_DOWN_n" =>  $this->getDMY($switch, $this->l->trad('AT') . ' ' . $this->l->timeTrad($temp_extra_5_day_low_time , $this->l->getLg()), $this->l->trad('OF_THE_MONTH'), $this->l->trad('OF_THE_YEAR')),
-                    "DMY_OF_DOWN_x" =>  $this->getDMY($switch, $this->l->trad('AT') . ' ' . $this->l->timeTrad($temp_extra_5_day_high_time , $this->l->getLg()), $this->l->trad('OF_THE_MONTH'), $this->l->trad('OF_THE_YEAR')),
-                    "DMY_TXT_TOOLTIP" => $this->getDMY($switch, $this->l->trad('DAILY'), $this->l->trad('MONTHLY'), $this->l->trad('YEARLY'))
-                ),
-                "20" => array(
-                    "CSS_DOWN" => '500',
-                    "TEXT_DOWN_SMALL_n" => $this->l->trad('TN'),
-                    "TEXT_DOWN_LARGE_n" => $this->l->trad('MINIMUM_TEMP'),
-                    "TEXT_DOWN_SMALL_x" => $this->l->trad('TX'),
-                    "TEXT_DOWN_LARGE_x" => $this->l->trad('MAXIMUM_TEMP'),
-                    "CLASS_UNIT_DOWN_SMALL" => '09',
-                    "CLASS_UNIT_DOWN_LARGE" => '09',
-                    "_UNIT_DOWN_SMALL" => '°',
-                    "_UNIT_DOWN_LARGE" => $this->getUnit($switch, 'temp'),
-                    "_DMY_VALUE_n" => $this->getDMY($switch, $this->getTemp($switch, $temp_extra_6_day_low ), $this->getTemp($switch, $temp_extra_6_month_low ), $this->getTemp($switch, $temp_extra_6_year_low )),
-                    "_DMY_VALUE_x" => $this->getDMY($switch, $this->getTemp($switch, $temp_extra_6_day_high ), $this->getTemp($switch, $temp_extra_6_month_high ), $this->getTemp($switch, $temp_extra_6_year_high )),
-                    "DMY_OF_DOWN_n" =>  $this->getDMY($switch, $this->l->trad('AT') . ' ' . $this->l->timeTrad($temp_extra_6_day_low_time , $this->l->getLg()), $this->l->trad('OF_THE_MONTH'), $this->l->trad('OF_THE_YEAR')),
-                    "DMY_OF_DOWN_x" =>  $this->getDMY($switch, $this->l->trad('AT') . ' ' . $this->l->timeTrad($temp_extra_6_day_high_time , $this->l->getLg()), $this->l->trad('OF_THE_MONTH'), $this->l->trad('OF_THE_YEAR')),
-                    "DMY_TXT_TOOLTIP" => $this->getDMY($switch, $this->l->trad('DAILY'), $this->l->trad('MONTHLY'), $this->l->trad('YEARLY'))
-                ),
-                "21" => array(
-                    "CSS_DOWN" => '500',
-                    "TEXT_DOWN_SMALL_n" => $this->l->trad('TN'),
-                    "TEXT_DOWN_LARGE_n" => $this->l->trad('MINIMUM_TEMP'),
-                    "TEXT_DOWN_SMALL_x" => $this->l->trad('TX'),
-                    "TEXT_DOWN_LARGE_x" => $this->l->trad('MAXIMUM_TEMP'),
-                    "CLASS_UNIT_DOWN_SMALL" => '09',
-                    "CLASS_UNIT_DOWN_LARGE" => '09',
-                    "_UNIT_DOWN_SMALL" => '°',
-                    "_UNIT_DOWN_LARGE" => $this->getUnit($switch, 'temp'),
-                    "_DMY_VALUE_n" => $this->getDMY($switch, $this->getTemp($switch, $temp_extra_7_day_low ), $this->getTemp($switch, $temp_extra_7_month_low ), $this->getTemp($switch, $temp_extra_7_year_low )),
-                    "_DMY_VALUE_x" => $this->getDMY($switch, $this->getTemp($switch, $temp_extra_7_day_high ), $this->getTemp($switch, $temp_extra_7_month_high ), $this->getTemp($switch, $temp_extra_7_year_high )),
-                    "DMY_OF_DOWN_n" =>  $this->getDMY($switch, $this->l->trad('AT') . ' ' . $this->l->timeTrad($temp_extra_7_day_low_time , $this->l->getLg()), $this->l->trad('OF_THE_MONTH'), $this->l->trad('OF_THE_YEAR')),
-                    "DMY_OF_DOWN_x" =>  $this->getDMY($switch, $this->l->trad('AT') . ' ' . $this->l->timeTrad($temp_extra_7_day_high_time , $this->l->getLg()), $this->l->trad('OF_THE_MONTH'), $this->l->trad('OF_THE_YEAR')),
-                    "DMY_TXT_TOOLTIP" => $this->getDMY($switch, $this->l->trad('DAILY'), $this->l->trad('MONTHLY'), $this->l->trad('YEARLY'))
-                ),
-                "24" => array(
-                    "CSS_DOWN" => '500',
-                    "TEXT_DOWN_SMALL_n" => $this->l->trad('TN'),
-                    "TEXT_DOWN_LARGE_n" => $this->l->trad('MINIMUM_TEMP'),
-                    "TEXT_DOWN_SMALL_x" => $this->l->trad('TX'),
-                    "TEXT_DOWN_LARGE_x" => $this->l->trad('MAXIMUM_TEMP'),
-                    "CLASS_UNIT_DOWN_SMALL" => '09',
-                    "CLASS_UNIT_DOWN_LARGE" => '09',
-                    "_UNIT_DOWN_SMALL" => '°',
-                    "_UNIT_DOWN_LARGE" => $this->getUnit($switch, 'temp'),
-                    "_DMY_VALUE_n" => $this->getDMY($switch, $this->getTemp($switch, $temp_leaf_1_day_low ), $this->getTemp($switch, $temp_leaf_1_month_low ), $this->getTemp($switch, $temp_leaf_1_year_low )),
-                    "_DMY_VALUE_x" => $this->getDMY($switch, $this->getTemp($switch, $temp_leaf_1_day_high ), $this->getTemp($switch, $temp_leaf_1_month_high ), $this->getTemp($switch, $temp_leaf_1_year_high )),
-                    "DMY_OF_DOWN_n" =>  $this->getDMY($switch, $this->l->trad('AT') . ' ' . $this->l->timeTrad($temp_leaf_1_day_low_time , $this->l->getLg()), $this->l->trad('OF_THE_MONTH'), $this->l->trad('OF_THE_YEAR')),
-                    "DMY_OF_DOWN_x" =>  $this->getDMY($switch, $this->l->trad('AT') . ' ' . $this->l->timeTrad($temp_leaf_1_day_high_time , $this->l->getLg()), $this->l->trad('OF_THE_MONTH'), $this->l->trad('OF_THE_YEAR')),
-                    "DMY_TXT_TOOLTIP" => $this->getDMY($switch, $this->l->trad('DAILY'), $this->l->trad('MONTHLY'), $this->l->trad('YEARLY'))
-                ),
-                "25" => array(
-                    "CSS_DOWN" => '500',
-                    "TEXT_DOWN_SMALL_n" => $this->l->trad('TN'),
-                    "TEXT_DOWN_LARGE_n" => $this->l->trad('MINIMUM_TEMP'),
-                    "TEXT_DOWN_SMALL_x" => $this->l->trad('TX'),
-                    "TEXT_DOWN_LARGE_x" => $this->l->trad('MAXIMUM_TEMP'),
-                    "CLASS_UNIT_DOWN_SMALL" => '09',
-                    "CLASS_UNIT_DOWN_LARGE" => '09',
-                    "_UNIT_DOWN_SMALL" => '°',
-                    "_UNIT_DOWN_LARGE" => $this->getUnit($switch, 'temp'),
-                    "_DMY_VALUE_n" => $this->getDMY($switch, $this->getTemp($switch, $temp_leaf_2_day_low ), $this->getTemp($switch, $temp_leaf_2_month_low ), $this->getTemp($switch, $temp_leaf_2_year_low )),
-                    "_DMY_VALUE_x" => $this->getDMY($switch, $this->getTemp($switch, $temp_leaf_2_day_high ), $this->getTemp($switch, $temp_leaf_2_month_high ), $this->getTemp($switch, $temp_leaf_2_year_high )),
-                    "DMY_OF_DOWN_n" =>  $this->getDMY($switch, $this->l->trad('AT') . ' ' . $this->l->timeTrad($temp_leaf_2_day_low_time , $this->l->getLg()), $this->l->trad('OF_THE_MONTH'), $this->l->trad('OF_THE_YEAR')),
-                    "DMY_OF_DOWN_x" =>  $this->getDMY($switch, $this->l->trad('AT') . ' ' . $this->l->timeTrad($temp_leaf_2_day_high_time , $this->l->getLg()), $this->l->trad('OF_THE_MONTH'), $this->l->trad('OF_THE_YEAR')),
-                    "DMY_TXT_TOOLTIP" => $this->getDMY($switch, $this->l->trad('DAILY'), $this->l->trad('MONTHLY'), $this->l->trad('YEARLY'))
-                ),
-                "26" => array(
-                    "CSS_DOWN" => '500',
-                    "TEXT_DOWN_SMALL_n" => $this->l->trad('TN'),
-                    "TEXT_DOWN_LARGE_n" => $this->l->trad('MINIMUM_TEMP'),
-                    "TEXT_DOWN_SMALL_x" => $this->l->trad('TX'),
-                    "TEXT_DOWN_LARGE_x" => $this->l->trad('MAXIMUM_TEMP'),
-                    "CLASS_UNIT_DOWN_SMALL" => '09',
-                    "CLASS_UNIT_DOWN_LARGE" => '09',
-                    "_UNIT_DOWN_SMALL" => '°',
-                    "_UNIT_DOWN_LARGE" => $this->getUnit($switch, 'temp'),
-                    "_DMY_VALUE_n" => $this->getDMY($switch, $this->getTemp($switch, $temp_soil_1_day_low ), $this->getTemp($switch, $temp_soil_1_month_low ), $this->getTemp($switch, $temp_soil_1_year_low )),
-                    "_DMY_VALUE_x" => $this->getDMY($switch, $this->getTemp($switch, $temp_soil_1_day_high ), $this->getTemp($switch, $temp_soil_1_month_high ), $this->getTemp($switch, $temp_soil_1_year_high )),
-                    "DMY_OF_DOWN_n" =>  $this->getDMY($switch, $this->l->trad('AT') . ' ' . $this->l->timeTrad($temp_soil_1_day_low_time , $this->l->getLg()), $this->l->trad('OF_THE_MONTH'), $this->l->trad('OF_THE_YEAR')),
-                    "DMY_OF_DOWN_x" =>  $this->getDMY($switch, $this->l->trad('AT') . ' ' . $this->l->timeTrad($temp_soil_1_day_high_time , $this->l->getLg()), $this->l->trad('OF_THE_MONTH'), $this->l->trad('OF_THE_YEAR')),
-                    "DMY_TXT_TOOLTIP" => $this->getDMY($switch, $this->l->trad('DAILY'), $this->l->trad('MONTHLY'), $this->l->trad('YEARLY'))
-                ),
-                "27" => array(
-                    "CSS_DOWN" => '500',
-                    "TEXT_DOWN_SMALL_n" => $this->l->trad('TN'),
-                    "TEXT_DOWN_LARGE_n" => $this->l->trad('MINIMUM_TEMP'),
-                    "TEXT_DOWN_SMALL_x" => $this->l->trad('TX'),
-                    "TEXT_DOWN_LARGE_x" => $this->l->trad('MAXIMUM_TEMP'),
-                    "CLASS_UNIT_DOWN_SMALL" => '09',
-                    "CLASS_UNIT_DOWN_LARGE" => '09',
-                    "_UNIT_DOWN_SMALL" => '°',
-                    "_UNIT_DOWN_LARGE" => $this->getUnit($switch, 'temp'),
-                    "_DMY_VALUE_n" => $this->getDMY($switch, $this->getTemp($switch, $temp_soil_2_day_low ), $this->getTemp($switch, $temp_soil_2_month_low ), $this->getTemp($switch, $temp_soil_2_year_low )),
-                    "_DMY_VALUE_x" => $this->getDMY($switch, $this->getTemp($switch, $temp_soil_2_day_high ), $this->getTemp($switch, $temp_soil_2_month_high ), $this->getTemp($switch, $temp_soil_2_year_high )),
-                    "DMY_OF_DOWN_n" =>  $this->getDMY($switch, $this->l->trad('AT') . ' ' . $this->l->timeTrad($temp_soil_2_day_low_time , $this->l->getLg()), $this->l->trad('OF_THE_MONTH'), $this->l->trad('OF_THE_YEAR')),
-                    "DMY_OF_DOWN_x" =>  $this->getDMY($switch, $this->l->trad('AT') . ' ' . $this->l->timeTrad($temp_soil_2_day_high_time , $this->l->getLg()), $this->l->trad('OF_THE_MONTH'), $this->l->trad('OF_THE_YEAR')),
-                    "DMY_TXT_TOOLTIP" => $this->getDMY($switch, $this->l->trad('DAILY'), $this->l->trad('MONTHLY'), $this->l->trad('YEARLY'))
-                ),
-                "28" => array(
-                    "CSS_DOWN" => '500',
-                    "TEXT_DOWN_SMALL_n" => $this->l->trad('TN'),
-                    "TEXT_DOWN_LARGE_n" => $this->l->trad('MINIMUM_TEMP'),
-                    "TEXT_DOWN_SMALL_x" => $this->l->trad('TX'),
-                    "TEXT_DOWN_LARGE_x" => $this->l->trad('MAXIMUM_TEMP'),
-                    "CLASS_UNIT_DOWN_SMALL" => '09',
-                    "CLASS_UNIT_DOWN_LARGE" => '09',
-                    "_UNIT_DOWN_SMALL" => '°',
-                    "_UNIT_DOWN_LARGE" => $this->getUnit($switch, 'temp'),
-                    "_DMY_VALUE_n" => $this->getDMY($switch, $this->getTemp($switch, $temp_soil_3_day_low ), $this->getTemp($switch, $temp_soil_3_month_low ), $this->getTemp($switch, $temp_soil_3_year_low )),
-                    "_DMY_VALUE_x" => $this->getDMY($switch, $this->getTemp($switch, $temp_soil_3_day_high ), $this->getTemp($switch, $temp_soil_3_month_high ), $this->getTemp($switch, $temp_soil_3_year_high )),
-                    "DMY_OF_DOWN_n" =>  $this->getDMY($switch, $this->l->trad('AT') . ' ' . $this->l->timeTrad($temp_soil_3_day_low_time , $this->l->getLg()), $this->l->trad('OF_THE_MONTH'), $this->l->trad('OF_THE_YEAR')),
-                    "DMY_OF_DOWN_x" =>  $this->getDMY($switch, $this->l->trad('AT') . ' ' . $this->l->timeTrad($temp_soil_3_day_high_time , $this->l->getLg()), $this->l->trad('OF_THE_MONTH'), $this->l->trad('OF_THE_YEAR')),
-                    "DMY_TXT_TOOLTIP" => $this->getDMY($switch, $this->l->trad('DAILY'), $this->l->trad('MONTHLY'), $this->l->trad('YEARLY'))
-                ),
-                "29" => array(
-                    "CSS_DOWN" => '500',
-                    "TEXT_DOWN_SMALL_n" => $this->l->trad('TN'),
-                    "TEXT_DOWN_LARGE_n" => $this->l->trad('MINIMUM_TEMP'),
-                    "TEXT_DOWN_SMALL_x" => $this->l->trad('TX'),
-                    "TEXT_DOWN_LARGE_x" => $this->l->trad('MAXIMUM_TEMP'),
-                    "CLASS_UNIT_DOWN_SMALL" => '09',
-                    "CLASS_UNIT_DOWN_LARGE" => '09',
-                    "_UNIT_DOWN_SMALL" => '°',
-                    "_UNIT_DOWN_LARGE" => $this->getUnit($switch, 'temp'),
-                    "_DMY_VALUE_n" => $this->getDMY($switch, $this->getTemp($switch, $temp_soil_4_day_low ), $this->getTemp($switch, $temp_soil_4_month_low ), $this->getTemp($switch, $temp_soil_4_year_low )),
-                    "_DMY_VALUE_x" => $this->getDMY($switch, $this->getTemp($switch, $temp_soil_4_day_high ), $this->getTemp($switch, $temp_soil_4_month_high ), $this->getTemp($switch, $temp_soil_4_year_high )),
-                    "DMY_OF_DOWN_n" =>  $this->getDMY($switch, $this->l->trad('AT') . ' ' . $this->l->timeTrad($temp_soil_4_day_low_time , $this->l->getLg()), $this->l->trad('OF_THE_MONTH'), $this->l->trad('OF_THE_YEAR')),
-                    "DMY_OF_DOWN_x" =>  $this->getDMY($switch, $this->l->trad('AT') . ' ' . $this->l->timeTrad($temp_soil_4_day_high_time , $this->l->getLg()), $this->l->trad('OF_THE_MONTH'), $this->l->trad('OF_THE_YEAR')),
-                    "DMY_TXT_TOOLTIP" => $this->getDMY($switch, $this->l->trad('DAILY'), $this->l->trad('MONTHLY'), $this->l->trad('YEARLY'))
-                ),
-                "30" => array(
-                    "CSS_DOWN" => '500',
-                    "TEXT_DOWN_SMALL_n" => $this->l->trad('MIN'),
-                    "TEXT_DOWN_LARGE_n" => $this->l->trad('MINIMUM_HUMIDITY'),
-                    "TEXT_DOWN_SMALL_x" => $this->l->trad('MAX'),
-                    "TEXT_DOWN_LARGE_x" => $this->l->trad('MAXIMUM_HUMIDITY'),
-                    "CLASS_UNIT_DOWN_SMALL" => '08',
-                    "CLASS_UNIT_DOWN_LARGE" => '08',
-                    "_UNIT_DOWN_SMALL" => '%',
-                    "_UNIT_DOWN_LARGE" => '%',
-                    "_DMY_VALUE_n" => $this->getDMY($switch, $relative_humidity_1_day_low, $relative_humidity_1_month_low, $relative_humidity_1_year_low),
-                    "_DMY_VALUE_x" => $this->getDMY($switch, $relative_humidity_1_day_high, $relative_humidity_1_month_high, $relative_humidity_1_year_high),
-                    "DMY_OF_DOWN_n" =>  $this->getDMY($switch, $this->l->trad('AT') . ' ' . $this->l->timeTrad($relative_humidity_1_day_low_time, $this->l->getLg()), $this->l->trad('OF_THE_MONTH'), $this->l->trad('OF_THE_YEAR')),
-                    "DMY_OF_DOWN_x" =>  $this->getDMY($switch, $this->l->trad('AT') . ' ' . $this->l->timeTrad($relative_humidity_1_day_high_time, $this->l->getLg()), $this->l->trad('OF_THE_MONTH'), $this->l->trad('OF_THE_YEAR')),
-                    "DMY_TXT_TOOLTIP" => $this->getDMY($switch, $this->l->trad('DAILY'), $this->l->trad('MONTHLY'), $this->l->trad('YEARLY'))
-                ),
-                "31" => array(
-                    "CSS_DOWN" => '500',
-                    "TEXT_DOWN_SMALL_n" => $this->l->trad('MIN'),
-                    "TEXT_DOWN_LARGE_n" => $this->l->trad('MINIMUM_HUMIDITY'),
-                    "TEXT_DOWN_SMALL_x" => $this->l->trad('MAX'),
-                    "TEXT_DOWN_LARGE_x" => $this->l->trad('MAXIMUM_HUMIDITY'),
-                    "CLASS_UNIT_DOWN_SMALL" => '08',
-                    "CLASS_UNIT_DOWN_LARGE" => '08',
-                    "_UNIT_DOWN_SMALL" => '%',
-                    "_UNIT_DOWN_LARGE" => '%',
-                    "_DMY_VALUE_n" => $this->getDMY($switch, $relative_humidity_2_day_low, $relative_humidity_2_month_low, $relative_humidity_2_year_low),
-                    "_DMY_VALUE_x" => $this->getDMY($switch, $relative_humidity_2_day_high, $relative_humidity_2_month_high, $relative_humidity_2_year_high),
-                    "DMY_OF_DOWN_n" =>  $this->getDMY($switch, $this->l->trad('AT') . ' ' . $this->l->timeTrad($relative_humidity_2_day_low_time, $this->l->getLg()), $this->l->trad('OF_THE_MONTH'), $this->l->trad('OF_THE_YEAR')),
-                    "DMY_OF_DOWN_x" =>  $this->getDMY($switch, $this->l->trad('AT') . ' ' . $this->l->timeTrad($relative_humidity_2_day_high_time, $this->l->getLg()), $this->l->trad('OF_THE_MONTH'), $this->l->trad('OF_THE_YEAR')),
-                    "DMY_TXT_TOOLTIP" => $this->getDMY($switch, $this->l->trad('DAILY'), $this->l->trad('MONTHLY'), $this->l->trad('YEARLY'))
-                ),
-                "32" => array(
-                    "CSS_DOWN" => '500',
-                    "TEXT_DOWN_SMALL_n" => $this->l->trad('MIN'),
-                    "TEXT_DOWN_LARGE_n" => $this->l->trad('MINIMUM_HUMIDITY'),
-                    "TEXT_DOWN_SMALL_x" => $this->l->trad('MAX'),
-                    "TEXT_DOWN_LARGE_x" => $this->l->trad('MAXIMUM_HUMIDITY'),
-                    "CLASS_UNIT_DOWN_SMALL" => '08',
-                    "CLASS_UNIT_DOWN_LARGE" => '08',
-                    "_UNIT_DOWN_SMALL" => '%',
-                    "_UNIT_DOWN_LARGE" => '%',
-                    "_DMY_VALUE_n" => $this->getDMY($switch, $relative_humidity_3_day_low, $relative_humidity_3_month_low, $relative_humidity_3_year_low),
-                    "_DMY_VALUE_x" => $this->getDMY($switch, $relative_humidity_3_day_high, $relative_humidity_3_month_high, $relative_humidity_3_year_high),
-                    "DMY_OF_DOWN_n" =>  $this->getDMY($switch, $this->l->trad('AT') . ' ' . $this->l->timeTrad($relative_humidity_3_day_low_time, $this->l->getLg()), $this->l->trad('OF_THE_MONTH'), $this->l->trad('OF_THE_YEAR')),
-                    "DMY_OF_DOWN_x" =>  $this->getDMY($switch, $this->l->trad('AT') . ' ' . $this->l->timeTrad($relative_humidity_3_day_high_time, $this->l->getLg()), $this->l->trad('OF_THE_MONTH'), $this->l->trad('OF_THE_YEAR')),
-                    "DMY_TXT_TOOLTIP" => $this->getDMY($switch, $this->l->trad('DAILY'), $this->l->trad('MONTHLY'), $this->l->trad('YEARLY'))
-                ),
-                "33" => array(
-                    "CSS_DOWN" => '500',
-                    "TEXT_DOWN_SMALL_n" => $this->l->trad('MIN'),
-                    "TEXT_DOWN_LARGE_n" => $this->l->trad('MINIMUM_HUMIDITY'),
-                    "TEXT_DOWN_SMALL_x" => $this->l->trad('MAX'),
-                    "TEXT_DOWN_LARGE_x" => $this->l->trad('MAXIMUM_HUMIDITY'),
-                    "CLASS_UNIT_DOWN_SMALL" => '08',
-                    "CLASS_UNIT_DOWN_LARGE" => '08',
-                    "_UNIT_DOWN_SMALL" => '%',
-                    "_UNIT_DOWN_LARGE" => '%',
-                    "_DMY_VALUE_n" => $this->getDMY($switch, $relative_humidity_4_day_low, $relative_humidity_4_month_low, $relative_humidity_4_year_low),
-                    "_DMY_VALUE_x" => $this->getDMY($switch, $relative_humidity_4_day_high, $relative_humidity_4_month_high, $relative_humidity_4_year_high),
-                    "DMY_OF_DOWN_n" =>  $this->getDMY($switch, $this->l->trad('AT') . ' ' . $this->l->timeTrad($relative_humidity_4_day_low_time, $this->l->getLg()), $this->l->trad('OF_THE_MONTH'), $this->l->trad('OF_THE_YEAR')),
-                    "DMY_OF_DOWN_x" =>  $this->getDMY($switch, $this->l->trad('AT') . ' ' . $this->l->timeTrad($relative_humidity_4_day_high_time, $this->l->getLg()), $this->l->trad('OF_THE_MONTH'), $this->l->trad('OF_THE_YEAR')),
-                    "DMY_TXT_TOOLTIP" => $this->getDMY($switch, $this->l->trad('DAILY'), $this->l->trad('MONTHLY'), $this->l->trad('YEARLY'))
-                ),
-                "34" => array(
-                    "CSS_DOWN" => '500',
-                    "TEXT_DOWN_SMALL_n" => $this->l->trad('MIN'),
-                    "TEXT_DOWN_LARGE_n" => $this->l->trad('MINIMUM_HUMIDITY'),
-                    "TEXT_DOWN_SMALL_x" => $this->l->trad('MAX'),
-                    "TEXT_DOWN_LARGE_x" => $this->l->trad('MAXIMUM_HUMIDITY'),
-                    "CLASS_UNIT_DOWN_SMALL" => '08',
-                    "CLASS_UNIT_DOWN_LARGE" => '08',
-                    "_UNIT_DOWN_SMALL" => '%',
-                    "_UNIT_DOWN_LARGE" => '%',
-                    "_DMY_VALUE_n" => $this->getDMY($switch, $relative_humidity_5_day_low, $relative_humidity_5_month_low, $relative_humidity_5_year_low),
-                    "_DMY_VALUE_x" => $this->getDMY($switch, $relative_humidity_5_day_high, $relative_humidity_5_month_high, $relative_humidity_5_year_high),
-                    "DMY_OF_DOWN_n" =>  $this->getDMY($switch, $this->l->trad('AT') . ' ' . $this->l->timeTrad($relative_humidity_5_day_low_time, $this->l->getLg()), $this->l->trad('OF_THE_MONTH'), $this->l->trad('OF_THE_YEAR')),
-                    "DMY_OF_DOWN_x" =>  $this->getDMY($switch, $this->l->trad('AT') . ' ' . $this->l->timeTrad($relative_humidity_5_day_high_time, $this->l->getLg()), $this->l->trad('OF_THE_MONTH'), $this->l->trad('OF_THE_YEAR')),
-                    "DMY_TXT_TOOLTIP" => $this->getDMY($switch, $this->l->trad('DAILY'), $this->l->trad('MONTHLY'), $this->l->trad('YEARLY'))
-                ),
-                "35" => array(
-                    "CSS_DOWN" => '500',
-                    "TEXT_DOWN_SMALL_n" => $this->l->trad('MIN'),
-                    "TEXT_DOWN_LARGE_n" => $this->l->trad('MINIMUM_HUMIDITY'),
-                    "TEXT_DOWN_SMALL_x" => $this->l->trad('MAX'),
-                    "TEXT_DOWN_LARGE_x" => $this->l->trad('MAXIMUM_HUMIDITY'),
-                    "CLASS_UNIT_DOWN_SMALL" => '08',
-                    "CLASS_UNIT_DOWN_LARGE" => '08',
-                    "_UNIT_DOWN_SMALL" => '%',
-                    "_UNIT_DOWN_LARGE" => '%',
-                    "_DMY_VALUE_n" => $this->getDMY($switch, $relative_humidity_6_day_low, $relative_humidity_6_month_low, $relative_humidity_6_year_low),
-                    "_DMY_VALUE_x" => $this->getDMY($switch, $relative_humidity_6_day_high, $relative_humidity_6_month_high, $relative_humidity_6_year_high),
-                    "DMY_OF_DOWN_n" =>  $this->getDMY($switch, $this->l->trad('AT') . ' ' . $this->l->timeTrad($relative_humidity_6_day_low_time, $this->l->getLg()), $this->l->trad('OF_THE_MONTH'), $this->l->trad('OF_THE_YEAR')),
-                    "DMY_OF_DOWN_x" =>  $this->getDMY($switch, $this->l->trad('AT') . ' ' . $this->l->timeTrad($relative_humidity_6_day_high_time, $this->l->getLg()), $this->l->trad('OF_THE_MONTH'), $this->l->trad('OF_THE_YEAR')),
-                    "DMY_TXT_TOOLTIP" => $this->getDMY($switch, $this->l->trad('DAILY'), $this->l->trad('MONTHLY'), $this->l->trad('YEARLY'))
-                ),
-                "36" => array(
-                    "CSS_DOWN" => '500',
-                    "TEXT_DOWN_SMALL_n" => $this->l->trad('MIN'),
-                    "TEXT_DOWN_LARGE_n" => $this->l->trad('MINIMUM_HUMIDITY'),
-                    "TEXT_DOWN_SMALL_x" => $this->l->trad('MAX'),
-                    "TEXT_DOWN_LARGE_x" => $this->l->trad('MAXIMUM_HUMIDITY'),
-                    "CLASS_UNIT_DOWN_SMALL" => '08',
-                    "CLASS_UNIT_DOWN_LARGE" => '08',
-                    "_UNIT_DOWN_SMALL" => '%',
-                    "_UNIT_DOWN_LARGE" => '%',
-                    "_DMY_VALUE_n" => $this->getDMY($switch, $relative_humidity_7_day_low, $relative_humidity_7_month_low, $relative_humidity_7_year_low),
-                    "_DMY_VALUE_x" => $this->getDMY($switch, $relative_humidity_7_day_high, $relative_humidity_7_month_high, $relative_humidity_7_year_high),
-                    "DMY_OF_DOWN_n" =>  $this->getDMY($switch, $this->l->trad('AT') . ' ' . $this->l->timeTrad($relative_humidity_7_day_low_time, $this->l->getLg()), $this->l->trad('OF_THE_MONTH'), $this->l->trad('OF_THE_YEAR')),
-                    "DMY_OF_DOWN_x" =>  $this->getDMY($switch, $this->l->trad('AT') . ' ' . $this->l->timeTrad($relative_humidity_7_day_high_time, $this->l->getLg()), $this->l->trad('OF_THE_MONTH'), $this->l->trad('OF_THE_YEAR')),
-                    "DMY_TXT_TOOLTIP" => $this->getDMY($switch, $this->l->trad('DAILY'), $this->l->trad('MONTHLY'), $this->l->trad('YEARLY'))
-                ),
-                "37" => array(
-                    "CSS_DOWN" => '500',
-                    "TEXT_DOWN_SMALL_n" => $this->l->trad('MIN'),
-                    "TEXT_DOWN_LARGE_n" => $this->l->trad('MIN_INDEX'),
-                    "TEXT_DOWN_SMALL_x" => $this->l->trad('MAX'),
-                    "TEXT_DOWN_LARGE_x" => $this->l->trad('MAX_INDEX'),
-                    "CLASS_UNIT_DOWN_SMALL" => '08',
-                    "CLASS_UNIT_DOWN_LARGE" => '08',
-                    "_UNIT_DOWN_SMALL" => '',
-                    "_UNIT_DOWN_LARGE" => '',
-                    "_DMY_VALUE_n" => $this->getDMY($switch, $leaf_wetness_1_day_low, $leaf_wetness_1_month_low, $leaf_wetness_1_year_low),
-                    "_DMY_VALUE_x" => $this->getDMY($switch, $leaf_wetness_1_day_high, $leaf_wetness_1_month_high, $leaf_wetness_1_year_high),
-                    "DMY_OF_DOWN_n" =>  $this->getDMY($switch, $this->l->trad('AT') . ' ' . $this->l->timeTrad($leaf_wetness_1_day_low_time, $this->l->getLg()), $this->l->trad('OF_THE_MONTH'), $this->l->trad('OF_THE_YEAR')),
-                    "DMY_OF_DOWN_x" =>  $this->getDMY($switch, $this->l->trad('AT') . ' ' . $this->l->timeTrad($leaf_wetness_1_day_high_time, $this->l->getLg()), $this->l->trad('OF_THE_MONTH'), $this->l->trad('OF_THE_YEAR')),
-                    "DMY_TXT_TOOLTIP" => $this->getDMY($switch, $this->l->trad('DAILY'), $this->l->trad('MONTHLY'), $this->l->trad('YEARLY'))
-                ),
-                "38" => array(
-                    "CSS_DOWN" => '500',
-                    "TEXT_DOWN_SMALL_n" => $this->l->trad('MIN'),
-                    "TEXT_DOWN_LARGE_n" => $this->l->trad('MIN_INDEX'),
-                    "TEXT_DOWN_SMALL_x" => $this->l->trad('MAX'),
-                    "TEXT_DOWN_LARGE_x" => $this->l->trad('MAX_INDEX'),
-                    "CLASS_UNIT_DOWN_SMALL" => '08',
-                    "CLASS_UNIT_DOWN_LARGE" => '08',
-                    "_UNIT_DOWN_SMALL" => '',
-                    "_UNIT_DOWN_LARGE" => '',
-                    "_DMY_VALUE_n" => $this->getDMY($switch, $leaf_wetness_2_day_low, $leaf_wetness_2_month_low, $leaf_wetness_2_year_low),
-                    "_DMY_VALUE_x" => $this->getDMY($switch, $leaf_wetness_2_day_high, $leaf_wetness_2_month_high, $leaf_wetness_2_year_high),
-                    "DMY_OF_DOWN_n" =>  $this->getDMY($switch, $this->l->trad('AT') . ' ' . $this->l->timeTrad($leaf_wetness_2_day_low_time, $this->l->getLg()), $this->l->trad('OF_THE_MONTH'), $this->l->trad('OF_THE_YEAR')),
-                    "DMY_OF_DOWN_x" =>  $this->getDMY($switch, $this->l->trad('AT') . ' ' . $this->l->timeTrad($leaf_wetness_2_day_high_time, $this->l->getLg()), $this->l->trad('OF_THE_MONTH'), $this->l->trad('OF_THE_YEAR')),
-                    "DMY_TXT_TOOLTIP" => $this->getDMY($switch, $this->l->trad('DAILY'), $this->l->trad('MONTHLY'), $this->l->trad('YEARLY'))
-                ),
-                "39" => array(
-                    "CSS_DOWN" => '500',
-                    "TEXT_DOWN_SMALL_n" => $this->l->trad('MIN'),
-                    "TEXT_DOWN_LARGE_n" => $this->l->trad('MINIMUM_HUMIDITY'),
-                    "TEXT_DOWN_SMALL_x" => $this->l->trad('MAX'),
-                    "TEXT_DOWN_LARGE_x" => $this->l->trad('MAXIMUM_HUMIDITY'),
-                    "CLASS_UNIT_DOWN_SMALL" => '08',
-                    "CLASS_UNIT_DOWN_LARGE" => '08',
-                    "_UNIT_DOWN_SMALL" => 'cB',
-                    "_UNIT_DOWN_LARGE" => 'cB',
-                    "_DMY_VALUE_n" => $this->getDMY($switch, $soil_moisture_1_day_low, $soil_moisture_1_month_low, $soil_moisture_1_year_low),
-                    "_DMY_VALUE_x" => $this->getDMY($switch, $soil_moisture_1_day_high, $soil_moisture_1_month_high, $soil_moisture_1_year_high),
-                    "DMY_OF_DOWN_n" =>  $this->getDMY($switch, $this->l->trad('AT') . ' ' . $this->l->timeTrad($soil_moisture_1_day_low_time, $this->l->getLg()), $this->l->trad('OF_THE_MONTH'), $this->l->trad('OF_THE_YEAR')),
-                    "DMY_OF_DOWN_x" =>  $this->getDMY($switch, $this->l->trad('AT') . ' ' . $this->l->timeTrad($soil_moisture_1_day_high_time, $this->l->getLg()), $this->l->trad('OF_THE_MONTH'), $this->l->trad('OF_THE_YEAR')),
-                    "DMY_TXT_TOOLTIP" => $this->getDMY($switch, $this->l->trad('DAILY'), $this->l->trad('MONTHLY'), $this->l->trad('YEARLY'))
-                ),
-                "40" => array(
-                    "CSS_DOWN" => '500',
-                    "TEXT_DOWN_SMALL_n" => $this->l->trad('MIN'),
-                    "TEXT_DOWN_LARGE_n" => $this->l->trad('MINIMUM_HUMIDITY'),
-                    "TEXT_DOWN_SMALL_x" => $this->l->trad('MAX'),
-                    "TEXT_DOWN_LARGE_x" => $this->l->trad('MAXIMUM_HUMIDITY'),
-                    "CLASS_UNIT_DOWN_SMALL" => '08',
-                    "CLASS_UNIT_DOWN_LARGE" => '08',
-                    "_UNIT_DOWN_SMALL" => 'cB',
-                    "_UNIT_DOWN_LARGE" => 'cB',
-                    "_DMY_VALUE_n" => $this->getDMY($switch, $soil_moisture_2_day_low, $soil_moisture_2_month_low, $soil_moisture_2_year_low),
-                    "_DMY_VALUE_x" => $this->getDMY($switch, $soil_moisture_2_day_high, $soil_moisture_2_month_high, $soil_moisture_2_year_high),
-                    "DMY_OF_DOWN_n" =>  $this->getDMY($switch, $this->l->trad('AT') . ' ' . $this->l->timeTrad($soil_moisture_2_day_low_time, $this->l->getLg()), $this->l->trad('OF_THE_MONTH'), $this->l->trad('OF_THE_YEAR')),
-                    "DMY_OF_DOWN_x" =>  $this->getDMY($switch, $this->l->trad('AT') . ' ' . $this->l->timeTrad($soil_moisture_2_day_high_time, $this->l->getLg()), $this->l->trad('OF_THE_MONTH'), $this->l->trad('OF_THE_YEAR')),
-                    "DMY_TXT_TOOLTIP" => $this->getDMY($switch, $this->l->trad('DAILY'), $this->l->trad('MONTHLY'), $this->l->trad('YEARLY'))
-                ),
-                "41" => array(
-                    "CSS_DOWN" => '500',
-                    "TEXT_DOWN_SMALL_n" => $this->l->trad('MIN'),
-                    "TEXT_DOWN_LARGE_n" => $this->l->trad('MINIMUM_HUMIDITY'),
-                    "TEXT_DOWN_SMALL_x" => $this->l->trad('MAX'),
-                    "TEXT_DOWN_LARGE_x" => $this->l->trad('MAXIMUM_HUMIDITY'),
-                    "CLASS_UNIT_DOWN_SMALL" => '08',
-                    "CLASS_UNIT_DOWN_LARGE" => '08',
-                    "_UNIT_DOWN_SMALL" => 'cB',
-                    "_UNIT_DOWN_LARGE" => 'cB',
-                    "_DMY_VALUE_n" => $this->getDMY($switch, $soil_moisture_3_day_low, $soil_moisture_3_month_low, $soil_moisture_3_year_low),
-                    "_DMY_VALUE_x" => $this->getDMY($switch, $soil_moisture_3_day_high, $soil_moisture_3_month_high, $soil_moisture_3_year_high),
-                    "DMY_OF_DOWN_n" =>  $this->getDMY($switch, $this->l->trad('AT') . ' ' . $this->l->timeTrad($soil_moisture_3_day_low_time, $this->l->getLg()), $this->l->trad('OF_THE_MONTH'), $this->l->trad('OF_THE_YEAR')),
-                    "DMY_OF_DOWN_x" =>  $this->getDMY($switch, $this->l->trad('AT') . ' ' . $this->l->timeTrad($soil_moisture_3_day_high_time, $this->l->getLg()), $this->l->trad('OF_THE_MONTH'), $this->l->trad('OF_THE_YEAR')),
-                    "DMY_TXT_TOOLTIP" => $this->getDMY($switch, $this->l->trad('DAILY'), $this->l->trad('MONTHLY'), $this->l->trad('YEARLY'))
-                ),
-                "42" => array(
-                    "CSS_DOWN" => '500',
-                    "TEXT_DOWN_SMALL_n" => $this->l->trad('MIN'),
-                    "TEXT_DOWN_LARGE_n" => $this->l->trad('MINIMUM_HUMIDITY'),
-                    "TEXT_DOWN_SMALL_x" => $this->l->trad('MAX'),
-                    "TEXT_DOWN_LARGE_x" => $this->l->trad('MAXIMUM_HUMIDITY'),
-                    "CLASS_UNIT_DOWN_SMALL" => '08',
-                    "CLASS_UNIT_DOWN_LARGE" => '08',
-                    "_UNIT_DOWN_SMALL" => 'cB',
-                    "_UNIT_DOWN_LARGE" => 'cB',
-                    "_DMY_VALUE_n" => $this->getDMY($switch, $soil_moisture_4_day_low, $soil_moisture_4_month_low, $soil_moisture_4_year_low),
-                    "_DMY_VALUE_x" => $this->getDMY($switch, $soil_moisture_4_day_high, $soil_moisture_4_month_high, $soil_moisture_4_year_high),
-                    "DMY_OF_DOWN_n" =>  $this->getDMY($switch, $this->l->trad('AT') . ' ' . $this->l->timeTrad($soil_moisture_4_day_low_time, $this->l->getLg()), $this->l->trad('OF_THE_MONTH'), $this->l->trad('OF_THE_YEAR')),
-                    "DMY_OF_DOWN_x" =>  $this->getDMY($switch, $this->l->trad('AT') . ' ' . $this->l->timeTrad($soil_moisture_4_day_high_time, $this->l->getLg()), $this->l->trad('OF_THE_MONTH'), $this->l->trad('OF_THE_YEAR')),
-                    "DMY_TXT_TOOLTIP" => $this->getDMY($switch, $this->l->trad('DAILY'), $this->l->trad('MONTHLY'), $this->l->trad('YEARLY'))
-                ),
-                "43" => array(
-                    "CSS_DOWN" => '500',
-                    "TEXT_DOWN_SMALL_n" => $this->l->trad('TN'),
-                    "TEXT_DOWN_LARGE_n" => $this->l->trad('MINIMUM_TEMP'),
-                    "TEXT_DOWN_SMALL_x" => $this->l->trad('TX'),
-                    "TEXT_DOWN_LARGE_x" => $this->l->trad('MAXIMUM_TEMP'),
-                    "CLASS_UNIT_DOWN_SMALL" => '09',
-                    "CLASS_UNIT_DOWN_LARGE" => '09',
-                    "_UNIT_DOWN_SMALL" => '°',
-                    "_UNIT_DOWN_LARGE" => $this->getUnit($switch, 'temp'),
-                    "_DMY_VALUE_n" => $this->getDMY($switch, $this->getTemp($switch, $temp_in_day_low_f), $this->getTemp($switch, $temp_in_month_low_f), $this->getTemp($switch, $temp_in_year_low_f)),
-                    "_DMY_VALUE_x" => $this->getDMY($switch, $this->getTemp($switch, $temp_in_day_high_f), $this->getTemp($switch, $temp_in_month_high_f), $this->getTemp($switch, $temp_in_year_high_f)),
-                    "DMY_OF_DOWN_n" =>  $this->getDMY($switch, $this->l->trad('AT') . ' ' . $this->l->timeTrad($temp_in_day_low_time, $this->l->getLg()), $this->l->trad('OF_THE_MONTH'), $this->l->trad('OF_THE_YEAR')),
-                    "DMY_OF_DOWN_x" =>  $this->getDMY($switch, $this->l->trad('AT') . ' ' . $this->l->timeTrad($temp_in_day_high_time, $this->l->getLg()), $this->l->trad('OF_THE_MONTH'), $this->l->trad('OF_THE_YEAR')),
-                    "DMY_TXT_TOOLTIP" => $this->getDMY($switch, $this->l->trad('DAILY'), $this->l->trad('MONTHLY'), $this->l->trad('YEARLY'))
-                ), 
-                "44" => array(
-                    "CSS_DOWN" => '500',
-                    "TEXT_DOWN_SMALL_n" => $this->l->trad('MIN'),
-                    "TEXT_DOWN_LARGE_n" => $this->l->trad('MINIMUM_HUMIDITY'),
-                    "TEXT_DOWN_SMALL_x" => $this->l->trad('MAX'),
-                    "TEXT_DOWN_LARGE_x" => $this->l->trad('MAXIMUM_HUMIDITY'),
-                    "CLASS_UNIT_DOWN_SMALL" => '08',
-                    "CLASS_UNIT_DOWN_LARGE" => '08',
-                    "_UNIT_DOWN_SMALL" => '%',
-                    "_UNIT_DOWN_LARGE" => '%',
-                    "_DMY_VALUE_n" => $this->getDMY($switch, $relative_humidity_in_day_low, $relative_humidity_in_month_low, $relative_humidity_in_year_low),
-                    "_DMY_VALUE_x" => $this->getDMY($switch, $relative_humidity_in_day_high, $relative_humidity_in_month_high, $relative_humidity_in_year_high),
-                    "DMY_OF_DOWN_n" =>  $this->getDMY($switch, $this->l->trad('AT') . ' ' . $this->l->timeTrad($relative_humidity_in_day_low_time, $this->l->getLg()), $this->l->trad('OF_THE_MONTH'), $this->l->trad('OF_THE_YEAR')),
-                    "DMY_OF_DOWN_x" =>  $this->getDMY($switch, $this->l->trad('AT') . ' ' . $this->l->timeTrad($relative_humidity_in_day_high_time, $this->l->getLg()), $this->l->trad('OF_THE_MONTH'), $this->l->trad('OF_THE_YEAR')),
-                    "DMY_TXT_TOOLTIP" => $this->getDMY($switch, $this->l->trad('DAILY'), $this->l->trad('MONTHLY'), $this->l->trad('YEARLY'))
-                ),
+            ),
+            "10" => array(
+                "CSS_DOWN" => '800',
+                "TEXT_DOWN_SMALL_n" => $this->l->trad('MIN'),
+                "TEXT_DOWN_LARGE_n" => $this->l->trad('MINIMUM_PRESSURE'),
+                "TEXT_DOWN_SMALL_x" => $this->l->trad('MAX'),
+                "TEXT_DOWN_LARGE_x" => $this->l->trad('MAXIMUM_PRESSURE'),
+                "CLASS_UNIT_DOWN_SMALL" => '08',
+                "CLASS_UNIT_DOWN_LARGE" => '08',
+                "_UNIT_DOWN_SMALL" => '',
+                "_UNIT_DOWN_LARGE" => $this->getUnit($switch, 'press'),
+                "_DMY_VALUE_n" => $this->getDMY($switch, $this->getPress($switch, $pressure_day_low_in), $this->getPress($switch, $pressure_month_low_in), $this->getPress($switch, $pressure_year_low_in)),
+                "_DMY_VALUE_x" => $this->getDMY($switch, $this->getPress($switch, $pressure_day_high_in), $this->getPress($switch, $pressure_month_high_in), $this->getPress($switch, $pressure_year_high_in)),
+                "DMY_OF_DOWN_n" =>  $this->getDMY($switch, $this->l->trad('AT') . ' ' . $this->l->timeTrad($pressure_day_low_time, $this->l->getLg()), $this->l->trad('OF_THE_MONTH'), $this->l->trad('OF_THE_YEAR')),
+                "DMY_OF_DOWN_x" =>  $this->getDMY($switch, $this->l->trad('AT') . ' ' . $this->l->timeTrad($pressure_day_high_time, $this->l->getLg()), $this->l->trad('OF_THE_MONTH'), $this->l->trad('OF_THE_YEAR')),
+                "DMY_TXT_TOOLTIP" => $this->getDMY($switch, $this->l->trad('DAILY'), $this->l->trad('MONTHLY'), $this->l->trad('YEARLY'))
+            ),
+            "11" => array(
+                "CSS_DOWN" => '500',
+                "TEXT_DOWN_SMALL_n" => $this->l->trad('TDN'),
+                "TEXT_DOWN_LARGE_n" => $this->l->trad('MINIMUM_DEW_POINT'),
+                "TEXT_DOWN_SMALL_x" => $this->l->trad('TDX'),
+                "TEXT_DOWN_LARGE_x" => $this->l->trad('MAXIMUM_DEW_POINT'),
+                "CLASS_UNIT_DOWN_SMALL" => '09',
+                "CLASS_UNIT_DOWN_LARGE" => '09',
+                "_UNIT_DOWN_SMALL" => '°',
+                "_UNIT_DOWN_LARGE" => $this->getUnit($switch, 'temp'),
+                "_DMY_VALUE_n" => $this->getDMY($switch, $this->getTemp($switch, $dewpoint_day_low_f), $this->getTemp($switch, $dewpoint_month_low_f), $this->getTemp($switch, $dewpoint_year_low_f)),
+                "_DMY_VALUE_x" => $this->getDMY($switch, $this->getTemp($switch, $dewpoint_day_high_f), $this->getTemp($switch, $dewpoint_month_high_f), $this->getTemp($switch, $dewpoint_year_high_f)),
+                "DMY_OF_DOWN_n" =>  $this->getDMY($switch, $this->l->trad('AT') . ' ' . $this->l->timeTrad($dewpoint_day_low_time, $this->l->getLg()), $this->l->trad('OF_THE_MONTH'), $this->l->trad('OF_THE_YEAR')),
+                "DMY_OF_DOWN_x" =>  $this->getDMY($switch, $this->l->trad('AT') . ' ' . $this->l->timeTrad($dewpoint_day_high_time, $this->l->getLg()), $this->l->trad('OF_THE_MONTH'), $this->l->trad('OF_THE_YEAR')),
+                "DMY_TXT_TOOLTIP" => $this->getDMY($switch, $this->l->trad('DAILY'), $this->l->trad('MONTHLY'), $this->l->trad('YEARLY'))
+            ),
+            "12" => array(
+                "CSS_DOWN" => '500',
+                "TEXT_DOWN_SMALL_n" => $this->l->trad('MIN'),
+                "TEXT_DOWN_LARGE_n" => $this->l->trad('MINIMUM_HUMIDITY'),
+                "TEXT_DOWN_SMALL_x" => $this->l->trad('MAX'),
+                "TEXT_DOWN_LARGE_x" => $this->l->trad('MAXIMUM_HUMIDITY'),
+                "CLASS_UNIT_DOWN_SMALL" => '08',
+                "CLASS_UNIT_DOWN_LARGE" => '08',
+                "_UNIT_DOWN_SMALL" => '%',
+                "_UNIT_DOWN_LARGE" => '%',
+                "_DMY_VALUE_n" => $this->getDMY($switch, $relative_humidity_day_low, $relative_humidity_month_low, $relative_humidity_year_low),
+                "_DMY_VALUE_x" => $this->getDMY($switch, $relative_humidity_day_high, $relative_humidity_month_high, $relative_humidity_year_high),
+                "DMY_OF_DOWN_n" =>  $this->getDMY($switch, $this->l->trad('AT') . ' ' . $this->l->timeTrad($relative_humidity_day_low_time, $this->l->getLg()), $this->l->trad('OF_THE_MONTH'), $this->l->trad('OF_THE_YEAR')),
+                "DMY_OF_DOWN_x" =>  $this->getDMY($switch, $this->l->trad('AT') . ' ' . $this->l->timeTrad($relative_humidity_day_high_time, $this->l->getLg()), $this->l->trad('OF_THE_MONTH'), $this->l->trad('OF_THE_YEAR')),
+                "DMY_TXT_TOOLTIP" => $this->getDMY($switch, $this->l->trad('DAILY'), $this->l->trad('MONTHLY'), $this->l->trad('YEARLY'))
+            ),
+            "15" => array(
+                "CSS_DOWN" => '500',
+                "TEXT_DOWN_SMALL_n" => $this->l->trad('TN'),
+                "TEXT_DOWN_LARGE_n" => $this->l->trad('MINIMUM_TEMP'),
+                "TEXT_DOWN_SMALL_x" => $this->l->trad('TX'),
+                "TEXT_DOWN_LARGE_x" => $this->l->trad('MAXIMUM_TEMP'),
+                "CLASS_UNIT_DOWN_SMALL" => '09',
+                "CLASS_UNIT_DOWN_LARGE" => '09',
+                "_UNIT_DOWN_SMALL" => '°',
+                "_UNIT_DOWN_LARGE" => $this->getUnit($switch, 'temp'),
+                "_DMY_VALUE_n" => $this->getDMY($switch, $this->getTemp($switch, $temp_extra_1_day_low), $this->getTemp($switch, $temp_extra_1_month_low), $this->getTemp($switch, $temp_extra_1_year_low)),
+                "_DMY_VALUE_x" => $this->getDMY($switch, $this->getTemp($switch, $temp_extra_1_day_high), $this->getTemp($switch, $temp_extra_1_month_high), $this->getTemp($switch, $temp_extra_1_year_high)),
+                "DMY_OF_DOWN_n" =>  $this->getDMY($switch, $this->l->trad('AT') . ' ' . $this->l->timeTrad($temp_extra_1_day_low_time, $this->l->getLg()), $this->l->trad('OF_THE_MONTH'), $this->l->trad('OF_THE_YEAR')),
+                "DMY_OF_DOWN_x" =>  $this->getDMY($switch, $this->l->trad('AT') . ' ' . $this->l->timeTrad($temp_extra_1_day_high_time, $this->l->getLg()), $this->l->trad('OF_THE_MONTH'), $this->l->trad('OF_THE_YEAR')),
+                "DMY_TXT_TOOLTIP" => $this->getDMY($switch, $this->l->trad('DAILY'), $this->l->trad('MONTHLY'), $this->l->trad('YEARLY'))
+            ),
+            "16" => array(
+                "CSS_DOWN" => '500',
+                "TEXT_DOWN_SMALL_n" => $this->l->trad('TN'),
+                "TEXT_DOWN_LARGE_n" => $this->l->trad('MINIMUM_TEMP'),
+                "TEXT_DOWN_SMALL_x" => $this->l->trad('TX'),
+                "TEXT_DOWN_LARGE_x" => $this->l->trad('MAXIMUM_TEMP'),
+                "CLASS_UNIT_DOWN_SMALL" => '09',
+                "CLASS_UNIT_DOWN_LARGE" => '09',
+                "_UNIT_DOWN_SMALL" => '°',
+                "_UNIT_DOWN_LARGE" => $this->getUnit($switch, 'temp'),
+                "_DMY_VALUE_n" => $this->getDMY($switch, $this->getTemp($switch, $temp_extra_2_day_low), $this->getTemp($switch, $temp_extra_2_month_low), $this->getTemp($switch, $temp_extra_2_year_low)),
+                "_DMY_VALUE_x" => $this->getDMY($switch, $this->getTemp($switch, $temp_extra_2_day_high), $this->getTemp($switch,  $temp_extra_2_month_high), $this->getTemp($switch, $temp_extra_2_year_high)),
+                "DMY_OF_DOWN_n" =>  $this->getDMY($switch, $this->l->trad('AT') . ' ' . $this->l->timeTrad($temp_extra_2_day_low_time, $this->l->getLg()), $this->l->trad('OF_THE_MONTH'), $this->l->trad('OF_THE_YEAR')),
+                "DMY_OF_DOWN_x" =>  $this->getDMY($switch, $this->l->trad('AT') . ' ' . $this->l->timeTrad($temp_extra_2_day_high_time, $this->l->getLg()), $this->l->trad('OF_THE_MONTH'), $this->l->trad('OF_THE_YEAR')),
+                "DMY_TXT_TOOLTIP" => $this->getDMY($switch, $this->l->trad('DAILY'), $this->l->trad('MONTHLY'), $this->l->trad('YEARLY'))
+            ),
+            "17" => array(
+                "CSS_DOWN" => '500',
+                "TEXT_DOWN_SMALL_n" => $this->l->trad('TN'),
+                "TEXT_DOWN_LARGE_n" => $this->l->trad('MINIMUM_TEMP'),
+                "TEXT_DOWN_SMALL_x" => $this->l->trad('TX'),
+                "TEXT_DOWN_LARGE_x" => $this->l->trad('MAXIMUM_TEMP'),
+                "CLASS_UNIT_DOWN_SMALL" => '09',
+                "CLASS_UNIT_DOWN_LARGE" => '09',
+                "_UNIT_DOWN_SMALL" => '°',
+                "_UNIT_DOWN_LARGE" => $this->getUnit($switch, 'temp'),
+                "_DMY_VALUE_n" => $this->getDMY($switch, $this->getTemp($switch, $temp_extra_3_day_low), $this->getTemp($switch, $temp_extra_3_month_low), $this->getTemp($switch, $temp_extra_3_year_low)),
+                "_DMY_VALUE_x" => $this->getDMY($switch, $this->getTemp($switch, $temp_extra_3_day_high), $this->getTemp($switch, $temp_extra_3_month_high), $this->getTemp($switch, $temp_extra_3_year_high)),
+                "DMY_OF_DOWN_n" =>  $this->getDMY($switch, $this->l->trad('AT') . ' ' . $this->l->timeTrad($temp_extra_3_day_low_time, $this->l->getLg()), $this->l->trad('OF_THE_MONTH'), $this->l->trad('OF_THE_YEAR')),
+                "DMY_OF_DOWN_x" =>  $this->getDMY($switch, $this->l->trad('AT') . ' ' . $this->l->timeTrad($temp_extra_3_day_high_time, $this->l->getLg()), $this->l->trad('OF_THE_MONTH'), $this->l->trad('OF_THE_YEAR')),
+                "DMY_TXT_TOOLTIP" => $this->getDMY($switch, $this->l->trad('DAILY'), $this->l->trad('MONTHLY'), $this->l->trad('YEARLY'))
+            ),
+            "18" => array(
+                "CSS_DOWN" => '500',
+                "TEXT_DOWN_SMALL_n" => $this->l->trad('TN'),
+                "TEXT_DOWN_LARGE_n" => $this->l->trad('MINIMUM_TEMP'),
+                "TEXT_DOWN_SMALL_x" => $this->l->trad('TX'),
+                "TEXT_DOWN_LARGE_x" => $this->l->trad('MAXIMUM_TEMP'),
+                "CLASS_UNIT_DOWN_SMALL" => '09',
+                "CLASS_UNIT_DOWN_LARGE" => '09',
+                "_UNIT_DOWN_SMALL" => '°',
+                "_UNIT_DOWN_LARGE" => $this->getUnit($switch, 'temp'),
+                "_DMY_VALUE_n" => $this->getDMY($switch, $this->getTemp($switch, $temp_extra_4_day_low), $this->getTemp($switch, $temp_extra_4_month_low), $this->getTemp($switch, $temp_extra_4_year_low)),
+                "_DMY_VALUE_x" => $this->getDMY($switch, $this->getTemp($switch, $temp_extra_4_day_high), $this->getTemp($switch,  $temp_extra_4_month_high), $this->getTemp($switch, $temp_extra_4_year_high)),
+                "DMY_OF_DOWN_n" =>  $this->getDMY($switch, $this->l->trad('AT') . ' ' . $this->l->timeTrad($temp_extra_4_day_low_time, $this->l->getLg()), $this->l->trad('OF_THE_MONTH'), $this->l->trad('OF_THE_YEAR')),
+                "DMY_OF_DOWN_x" =>  $this->getDMY($switch, $this->l->trad('AT') . ' ' . $this->l->timeTrad($temp_extra_4_day_high_time, $this->l->getLg()), $this->l->trad('OF_THE_MONTH'), $this->l->trad('OF_THE_YEAR')),
+                "DMY_TXT_TOOLTIP" => $this->getDMY($switch, $this->l->trad('DAILY'), $this->l->trad('MONTHLY'), $this->l->trad('YEARLY'))
+            ),
+            "19" => array(
+                "CSS_DOWN" => '500',
+                "TEXT_DOWN_SMALL_n" => $this->l->trad('TN'),
+                "TEXT_DOWN_LARGE_n" => $this->l->trad('MINIMUM_TEMP'),
+                "TEXT_DOWN_SMALL_x" => $this->l->trad('TX'),
+                "TEXT_DOWN_LARGE_x" => $this->l->trad('MAXIMUM_TEMP'),
+                "CLASS_UNIT_DOWN_SMALL" => '09',
+                "CLASS_UNIT_DOWN_LARGE" => '09',
+                "_UNIT_DOWN_SMALL" => '°',
+                "_UNIT_DOWN_LARGE" => $this->getUnit($switch, 'temp'),
+                "_DMY_VALUE_n" => $this->getDMY($switch, $this->getTemp($switch, $temp_extra_5_day_low), $this->getTemp($switch, $temp_extra_5_month_low), $this->getTemp($switch, $temp_extra_5_year_low)),
+                "_DMY_VALUE_x" => $this->getDMY($switch, $this->getTemp($switch,  $temp_extra_5_day_high), $this->getTemp($switch, $temp_extra_5_month_high), $this->getTemp($switch, $temp_extra_5_year_high)),
+                "DMY_OF_DOWN_n" =>  $this->getDMY($switch, $this->l->trad('AT') . ' ' . $this->l->timeTrad($temp_extra_5_day_low_time, $this->l->getLg()), $this->l->trad('OF_THE_MONTH'), $this->l->trad('OF_THE_YEAR')),
+                "DMY_OF_DOWN_x" =>  $this->getDMY($switch, $this->l->trad('AT') . ' ' . $this->l->timeTrad($temp_extra_5_day_high_time, $this->l->getLg()), $this->l->trad('OF_THE_MONTH'), $this->l->trad('OF_THE_YEAR')),
+                "DMY_TXT_TOOLTIP" => $this->getDMY($switch, $this->l->trad('DAILY'), $this->l->trad('MONTHLY'), $this->l->trad('YEARLY'))
+            ),
+            "20" => array(
+                "CSS_DOWN" => '500',
+                "TEXT_DOWN_SMALL_n" => $this->l->trad('TN'),
+                "TEXT_DOWN_LARGE_n" => $this->l->trad('MINIMUM_TEMP'),
+                "TEXT_DOWN_SMALL_x" => $this->l->trad('TX'),
+                "TEXT_DOWN_LARGE_x" => $this->l->trad('MAXIMUM_TEMP'),
+                "CLASS_UNIT_DOWN_SMALL" => '09',
+                "CLASS_UNIT_DOWN_LARGE" => '09',
+                "_UNIT_DOWN_SMALL" => '°',
+                "_UNIT_DOWN_LARGE" => $this->getUnit($switch, 'temp'),
+                "_DMY_VALUE_n" => $this->getDMY($switch, $this->getTemp($switch, $temp_extra_6_day_low), $this->getTemp($switch, $temp_extra_6_month_low), $this->getTemp($switch, $temp_extra_6_year_low)),
+                "_DMY_VALUE_x" => $this->getDMY($switch, $this->getTemp($switch, $temp_extra_6_day_high), $this->getTemp($switch, $temp_extra_6_month_high), $this->getTemp($switch, $temp_extra_6_year_high)),
+                "DMY_OF_DOWN_n" =>  $this->getDMY($switch, $this->l->trad('AT') . ' ' . $this->l->timeTrad($temp_extra_6_day_low_time, $this->l->getLg()), $this->l->trad('OF_THE_MONTH'), $this->l->trad('OF_THE_YEAR')),
+                "DMY_OF_DOWN_x" =>  $this->getDMY($switch, $this->l->trad('AT') . ' ' . $this->l->timeTrad($temp_extra_6_day_high_time, $this->l->getLg()), $this->l->trad('OF_THE_MONTH'), $this->l->trad('OF_THE_YEAR')),
+                "DMY_TXT_TOOLTIP" => $this->getDMY($switch, $this->l->trad('DAILY'), $this->l->trad('MONTHLY'), $this->l->trad('YEARLY'))
+            ),
+            "21" => array(
+                "CSS_DOWN" => '500',
+                "TEXT_DOWN_SMALL_n" => $this->l->trad('TN'),
+                "TEXT_DOWN_LARGE_n" => $this->l->trad('MINIMUM_TEMP'),
+                "TEXT_DOWN_SMALL_x" => $this->l->trad('TX'),
+                "TEXT_DOWN_LARGE_x" => $this->l->trad('MAXIMUM_TEMP'),
+                "CLASS_UNIT_DOWN_SMALL" => '09',
+                "CLASS_UNIT_DOWN_LARGE" => '09',
+                "_UNIT_DOWN_SMALL" => '°',
+                "_UNIT_DOWN_LARGE" => $this->getUnit($switch, 'temp'),
+                "_DMY_VALUE_n" => $this->getDMY($switch, $this->getTemp($switch, $temp_extra_7_day_low), $this->getTemp($switch, $temp_extra_7_month_low), $this->getTemp($switch, $temp_extra_7_year_low)),
+                "_DMY_VALUE_x" => $this->getDMY($switch, $this->getTemp($switch, $temp_extra_7_day_high), $this->getTemp($switch, $temp_extra_7_month_high), $this->getTemp($switch, $temp_extra_7_year_high)),
+                "DMY_OF_DOWN_n" =>  $this->getDMY($switch, $this->l->trad('AT') . ' ' . $this->l->timeTrad($temp_extra_7_day_low_time, $this->l->getLg()), $this->l->trad('OF_THE_MONTH'), $this->l->trad('OF_THE_YEAR')),
+                "DMY_OF_DOWN_x" =>  $this->getDMY($switch, $this->l->trad('AT') . ' ' . $this->l->timeTrad($temp_extra_7_day_high_time, $this->l->getLg()), $this->l->trad('OF_THE_MONTH'), $this->l->trad('OF_THE_YEAR')),
+                "DMY_TXT_TOOLTIP" => $this->getDMY($switch, $this->l->trad('DAILY'), $this->l->trad('MONTHLY'), $this->l->trad('YEARLY'))
+            ),
+            "24" => array(
+                "CSS_DOWN" => '500',
+                "TEXT_DOWN_SMALL_n" => $this->l->trad('TN'),
+                "TEXT_DOWN_LARGE_n" => $this->l->trad('MINIMUM_TEMP'),
+                "TEXT_DOWN_SMALL_x" => $this->l->trad('TX'),
+                "TEXT_DOWN_LARGE_x" => $this->l->trad('MAXIMUM_TEMP'),
+                "CLASS_UNIT_DOWN_SMALL" => '09',
+                "CLASS_UNIT_DOWN_LARGE" => '09',
+                "_UNIT_DOWN_SMALL" => '°',
+                "_UNIT_DOWN_LARGE" => $this->getUnit($switch, 'temp'),
+                "_DMY_VALUE_n" => $this->getDMY($switch, $this->getTemp($switch, $temp_leaf_1_day_low), $this->getTemp($switch, $temp_leaf_1_month_low), $this->getTemp($switch, $temp_leaf_1_year_low)),
+                "_DMY_VALUE_x" => $this->getDMY($switch, $this->getTemp($switch, $temp_leaf_1_day_high), $this->getTemp($switch, $temp_leaf_1_month_high), $this->getTemp($switch, $temp_leaf_1_year_high)),
+                "DMY_OF_DOWN_n" =>  $this->getDMY($switch, $this->l->trad('AT') . ' ' . $this->l->timeTrad($temp_leaf_1_day_low_time, $this->l->getLg()), $this->l->trad('OF_THE_MONTH'), $this->l->trad('OF_THE_YEAR')),
+                "DMY_OF_DOWN_x" =>  $this->getDMY($switch, $this->l->trad('AT') . ' ' . $this->l->timeTrad($temp_leaf_1_day_high_time, $this->l->getLg()), $this->l->trad('OF_THE_MONTH'), $this->l->trad('OF_THE_YEAR')),
+                "DMY_TXT_TOOLTIP" => $this->getDMY($switch, $this->l->trad('DAILY'), $this->l->trad('MONTHLY'), $this->l->trad('YEARLY'))
+            ),
+            "25" => array(
+                "CSS_DOWN" => '500',
+                "TEXT_DOWN_SMALL_n" => $this->l->trad('TN'),
+                "TEXT_DOWN_LARGE_n" => $this->l->trad('MINIMUM_TEMP'),
+                "TEXT_DOWN_SMALL_x" => $this->l->trad('TX'),
+                "TEXT_DOWN_LARGE_x" => $this->l->trad('MAXIMUM_TEMP'),
+                "CLASS_UNIT_DOWN_SMALL" => '09',
+                "CLASS_UNIT_DOWN_LARGE" => '09',
+                "_UNIT_DOWN_SMALL" => '°',
+                "_UNIT_DOWN_LARGE" => $this->getUnit($switch, 'temp'),
+                "_DMY_VALUE_n" => $this->getDMY($switch, $this->getTemp($switch, $temp_leaf_2_day_low), $this->getTemp($switch, $temp_leaf_2_month_low), $this->getTemp($switch, $temp_leaf_2_year_low)),
+                "_DMY_VALUE_x" => $this->getDMY($switch, $this->getTemp($switch, $temp_leaf_2_day_high), $this->getTemp($switch, $temp_leaf_2_month_high), $this->getTemp($switch, $temp_leaf_2_year_high)),
+                "DMY_OF_DOWN_n" =>  $this->getDMY($switch, $this->l->trad('AT') . ' ' . $this->l->timeTrad($temp_leaf_2_day_low_time, $this->l->getLg()), $this->l->trad('OF_THE_MONTH'), $this->l->trad('OF_THE_YEAR')),
+                "DMY_OF_DOWN_x" =>  $this->getDMY($switch, $this->l->trad('AT') . ' ' . $this->l->timeTrad($temp_leaf_2_day_high_time, $this->l->getLg()), $this->l->trad('OF_THE_MONTH'), $this->l->trad('OF_THE_YEAR')),
+                "DMY_TXT_TOOLTIP" => $this->getDMY($switch, $this->l->trad('DAILY'), $this->l->trad('MONTHLY'), $this->l->trad('YEARLY'))
+            ),
+            "26" => array(
+                "CSS_DOWN" => '500',
+                "TEXT_DOWN_SMALL_n" => $this->l->trad('TN'),
+                "TEXT_DOWN_LARGE_n" => $this->l->trad('MINIMUM_TEMP'),
+                "TEXT_DOWN_SMALL_x" => $this->l->trad('TX'),
+                "TEXT_DOWN_LARGE_x" => $this->l->trad('MAXIMUM_TEMP'),
+                "CLASS_UNIT_DOWN_SMALL" => '09',
+                "CLASS_UNIT_DOWN_LARGE" => '09',
+                "_UNIT_DOWN_SMALL" => '°',
+                "_UNIT_DOWN_LARGE" => $this->getUnit($switch, 'temp'),
+                "_DMY_VALUE_n" => $this->getDMY($switch, $this->getTemp($switch, $temp_soil_1_day_low), $this->getTemp($switch, $temp_soil_1_month_low), $this->getTemp($switch, $temp_soil_1_year_low)),
+                "_DMY_VALUE_x" => $this->getDMY($switch, $this->getTemp($switch, $temp_soil_1_day_high), $this->getTemp($switch, $temp_soil_1_month_high), $this->getTemp($switch, $temp_soil_1_year_high)),
+                "DMY_OF_DOWN_n" =>  $this->getDMY($switch, $this->l->trad('AT') . ' ' . $this->l->timeTrad($temp_soil_1_day_low_time, $this->l->getLg()), $this->l->trad('OF_THE_MONTH'), $this->l->trad('OF_THE_YEAR')),
+                "DMY_OF_DOWN_x" =>  $this->getDMY($switch, $this->l->trad('AT') . ' ' . $this->l->timeTrad($temp_soil_1_day_high_time, $this->l->getLg()), $this->l->trad('OF_THE_MONTH'), $this->l->trad('OF_THE_YEAR')),
+                "DMY_TXT_TOOLTIP" => $this->getDMY($switch, $this->l->trad('DAILY'), $this->l->trad('MONTHLY'), $this->l->trad('YEARLY'))
+            ),
+            "27" => array(
+                "CSS_DOWN" => '500',
+                "TEXT_DOWN_SMALL_n" => $this->l->trad('TN'),
+                "TEXT_DOWN_LARGE_n" => $this->l->trad('MINIMUM_TEMP'),
+                "TEXT_DOWN_SMALL_x" => $this->l->trad('TX'),
+                "TEXT_DOWN_LARGE_x" => $this->l->trad('MAXIMUM_TEMP'),
+                "CLASS_UNIT_DOWN_SMALL" => '09',
+                "CLASS_UNIT_DOWN_LARGE" => '09',
+                "_UNIT_DOWN_SMALL" => '°',
+                "_UNIT_DOWN_LARGE" => $this->getUnit($switch, 'temp'),
+                "_DMY_VALUE_n" => $this->getDMY($switch, $this->getTemp($switch, $temp_soil_2_day_low), $this->getTemp($switch, $temp_soil_2_month_low), $this->getTemp($switch, $temp_soil_2_year_low)),
+                "_DMY_VALUE_x" => $this->getDMY($switch, $this->getTemp($switch, $temp_soil_2_day_high), $this->getTemp($switch, $temp_soil_2_month_high), $this->getTemp($switch, $temp_soil_2_year_high)),
+                "DMY_OF_DOWN_n" =>  $this->getDMY($switch, $this->l->trad('AT') . ' ' . $this->l->timeTrad($temp_soil_2_day_low_time, $this->l->getLg()), $this->l->trad('OF_THE_MONTH'), $this->l->trad('OF_THE_YEAR')),
+                "DMY_OF_DOWN_x" =>  $this->getDMY($switch, $this->l->trad('AT') . ' ' . $this->l->timeTrad($temp_soil_2_day_high_time, $this->l->getLg()), $this->l->trad('OF_THE_MONTH'), $this->l->trad('OF_THE_YEAR')),
+                "DMY_TXT_TOOLTIP" => $this->getDMY($switch, $this->l->trad('DAILY'), $this->l->trad('MONTHLY'), $this->l->trad('YEARLY'))
+            ),
+            "28" => array(
+                "CSS_DOWN" => '500',
+                "TEXT_DOWN_SMALL_n" => $this->l->trad('TN'),
+                "TEXT_DOWN_LARGE_n" => $this->l->trad('MINIMUM_TEMP'),
+                "TEXT_DOWN_SMALL_x" => $this->l->trad('TX'),
+                "TEXT_DOWN_LARGE_x" => $this->l->trad('MAXIMUM_TEMP'),
+                "CLASS_UNIT_DOWN_SMALL" => '09',
+                "CLASS_UNIT_DOWN_LARGE" => '09',
+                "_UNIT_DOWN_SMALL" => '°',
+                "_UNIT_DOWN_LARGE" => $this->getUnit($switch, 'temp'),
+                "_DMY_VALUE_n" => $this->getDMY($switch, $this->getTemp($switch, $temp_soil_3_day_low), $this->getTemp($switch, $temp_soil_3_month_low), $this->getTemp($switch, $temp_soil_3_year_low)),
+                "_DMY_VALUE_x" => $this->getDMY($switch, $this->getTemp($switch, $temp_soil_3_day_high), $this->getTemp($switch, $temp_soil_3_month_high), $this->getTemp($switch, $temp_soil_3_year_high)),
+                "DMY_OF_DOWN_n" =>  $this->getDMY($switch, $this->l->trad('AT') . ' ' . $this->l->timeTrad($temp_soil_3_day_low_time, $this->l->getLg()), $this->l->trad('OF_THE_MONTH'), $this->l->trad('OF_THE_YEAR')),
+                "DMY_OF_DOWN_x" =>  $this->getDMY($switch, $this->l->trad('AT') . ' ' . $this->l->timeTrad($temp_soil_3_day_high_time, $this->l->getLg()), $this->l->trad('OF_THE_MONTH'), $this->l->trad('OF_THE_YEAR')),
+                "DMY_TXT_TOOLTIP" => $this->getDMY($switch, $this->l->trad('DAILY'), $this->l->trad('MONTHLY'), $this->l->trad('YEARLY'))
+            ),
+            "29" => array(
+                "CSS_DOWN" => '500',
+                "TEXT_DOWN_SMALL_n" => $this->l->trad('TN'),
+                "TEXT_DOWN_LARGE_n" => $this->l->trad('MINIMUM_TEMP'),
+                "TEXT_DOWN_SMALL_x" => $this->l->trad('TX'),
+                "TEXT_DOWN_LARGE_x" => $this->l->trad('MAXIMUM_TEMP'),
+                "CLASS_UNIT_DOWN_SMALL" => '09',
+                "CLASS_UNIT_DOWN_LARGE" => '09',
+                "_UNIT_DOWN_SMALL" => '°',
+                "_UNIT_DOWN_LARGE" => $this->getUnit($switch, 'temp'),
+                "_DMY_VALUE_n" => $this->getDMY($switch, $this->getTemp($switch, $temp_soil_4_day_low), $this->getTemp($switch, $temp_soil_4_month_low), $this->getTemp($switch, $temp_soil_4_year_low)),
+                "_DMY_VALUE_x" => $this->getDMY($switch, $this->getTemp($switch, $temp_soil_4_day_high), $this->getTemp($switch, $temp_soil_4_month_high), $this->getTemp($switch, $temp_soil_4_year_high)),
+                "DMY_OF_DOWN_n" =>  $this->getDMY($switch, $this->l->trad('AT') . ' ' . $this->l->timeTrad($temp_soil_4_day_low_time, $this->l->getLg()), $this->l->trad('OF_THE_MONTH'), $this->l->trad('OF_THE_YEAR')),
+                "DMY_OF_DOWN_x" =>  $this->getDMY($switch, $this->l->trad('AT') . ' ' . $this->l->timeTrad($temp_soil_4_day_high_time, $this->l->getLg()), $this->l->trad('OF_THE_MONTH'), $this->l->trad('OF_THE_YEAR')),
+                "DMY_TXT_TOOLTIP" => $this->getDMY($switch, $this->l->trad('DAILY'), $this->l->trad('MONTHLY'), $this->l->trad('YEARLY'))
+            ),
+            "30" => array(
+                "CSS_DOWN" => '500',
+                "TEXT_DOWN_SMALL_n" => $this->l->trad('MIN'),
+                "TEXT_DOWN_LARGE_n" => $this->l->trad('MINIMUM_HUMIDITY'),
+                "TEXT_DOWN_SMALL_x" => $this->l->trad('MAX'),
+                "TEXT_DOWN_LARGE_x" => $this->l->trad('MAXIMUM_HUMIDITY'),
+                "CLASS_UNIT_DOWN_SMALL" => '08',
+                "CLASS_UNIT_DOWN_LARGE" => '08',
+                "_UNIT_DOWN_SMALL" => '%',
+                "_UNIT_DOWN_LARGE" => '%',
+                "_DMY_VALUE_n" => $this->getDMY($switch, $relative_humidity_1_day_low, $relative_humidity_1_month_low, $relative_humidity_1_year_low),
+                "_DMY_VALUE_x" => $this->getDMY($switch, $relative_humidity_1_day_high, $relative_humidity_1_month_high, $relative_humidity_1_year_high),
+                "DMY_OF_DOWN_n" =>  $this->getDMY($switch, $this->l->trad('AT') . ' ' . $this->l->timeTrad($relative_humidity_1_day_low_time, $this->l->getLg()), $this->l->trad('OF_THE_MONTH'), $this->l->trad('OF_THE_YEAR')),
+                "DMY_OF_DOWN_x" =>  $this->getDMY($switch, $this->l->trad('AT') . ' ' . $this->l->timeTrad($relative_humidity_1_day_high_time, $this->l->getLg()), $this->l->trad('OF_THE_MONTH'), $this->l->trad('OF_THE_YEAR')),
+                "DMY_TXT_TOOLTIP" => $this->getDMY($switch, $this->l->trad('DAILY'), $this->l->trad('MONTHLY'), $this->l->trad('YEARLY'))
+            ),
+            "31" => array(
+                "CSS_DOWN" => '500',
+                "TEXT_DOWN_SMALL_n" => $this->l->trad('MIN'),
+                "TEXT_DOWN_LARGE_n" => $this->l->trad('MINIMUM_HUMIDITY'),
+                "TEXT_DOWN_SMALL_x" => $this->l->trad('MAX'),
+                "TEXT_DOWN_LARGE_x" => $this->l->trad('MAXIMUM_HUMIDITY'),
+                "CLASS_UNIT_DOWN_SMALL" => '08',
+                "CLASS_UNIT_DOWN_LARGE" => '08',
+                "_UNIT_DOWN_SMALL" => '%',
+                "_UNIT_DOWN_LARGE" => '%',
+                "_DMY_VALUE_n" => $this->getDMY($switch, $relative_humidity_2_day_low, $relative_humidity_2_month_low, $relative_humidity_2_year_low),
+                "_DMY_VALUE_x" => $this->getDMY($switch, $relative_humidity_2_day_high, $relative_humidity_2_month_high, $relative_humidity_2_year_high),
+                "DMY_OF_DOWN_n" =>  $this->getDMY($switch, $this->l->trad('AT') . ' ' . $this->l->timeTrad($relative_humidity_2_day_low_time, $this->l->getLg()), $this->l->trad('OF_THE_MONTH'), $this->l->trad('OF_THE_YEAR')),
+                "DMY_OF_DOWN_x" =>  $this->getDMY($switch, $this->l->trad('AT') . ' ' . $this->l->timeTrad($relative_humidity_2_day_high_time, $this->l->getLg()), $this->l->trad('OF_THE_MONTH'), $this->l->trad('OF_THE_YEAR')),
+                "DMY_TXT_TOOLTIP" => $this->getDMY($switch, $this->l->trad('DAILY'), $this->l->trad('MONTHLY'), $this->l->trad('YEARLY'))
+            ),
+            "32" => array(
+                "CSS_DOWN" => '500',
+                "TEXT_DOWN_SMALL_n" => $this->l->trad('MIN'),
+                "TEXT_DOWN_LARGE_n" => $this->l->trad('MINIMUM_HUMIDITY'),
+                "TEXT_DOWN_SMALL_x" => $this->l->trad('MAX'),
+                "TEXT_DOWN_LARGE_x" => $this->l->trad('MAXIMUM_HUMIDITY'),
+                "CLASS_UNIT_DOWN_SMALL" => '08',
+                "CLASS_UNIT_DOWN_LARGE" => '08',
+                "_UNIT_DOWN_SMALL" => '%',
+                "_UNIT_DOWN_LARGE" => '%',
+                "_DMY_VALUE_n" => $this->getDMY($switch, $relative_humidity_3_day_low, $relative_humidity_3_month_low, $relative_humidity_3_year_low),
+                "_DMY_VALUE_x" => $this->getDMY($switch, $relative_humidity_3_day_high, $relative_humidity_3_month_high, $relative_humidity_3_year_high),
+                "DMY_OF_DOWN_n" =>  $this->getDMY($switch, $this->l->trad('AT') . ' ' . $this->l->timeTrad($relative_humidity_3_day_low_time, $this->l->getLg()), $this->l->trad('OF_THE_MONTH'), $this->l->trad('OF_THE_YEAR')),
+                "DMY_OF_DOWN_x" =>  $this->getDMY($switch, $this->l->trad('AT') . ' ' . $this->l->timeTrad($relative_humidity_3_day_high_time, $this->l->getLg()), $this->l->trad('OF_THE_MONTH'), $this->l->trad('OF_THE_YEAR')),
+                "DMY_TXT_TOOLTIP" => $this->getDMY($switch, $this->l->trad('DAILY'), $this->l->trad('MONTHLY'), $this->l->trad('YEARLY'))
+            ),
+            "33" => array(
+                "CSS_DOWN" => '500',
+                "TEXT_DOWN_SMALL_n" => $this->l->trad('MIN'),
+                "TEXT_DOWN_LARGE_n" => $this->l->trad('MINIMUM_HUMIDITY'),
+                "TEXT_DOWN_SMALL_x" => $this->l->trad('MAX'),
+                "TEXT_DOWN_LARGE_x" => $this->l->trad('MAXIMUM_HUMIDITY'),
+                "CLASS_UNIT_DOWN_SMALL" => '08',
+                "CLASS_UNIT_DOWN_LARGE" => '08',
+                "_UNIT_DOWN_SMALL" => '%',
+                "_UNIT_DOWN_LARGE" => '%',
+                "_DMY_VALUE_n" => $this->getDMY($switch, $relative_humidity_4_day_low, $relative_humidity_4_month_low, $relative_humidity_4_year_low),
+                "_DMY_VALUE_x" => $this->getDMY($switch, $relative_humidity_4_day_high, $relative_humidity_4_month_high, $relative_humidity_4_year_high),
+                "DMY_OF_DOWN_n" =>  $this->getDMY($switch, $this->l->trad('AT') . ' ' . $this->l->timeTrad($relative_humidity_4_day_low_time, $this->l->getLg()), $this->l->trad('OF_THE_MONTH'), $this->l->trad('OF_THE_YEAR')),
+                "DMY_OF_DOWN_x" =>  $this->getDMY($switch, $this->l->trad('AT') . ' ' . $this->l->timeTrad($relative_humidity_4_day_high_time, $this->l->getLg()), $this->l->trad('OF_THE_MONTH'), $this->l->trad('OF_THE_YEAR')),
+                "DMY_TXT_TOOLTIP" => $this->getDMY($switch, $this->l->trad('DAILY'), $this->l->trad('MONTHLY'), $this->l->trad('YEARLY'))
+            ),
+            "34" => array(
+                "CSS_DOWN" => '500',
+                "TEXT_DOWN_SMALL_n" => $this->l->trad('MIN'),
+                "TEXT_DOWN_LARGE_n" => $this->l->trad('MINIMUM_HUMIDITY'),
+                "TEXT_DOWN_SMALL_x" => $this->l->trad('MAX'),
+                "TEXT_DOWN_LARGE_x" => $this->l->trad('MAXIMUM_HUMIDITY'),
+                "CLASS_UNIT_DOWN_SMALL" => '08',
+                "CLASS_UNIT_DOWN_LARGE" => '08',
+                "_UNIT_DOWN_SMALL" => '%',
+                "_UNIT_DOWN_LARGE" => '%',
+                "_DMY_VALUE_n" => $this->getDMY($switch, $relative_humidity_5_day_low, $relative_humidity_5_month_low, $relative_humidity_5_year_low),
+                "_DMY_VALUE_x" => $this->getDMY($switch, $relative_humidity_5_day_high, $relative_humidity_5_month_high, $relative_humidity_5_year_high),
+                "DMY_OF_DOWN_n" =>  $this->getDMY($switch, $this->l->trad('AT') . ' ' . $this->l->timeTrad($relative_humidity_5_day_low_time, $this->l->getLg()), $this->l->trad('OF_THE_MONTH'), $this->l->trad('OF_THE_YEAR')),
+                "DMY_OF_DOWN_x" =>  $this->getDMY($switch, $this->l->trad('AT') . ' ' . $this->l->timeTrad($relative_humidity_5_day_high_time, $this->l->getLg()), $this->l->trad('OF_THE_MONTH'), $this->l->trad('OF_THE_YEAR')),
+                "DMY_TXT_TOOLTIP" => $this->getDMY($switch, $this->l->trad('DAILY'), $this->l->trad('MONTHLY'), $this->l->trad('YEARLY'))
+            ),
+            "35" => array(
+                "CSS_DOWN" => '500',
+                "TEXT_DOWN_SMALL_n" => $this->l->trad('MIN'),
+                "TEXT_DOWN_LARGE_n" => $this->l->trad('MINIMUM_HUMIDITY'),
+                "TEXT_DOWN_SMALL_x" => $this->l->trad('MAX'),
+                "TEXT_DOWN_LARGE_x" => $this->l->trad('MAXIMUM_HUMIDITY'),
+                "CLASS_UNIT_DOWN_SMALL" => '08',
+                "CLASS_UNIT_DOWN_LARGE" => '08',
+                "_UNIT_DOWN_SMALL" => '%',
+                "_UNIT_DOWN_LARGE" => '%',
+                "_DMY_VALUE_n" => $this->getDMY($switch, $relative_humidity_6_day_low, $relative_humidity_6_month_low, $relative_humidity_6_year_low),
+                "_DMY_VALUE_x" => $this->getDMY($switch, $relative_humidity_6_day_high, $relative_humidity_6_month_high, $relative_humidity_6_year_high),
+                "DMY_OF_DOWN_n" =>  $this->getDMY($switch, $this->l->trad('AT') . ' ' . $this->l->timeTrad($relative_humidity_6_day_low_time, $this->l->getLg()), $this->l->trad('OF_THE_MONTH'), $this->l->trad('OF_THE_YEAR')),
+                "DMY_OF_DOWN_x" =>  $this->getDMY($switch, $this->l->trad('AT') . ' ' . $this->l->timeTrad($relative_humidity_6_day_high_time, $this->l->getLg()), $this->l->trad('OF_THE_MONTH'), $this->l->trad('OF_THE_YEAR')),
+                "DMY_TXT_TOOLTIP" => $this->getDMY($switch, $this->l->trad('DAILY'), $this->l->trad('MONTHLY'), $this->l->trad('YEARLY'))
+            ),
+            "36" => array(
+                "CSS_DOWN" => '500',
+                "TEXT_DOWN_SMALL_n" => $this->l->trad('MIN'),
+                "TEXT_DOWN_LARGE_n" => $this->l->trad('MINIMUM_HUMIDITY'),
+                "TEXT_DOWN_SMALL_x" => $this->l->trad('MAX'),
+                "TEXT_DOWN_LARGE_x" => $this->l->trad('MAXIMUM_HUMIDITY'),
+                "CLASS_UNIT_DOWN_SMALL" => '08',
+                "CLASS_UNIT_DOWN_LARGE" => '08',
+                "_UNIT_DOWN_SMALL" => '%',
+                "_UNIT_DOWN_LARGE" => '%',
+                "_DMY_VALUE_n" => $this->getDMY($switch, $relative_humidity_7_day_low, $relative_humidity_7_month_low, $relative_humidity_7_year_low),
+                "_DMY_VALUE_x" => $this->getDMY($switch, $relative_humidity_7_day_high, $relative_humidity_7_month_high, $relative_humidity_7_year_high),
+                "DMY_OF_DOWN_n" =>  $this->getDMY($switch, $this->l->trad('AT') . ' ' . $this->l->timeTrad($relative_humidity_7_day_low_time, $this->l->getLg()), $this->l->trad('OF_THE_MONTH'), $this->l->trad('OF_THE_YEAR')),
+                "DMY_OF_DOWN_x" =>  $this->getDMY($switch, $this->l->trad('AT') . ' ' . $this->l->timeTrad($relative_humidity_7_day_high_time, $this->l->getLg()), $this->l->trad('OF_THE_MONTH'), $this->l->trad('OF_THE_YEAR')),
+                "DMY_TXT_TOOLTIP" => $this->getDMY($switch, $this->l->trad('DAILY'), $this->l->trad('MONTHLY'), $this->l->trad('YEARLY'))
+            ),
+            "37" => array(
+                "CSS_DOWN" => '500',
+                "TEXT_DOWN_SMALL_n" => $this->l->trad('MIN'),
+                "TEXT_DOWN_LARGE_n" => $this->l->trad('MIN_INDEX'),
+                "TEXT_DOWN_SMALL_x" => $this->l->trad('MAX'),
+                "TEXT_DOWN_LARGE_x" => $this->l->trad('MAX_INDEX'),
+                "CLASS_UNIT_DOWN_SMALL" => '08',
+                "CLASS_UNIT_DOWN_LARGE" => '08',
+                "_UNIT_DOWN_SMALL" => '',
+                "_UNIT_DOWN_LARGE" => '',
+                "_DMY_VALUE_n" => $this->getDMY($switch, $leaf_wetness_1_day_low, $leaf_wetness_1_month_low, $leaf_wetness_1_year_low),
+                "_DMY_VALUE_x" => $this->getDMY($switch, $leaf_wetness_1_day_high, $leaf_wetness_1_month_high, $leaf_wetness_1_year_high),
+                "DMY_OF_DOWN_n" =>  $this->getDMY($switch, $this->l->trad('AT') . ' ' . $this->l->timeTrad($leaf_wetness_1_day_low_time, $this->l->getLg()), $this->l->trad('OF_THE_MONTH'), $this->l->trad('OF_THE_YEAR')),
+                "DMY_OF_DOWN_x" =>  $this->getDMY($switch, $this->l->trad('AT') . ' ' . $this->l->timeTrad($leaf_wetness_1_day_high_time, $this->l->getLg()), $this->l->trad('OF_THE_MONTH'), $this->l->trad('OF_THE_YEAR')),
+                "DMY_TXT_TOOLTIP" => $this->getDMY($switch, $this->l->trad('DAILY'), $this->l->trad('MONTHLY'), $this->l->trad('YEARLY'))
+            ),
+            "38" => array(
+                "CSS_DOWN" => '500',
+                "TEXT_DOWN_SMALL_n" => $this->l->trad('MIN'),
+                "TEXT_DOWN_LARGE_n" => $this->l->trad('MIN_INDEX'),
+                "TEXT_DOWN_SMALL_x" => $this->l->trad('MAX'),
+                "TEXT_DOWN_LARGE_x" => $this->l->trad('MAX_INDEX'),
+                "CLASS_UNIT_DOWN_SMALL" => '08',
+                "CLASS_UNIT_DOWN_LARGE" => '08',
+                "_UNIT_DOWN_SMALL" => '',
+                "_UNIT_DOWN_LARGE" => '',
+                "_DMY_VALUE_n" => $this->getDMY($switch, $leaf_wetness_2_day_low, $leaf_wetness_2_month_low, $leaf_wetness_2_year_low),
+                "_DMY_VALUE_x" => $this->getDMY($switch, $leaf_wetness_2_day_high, $leaf_wetness_2_month_high, $leaf_wetness_2_year_high),
+                "DMY_OF_DOWN_n" =>  $this->getDMY($switch, $this->l->trad('AT') . ' ' . $this->l->timeTrad($leaf_wetness_2_day_low_time, $this->l->getLg()), $this->l->trad('OF_THE_MONTH'), $this->l->trad('OF_THE_YEAR')),
+                "DMY_OF_DOWN_x" =>  $this->getDMY($switch, $this->l->trad('AT') . ' ' . $this->l->timeTrad($leaf_wetness_2_day_high_time, $this->l->getLg()), $this->l->trad('OF_THE_MONTH'), $this->l->trad('OF_THE_YEAR')),
+                "DMY_TXT_TOOLTIP" => $this->getDMY($switch, $this->l->trad('DAILY'), $this->l->trad('MONTHLY'), $this->l->trad('YEARLY'))
+            ),
+            "39" => array(
+                "CSS_DOWN" => '500',
+                "TEXT_DOWN_SMALL_n" => $this->l->trad('MIN'),
+                "TEXT_DOWN_LARGE_n" => $this->l->trad('MINIMUM_HUMIDITY'),
+                "TEXT_DOWN_SMALL_x" => $this->l->trad('MAX'),
+                "TEXT_DOWN_LARGE_x" => $this->l->trad('MAXIMUM_HUMIDITY'),
+                "CLASS_UNIT_DOWN_SMALL" => '08',
+                "CLASS_UNIT_DOWN_LARGE" => '08',
+                "_UNIT_DOWN_SMALL" => 'cB',
+                "_UNIT_DOWN_LARGE" => 'cB',
+                "_DMY_VALUE_n" => $this->getDMY($switch, $soil_moisture_1_day_low, $soil_moisture_1_month_low, $soil_moisture_1_year_low),
+                "_DMY_VALUE_x" => $this->getDMY($switch, $soil_moisture_1_day_high, $soil_moisture_1_month_high, $soil_moisture_1_year_high),
+                "DMY_OF_DOWN_n" =>  $this->getDMY($switch, $this->l->trad('AT') . ' ' . $this->l->timeTrad($soil_moisture_1_day_low_time, $this->l->getLg()), $this->l->trad('OF_THE_MONTH'), $this->l->trad('OF_THE_YEAR')),
+                "DMY_OF_DOWN_x" =>  $this->getDMY($switch, $this->l->trad('AT') . ' ' . $this->l->timeTrad($soil_moisture_1_day_high_time, $this->l->getLg()), $this->l->trad('OF_THE_MONTH'), $this->l->trad('OF_THE_YEAR')),
+                "DMY_TXT_TOOLTIP" => $this->getDMY($switch, $this->l->trad('DAILY'), $this->l->trad('MONTHLY'), $this->l->trad('YEARLY'))
+            ),
+            "40" => array(
+                "CSS_DOWN" => '500',
+                "TEXT_DOWN_SMALL_n" => $this->l->trad('MIN'),
+                "TEXT_DOWN_LARGE_n" => $this->l->trad('MINIMUM_HUMIDITY'),
+                "TEXT_DOWN_SMALL_x" => $this->l->trad('MAX'),
+                "TEXT_DOWN_LARGE_x" => $this->l->trad('MAXIMUM_HUMIDITY'),
+                "CLASS_UNIT_DOWN_SMALL" => '08',
+                "CLASS_UNIT_DOWN_LARGE" => '08',
+                "_UNIT_DOWN_SMALL" => 'cB',
+                "_UNIT_DOWN_LARGE" => 'cB',
+                "_DMY_VALUE_n" => $this->getDMY($switch, $soil_moisture_2_day_low, $soil_moisture_2_month_low, $soil_moisture_2_year_low),
+                "_DMY_VALUE_x" => $this->getDMY($switch, $soil_moisture_2_day_high, $soil_moisture_2_month_high, $soil_moisture_2_year_high),
+                "DMY_OF_DOWN_n" =>  $this->getDMY($switch, $this->l->trad('AT') . ' ' . $this->l->timeTrad($soil_moisture_2_day_low_time, $this->l->getLg()), $this->l->trad('OF_THE_MONTH'), $this->l->trad('OF_THE_YEAR')),
+                "DMY_OF_DOWN_x" =>  $this->getDMY($switch, $this->l->trad('AT') . ' ' . $this->l->timeTrad($soil_moisture_2_day_high_time, $this->l->getLg()), $this->l->trad('OF_THE_MONTH'), $this->l->trad('OF_THE_YEAR')),
+                "DMY_TXT_TOOLTIP" => $this->getDMY($switch, $this->l->trad('DAILY'), $this->l->trad('MONTHLY'), $this->l->trad('YEARLY'))
+            ),
+            "41" => array(
+                "CSS_DOWN" => '500',
+                "TEXT_DOWN_SMALL_n" => $this->l->trad('MIN'),
+                "TEXT_DOWN_LARGE_n" => $this->l->trad('MINIMUM_HUMIDITY'),
+                "TEXT_DOWN_SMALL_x" => $this->l->trad('MAX'),
+                "TEXT_DOWN_LARGE_x" => $this->l->trad('MAXIMUM_HUMIDITY'),
+                "CLASS_UNIT_DOWN_SMALL" => '08',
+                "CLASS_UNIT_DOWN_LARGE" => '08',
+                "_UNIT_DOWN_SMALL" => 'cB',
+                "_UNIT_DOWN_LARGE" => 'cB',
+                "_DMY_VALUE_n" => $this->getDMY($switch, $soil_moisture_3_day_low, $soil_moisture_3_month_low, $soil_moisture_3_year_low),
+                "_DMY_VALUE_x" => $this->getDMY($switch, $soil_moisture_3_day_high, $soil_moisture_3_month_high, $soil_moisture_3_year_high),
+                "DMY_OF_DOWN_n" =>  $this->getDMY($switch, $this->l->trad('AT') . ' ' . $this->l->timeTrad($soil_moisture_3_day_low_time, $this->l->getLg()), $this->l->trad('OF_THE_MONTH'), $this->l->trad('OF_THE_YEAR')),
+                "DMY_OF_DOWN_x" =>  $this->getDMY($switch, $this->l->trad('AT') . ' ' . $this->l->timeTrad($soil_moisture_3_day_high_time, $this->l->getLg()), $this->l->trad('OF_THE_MONTH'), $this->l->trad('OF_THE_YEAR')),
+                "DMY_TXT_TOOLTIP" => $this->getDMY($switch, $this->l->trad('DAILY'), $this->l->trad('MONTHLY'), $this->l->trad('YEARLY'))
+            ),
+            "42" => array(
+                "CSS_DOWN" => '500',
+                "TEXT_DOWN_SMALL_n" => $this->l->trad('MIN'),
+                "TEXT_DOWN_LARGE_n" => $this->l->trad('MINIMUM_HUMIDITY'),
+                "TEXT_DOWN_SMALL_x" => $this->l->trad('MAX'),
+                "TEXT_DOWN_LARGE_x" => $this->l->trad('MAXIMUM_HUMIDITY'),
+                "CLASS_UNIT_DOWN_SMALL" => '08',
+                "CLASS_UNIT_DOWN_LARGE" => '08',
+                "_UNIT_DOWN_SMALL" => 'cB',
+                "_UNIT_DOWN_LARGE" => 'cB',
+                "_DMY_VALUE_n" => $this->getDMY($switch, $soil_moisture_4_day_low, $soil_moisture_4_month_low, $soil_moisture_4_year_low),
+                "_DMY_VALUE_x" => $this->getDMY($switch, $soil_moisture_4_day_high, $soil_moisture_4_month_high, $soil_moisture_4_year_high),
+                "DMY_OF_DOWN_n" =>  $this->getDMY($switch, $this->l->trad('AT') . ' ' . $this->l->timeTrad($soil_moisture_4_day_low_time, $this->l->getLg()), $this->l->trad('OF_THE_MONTH'), $this->l->trad('OF_THE_YEAR')),
+                "DMY_OF_DOWN_x" =>  $this->getDMY($switch, $this->l->trad('AT') . ' ' . $this->l->timeTrad($soil_moisture_4_day_high_time, $this->l->getLg()), $this->l->trad('OF_THE_MONTH'), $this->l->trad('OF_THE_YEAR')),
+                "DMY_TXT_TOOLTIP" => $this->getDMY($switch, $this->l->trad('DAILY'), $this->l->trad('MONTHLY'), $this->l->trad('YEARLY'))
+            ),
+            "43" => array(
+                "CSS_DOWN" => '500',
+                "TEXT_DOWN_SMALL_n" => $this->l->trad('TN'),
+                "TEXT_DOWN_LARGE_n" => $this->l->trad('MINIMUM_TEMP'),
+                "TEXT_DOWN_SMALL_x" => $this->l->trad('TX'),
+                "TEXT_DOWN_LARGE_x" => $this->l->trad('MAXIMUM_TEMP'),
+                "CLASS_UNIT_DOWN_SMALL" => '09',
+                "CLASS_UNIT_DOWN_LARGE" => '09',
+                "_UNIT_DOWN_SMALL" => '°',
+                "_UNIT_DOWN_LARGE" => $this->getUnit($switch, 'temp'),
+                "_DMY_VALUE_n" => $this->getDMY($switch, $this->getTemp($switch, $temp_in_day_low_f), $this->getTemp($switch, $temp_in_month_low_f), $this->getTemp($switch, $temp_in_year_low_f)),
+                "_DMY_VALUE_x" => $this->getDMY($switch, $this->getTemp($switch, $temp_in_day_high_f), $this->getTemp($switch, $temp_in_month_high_f), $this->getTemp($switch, $temp_in_year_high_f)),
+                "DMY_OF_DOWN_n" =>  $this->getDMY($switch, $this->l->trad('AT') . ' ' . $this->l->timeTrad($temp_in_day_low_time, $this->l->getLg()), $this->l->trad('OF_THE_MONTH'), $this->l->trad('OF_THE_YEAR')),
+                "DMY_OF_DOWN_x" =>  $this->getDMY($switch, $this->l->trad('AT') . ' ' . $this->l->timeTrad($temp_in_day_high_time, $this->l->getLg()), $this->l->trad('OF_THE_MONTH'), $this->l->trad('OF_THE_YEAR')),
+                "DMY_TXT_TOOLTIP" => $this->getDMY($switch, $this->l->trad('DAILY'), $this->l->trad('MONTHLY'), $this->l->trad('YEARLY'))
+            ),
+            "44" => array(
+                "CSS_DOWN" => '500',
+                "TEXT_DOWN_SMALL_n" => $this->l->trad('MIN'),
+                "TEXT_DOWN_LARGE_n" => $this->l->trad('MINIMUM_HUMIDITY'),
+                "TEXT_DOWN_SMALL_x" => $this->l->trad('MAX'),
+                "TEXT_DOWN_LARGE_x" => $this->l->trad('MAXIMUM_HUMIDITY'),
+                "CLASS_UNIT_DOWN_SMALL" => '08',
+                "CLASS_UNIT_DOWN_LARGE" => '08',
+                "_UNIT_DOWN_SMALL" => '%',
+                "_UNIT_DOWN_LARGE" => '%',
+                "_DMY_VALUE_n" => $this->getDMY($switch, $relative_humidity_in_day_low, $relative_humidity_in_month_low, $relative_humidity_in_year_low),
+                "_DMY_VALUE_x" => $this->getDMY($switch, $relative_humidity_in_day_high, $relative_humidity_in_month_high, $relative_humidity_in_year_high),
+                "DMY_OF_DOWN_n" =>  $this->getDMY($switch, $this->l->trad('AT') . ' ' . $this->l->timeTrad($relative_humidity_in_day_low_time, $this->l->getLg()), $this->l->trad('OF_THE_MONTH'), $this->l->trad('OF_THE_YEAR')),
+                "DMY_OF_DOWN_x" =>  $this->getDMY($switch, $this->l->trad('AT') . ' ' . $this->l->timeTrad($relative_humidity_in_day_high_time, $this->l->getLg()), $this->l->trad('OF_THE_MONTH'), $this->l->trad('OF_THE_YEAR')),
+                "DMY_TXT_TOOLTIP" => $this->getDMY($switch, $this->l->trad('DAILY'), $this->l->trad('MONTHLY'), $this->l->trad('YEARLY'))
+            ),
         );
 
         return $inc;
     }
 
-
-    public function incDown3($datas, $switch)
+    /**
+     * BAS CASE POUR HOME version 3
+     */
+    public function incDown3($datas, $switch, $info, $livestation)
     {
-
-        $zero = '&#8709;'; 
-
-        $dat = $datas->davis_current_observation;
-
-        $wind_day_high_time = isset($dat->wind_day_high_time) ? $dat->wind_day_high_time : $zero ; 
-        $wind_day_high_mph = isset($dat->wind_day_high_mph) ? $dat->wind_day_high_mph : $zero ; 
-        $wind_month_high_mph = isset($dat->wind_month_high_mph) ? $dat->wind_month_high_mph : $zero ; 
-        $wind_year_high_mph = isset($dat->wind_year_high_mph) ? $dat->wind_year_high_mph : $zero ; 
+        $wind_day_high_time = $this->getAPIDatas($datas, $info, $livestation)['wind_day_high_time'];
+        $wind_day_high_mph = $this->getAPIDatas($datas, $info, $livestation)['wind_day_high_mph'];
+        $wind_month_high_mph = $this->getAPIDatas($datas, $info, $livestation)['wind_month_high_mph'];
+        $wind_year_high_mph = $this->getAPIDatas($datas, $info, $livestation)['wind_year_high_mph'];
 
         $inc = array(
             "4" => array(
@@ -1843,29 +2329,27 @@ class StationView extends View
         return $inc;
     }
 
-    public function incDown5($datas, $switch, $config)
+    /**
+     * BAS CASE POUR HOME version 5
+     */
+    public function incDown5($datas, $switch, $config, $info, $livestation)
     {
+        $rain_month_in = $this->getAPIDatas($datas, $info, $livestation)['rain_month_in'];
+        $rain_year_in = $this->getAPIDatas($datas, $info, $livestation)['rain_year_in'];
 
-        $zero = '&#8709;'; 
+        $et_month = $this->getAPIDatas($datas, $info, $livestation)['et_month'];
+        $temp_month_high_f = $this->getAPIDatas($datas, $info, $livestation)['temp_month_high_f'];
+        $temp_month_low_f = $this->getAPIDatas($datas, $info, $livestation)['temp_month_low_f'];
 
-        $dat = $datas->davis_current_observation;
+        $et_year = $this->getAPIDatas($datas, $info, $livestation)['et_year'];
+        $temp_year_high_f = $this->getAPIDatas($datas, $info, $livestation)['temp_year_high_f'];
+        $temp_year_low_f = $this->getAPIDatas($datas, $info, $livestation)['temp_year_low_f'];
 
-        $rain_month_in = isset($dat->rain_month_in) ? $dat->rain_month_in : $zero ; 
-        $rain_year_in = isset($dat->rain_year_in) ? $dat->rain_year_in : $zero ; 
+        $solar_radiation_month_high = $this->getAPIDatas($datas, $info, $livestation)['solar_radiation_month_high'];
+        $solar_radiation_year_high = $this->getAPIDatas($datas, $info, $livestation)['solar_radiation_year_high'];
 
-        $et_month = isset($dat->et_month) ? $dat->et_month : $zero ; 
-        $temp_month_high_f = isset($dat->temp_month_high_f) ? $dat->temp_month_high_f : $zero ; 
-        $temp_month_low_f = isset($dat->temp_month_low_f) ? $dat->temp_month_low_f : $zero ;
-        
-        $et_year = isset($dat->et_year) ? $dat->et_year : $zero ; 
-        $temp_year_high_f = isset($dat->temp_year_high_f) ? $dat->temp_year_high_f : $zero ; 
-        $temp_year_low_f = isset($dat->temp_year_low_f) ? $dat->temp_year_low_f : $zero ; 
-        
-        $solar_radiation_month_high = isset($dat->solar_radiation_month_high) ? $dat->solar_radiation_month_high : $zero ; 
-        $solar_radiation_year_high = isset($dat->solar_radiation_year_high) ? $dat->solar_radiation_year_high : $zero ; 
-
-        $uv_index_month_high = isset($dat->uv_index_month_high) ? $dat->uv_index_month_high : $zero ; 
-        $uv_index_year_high = isset($dat->uv_index_year_high) ? $dat->uv_index_year_high : $zero ; 
+        $uv_index_month_high = $this->getAPIDatas($datas, $info, $livestation)['uv_index_month_high'];
+        $uv_index_year_high = $this->getAPIDatas($datas, $info, $livestation)['uv_index_year_high'];
 
         $inc = array(
             "6" => array(
@@ -1925,8 +2409,7 @@ class StationView extends View
                 "CLASS_UNIT_DOWN_LARGEx" => '08',
                 "_UNIT_DOWN_LARGEx" => $this->getUnit($switch, 'rain'),
                 "ALTERN_TXT_L_3x" => '',
-            )
-            ,
+            ),
             "22" => array(
                 "CSS_DOWN" => '800',
                 "TEXT_DOWN_SMALL_n" => $this->l->trad('MONTH_SUN'),
@@ -1955,8 +2438,7 @@ class StationView extends View
                 "CLASS_UNIT_DOWN_LARGEx" => '08',
                 "_UNIT_DOWN_LARGEx" => '&nbsp;W/m²',
                 "ALTERN_TXT_L_3x" => '',
-            )
-            ,
+            ),
             "23" => array(
                 "CSS_DOWN" => '800',
                 "TEXT_DOWN_SMALL_n" => $this->l->trad('MONTH_UV'),
@@ -1991,21 +2473,26 @@ class StationView extends View
         return $inc;
     }
 
+    /**
+     * TOOLTIP
+     */
     public function getIconTooltip($switch, $icon, $txt, $altern)
     {
         if ($switch['s_icon'] == 'yes') {
             $page = '<a data-toggle="tooltip" title="' . $txt . '">' . $icon . $altern . '</a>';
         } else {
             if ($altern != '') {
-                $page = '<a data-toggle="tooltip" title="' . $txt . '">'.$altern . '</a>';
-            }
-            else {
-            $page = $txt;
+                $page = '<a data-toggle="tooltip" title="' . $txt . '">' . $altern . '</a>';
+            } else {
+                $page = $txt;
             }
         }
         return $page;
     }
 
+    /**
+     * ICON
+     */
     public function getIcon($switch, $icon)
     {
         if ($switch['s_icon'] == 'yes') {
@@ -2016,6 +2503,9 @@ class StationView extends View
         return $page;
     }
 
+    /**
+     * Donne les TITRES de CASE dans PREF pour le choix OPTIONS-SELECT
+     */
     public function optionValue($config)
     {
         $optionValue = array(
@@ -2067,44 +2557,29 @@ class StationView extends View
         return $optionValue;
     }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    public function downHeatWind($switch, $datas)
+    /**
+     * Calcul Case Bas Heat-Wind
+     */
+    public function downHeatWind($switch, $datas, $info, $livestation)
     {
-        $zero = '&#8709;'; 
-        $dat = $datas->davis_current_observation;
 
-        $temp_day_high_f = isset($dat->temp_day_high_f) ? $dat->temp_day_high_f : $zero ;
-        $temp_month_high_f = isset($dat->temp_month_high_f) ? $dat->temp_month_high_f : $zero ; 
-        $temp_year_high_f = isset($dat->temp_year_high_f) ? $dat->temp_year_high_f : $zero ;
-        
-        $temp_day_low_f = isset($dat->temp_day_low_f) ? $dat->temp_day_low_f : $zero ;
-        $temp_month_low_f = isset($dat->temp_month_low_f) ? $dat->temp_month_low_f : $zero ; 
-        $temp_year_low_f = isset($dat->temp_year_low_f) ? $dat->temp_year_low_f : $zero ;
-        
-        $windchill_day_low_f = isset($dat->windchill_day_low_f) ? $dat->windchill_day_low_f : $zero ;
-        $windchill_day_low_time = isset($dat->windchill_day_low_time) ? $dat->windchill_day_low_time : $zero ;
-        $windchill_month_low_f = isset($dat->windchill_month_low_f) ? $dat->windchill_month_low_f : $zero ; 
-        $windchill_year_low_f = isset($dat->windchill_year_low_f) ? $dat->windchill_year_low_f : $zero ;
+        $temp_day_high_f = $this->getAPIDatas($datas, $info, $livestation)['temp_day_high_f'];
+        $temp_month_high_f = $this->getAPIDatas($datas, $info, $livestation)['temp_month_high_f'];
+        $temp_year_high_f = $this->getAPIDatas($datas, $info, $livestation)['temp_year_high_f'];
 
-        $heat_index_day_high_f = isset($dat->heat_index_day_high_f) ? $dat->heat_index_day_high_f : $zero ;
-        $heat_index_day_high_time = isset($dat->heat_index_day_high_time) ? $dat->heat_index_day_high_time : $zero ;
-        $heat_index_month_high_f = isset($dat->heat_index_month_high_f) ? $dat->heat_index_month_high_f : $zero ; 
-        $heat_index_year_high_f = isset($dat->heat_index_year_high_f) ? $dat->heat_index_year_high_f : $zero ;
-        
-        
+        $temp_day_low_f = $this->getAPIDatas($datas, $info, $livestation)['temp_day_low_f'];
+        $temp_month_low_f = $this->getAPIDatas($datas, $info, $livestation)['temp_month_low_f'];
+        $temp_year_low_f = $this->getAPIDatas($datas, $info, $livestation)['temp_year_low_f'];
+
+        $windchill_day_low_f = $this->getAPIDatas($datas, $info, $livestation)['windchill_day_low_f'];
+        $windchill_day_low_time = $this->getAPIDatas($datas, $info, $livestation)['windchill_day_low_time'];
+        $windchill_month_low_f = $this->getAPIDatas($datas, $info, $livestation)['windchill_month_low_f'];
+        $windchill_year_low_f = $this->getAPIDatas($datas, $info, $livestation)['windchill_year_low_f'];
+
+        $heat_index_day_high_f = $this->getAPIDatas($datas, $info, $livestation)['heat_index_day_high_f'];
+        $heat_index_day_high_time = $this->getAPIDatas($datas, $info, $livestation)['heat_index_day_high_time'];
+        $heat_index_month_high_f = $this->getAPIDatas($datas, $info, $livestation)['heat_index_month_high_f'];
+        $heat_index_year_high_f = $this->getAPIDatas($datas, $info, $livestation)['heat_index_year_high_f'];
 
         $page = '';
         if ($this->is_Temp('59', $this->getDMY($switch, $temp_day_high_f, $temp_month_high_f, $temp_year_high_f)) == true) {
@@ -2163,18 +2638,20 @@ class StationView extends View
         return $page;
     }
 
-
-    public function incDownCloudy($config, $datas)
+    /**
+     * Calcul Case Bas CLOUD TEXT
+     */
+    public function incDownCloudy($config, $datas, $info, $livestation)
     {
-        $zero = '&#8709;'; 
-        $dat = $datas->davis_current_observation;
+        $temp_f = $this->getAPIDatas($datas, $info, $livestation)['temp_f'];
+        $temp_c = $this->getAPIDatas($datas, $info, $livestation)['temp_c'];
 
-        $time = isset($datas->observation_time_rfc822) ? $datas->observation_time_rfc822 : $zero ;
-        $sunset = isset($dat->sunset) ? $dat->sunset : $zero ;
-        $sunrise = isset($dat->sunrise) ? $dat->sunrise : $zero ;
+        $time = $this->getAPIDatasUp($datas, $info, $livestation)['time'];
+        $sunset = $this->getAPIDatasUp($datas, $info, $livestation)['time_sunset'];
+        $sunrise = $this->getAPIDatasUp($datas, $info, $livestation)['time_sunrise'];
 
-        $longitude = isset($datas->longitude) ? $datas->longitude : $zero ;
-        $latitude = isset($datas->latitude) ? $datas->latitude : $zero ;
+        $longitude = $this->getAPIDatas($datas, $info, $livestation)['longitude'];
+        $latitude = $this->getAPIDatas($datas, $info, $livestation)['latitude'];
 
         $tmp_date = date_create($time);
         $jour = date_format($tmp_date, "d");
@@ -2185,13 +2662,10 @@ class StationView extends View
         $heure_utc = date_format($utc_date, "H");
         $minute_utc = date_format($utc_date, "i");
 
-        $temp_c = isset($datas->temp_c) ? $datas->temp_c : $zero ;
-        $temp_f = isset($datas->temp_f) ? $datas->temp_f : $zero ;
-        $relative_humidity = isset($datas->relative_humidity) ? $datas->relative_humidity : $zero ;
-
-        $solar_radiation = isset($dat->solar_radiation) ? $dat->solar_radiation : $zero ;
-        $rain_rate_in_per_hr = isset($dat->rain_rate_in_per_hr) ? $dat->rain_rate_in_per_hr : $zero ;
-        $rain_day_in = isset($dat->rain_day_in) ? $dat->rain_day_in : $zero ;
+        $relative_humidity = $this->getAPIDatas($datas, $info, $livestation)['relative_humidity'];
+        $solar_radiation = $this->getAPIDatas($datas, $info, $livestation)['solar_radiation'];
+        $rain_rate_in_per_hr = $this->getAPIDatas($datas, $info, $livestation)['rain_rate_in_per_hr'];
+        $rain_day_in = $this->getAPIDatas($datas, $info, $livestation)['rain_day_in'];
 
         if ($rain_rate_in_per_hr == '0') {
             if ($config['config_sun'] == 'sun' || $config['config_sun'] == 'sun_uv') {
@@ -2304,17 +2778,11 @@ class StationView extends View
         return $page;
     }
 
-    public function incUpSun($switch, $config, $tab, $datas)
+    public function incUpSun($switch, $config, $tab, $datas, $info, $livestation)
     {
-
-        $zero = '&#8709;'; 
-        $dat = $datas->davis_current_observation;
-
-        $time = isset($datas->observation_time_rfc822) ? $datas->observation_time_rfc822 : $zero ;
-        $sunset = isset($dat->sunset) ? $dat->sunset : $zero ;
-        $sunrise = isset($dat->sunrise) ? $dat->sunrise : $zero ;
-
-
+        $time = $this->getAPIDatasUp($datas, $info, $livestation)['time'];
+        $sunset = $this->getAPIDatasUp($datas, $info, $livestation)['time_sunset'];
+        $sunrise = $this->getAPIDatasUp($datas, $info, $livestation)['time_sunrise'];
 
         if ($config['config_sun'] == 'sun') {
             if ($this->is_tab($tab, '22') == false) {
@@ -2439,21 +2907,17 @@ class StationView extends View
 
 
 
-    public function incMidSun($switch, $config, $tab, $datas)
+    public function incMidSun($switch, $config, $tab, $datas, $info, $livestation)
     {
+        $time = $this->getAPIDatasUp($datas, $info, $livestation)['time'];
+        $sunset = $this->getAPIDatasUp($datas, $info, $livestation)['time_sunset'];
+        $sunrise = $this->getAPIDatasUp($datas, $info, $livestation)['time_sunrise'];
 
-        $zero = '&#8709;'; 
-        $dat = $datas->davis_current_observation;
+        $solar_radiation = $this->getAPIDatas($datas, $info, $livestation)['solar_radiation'];
+        $solar_radiation_day_high = $this->getAPIDatas($datas, $info, $livestation)['solar_radiation_day_high'];
+        $solar_radiation_day_high_time = $this->getAPIDatas($datas, $info, $livestation)['solar_radiation_day_high_time'];
 
-        $time = isset($datas->observation_time_rfc822) ? $datas->observation_time_rfc822 : $zero ;
-        $sunset = isset($dat->sunset) ? $dat->sunset : $zero ;
-        $sunrise = isset($dat->sunrise) ? $dat->sunrise : $zero ;
-
-        $solar_radiation = isset($dat->solar_radiation) ? $dat->solar_radiation : $zero ;
-        $solar_radiation_day_high = isset($dat->solar_radiation_day_high) ? $dat->solar_radiation_day_high : $zero ;        
-        $solar_radiation_day_high_time = isset($dat->solar_radiation_day_high_time) ? $dat->solar_radiation_day_high_time : $zero ;
-
-        $uv_index = isset($dat->uv_index) ? $dat->uv_index : $zero ;
+        $uv_index = $this->getAPIDatas($datas, $info, $livestation)['uv_index'];
 
         //MOON PREPARATION
         $tmp_date = strtotime($time);
@@ -2508,14 +2972,14 @@ class StationView extends View
         if ($model == '1') {
             $model1 = '<div class="small500 tab_mid_size_20">';
             $model1 .= '<a data-toggle="tooltip" title="' . $this->l->trad('MAX') . '&nbsp;:&nbsp;' . $solar_radiation_day_high . '&nbsp;W/m² &nbsp;' . $this->l->trad('AT') . '&nbsp;' . $this->l->timeTrad($solar_radiation_day_high_time, $this->l->getLg()) . '">';
-            $model1 .= '<span ' . $this->col->colSun($switch, $solar_radiation, $datas) . ' >';
+            $model1 .= '<span ' . $this->col->colSun($switch, $solar_radiation, $datas, $info, $livestation) . ' >';
             $model1 .=  $solar_radiation;
             $model1 .= '<span class="unit05">W/m²</span></span>';
             $model1 .= '</a>';
             $model1 .= '</div>';
             $model1 .= '<div class="large500">';
             $model1 .= '<a data-toggle="tooltip" title="' . $this->l->trad('MAX') . '&nbsp;:&nbsp;' . $solar_radiation_day_high . '&nbsp;W/m² &nbsp;' . $this->l->trad('AT') . '&nbsp;' . $this->l->timeTrad($solar_radiation_day_high_time, $this->l->getLg()) . '">';
-            $model1 .= '<span ' . $this->col->colSun($switch, $solar_radiation, $datas) . ' >';
+            $model1 .= '<span ' . $this->col->colSun($switch, $solar_radiation, $datas, $info, $livestation) . ' >';
             $model1 .=  $solar_radiation;
             $model1 .= '<span class="unit06">&nbsp;W/m²</span></span>';
             $model1 .= '</a>';
@@ -2546,17 +3010,14 @@ class StationView extends View
     }
 
 
-    public function incDownSun($config, $tab, $datas)
+    public function incDownSun($config, $tab, $datas, $info, $livestation)
     {
 
-        $zero = '&#8709;'; 
-        $dat = $datas->davis_current_observation;
+        $time = $this->getAPIDatasUp($datas, $info, $livestation)['time'];
+        $sunset = $this->getAPIDatasUp($datas, $info, $livestation)['time_sunset'];
+        $sunrise = $this->getAPIDatasUp($datas, $info, $livestation)['time_sunrise'];
 
-        $time = isset($datas->observation_time_rfc822) ? $datas->observation_time_rfc822 : $zero ;
-        $sunset = isset($dat->sunset) ? $dat->sunset : $zero ;
-        $sunrise = isset($dat->sunrise) ? $dat->sunrise : $zero ;
-
-        $uv_index = isset($dat->uv_index) ? $dat->uv_index : $zero ;
+        $uv_index = $this->getAPIDatas($datas, $info, $livestation)['uv_index'];
 
         if ($config['config_sun'] == 'sun') {
             if ($this->is_tab($tab, '22') == false) {
@@ -2693,6 +3154,7 @@ class StationView extends View
         return $date_time;
     }
 
+    //format de $datas doit être "h:i a"
     public function TimeStation($datas)
     {
         $tmp_date = date_create($datas);
@@ -2780,11 +3242,20 @@ class StationView extends View
 
     public function getTemp($switch, $tempF)
     {
-        if($tempF != '&#8709;'){
-             if ($switch['s_temp'] == 'C') {
+        if ($tempF != '&#8709;') {
+            if ($switch['s_temp'] == 'C') {
                 $tempC = round((5 / 9) * (floatval($tempF) - 32), 1);
                 $tempF = $tempC;
             }
+        }
+        return $tempF;
+    }
+
+    public function getTempFtoC($tempF)
+    {
+        if ($tempF != '&#8709;') {
+            $tempC = round((5 / 9) * (floatval($tempF) - 32), 1);
+            $tempF = $tempC;
         }
         return $tempF;
     }
@@ -2981,23 +3452,5 @@ class StationView extends View
         } else {
             return false;
         }
-    }
-
-
-
-
-
-
-
-
-
-    function pressImg($value)
-    {
-        $value = str_replace("Steady", "images/stable.png", $value);
-        $value = str_replace("Falling Slowly", "images/fleche_bas.png", $value);
-        $value = str_replace("Rising Slowly", "images/fleche_haut.png", $value);
-        $value = str_replace("Falling Rapidly", "images/fleche_bas_1.png", $value);
-        $value = str_replace("Rising Rapidly", "images/fleche_haut_1.png", $value);
-        return $value;
     }
 }

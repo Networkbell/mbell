@@ -19,9 +19,12 @@ class ChangeController  extends Controller
     public function listAction()
     {        
         $paramJson = $this->paramStat->getAPI();
-        $station = $this->model->getAllStationUserLogin();  
-        $active = $this->paramStat->getStationActive();    
-        $this->view->changeList($station, $active, $paramJson);
+        $v1 = $this->model->getAllStationUserLogin('v1');  
+        $v2 = $this->model->getAllStationUserLogin('v2');  
+        $live = $this->model->getAllStationUserLogin('live');  
+        $active = $this->paramStat->getStationActive();       
+        $liveStation = ($active['stat_type']=='live') ? $this->model->getLiveAPIStation($active['stat_livekey'], $active['stat_livesecret']): '';           
+        $this->view->changeList($v1, $v2,$live,$active, $paramJson, $liveStation);
     }
 
     public function chooseAction()
@@ -88,6 +91,7 @@ class ChangeController  extends Controller
     {
         $lg = $this->l->getLg();
         $response = $this->model->updateBDD($this->paramPost);
+        
         if ($response) {
             header('location:index.php?controller=change&action=list&lg=' . $lg);
         } else {

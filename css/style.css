@@ -880,3 +880,7 @@ img.moon {
 	color:green;
 }
 
+.capitalise {
+text-transform: capitalize;
+}
+

@@ -9,39 +9,42 @@ class StationModel extends Model
         parent::__construct();
     }
 
-    public function jsonDebug()
-    {       
-        require $this->file_admin;
-        if (MB_DEBUG) {
-            if (json_last_error()) {
-                $jsDebug = '';
-                switch (json_last_error()) {
-                    case JSON_ERROR_NONE:
-                        $jsDebug .= ' - Aucune erreur';
-                        break;
-                    case JSON_ERROR_DEPTH:
-                        $jsDebug .= ' - Profondeur maximale atteinte';
-                        break;
-                    case JSON_ERROR_STATE_MISMATCH:
-                        $jsDebug .= ' - Inadéquation des modes ou underflow';
-                        break;
-                    case JSON_ERROR_CTRL_CHAR:
-                        $jsDebug .= ' - Erreur lors du contrôle des caractères';
-                        break;
-                    case JSON_ERROR_SYNTAX:
-                        $jsDebug .= " - Erreur de syntaxe ; JSON malformé ; Erreur d'API ; Mauvais identifiants vers votre API";
-                        break;
-                    case JSON_ERROR_UTF8:
-                        $jsDebug .= ' - Caractères UTF-8 malformés, probablement une erreur d\'encodage';
-                        break;
-                    default:
-                        $jsDebug .= ' - Erreur inconnue';
-                        break;
-                }
-                return var_dump($jsDebug);
-            }
+
+
+
+
+        /**
+     * Retourne l'URL de l'API Live current : https://api.weatherlink.com/v2/stations/
+     * 
+     * 
+     */
+    public function getLiveURLCurrent($key, $secret, $live_id)
+    {
+        $parameters = array(
+            "api-key" => $key,
+            "api-secret" => $secret,
+            "station-id" => $live_id,
+            "t" => time()
+        );
+
+        ksort($parameters);
+        $apiSecret = $parameters["api-secret"];
+        unset($parameters["api-secret"]);
+
+        $data = "";
+        foreach ($parameters as $key => $value) {
+            $data = $data . $key . $value;
         }
+
+        $apiSignature = hash_hmac("sha256", $data, $apiSecret);
+        $apiCurrent = "https://api.weatherlink.com/v2/current/" . $parameters["station-id"] . "?api-key=" . $parameters["api-key"] . "&api-signature=" . $apiSignature . "&t=" . $parameters["t"] ;
+
+
+        return $apiCurrent;
     }
+
+
+
 
 
     public function getAPI()
@@ -52,18 +55,27 @@ class StationModel extends Model
         $my_key = $active['stat_key'];
         $my_pass = $active['stat_password'];
         $my_token = $active['stat_token'];
+        $my_livekey = $active['stat_livekey'];
+        $my_livesecret = $active['stat_livesecret'];
+        $my_liveid = $active['stat_liveid'];
 
         if ($my_type == 'v1') {
             $data = file_get_contents('http://api.weatherlink.com/v1/NoaaExt.json?DID=' . $my_did . '&key=' . $my_key);
+            $json = json_decode($data);
         }
         if ($my_type == 'v2') {
             $data = file_get_contents('http://api.weatherlink.com/v1/NoaaExt.json?user=' . $my_did . '&pass=' . $my_pass . '&apiToken=' . $my_token);
+            $json = json_decode($data);
         }
-        
-        $json = json_decode($data);
+        if ($my_type == 'live') {            
+            $data = @file_get_contents($this->getLiveURLCurrent($my_livekey, $my_livesecret, $my_liveid));           
+            $json = json_decode($data, true);            
+        }
         $this->jsonDebug();
         return $json;
     }
+
+
 
     /**
      * Selection d'un élément dans la BDD stations et de l'user associé
@@ -72,7 +84,7 @@ class StationModel extends Model
      */
     public function getStationActive()
     {
-        
+
         require $this->file_admin;
         $station_tab = $table_prefix . 'station';
         $user_tab = $table_prefix . 'user';
@@ -81,7 +93,7 @@ class StationModel extends Model
         $stat_active = 1;
 
         $req = "SELECT stat_id, stat_type, stat_did, stat_key, stat_users, stat_password, 
-        stat_token, stat_active, $stat_userid, user_login, user_password, user_email 
+        stat_token, stat_livekey, stat_livesecret, stat_liveid, stat_active, $stat_userid, user_login, user_password, user_email 
         FROM $station_tab 
         INNER JOIN $user_tab 
         ON $stat_userid = $user_userid 

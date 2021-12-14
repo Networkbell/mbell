@@ -18,12 +18,13 @@ class HomeController  extends Controller
 
     public function indexAction()
     {
-        $station = $this->paramStat->getStationActive();
+        $active = $this->paramStat->getStationActive();       
         $paramJson = $this->paramStat->getAPI();
-        $config = $this->model->getConfigActive();
-        $tab = $this->model->getTabActive();
-        $switch = $this->model->allChoice($config);
-        $this->view->displayHome($station, $paramJson, $config, $tab, $switch);
+        $liveStation = ($active['stat_type']=='live') ? $this->model->getLiveAPIStation($active['stat_livekey'], $active['stat_livesecret']): '';              
+        $config = $this->model->getConfigActive();   
+        $tab = $this->model->getTabActive();  
+        $switch = $this->model->allChoice($config);    
+        $this->view->displayHome($active, $paramJson, $config, $tab, $switch,$liveStation);
     }
 
 
