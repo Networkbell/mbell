@@ -20,7 +20,8 @@ class ChangeModel extends Model
         $station_tab = $table_prefix . 'station';
         $id_stat_user = $user_tab . '.user_id';
         $id_stat_station = $station_tab . '.user_id';
-        $stat_active = 0;      
+        $stat_active = 0;
+
 
         try {
 
@@ -173,12 +174,13 @@ class ChangeModel extends Model
 
 
 
-     /**
+    /**
      * Modifications dans la BDD "station" 
      * 
      * @return boolean
      */
-    public function updateBDD($paramPost){
+    public function updateBDD($paramPost)
+    {
 
         require $this->file_admin;
         $station_tab = $table_prefix . 'station';
@@ -193,9 +195,9 @@ class ChangeModel extends Model
         stat_livekey = :stat_livekey, stat_livesecret = :stat_livesecret, stat_liveid = :stat_liveid
         WHERE stat_id = :stat_id";
 
-        
+
         try {
-            $this->requete= $this->connexion->prepare($req);
+            $this->requete = $this->connexion->prepare($req);
             $this->requete->bindParam(':stat_id', $paramPost['stat_id']);
             $this->requete->bindParam(':stat_did', $paramPost['stat_did']);
             $this->requete->bindParam(':stat_key', $paramPost['stat_key']);
@@ -205,8 +207,8 @@ class ChangeModel extends Model
             $this->requete->bindParam(':stat_livekey', $live_key);
             $this->requete->bindParam(':stat_livesecret', $live_secret);
             $this->requete->bindParam(':stat_liveid', $live_id);
-            
-            $result = $this->requete->execute(); 
+
+            $result = $this->requete->execute();
             $row = ($result) ? 1 : null;
             return $row;
         } catch (Exception $e) {
@@ -218,36 +220,54 @@ class ChangeModel extends Model
         }
     }
 
-
-
-
-
-/**
+    /**
      * Modifications dans la BDD "station" de la station active en OFF et de la station choisi en ON
+     * Modifications dans la BDD "config" associé à la station active du cron et activation du cron de la station choisi si besoin
+     * Le cron suit toujtours la station active
      * 
      * @return boolean
      */
-    public function activateStation($id, $active){
+    public function activateStation($id_stat, $active, $cron)
+    {
 
         require $this->file_admin;
         $station_tab = $table_prefix . 'station';
-        $stat_active1 = 1;
-        $stat_active0 = 0;
+        $config_tab = $table_prefix . 'config';
+        $stat_statid = $station_tab . '.stat_id';
+        $config_statid = $config_tab . '.stat_id';
 
-        $req0 = "UPDATE $station_tab SET stat_active = :stat_active0  WHERE stat_id = :stat_id0";
-        $req1 = "UPDATE $station_tab SET stat_active = :stat_active1  WHERE stat_id = :stat_id1";
-       
-        
+        $stat_activate = 1;
+        $stat_disabled = 0;
+        $cron_activate = ($cron['config_cron'] == 1) ? 1 : 0;
+
+        $req_stat_disabled = "UPDATE $station_tab SET stat_active = :stat_disabled  WHERE stat_id = :stat_id_disabled";
+        $req_stat_activate = "UPDATE $station_tab SET stat_active = :stat_activate  WHERE stat_id = :stat_id_activate";
+
+        $req_config_disabled = "UPDATE $config_tab SET config_cron = :config_disabled  WHERE config_id = :config_id_disabled";
+        $req_config_activate = "UPDATE $config_tab INNER JOIN $station_tab ON $config_statid = $stat_statid SET config_cron = :config_activate  WHERE $config_statid = :config_id_activate";
+
         try {
-            $this->requete= $this->connexion->prepare($req0);
-            $this->requete->bindParam(':stat_id0', $active['stat_id']);
-            $this->requete->bindParam(':stat_active0', $stat_active0);
-            $result0 = $this->requete->execute(); 
-            $this->requete= $this->connexion->prepare($req1);
-            $this->requete->bindParam(':stat_id1', $id['stat_id']);
-            $this->requete->bindParam(':stat_active1', $stat_active1);
-            $result1 = $this->requete->execute(); 
-            $row = ($result0 && $result1) ? 1 : null;
+            //on désactive la station active
+            $this->requete = $this->connexion->prepare($req_stat_disabled);
+            $this->requete->bindParam(':stat_id_disabled', $active['stat_id']);
+            $this->requete->bindParam(':stat_disabled', $stat_disabled);
+            $result1 = $this->requete->execute();
+            //on désactive le cron actif (qu'il soit déjà actif ou non)
+            $this->requete = $this->connexion->prepare($req_config_disabled);
+            $this->requete->bindParam(':config_id_disabled', $cron['config_id']);
+            $this->requete->bindParam(':config_disabled', $stat_disabled);
+            $result2 = $this->requete->execute();
+            //on active la station choisi
+            $this->requete = $this->connexion->prepare($req_stat_activate);
+            $this->requete->bindParam(':stat_id_activate', $id_stat['stat_id']);
+            $this->requete->bindParam(':stat_activate', $stat_activate);
+            $result3 = $this->requete->execute();
+            //on active le cron de la station choisi si actif (sinon on le désactive)
+            $this->requete = $this->connexion->prepare($req_config_activate);
+            $this->requete->bindParam(':config_id_activate', $id_stat['stat_id']);
+            $this->requete->bindParam(':config_activate', $cron_activate);
+            $result4 = $this->requete->execute();
+            $row = ($result1 && $result2&& $result3&& $result4) ? 1 : null;
             return $row;
         } catch (Exception $e) {
             if (MB_DEBUG) {
@@ -257,14 +277,4 @@ class ChangeModel extends Model
             return $row;
         }
     }
-
-
-
-
-
-
-
-
-
-
 }

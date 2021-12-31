@@ -52,13 +52,16 @@ class Lang
 
     public function degToCompass($wind_deg, $lg)
     {
+
         if ($lg == 'fr') {
             $arr = array("Nord", "Nord-Est", "Est", "Sud-Est", "Sud", "Sud-Ouest", "Ouest", "Nord-Ouest");
         } elseif ($lg == 'en') {
             $arr = array("North", "North-East", "East", "South-East", "South", "South-West", "West", "North-West");
         }
-        $val = floor(($wind_deg / 45) + .5);
-        return $arr[($val % 8)];
+        if ($wind_deg != '&#8709;') {
+            $val = floor(($wind_deg / 45) + .5);
+            return $arr[($val % 8)];
+        }
     }
 
     public function degToCompassSmall($wind_deg, $lg)
@@ -68,8 +71,10 @@ class Lang
         } elseif ($lg == 'en') {
             $arr = array("North", "NE", "East", "SE", "South", "SW", "West", "NW");
         }
-        $val = floor(($wind_deg / 45) + .5);
-        return $arr[($val % 8)];
+        if ($wind_deg != '&#8709;') {
+            $val = floor(($wind_deg / 45) + .5);
+            return $arr[($val % 8)];
+        }
     }
 
 
@@ -89,16 +94,16 @@ class Lang
 
     public function pressTrad($value, $lg)
     {
-            if ($lg == 'en') {
-                $value = $value;
-            } else if ($lg == 'fr') {
-                $value = str_replace("Steady", "Stable", $value);
-                $value = str_replace("Falling Slowly", "Baisse Lentement", $value);
-                $value = str_replace("Rising Slowly", "Augmente Lentement", $value);
-                $value = str_replace("Falling Rapidly", "Baisse Rapidement", $value);
-                $value = str_replace("Rising Rapidly", "Augmente Rapidement", $value);
-            }
-        
+        if ($lg == 'en') {
+            $value = $value;
+        } else if ($lg == 'fr') {
+            $value = str_replace("Steady", "Stable", $value);
+            $value = str_replace("Falling Slowly", "Baisse Lentement", $value);
+            $value = str_replace("Rising Slowly", "Augmente Lentement", $value);
+            $value = str_replace("Falling Rapidly", "Baisse Rapidement", $value);
+            $value = str_replace("Rising Rapidly", "Augmente Rapidement", $value);
+        }
+
         return $value;
     }
 

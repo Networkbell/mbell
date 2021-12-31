@@ -9,6 +9,7 @@ require 'Controller/LoginController.php';
 require 'Controller/PrefController.php';
 require 'Controller/HomeController.php';
 require 'Controller/ChangeController.php';
+require 'Controller/CronController.php';
 
 class Dispatcher
 {
@@ -33,15 +34,15 @@ class Dispatcher
             } else {
 
                 /*VERIFICATION DE LOGIN*/
-                if (!isset($_SESSION['user_login']) && ($controller == "pref")) {
+                if ((!isset($_SESSION['user_login']) && ($controller == "pref")) || (!isset($_SESSION['user_login']) && ($controller == "change")) || (!isset($_SESSION['user_login']) && ($controller == "cron"))) {
                     $controller = 'LoginController';
                     $action = 'formAction';
-                } else if (isset($_SESSION['user_login']) && ($controller == "pref")) {
-                    
+                } else if ((isset($_SESSION['user_login']) && ($controller == "pref"))|| (isset($_SESSION['user_login']) && ($controller == "change"))||(isset($_SESSION['user_login']) && ($controller == "cron"))) {                   
                     $controller = ucfirst($controller) . 'Controller';
                     $action = (isset($_GET['action'])) ? $_GET['action'] : "list";
                     $action = $action . "Action";
                 }
+                
 
                 //HomeController
                 else {

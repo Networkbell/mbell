@@ -30,7 +30,8 @@ class HomeView extends View
     }
 
 
-
+//datas = api datas
+//info = stat_type
     public function displayHome($info, $datas, $config, $tab, $switch, $liveStation)
     {
         $param = array(

@@ -69,6 +69,7 @@ class InstallModel extends Model
         $live_secret = $paramPost['stat_livesecret'];
         $live_id = $this->getStationID($live_key, $live_secret, $stat_type);
         $stat_active = 1;
+       
 
         try {
             $req = "INSERT INTO $station_tab VALUES(
@@ -144,6 +145,7 @@ class InstallModel extends Model
                 $station_tab = $table_prefix . 'station';
                 $config_tab = $table_prefix . 'config';
                 $tab_tab = $table_prefix . 'tab';
+                $data_tab = $table_prefix . 'data';
 
                 // Test Création des tables
                 try {
@@ -152,6 +154,7 @@ class InstallModel extends Model
                     $response_station = $this->createStation($station_tab, DB_CHARSET, $user_tab);
                     $response_config = $this->createConfig($config_tab, DB_CHARSET, $station_tab, $this->l->getLg());
                     $response_tab = $this->createTab($tab_tab, DB_CHARSET, $station_tab);
+                    $response_data = $this->createData($data_tab, DB_CHARSET);
 
                     $this->requete = $this->connexion->prepare($response_user);
                     $result1 = $this->requete->execute();
@@ -161,8 +164,10 @@ class InstallModel extends Model
                     $result3 = $this->requete->execute();
                     $this->requete = $this->connexion->prepare($response_tab);
                     $result4 = $this->requete->execute();
+                    $this->requete = $this->connexion->prepare($response_data);
+                    $result5 = $this->requete->execute();
 
-                    if ($result1 && $result2 && $result3 && $result4) {
+                    if ($result1 && $result2 && $result3 && $result4 && $result5) {
                         $response = 4;
                     } else {
                         if (MB_DEBUG) {
@@ -173,6 +178,8 @@ class InstallModel extends Model
                             var_dump($result3);
                             echo "<br>";
                             var_dump($result4);
+                            echo "<br>";
+                            var_dump($result5);
                             echo "<br>";
                         }
                         $response = 3;
@@ -251,6 +258,7 @@ class InstallModel extends Model
                 config_daynight tinyint(1) NOT NULL default 0,
                 config_color varchar(24) NOT NULL default 'colored',
                 config_icon tinyint(1) NOT NULL default 1,
+                config_cron tinyint(1) NOT NULL default 0,
                 stat_id int(11) NOT NULL,
                 CONSTRAINT PK_config_id PRIMARY KEY (config_id),
                 CONSTRAINT $constraint FOREIGN KEY (stat_id) REFERENCES $tab2(stat_id),
@@ -301,6 +309,35 @@ class InstallModel extends Model
                 CONSTRAINT PK_tab_id PRIMARY KEY (tab_id),
                 CONSTRAINT $constraint FOREIGN KEY (stat_id) REFERENCES $tab2(stat_id),
                 UNIQUE (stat_id)                
+            ) ENGINE = InnoDB DEFAULT CHARSET = $charset";
+
+        return $create_tab;
+    }
+
+
+    // Création de la Table *_user
+    public function createData($tab, $charset)
+    {
+        $create_tab = "CREATE TABLE IF NOT EXISTS $tab (
+                data_id int(11) NOT NULL auto_increment,
+                data_time_cron int(11) default NULL,
+                data_time_api varchar(60) default NULL,
+                data_temp Double default NULL,
+                data_heat Double default NULL,
+                data_windchill Double default NULL,
+                data_dewpoint Double default NULL,
+                data_hum Double default NULL,
+                data_press Double default NULL,
+                data_wind_dir Double default NULL,
+                data_wind_moy Double default NULL,
+                data_wind_raf Double default NULL,
+                data_rain_day Double default NULL,
+                data_rr_high_15mn Double default NULL,
+                data_rr_high_hour Double default NULL,
+                data_rr_last Double default NULL,
+                data_solar Double default NULL,
+                data_uv Double default NULL,                              
+                CONSTRAINT PK_data_id PRIMARY KEY (data_id)
             ) ENGINE = InnoDB DEFAULT CHARSET = $charset";
 
         return $create_tab;

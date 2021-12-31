@@ -44,7 +44,39 @@ class StationModel extends Model
     }
 
 
-
+    /**
+     * simplifie l'API live 
+     * array_merge_recursive génère un $single_array[key][0,1] si il y 2 clefs identiques (exemples plusieurs stations)
+     *
+     * @param [array] $array
+     * @return array
+     */
+    public function liveAPIreduc($array)
+    {
+        $new_array = array();
+        foreach ($array as $element1) {
+            if (is_array($element1) && count($element1) > 0) {
+                foreach ($element1 as $j => $element2) {
+                    if (is_array($element2) && count($element2) > 0) {
+                        foreach ($element2 as $element3) {
+                            if (is_array($element3) && count($element3) > 0) {
+                                foreach ($element3 as $element4) {
+                                    if (is_array($element4) && count($element4) > 0) {
+                                        $new_array[$j] = $element4;
+                                        $result = [];
+                                        array_walk_recursive($new_array, function ($value, $key) use (&$result) {
+                                            $result[$key][] = $value;
+                                        });
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return $result;
+    }
 
 
     public function getAPI()
@@ -62,17 +94,20 @@ class StationModel extends Model
         if ($my_type == 'v1') {
             $data = file_get_contents('http://api.weatherlink.com/v1/NoaaExt.json?DID=' . $my_did . '&key=' . $my_key);
             $json = json_decode($data);
+            $this->jsonDebug();
         }
         if ($my_type == 'v2') {
             $data = file_get_contents('http://api.weatherlink.com/v1/NoaaExt.json?user=' . $my_did . '&pass=' . $my_pass . '&apiToken=' . $my_token);
             $json = json_decode($data);
+            $this->jsonDebug();
         }
         if ($my_type == 'live') {            
             $data = @file_get_contents($this->getLiveURLCurrent($my_livekey, $my_livesecret, $my_liveid));           
-            $json = json_decode($data, true);            
-        }
-        $this->jsonDebug();
-        return $json;
+            $array= json_decode($data, true);
+            $this->jsonDebug();
+            $json = $this->liveAPIreduc($array);
+        }        
+        return $json;   
     }
 
 

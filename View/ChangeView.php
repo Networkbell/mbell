@@ -19,7 +19,10 @@ class ChangeView extends View
             "_CSS" => "maincolor",
             "_LOGO" => "1",
             "_ROOT" => $this->getRoot(),
-            "_LG" => $this->l->getLg()
+            "_URL" => 'index.php?controller=pref&action=list&',
+            "_LG" => $this->l->getLg(),
+            "HOMEPAGE" => $this->l->trad('SETTINGS'),
+            "HOMESCREEN" => $this->l->trad('SETTINGS'),
         );
         $this->page =  $this->getHead($param);
         $this->page .=  '<body>';
@@ -32,9 +35,10 @@ class ChangeView extends View
         $this->page .= $this->searchHTML('headerPref', 'pref');
         $this->page = str_replace('{_LOGO}',  $param['_LOGO'], $this->page);
         $this->page = str_replace('{_ROOT}',  $param['_ROOT'], $this->page);
+        $this->page = str_replace('{_URL}',  $param['_URL'], $this->page);
         $this->page = str_replace('{_LG}',  $param['_LG'], $this->page);
-        $this->page = str_replace('{HOMEPAGE}',  $this->l->trad('HOMEPAGE'), $this->page);
-        $this->page = str_replace('{HOMESCREEN}',  $this->l->trad('HOMESCREEN'), $this->page);
+        $this->page = str_replace('{HOMEPAGE}',  $param['HOMEPAGE'], $this->page);
+        $this->page = str_replace('{HOMESCREEN}',  $param['HOMESCREEN'], $this->page);
         $this->page = str_replace('{LOGOUT1}',  $this->l->trad('LOGOUT1'), $this->page);
         $this->page = str_replace('{LOGOUT2}',  $this->l->trad('LOGOUT2'), $this->page);
     }

@@ -20,6 +20,7 @@ class PrefView extends View
             "_CSS" => "maincolor",
             "_LOGO" => "1",
             "_ROOT" => $this->getRoot(),
+            "_URL" => 'index.php?',
             "_LG" => $this->l->getLg()
         );
         $this->page =  $this->getHead($param);
@@ -52,6 +53,7 @@ class PrefView extends View
             "_LG" => $this->l->getLg(),
             "SAVE" => $this->l->trad('SAVE'),
             "CHANGE_STATION" => $this->l->trad('CHANGE_STATION'),
+            "CRON_TITLE" => $this->l->trad('CRON_TITLE'),
         );
 
         $this->constructHead();
@@ -91,8 +93,6 @@ class PrefView extends View
         $this->page .= $this->getSubmit('pref', $param['SAVE']);
         $this->page .= '</form>';
         $this->page .= '</div>';
-        $this->page .= '</section>';
-        $this->page .= '<section>';
         $this->page .= $this->titleMenu($this->l->trad('CONFIGURATION_TITLE'), '4');
         $this->page .= '<div class="section_show" id="show_hide4">';
         $this->page .= '<form action="index.php?controller=pref&action=lines&lg=' . $param['_LG'] . '" method="POST">';
@@ -104,6 +104,15 @@ class PrefView extends View
         $this->page .= '</div>';
         $this->page .= $this->getSubmit('pref', $param['SAVE']);
         $this->page .= '</form>';
+        $this->page .= '</div>';
+        $this->page .= '</section>';
+        $this->page .= '<section>';
+        $this->page .= $this->titleMenu($this->l->trad('MANAGMENT'), '5');
+        $this->page .= '<div class="section_show" id="show_hide5">';
+        $this->page .= $this->getInfo($this->l->trad('CRON_INFO_1'));
+        $this->page .= $this->getInfo($this->l->trad('CRON_INFO_2'));
+        
+        $this->page .= $this->getButton($this->l->getLg(), 'cron', 'list', $param['CRON_TITLE']);
         $this->page .= '</div>';
         $this->page .= '</section>';
         $this->page .= '</main>';
@@ -197,6 +206,7 @@ class PrefView extends View
         $this->page .= $this->searchHTML('headerPref', 'pref');
         $this->page = str_replace('{_LOGO}',  $param['_LOGO'], $this->page);
         $this->page = str_replace('{_ROOT}',  $param['_ROOT'], $this->page);
+        $this->page = str_replace('{_URL}',  $param['_URL'], $this->page);
         $this->page = str_replace('{_LG}',  $param['_LG'], $this->page);
         $this->page = str_replace('{HOMEPAGE}',  $this->l->trad('HOMEPAGE'), $this->page);
         $this->page = str_replace('{HOMESCREEN}',  $this->l->trad('HOMESCREEN'), $this->page);
@@ -414,4 +424,6 @@ class PrefView extends View
         }
         return $checked;
     }
+
+
 }

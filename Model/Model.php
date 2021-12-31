@@ -132,9 +132,10 @@ abstract class Model
         $config_daynight = 0;
         $config_color = 'colored';
         $config_icon = 1;
+        $config_cron = 0;
         $stat_id = $info['stat_id'];
 
-        $req = "INSERT INTO $config_tab VALUES(NULL, :config_lang, :config_sun, :config_aux1, :config_aux2, :config_aux3, :config_temp, :config_wind, :config_rain, :config_press, :config_css, :config_daynight, :config_color, :config_icon, :stat_id)";
+        $req = "INSERT INTO $config_tab VALUES(NULL, :config_lang, :config_sun, :config_aux1, :config_aux2, :config_aux3, :config_temp, :config_wind, :config_rain, :config_press, :config_css, :config_daynight, :config_color, :config_icon, :config_cron, :stat_id)";
         try {
             $this->requete = $this->connexion->prepare($req);
             $this->requete->bindParam(':config_lang', $config_lang);
@@ -150,6 +151,7 @@ abstract class Model
             $this->requete->bindParam(':config_daynight', $config_daynight);
             $this->requete->bindParam(':config_color', $config_color);
             $this->requete->bindParam(':config_icon', $config_icon);
+            $this->requete->bindParam(':config_cron', $config_cron);
             $this->requete->bindParam(':stat_id', $stat_id);
             $result = $this->requete->execute();
             $row = ($result) ? $stat_id : null;
@@ -349,6 +351,77 @@ abstract class Model
                         break;
                 }
                 return var_dump($jsDebug);
+            }
+        }
+    }
+
+
+        /**
+     * Selection d'un élément dans la BDD config et de la station associé
+     * 
+     * @return type(string, int)
+     */
+    public function getConfigActive()
+    {
+
+        require $this->file_admin;
+        $station_tab = $table_prefix . 'station';
+        $config_tab = $table_prefix . 'config';
+        $stat_statid = $station_tab . '.stat_id';
+        $config_statid = $config_tab . '.stat_id';
+        $stat_active = 1;
+
+        $req = "SELECT config_id, config_lang, config_sun, config_aux1, config_aux2, config_aux3, config_temp, config_wind, config_rain, config_press, config_css, config_daynight, config_color, config_icon, config_cron, $config_statid FROM $config_tab INNER JOIN $station_tab ON $config_statid = $stat_statid WHERE stat_active = :stat_active";
+
+        try {
+            $this->requete = $this->connexion->prepare($req);
+            $this->requete->bindParam(':stat_active', $stat_active);
+
+            $result = $this->requete->execute();
+            $list = array();
+            if ($result) {
+                $list = $this->requete->fetch(PDO::FETCH_ASSOC);
+            }
+            return $list;
+        } catch (Exception $e) {
+            die('Erreur:' . $e->getMessage());
+        }
+    }
+
+
+
+    
+
+        /**
+     * Selection d'un élément dans la BDD tab et de la station associé
+     * 
+     * @return type(string, int)
+     */
+    public function getTabActive()
+    {
+
+        require $this->file_admin;
+        $station_tab = $table_prefix . 'station';
+        $tab_tab = $table_prefix . 'tab';
+        $stat_statid = $station_tab . '.stat_id';
+        $tab_statid = $tab_tab . '.stat_id';
+        $stat_active = 1;
+
+        $req = "SELECT tab_id, tab_lines, tab_1a, tab_1b, tab_1c, tab_2a, tab_2b, tab_2c, tab_3a, tab_3b, tab_3c, tab_4a, tab_4b, tab_4c, tab_5a, tab_5b, tab_5c, tab_6a, tab_6b, tab_6c, tab_7a, tab_7b, tab_7c, tab_8a, tab_8b, tab_8c, tab_9a, tab_9b, tab_9c, tab_10a, tab_10b, tab_10c, $tab_statid FROM $tab_tab INNER JOIN $station_tab ON $tab_statid = $stat_statid WHERE stat_active = :stat_active";
+        
+        try {
+            $this->requete = $this->connexion->prepare($req);
+            $this->requete->bindParam(':stat_active', $stat_active);
+
+            $result = $this->requete->execute();
+            $list = array();
+            if ($result) {
+                $list = $this->requete->fetch(PDO::FETCH_ASSOC);
+            }
+            return $list;
+        } catch (Exception $e) {
+            if (MB_DEBUG) {
+                die($e->getMessage());
             }
         }
     }

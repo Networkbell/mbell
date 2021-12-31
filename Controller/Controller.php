@@ -12,6 +12,8 @@ require 'View/StationView.php';
 require 'Model/StationModel.php';
 require 'View/ChangeView.php';
 require 'Model/ChangeModel.php';
+require 'View/CronView.php';
+require 'Model/CronModel.php';
 require 'config/Color.php';
 require 'config/Moon.php';
 
@@ -58,7 +60,7 @@ abstract class Controller
             $this->paramPost["metabdd"] = "mb_";
         }
 
-        
+
 
 
 

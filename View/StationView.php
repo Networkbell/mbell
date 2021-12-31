@@ -5,9 +5,9 @@ class StationView extends View
 
     public function __construct()
     {
-
         parent::__construct();
     }
+
 
 
     public function livePress($press)
@@ -27,7 +27,7 @@ class StationView extends View
         $date = date("h:i a", date_sun_info($time, $latitude, $longitude)[$type]);
         return $date;
     }
-    
+
 
     /**
      * Pour API v1
@@ -46,12 +46,14 @@ class StationView extends View
      */
     public function timeZone($timeRFC822)
     {
-        $dt = new DateTime($timeRFC822);
-        /* $tz = $dt->getTimezone();
+        if ($timeRFC822 != '&#8709;') {
+            $dt = new DateTime($timeRFC822);
+            /* $tz = $dt->getTimezone();
         $fus = $tz->getName();*/
-        $offset =  $dt->getOffset();
-        $timezone = timezone_name_from_abbr("", $offset, 0);
-        return $timezone;
+            $offset =  $dt->getOffset();
+            $timezone = timezone_name_from_abbr("", $offset, 0);
+            return $timezone;
+        }
     }
 
     /* 
@@ -103,375 +105,383 @@ class StationView extends View
     */
     public function getAPIDatas($datas, $station, $livestation)
     {
+
         $zero = '&#8709;';
-        if ($station['stat_type'] == 'live') {
-            $dat0 = $datas['sensors'][0]['data'];
-            $dat1 = $datas['sensors'][1]['data'];
-            $dat2 = $datas['sensors'][2]['data'];
-            $dat3 = $datas['sensors'][3]['data'];
+        $type = (isset($station['stat_type'])) ? $station['stat_type'] : $zero;
+        
+        if ($type == 'live') {
+            $dat = $zero;
+        } elseif ($type == 'v1' || $type == 'v2') {
+            $dat = isset($datas->davis_current_observation) ? $datas->davis_current_observation : $zero;
         } else {
-            $dat = $datas->davis_current_observation;
+            $dat = $zero;
         }
 
 
-        $data = array(
+        $response = array(
+
+
             //V1
-            "pressure_tendency_string" => ($station['stat_type'] == 'live') ? $zero : (isset($dat->pressure_tendency_string) ? $dat->pressure_tendency_string : $zero),          
-            "pressure_mb" => ($station['stat_type'] == 'live') ? $zero : ( isset($datas->pressure_mb) ? $datas->pressure_mb : $zero),
-            "time_RFC822" => ($station['stat_type'] == 'live') ? $zero : (isset($datas->observation_time_rfc822) ? $datas->observation_time_rfc822 : $zero),
-            "sunset" => ($station['stat_type'] == 'live') ? $zero : (isset($dat->sunset) ? $dat->sunset : $zero),
-            "sunrise" => ($station['stat_type'] == 'live') ? $zero : (isset($dat->sunrise) ? $dat->sunrise : $zero),
-            "wind_day_high_mph" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->wind_day_high_mph) ? $dat->wind_day_high_mph : $zero),
-            "wind_day_high_time" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->wind_day_high_time) ? $dat->wind_day_high_time : $zero),
-            "wind_month_high_mph" => ($station['stat_type'] == 'live') ?  $zero : ( isset($dat->wind_month_high_mph) ? $dat->wind_month_high_mph : $zero),
-            "wind_year_high_mph" => ($station['stat_type'] == 'live') ?  $zero : ( isset($dat->wind_year_high_mph) ? $dat->wind_year_high_mph : $zero),
-            "et_day" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->et_day) ? $dat->et_day : $zero),
-            "temp_day_high_f" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->temp_day_high_f) ? $dat->temp_day_high_f : $zero),
-            "temp_day_low_f" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->temp_day_low_f) ? $dat->temp_day_low_f : $zero),
-            "temp_extra_1" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->temp_extra_1) ? $dat->temp_extra_1 : $zero),
-            "temp_extra_2" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->temp_extra_2) ? $dat->temp_extra_2 : $zero),
-            "temp_extra_3" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->temp_extra_3) ? $dat->temp_extra_3 : $zero),
-            "temp_extra_4" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->temp_extra_4) ? $dat->temp_extra_4 : $zero),
-            "temp_extra_5" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->temp_extra_5) ? $dat->temp_extra_5 : $zero),
-            "temp_extra_6" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->temp_extra_6) ? $dat->temp_extra_6 : $zero),
-            "temp_extra_7" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->temp_extra_7) ? $dat->temp_extra_7 : $zero),
-            "relative_humidity_1" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->relative_humidity_1) ? $dat->relative_humidity_1 : $zero),
-            "relative_humidity_2" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->relative_humidity_2) ? $dat->relative_humidity_2 : $zero),
-            "relative_humidity_3" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->relative_humidity_3) ? $dat->relative_humidity_3 : $zero),
-            "relative_humidity_4" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->relative_humidity_4) ? $dat->relative_humidity_4 : $zero),
-            "relative_humidity_5" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->relative_humidity_5) ? $dat->relative_humidity_5 : $zero),
-            "relative_humidity_6" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->relative_humidity_6) ? $dat->relative_humidity_6 : $zero),
-            "relative_humidity_7" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->relative_humidity_7) ? $dat->relative_humidity_7 : $zero),
-            "temp_leaf_1" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->temp_leaf_1) ? $dat->temp_leaf_1 : $zero),
-            "temp_leaf_2" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->temp_leaf_2) ? $dat->temp_leaf_2 : $zero),
-            "temp_soil_1" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->temp_soil_1) ? $dat->temp_soil_1 : $zero),
-            "temp_soil_2" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->temp_soil_2) ? $dat->temp_soil_2 : $zero),
-            "temp_soil_3" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->temp_soil_3) ? $dat->temp_soil_3 : $zero),
-            "temp_soil_4" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->temp_soil_4) ? $dat->temp_soil_4 : $zero),
-            "leaf_wetness_1" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->leaf_wetness_1) ? $dat->leaf_wetness_1 : $zero),
-            "leaf_wetness_2" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->leaf_wetness_2) ? $dat->leaf_wetness_2 : $zero),
-            "soil_moisture_1" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->soil_moisture_1) ? $dat->soil_moisture_1 : $zero),
-            "soil_moisture_2" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->soil_moisture_2) ? $dat->soil_moisture_2 : $zero),
-            "soil_moisture_3" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->soil_moisture_3) ? $dat->soil_moisture_3 : $zero),
-            "soil_moisture_4" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->soil_moisture_4) ? $dat->soil_moisture_4 : $zero),
-            "temp_day_low_f" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->temp_day_low_f) ? $dat->temp_day_low_f : $zero),
-            "temp_month_low_f" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->temp_month_low_f) ? $dat->temp_month_low_f : $zero),
-            "temp_year_low_f" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->temp_year_low_f) ? $dat->temp_year_low_f : $zero),
-            "temp_day_high_f" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->temp_day_high_f) ? $dat->temp_day_high_f : $zero),
-            "temp_month_high_f" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->temp_month_high_f) ? $dat->temp_month_high_f : $zero),
-            "temp_year_high_f" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->temp_year_high_f) ? $dat->temp_year_high_f : $zero),
-            "temp_day_low_time" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->temp_day_low_time) ? $dat->temp_day_low_time : $zero),
-            "temp_day_high_time" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->temp_day_high_time) ? $dat->temp_day_high_time : $zero),
-            "pressure_day_low_in" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->pressure_day_low_in) ? $dat->pressure_day_low_in : $zero),
-            "pressure_month_low_in" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->pressure_month_low_in) ? $dat->pressure_month_low_in : $zero),
-            "pressure_year_low_in" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->pressure_year_low_in) ? $dat->pressure_year_low_in : $zero),
-            "pressure_day_high_in" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->pressure_day_high_in) ? $dat->pressure_day_high_in : $zero),
-            "pressure_month_high_in" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->pressure_month_high_in) ? $dat->pressure_month_high_in : $zero),
-            "pressure_year_high_in" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->pressure_year_high_in) ? $dat->pressure_year_high_in : $zero),
-            "pressure_day_low_time" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->pressure_day_low_time) ? $dat->pressure_day_low_time : $zero),
-            "pressure_day_high_time" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->pressure_day_high_time) ? $dat->pressure_day_high_time : $zero),
-            "dewpoint_day_low_f" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->dewpoint_day_low_f) ? $dat->dewpoint_day_low_f : $zero),
-            "dewpoint_month_low_f" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->dewpoint_month_low_f) ? $dat->dewpoint_month_low_f : $zero),
-            "dewpoint_year_low_f" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->dewpoint_year_low_f) ? $dat->dewpoint_year_low_f : $zero),
-            "dewpoint_day_high_f" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->dewpoint_day_high_f) ? $dat->dewpoint_day_high_f : $zero),
-            "dewpoint_month_high_f" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->dewpoint_month_high_f) ? $dat->dewpoint_month_high_f : $zero),
-            "dewpoint_year_high_f" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->dewpoint_year_high_f) ? $dat->dewpoint_year_high_f : $zero),
-            "dewpoint_day_low_time" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->dewpoint_day_low_time) ? $dat->dewpoint_day_low_time : $zero),
-            "dewpoint_day_high_time" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->dewpoint_day_high_time) ? $dat->dewpoint_day_high_time : $zero),
-            "relative_humidity_day_low" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->relative_humidity_day_low) ? $dat->relative_humidity_day_low : $zero),
-            "relative_humidity_month_low" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->relative_humidity_month_low) ? $dat->relative_humidity_month_low : $zero),
-            "relative_humidity_year_low" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->relative_humidity_year_low) ? $dat->relative_humidity_year_low : $zero),
-            "relative_humidity_day_high" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->relative_humidity_day_high) ? $dat->relative_humidity_day_high : $zero),
-            "relative_humidity_month_high" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->relative_humidity_month_high) ? $dat->relative_humidity_month_high : $zero),
-            "relative_humidity_year_high" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->relative_humidity_year_high) ? $dat->relative_humidity_year_high : $zero),
-            "relative_humidity_day_low_time" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->relative_humidity_day_low_time) ? $dat->relative_humidity_day_low_time : $zero),
-            "relative_humidity_day_high_time" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->relative_humidity_day_high_time) ? $dat->relative_humidity_day_high_time : $zero),
-            "temp_extra_1_day_low" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->temp_extra_1_day_low) ? $dat->temp_extra_1_day_low : $zero),
-            "temp_extra_1_month_low" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->temp_extra_1_month_low) ? $dat->temp_extra_1_month_low : $zero),
-            "temp_extra_1_year_low" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->temp_extra_1_year_low) ? $dat->temp_extra_1_year_low : $zero),
-            "temp_extra_1_day_high" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->temp_extra_1_day_high) ? $dat->temp_extra_1_day_high : $zero),
-            "temp_extra_1_month_high" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->temp_extra_1_month_high) ? $dat->temp_extra_1_month_high : $zero),
-            "temp_extra_1_year_high" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->temp_extra_1_year_high) ? $dat->temp_extra_1_year_high : $zero),
-            "temp_extra_1_day_low_time" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->temp_extra_1_day_low_time) ? $dat->temp_extra_1_day_low_time : $zero),
-            "temp_extra_1_day_high_time" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->temp_extra_1_day_high_time) ? $dat->temp_extra_1_day_high_time : $zero),
-            "temp_extra_2_day_low" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->temp_extra_2_day_low) ? $dat->temp_extra_2_day_low : $zero),
-            "temp_extra_2_month_low" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->temp_extra_2_month_low) ? $dat->temp_extra_2_month_low : $zero),
-            "temp_extra_2_year_low" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->temp_extra_2_year_low) ? $dat->temp_extra_2_year_low : $zero),
-            "temp_extra_2_day_high" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->temp_extra_2_day_high) ? $dat->temp_extra_2_day_high : $zero),
-            "temp_extra_2_month_high" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->temp_extra_2_month_high) ? $dat->temp_extra_2_month_high : $zero),
-            "temp_extra_2_year_high" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->temp_extra_2_year_high) ? $dat->temp_extra_2_year_high : $zero),
-            "temp_extra_2_day_low_time" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->temp_extra_2_day_low_time) ? $dat->temp_extra_2_day_low_time : $zero),
-            "temp_extra_2_day_high_time" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->temp_extra_2_day_high_time) ? $dat->temp_extra_2_day_high_time : $zero),
-            "temp_extra_3_day_low" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->temp_extra_3_day_low) ? $dat->temp_extra_3_day_low : $zero),
-            "temp_extra_3_month_low" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->temp_extra_3_month_low) ? $dat->temp_extra_3_month_low : $zero),
-            "temp_extra_3_year_low" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->temp_extra_3_year_low) ? $dat->temp_extra_3_year_low : $zero),
-            "temp_extra_3_day_high" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->temp_extra_3_day_high) ? $dat->temp_extra_3_day_high : $zero),
-            "temp_extra_3_month_high" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->temp_extra_3_month_high) ? $dat->temp_extra_3_month_high : $zero),
-            "temp_extra_3_year_high" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->temp_extra_3_year_high) ? $dat->temp_extra_3_year_high : $zero),
-            "temp_extra_3_day_low_time" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->temp_extra_3_day_low_time) ? $dat->temp_extra_3_day_low_time : $zero),
-            "temp_extra_3_day_high_time" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->temp_extra_3_day_high_time) ? $dat->temp_extra_3_day_high_time : $zero),
-            "temp_extra_4_day_low" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->temp_extra_4_day_low) ? $dat->temp_extra_4_day_low : $zero),
-            "temp_extra_4_month_low" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->temp_extra_4_month_low) ? $dat->temp_extra_4_month_low : $zero),
-            "temp_extra_4_year_low" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->temp_extra_4_year_low) ? $dat->temp_extra_4_year_low : $zero),
-            "temp_extra_4_day_high" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->temp_extra_4_day_high) ? $dat->temp_extra_4_day_high : $zero),
-            "temp_extra_4_month_high" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->temp_extra_4_month_high) ? $dat->temp_extra_4_month_high : $zero),
-            "temp_extra_4_year_high" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->temp_extra_4_year_high) ? $dat->temp_extra_4_year_high : $zero),
-            "temp_extra_4_day_low_time" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->temp_extra_4_day_low_time) ? $dat->temp_extra_4_day_low_time : $zero),
-            "temp_extra_4_day_high_time" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->temp_extra_4_day_high_time) ? $dat->temp_extra_4_day_high_time : $zero),
-            "temp_extra_5_day_low" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->temp_extra_5_day_low) ? $dat->temp_extra_5_day_low : $zero),
-            "temp_extra_5_month_low" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->temp_extra_5_month_low) ? $dat->temp_extra_5_month_low : $zero),
-            "temp_extra_5_year_low" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->temp_extra_5_year_low) ? $dat->temp_extra_5_year_low : $zero),
-            "temp_extra_5_day_high" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->temp_extra_5_day_high) ? $dat->temp_extra_5_day_high : $zero),
-            "temp_extra_5_month_high" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->temp_extra_5_month_high) ? $dat->temp_extra_5_month_high : $zero),
-            "temp_extra_5_year_high" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->temp_extra_5_year_high) ? $dat->temp_extra_5_year_high : $zero),
-            "temp_extra_5_day_low_time" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->temp_extra_5_day_low_time) ? $dat->temp_extra_5_day_low_time : $zero),
-            "temp_extra_5_day_high_time" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->temp_extra_5_day_high_time) ? $dat->temp_extra_5_day_high_time : $zero),
-            "temp_extra_6_day_low" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->temp_extra_6_day_low) ? $dat->temp_extra_6_day_low : $zero),
-            "temp_extra_6_month_low" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->temp_extra_6_month_low) ? $dat->temp_extra_6_month_low : $zero),
-            "temp_extra_6_year_low" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->temp_extra_6_year_low) ? $dat->temp_extra_6_year_low : $zero),
-            "temp_extra_6_day_high" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->temp_extra_6_day_high) ? $dat->temp_extra_6_day_high : $zero),
-            "temp_extra_6_month_high" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->temp_extra_6_month_high) ? $dat->temp_extra_6_month_high : $zero),
-            "temp_extra_6_year_high" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->temp_extra_6_year_high) ? $dat->temp_extra_6_year_high : $zero),
-            "temp_extra_6_day_low_time" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->temp_extra_6_day_low_time) ? $dat->temp_extra_6_day_low_time : $zero),
-            "temp_extra_6_day_high_time" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->temp_extra_6_day_high_time) ? $dat->temp_extra_6_day_high_time : $zero),
-            "temp_extra_7_day_low" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->temp_extra_7_day_low) ? $dat->temp_extra_7_day_low : $zero),
-            "temp_extra_7_month_low" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->temp_extra_7_month_low) ? $dat->temp_extra_7_month_low : $zero),
-            "temp_extra_7_year_low" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->temp_extra_7_year_low) ? $dat->temp_extra_7_year_low : $zero),
-            "temp_extra_7_day_high" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->temp_extra_7_day_high) ? $dat->temp_extra_7_day_high : $zero),
-            "temp_extra_7_month_high" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->temp_extra_7_month_high) ? $dat->temp_extra_7_month_high : $zero),
-            "temp_extra_7_year_high" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->temp_extra_7_year_high) ? $dat->temp_extra_7_year_high : $zero),
-            "temp_extra_7_day_low_time" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->temp_extra_7_day_low_time) ? $dat->temp_extra_7_day_low_time : $zero),
-            "temp_extra_7_day_high_time" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->temp_extra_7_day_high_time) ? $dat->temp_extra_7_day_high_time : $zero),
-            "temp_leaf_1_day_low" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->temp_leaf_1_day_low) ? $dat->temp_leaf_1_day_low : $zero),
-            "temp_leaf_1_month_low" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->temp_leaf_1_month_low) ? $dat->temp_leaf_1_month_low : $zero),
-            "temp_leaf_1_year_low" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->temp_leaf_1_year_low) ? $dat->temp_leaf_1_year_low : $zero),
-            "temp_leaf_1_day_high" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->temp_leaf_1_day_high) ? $dat->temp_leaf_1_day_high : $zero),
-            "temp_leaf_1_month_high" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->temp_leaf_1_month_high) ? $dat->temp_leaf_1_month_high : $zero),
-            "temp_leaf_1_year_high" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->temp_leaf_1_year_high) ? $dat->temp_leaf_1_year_high : $zero),
-            "temp_leaf_1_day_low_time" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->temp_leaf_1_day_low_time) ? $dat->temp_leaf_1_day_low_time : $zero),
-            "temp_leaf_1_day_high_time" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->temp_leaf_1_day_high_time) ? $dat->temp_leaf_1_day_high_time : $zero),
-            "temp_leaf_2_day_low" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->temp_leaf_2_day_low) ? $dat->temp_leaf_2_day_low : $zero),
-            "temp_leaf_2_month_low" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->temp_leaf_2_month_low) ? $dat->temp_leaf_2_month_low : $zero),
-            "temp_leaf_2_year_low" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->temp_leaf_2_year_low) ? $dat->temp_leaf_2_year_low : $zero),
-            "temp_leaf_2_day_high" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->temp_leaf_2_day_high) ? $dat->temp_leaf_2_day_high : $zero),
-            "temp_leaf_2_month_high" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->temp_leaf_2_month_high) ? $dat->temp_leaf_2_month_high : $zero),
-            "temp_leaf_2_year_high" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->temp_leaf_2_year_high) ? $dat->temp_leaf_2_year_high : $zero),
-            "temp_leaf_2_day_low_time" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->temp_leaf_2_day_low_time) ? $dat->temp_leaf_2_day_low_time : $zero),
-            "temp_leaf_2_day_high_time" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->temp_leaf_2_day_high_time) ? $dat->temp_leaf_2_day_high_time : $zero),
-            "temp_soil_1_day_low" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->temp_soil_1_day_low) ? $dat->temp_soil_1_day_low : $zero),
-            "temp_soil_1_month_low" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->temp_soil_1_month_low) ? $dat->temp_soil_1_month_low : $zero),
-            "temp_soil_1_year_low" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->temp_soil_1_year_low) ? $dat->temp_soil_1_year_low : $zero),
-            "temp_soil_1_day_high" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->temp_soil_1_day_high) ? $dat->temp_soil_1_day_high : $zero),
-            "temp_soil_1_month_high" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->temp_soil_1_month_high) ? $dat->temp_soil_1_month_high : $zero),
-            "temp_soil_1_year_high" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->temp_soil_1_year_high) ? $dat->temp_soil_1_year_high : $zero),
-            "temp_soil_1_day_low_time" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->temp_soil_1_day_low_time) ? $dat->temp_soil_1_day_low_time : $zero),
-            "temp_soil_1_day_high_time" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->temp_soil_1_day_high_time) ? $dat->temp_soil_1_day_high_time : $zero),
-            "temp_soil_2_day_low" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->temp_soil_2_day_low) ? $dat->temp_soil_2_day_low : $zero),
-            "temp_soil_2_month_low" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->temp_soil_2_month_low) ? $dat->temp_soil_2_month_low : $zero),
-            "temp_soil_2_year_low" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->temp_soil_2_year_low) ? $dat->temp_soil_2_year_low : $zero),
-            "temp_soil_2_day_high" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->temp_soil_2_day_high) ? $dat->temp_soil_2_day_high : $zero),
-            "temp_soil_2_month_high" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->temp_soil_2_month_high) ? $dat->temp_soil_2_month_high : $zero),
-            "temp_soil_2_year_high" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->temp_soil_2_year_high) ? $dat->temp_soil_2_year_high : $zero),
-            "temp_soil_2_day_low_time" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->temp_soil_2_day_low_time) ? $dat->temp_soil_2_day_low_time : $zero),
-            "temp_soil_2_day_high_time" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->temp_soil_2_day_high_time) ? $dat->temp_soil_2_day_high_time : $zero),
-            "temp_soil_3_day_low" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->temp_soil_3_day_low) ? $dat->temp_soil_3_day_low : $zero),
-            "temp_soil_3_month_low" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->temp_soil_3_month_low) ? $dat->temp_soil_3_month_low : $zero),
-            "temp_soil_3_year_low" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->temp_soil_3_year_low) ? $dat->temp_soil_3_year_low : $zero),
-            "temp_soil_3_day_high" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->temp_soil_3_day_high) ? $dat->temp_soil_3_day_high : $zero),
-            "temp_soil_3_month_high" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->temp_soil_3_month_high) ? $dat->temp_soil_3_month_high : $zero),
-            "temp_soil_3_year_high" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->temp_soil_3_year_high) ? $dat->temp_soil_3_year_high : $zero),
-            "temp_soil_3_day_low_time" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->temp_soil_3_day_low_time) ? $dat->temp_soil_3_day_low_time : $zero),
-            "temp_soil_3_day_high_time" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->temp_soil_3_day_high_time) ? $dat->temp_soil_3_day_high_time : $zero),
-            "temp_soil_4_day_low" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->temp_soil_4_day_low) ? $dat->temp_soil_4_day_low : $zero),
-            "temp_soil_4_month_low" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->temp_soil_4_month_low) ? $dat->temp_soil_4_month_low : $zero),
-            "temp_soil_4_year_low" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->temp_soil_4_year_low) ? $dat->temp_soil_4_year_low : $zero),
-            "temp_soil_4_day_high" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->temp_soil_4_day_high) ? $dat->temp_soil_4_day_high : $zero),
-            "temp_soil_4_month_high" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->temp_soil_4_month_high) ? $dat->temp_soil_4_month_high : $zero),
-            "temp_soil_4_year_high" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->temp_soil_4_year_high) ? $dat->temp_soil_4_year_high : $zero),
-            "temp_soil_4_day_low_time" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->temp_soil_4_day_low_time) ? $dat->temp_soil_4_day_low_time : $zero),
-            "temp_soil_4_day_high_time" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->temp_soil_4_day_high_time) ? $dat->temp_soil_4_day_high_time : $zero),
-            "relative_humidity_1_day_low" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->relative_humidity_1_day_low) ? $dat->relative_humidity_1_day_low : $zero),
-            "relative_humidity_1_month_low" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->relative_humidity_1_month_low) ? $dat->relative_humidity_1_month_low : $zero),
-            "relative_humidity_1_year_low" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->relative_humidity_1_year_low) ? $dat->relative_humidity_1_year_low : $zero),
-            "relative_humidity_1_day_high" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->relative_humidity_1_day_high) ? $dat->relative_humidity_1_day_high : $zero),
-            "relative_humidity_1_month_high" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->relative_humidity_1_month_high) ? $dat->relative_humidity_1_month_high : $zero),
-            "relative_humidity_1_year_high" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->relative_humidity_1_year_high) ? $dat->relative_humidity_1_year_high : $zero),
-            "relative_humidity_1_day_low_time" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->relative_humidity_1_day_low_time) ? $dat->relative_humidity_1_day_low_time : $zero),
-            "relative_humidity_1_day_high_time" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->relative_humidity_1_day_high_time) ? $dat->relative_humidity_1_day_high_time : $zero),
-            "relative_humidity_2_day_low" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->relative_humidity_2_day_low) ? $dat->relative_humidity_2_day_low : $zero),
-            "relative_humidity_2_month_low" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->relative_humidity_2_month_low) ? $dat->relative_humidity_2_month_low : $zero),
-            "relative_humidity_2_year_low" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->relative_humidity_2_year_low) ? $dat->relative_humidity_2_year_low : $zero),
-            "relative_humidity_2_day_high" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->relative_humidity_2_day_high) ? $dat->relative_humidity_2_day_high : $zero),
-            "relative_humidity_2_month_high" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->relative_humidity_2_month_high) ? $dat->relative_humidity_2_month_high : $zero),
-            "relative_humidity_2_year_high" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->relative_humidity_2_year_high) ? $dat->relative_humidity_2_year_high : $zero),
-            "relative_humidity_2_day_low_time" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->relative_humidity_2_day_low_time) ? $dat->relative_humidity_2_day_low_time : $zero),
-            "relative_humidity_2_day_high_time" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->relative_humidity_2_day_high_time) ? $dat->relative_humidity_2_day_high_time : $zero),
-            "relative_humidity_3_day_low" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->relative_humidity_3_day_low) ? $dat->relative_humidity_3_day_low : $zero),
-            "relative_humidity_3_month_low" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->relative_humidity_3_month_low) ? $dat->relative_humidity_3_month_low : $zero),
-            "relative_humidity_3_year_low" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->relative_humidity_3_year_low) ? $dat->relative_humidity_3_year_low : $zero),
-            "relative_humidity_3_day_high" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->relative_humidity_3_day_high) ? $dat->relative_humidity_3_day_high : $zero),
-            "relative_humidity_3_month_high" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->relative_humidity_3_month_high) ? $dat->relative_humidity_3_month_high : $zero),
-            "relative_humidity_3_year_high" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->relative_humidity_3_year_high) ? $dat->relative_humidity_3_year_high : $zero),
-            "relative_humidity_3_day_low_time" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->relative_humidity_3_day_low_time) ? $dat->relative_humidity_3_day_low_time : $zero),
-            "relative_humidity_3_day_high_time" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->relative_humidity_3_day_high_time) ? $dat->relative_humidity_3_day_high_time : $zero),
-            "relative_humidity_4_day_low" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->relative_humidity_4_day_low) ? $dat->relative_humidity_4_day_low : $zero),
-            "relative_humidity_4_month_low" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->relative_humidity_4_month_low) ? $dat->relative_humidity_4_month_low : $zero),
-            "relative_humidity_4_year_low" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->relative_humidity_4_year_low) ? $dat->relative_humidity_4_year_low : $zero),
-            "relative_humidity_4_day_high" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->relative_humidity_4_day_high) ? $dat->relative_humidity_4_day_high : $zero),
-            "relative_humidity_4_month_high" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->relative_humidity_4_month_high) ? $dat->relative_humidity_4_month_high : $zero),
-            "relative_humidity_4_year_high" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->relative_humidity_4_year_high) ? $dat->relative_humidity_4_year_high : $zero),
-            "relative_humidity_4_day_low_time" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->relative_humidity_4_day_low_time) ? $dat->relative_humidity_4_day_low_time : $zero),
-            "relative_humidity_4_day_high_time" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->relative_humidity_4_day_high_time) ? $dat->relative_humidity_4_day_high_time : $zero),
-            "relative_humidity_5_day_low" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->relative_humidity_5_day_low) ? $dat->relative_humidity_5_day_low : $zero),
-            "relative_humidity_5_month_low" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->relative_humidity_5_month_low) ? $dat->relative_humidity_5_month_low : $zero),
-            "relative_humidity_5_year_low" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->relative_humidity_5_year_low) ? $dat->relative_humidity_5_year_low : $zero),
-            "relative_humidity_5_day_high" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->relative_humidity_5_day_high) ? $dat->relative_humidity_5_day_high : $zero),
-            "relative_humidity_5_month_high" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->relative_humidity_5_month_high) ? $dat->relative_humidity_5_month_high : $zero),
-            "relative_humidity_5_year_high" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->relative_humidity_5_year_high) ? $dat->relative_humidity_5_year_high : $zero),
-            "relative_humidity_5_day_low_time" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->relative_humidity_5_day_low_time) ? $dat->relative_humidity_5_day_low_time : $zero),
-            "relative_humidity_5_day_high_time" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->relative_humidity_5_day_high_time) ? $dat->relative_humidity_5_day_high_time : $zero),
-            "relative_humidity_6_day_low" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->relative_humidity_6_day_low) ? $dat->relative_humidity_6_day_low : $zero),
-            "relative_humidity_6_month_low" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->relative_humidity_6_month_low) ? $dat->relative_humidity_6_month_low : $zero),
-            "relative_humidity_6_year_low" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->relative_humidity_6_year_low) ? $dat->relative_humidity_6_year_low : $zero),
-            "relative_humidity_6_day_high" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->relative_humidity_6_day_high) ? $dat->relative_humidity_6_day_high : $zero),
-            "relative_humidity_6_month_high" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->relative_humidity_6_month_high) ? $dat->relative_humidity_6_month_high : $zero),
-            "relative_humidity_6_year_high" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->relative_humidity_6_year_high) ? $dat->relative_humidity_6_year_high : $zero),
-            "relative_humidity_6_day_low_time" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->relative_humidity_6_day_low_time) ? $dat->relative_humidity_6_day_low_time : $zero),
-            "relative_humidity_6_day_high_time" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->relative_humidity_6_day_high_time) ? $dat->relative_humidity_6_day_high_time : $zero),
-            "relative_humidity_7_day_low" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->relative_humidity_7_day_low) ? $dat->relative_humidity_7_day_low : $zero),
-            "relative_humidity_7_month_low" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->relative_humidity_7_month_low) ? $dat->relative_humidity_7_month_low : $zero),
-            "relative_humidity_7_year_low" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->relative_humidity_7_year_low) ? $dat->relative_humidity_7_year_low : $zero),
-            "relative_humidity_7_day_high" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->relative_humidity_7_day_high) ? $dat->relative_humidity_7_day_high : $zero),
-            "relative_humidity_7_month_high" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->relative_humidity_7_month_high) ? $dat->relative_humidity_7_month_high : $zero),
-            "relative_humidity_7_year_high" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->relative_humidity_7_year_high) ? $dat->relative_humidity_7_year_high : $zero),
-            "relative_humidity_7_day_low_time" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->relative_humidity_7_day_low_time) ? $dat->relative_humidity_7_day_low_time : $zero),
-            "relative_humidity_7_day_high_time" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->relative_humidity_7_day_high_time) ? $dat->relative_humidity_7_day_high_time : $zero),
-            "leaf_wetness_1_day_low" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->leaf_wetness_1_day_low) ? $dat->leaf_wetness_1_day_low : $zero),
-            "leaf_wetness_1_month_low" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->leaf_wetness_1_month_low) ? $dat->leaf_wetness_1_month_low : $zero),
-            "leaf_wetness_1_year_low" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->leaf_wetness_1_year_low) ? $dat->leaf_wetness_1_year_low : $zero),
-            "leaf_wetness_1_day_high" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->leaf_wetness_1_day_high) ? $dat->leaf_wetness_1_day_high : $zero),
-            "leaf_wetness_1_month_high" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->leaf_wetness_1_month_high) ? $dat->leaf_wetness_1_month_high : $zero),
-            "leaf_wetness_1_year_high" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->leaf_wetness_1_year_high) ? $dat->leaf_wetness_1_year_high : $zero),
-            "leaf_wetness_1_day_low_time" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->leaf_wetness_1_day_low_time) ? $dat->leaf_wetness_1_day_low_time : $zero),
-            "leaf_wetness_1_day_high_time" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->leaf_wetness_1_day_high_time) ? $dat->leaf_wetness_1_day_high_time : $zero),
-            "leaf_wetness_2_day_low" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->leaf_wetness_2_day_low) ? $dat->leaf_wetness_2_day_low : $zero),
-            "leaf_wetness_2_month_low" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->leaf_wetness_2_month_low) ? $dat->leaf_wetness_2_month_low : $zero),
-            "leaf_wetness_2_year_low" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->leaf_wetness_2_year_low) ? $dat->leaf_wetness_2_year_low : $zero),
-            "leaf_wetness_2_day_high" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->leaf_wetness_2_day_high) ? $dat->leaf_wetness_2_day_high : $zero),
-            "leaf_wetness_2_month_high" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->leaf_wetness_2_month_high) ? $dat->leaf_wetness_2_month_high : $zero),
-            "leaf_wetness_2_year_high" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->leaf_wetness_2_year_high) ? $dat->leaf_wetness_2_year_high : $zero),
-            "leaf_wetness_2_day_low_time" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->leaf_wetness_2_day_low_time) ? $dat->leaf_wetness_2_day_low_time : $zero),
-            "leaf_wetness_2_day_high_time" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->leaf_wetness_2_day_high_time) ? $dat->leaf_wetness_2_day_high_time : $zero),
-            "soil_moisture_1_day_low" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->soil_moisture_1_day_low) ? $dat->soil_moisture_1_day_low : $zero),
-            "soil_moisture_1_month_low" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->soil_moisture_1_month_low) ? $dat->soil_moisture_1_month_low : $zero),
-            "soil_moisture_1_year_low" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->soil_moisture_1_year_low) ? $dat->soil_moisture_1_year_low : $zero),
-            "soil_moisture_1_day_high" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->soil_moisture_1_day_high) ? $dat->soil_moisture_1_day_high : $zero),
-            "soil_moisture_1_month_high" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->soil_moisture_1_month_high) ? $dat->soil_moisture_1_month_high : $zero),
-            "soil_moisture_1_year_high" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->soil_moisture_1_year_high) ? $dat->soil_moisture_1_year_high : $zero),
-            "soil_moisture_1_day_low_time" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->soil_moisture_1_day_low_time) ? $dat->soil_moisture_1_day_low_time : $zero),
-            "soil_moisture_1_day_high_time" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->soil_moisture_1_day_high_time) ? $dat->soil_moisture_1_day_high_time : $zero),
-            "soil_moisture_2_day_low" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->soil_moisture_2_day_low) ? $dat->soil_moisture_2_day_low : $zero),
-            "soil_moisture_2_month_low" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->soil_moisture_2_month_low) ? $dat->soil_moisture_2_month_low : $zero),
-            "soil_moisture_2_year_low" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->soil_moisture_2_year_low) ? $dat->soil_moisture_2_year_low : $zero),
-            "soil_moisture_2_day_high" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->soil_moisture_2_day_high) ? $dat->soil_moisture_2_day_high : $zero),
-            "soil_moisture_2_month_high" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->soil_moisture_2_month_high) ? $dat->soil_moisture_2_month_high : $zero),
-            "soil_moisture_2_year_high" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->soil_moisture_2_year_high) ? $dat->soil_moisture_2_year_high : $zero),
-            "soil_moisture_2_day_low_time" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->soil_moisture_2_day_low_time) ? $dat->soil_moisture_2_day_low_time : $zero),
-            "soil_moisture_2_day_high_time" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->soil_moisture_2_day_high_time) ? $dat->soil_moisture_2_day_high_time : $zero),
-            "soil_moisture_3_day_low" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->soil_moisture_3_day_low) ? $dat->soil_moisture_3_day_low : $zero),
-            "soil_moisture_3_month_low" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->soil_moisture_3_month_low) ? $dat->soil_moisture_3_month_low : $zero),
-            "soil_moisture_3_year_low" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->soil_moisture_3_year_low) ? $dat->soil_moisture_3_year_low : $zero),
-            "soil_moisture_3_day_high" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->soil_moisture_3_day_high) ? $dat->soil_moisture_3_day_high : $zero),
-            "soil_moisture_3_month_high" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->soil_moisture_3_month_high) ? $dat->soil_moisture_3_month_high : $zero),
-            "soil_moisture_3_year_high" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->soil_moisture_3_year_high) ? $dat->soil_moisture_3_year_high : $zero),
-            "soil_moisture_3_day_low_time" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->soil_moisture_3_day_low_time) ? $dat->soil_moisture_3_day_low_time : $zero),
-            "soil_moisture_3_day_high_time" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->soil_moisture_3_day_high_time) ? $dat->soil_moisture_3_day_high_time : $zero),
-            "soil_moisture_4_day_low" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->soil_moisture_4_day_low) ? $dat->soil_moisture_4_day_low : $zero),
-            "soil_moisture_4_month_low" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->soil_moisture_4_month_low) ? $dat->soil_moisture_4_month_low : $zero),
-            "soil_moisture_4_year_low" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->soil_moisture_4_year_low) ? $dat->soil_moisture_4_year_low : $zero),
-            "soil_moisture_4_day_high" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->soil_moisture_4_day_high) ? $dat->soil_moisture_4_day_high : $zero),
-            "soil_moisture_4_month_high" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->soil_moisture_4_month_high) ? $dat->soil_moisture_4_month_high : $zero),
-            "soil_moisture_4_year_high" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->soil_moisture_4_year_high) ? $dat->soil_moisture_4_year_high : $zero),
-            "soil_moisture_4_day_low_time" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->soil_moisture_4_day_low_time) ? $dat->soil_moisture_4_day_low_time : $zero),
-            "soil_moisture_4_day_high_time" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->soil_moisture_4_day_high_time) ? $dat->soil_moisture_4_day_high_time : $zero),
-            "temp_in_day_low_f" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->temp_in_day_low_f) ? $dat->temp_in_day_low_f : $zero),
-            "temp_in_month_low_f" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->temp_in_month_low_f) ? $dat->temp_in_month_low_f : $zero),
-            "temp_in_year_low_f" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->temp_in_year_low_f) ? $dat->temp_in_year_low_f : $zero),
-            "temp_in_day_high_f" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->temp_in_day_high_f) ? $dat->temp_in_day_high_f : $zero),
-            "temp_in_month_high_f" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->temp_in_month_high_f) ? $dat->temp_in_month_high_f : $zero),
-            "temp_in_year_high_f" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->temp_in_year_high_f) ? $dat->temp_in_year_high_f : $zero),
-            "temp_in_day_low_time" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->temp_in_day_low_time) ? $dat->temp_in_day_low_time : $zero),
-            "temp_in_day_high_time" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->temp_in_day_high_time) ? $dat->temp_in_day_high_time : $zero),
-            "relative_humidity_in_day_low" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->relative_humidity_in_day_low) ? $dat->relative_humidity_in_day_low : $zero),
-            "relative_humidity_in_month_low" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->relative_humidity_in_month_low) ? $dat->relative_humidity_in_month_low : $zero),
-            "relative_humidity_in_year_low" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->relative_humidity_in_year_low) ? $dat->relative_humidity_in_year_low : $zero),
-            "relative_humidity_in_day_high" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->relative_humidity_in_day_high) ? $dat->relative_humidity_in_day_high : $zero),
-            "relative_humidity_in_month_high" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->relative_humidity_in_month_high) ? $dat->relative_humidity_in_month_high : $zero),
-            "relative_humidity_in_year_high" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->relative_humidity_in_year_high) ? $dat->relative_humidity_in_year_high : $zero),
-            "relative_humidity_in_day_low_time" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->relative_humidity_in_day_low_time) ? $dat->relative_humidity_in_day_low_time : $zero),
-            "relative_humidity_in_day_high_time" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->relative_humidity_in_day_high_time) ? $dat->relative_humidity_in_day_high_time : $zero),
-            "temp_day_high_f" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->temp_day_high_f) ? $dat->temp_day_high_f : $zero),
-            "temp_month_high_f" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->temp_month_high_f) ? $dat->temp_month_high_f : $zero),
-            "temp_year_high_f" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->temp_year_high_f) ? $dat->temp_year_high_f : $zero),
-            "temp_day_low_f" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->temp_day_low_f) ? $dat->temp_day_low_f : $zero),
-            "temp_month_low_f" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->temp_month_low_f) ? $dat->temp_month_low_f : $zero),
-            "temp_year_low_f" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->temp_year_low_f) ? $dat->temp_year_low_f : $zero),
-            "windchill_day_low_f" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->windchill_day_low_f) ? $dat->windchill_day_low_f : $zero),
-            "windchill_day_low_time" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->windchill_day_low_time) ? $dat->windchill_day_low_time : $zero),
-            "windchill_month_low_f" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->windchill_month_low_f) ? $dat->windchill_month_low_f : $zero),
-            "windchill_year_low_f" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->windchill_year_low_f) ? $dat->windchill_year_low_f : $zero),
-            "heat_index_day_high_f" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->heat_index_day_high_f) ? $dat->heat_index_day_high_f : $zero),
-            "heat_index_day_high_time" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->heat_index_day_high_time) ? $dat->heat_index_day_high_time : $zero),
-            "heat_index_month_high_f" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->heat_index_month_high_f) ? $dat->heat_index_month_high_f : $zero),
-            "heat_index_year_high_f" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->heat_index_year_high_f) ? $dat->heat_index_year_high_f : $zero),
-            "solar_radiation_day_high" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->solar_radiation_day_high) ? $dat->solar_radiation_day_high : $zero),
-            "solar_radiation_day_high_time" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->solar_radiation_day_high_time) ? $dat->solar_radiation_day_high_time : $zero),
-            "uv_index_day_high" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->uv_index_day_high) ? $dat->uv_index_day_high : $zero),
-            "uv_index_day_high_time" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->uv_index_day_high_time) ? $dat->uv_index_day_high_time : $zero),
-            "et_month" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->et_month) ? $dat->et_month : $zero),
-            "temp_month_high_f" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->temp_month_high_f) ? $dat->temp_month_high_f : $zero),
-            "temp_month_low_f" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->temp_month_low_f) ? $dat->temp_month_low_f : $zero),
-            "et_year" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->et_year) ? $dat->et_year : $zero),
-            "temp_year_high_f" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->temp_year_high_f) ? $dat->temp_year_high_f : $zero),
-            "temp_year_low_f" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->temp_year_low_f) ? $dat->temp_year_low_f : $zero),
-            "solar_radiation_month_high" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->solar_radiation_month_high) ? $dat->solar_radiation_month_high : $zero),
-            "solar_radiation_year_high" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->solar_radiation_year_high) ? $dat->solar_radiation_year_high : $zero),
-            "uv_index_month_high" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->uv_index_month_high) ? $dat->uv_index_month_high : $zero),
-            "uv_index_year_high" => ($station['stat_type'] == 'live') ?  $zero : (isset($dat->uv_index_year_high) ? $dat->uv_index_year_high : $zero),
+            "temp_c" => ($type == 'live') ?  $zero : (isset($datas->temp_c) ? $datas->temp_c : $zero),
+            "pressure_tendency_string" => ($type == 'live') ? $zero : (isset($dat->pressure_tendency_string) ? $dat->pressure_tendency_string : $zero),
+            "pressure_mb" => ($type == 'live') ? $zero : (isset($datas->pressure_mb) ? $datas->pressure_mb : $zero),
+            "time_RFC822" => ($type == 'live') ? $zero : (isset($datas->observation_time_rfc822) ? $datas->observation_time_rfc822 : $zero),
+            "sunset" => ($type == 'live') ? $zero : (isset($dat->sunset) ? $dat->sunset : $zero),
+            "sunrise" => ($type == 'live') ? $zero : (isset($dat->sunrise) ? $dat->sunrise : $zero),
+            "wind_day_high_mph" => ($type == 'live') ?  $zero : (isset($dat->wind_day_high_mph) ? $dat->wind_day_high_mph : $zero),
+            "wind_day_high_time" => ($type == 'live') ?  $zero : (isset($dat->wind_day_high_time) ? $dat->wind_day_high_time : $zero),
+            "wind_month_high_mph" => ($type == 'live') ?  $zero : (isset($dat->wind_month_high_mph) ? $dat->wind_month_high_mph : $zero),
+            "wind_year_high_mph" => ($type == 'live') ?  $zero : (isset($dat->wind_year_high_mph) ? $dat->wind_year_high_mph : $zero),
+            "et_day" => ($type == 'live') ?  $zero : (isset($dat->et_day) ? $dat->et_day : $zero),
+            "temp_day_high_f" => ($type == 'live') ?  $zero : (isset($dat->temp_day_high_f) ? $dat->temp_day_high_f : $zero),
+            "temp_day_low_f" => ($type == 'live') ?  $zero : (isset($dat->temp_day_low_f) ? $dat->temp_day_low_f : $zero),
+            "temp_extra_1" => ($type == 'live') ?  $zero : (isset($dat->temp_extra_1) ? $dat->temp_extra_1 : $zero),
+            "temp_extra_2" => ($type == 'live') ?  $zero : (isset($dat->temp_extra_2) ? $dat->temp_extra_2 : $zero),
+            "temp_extra_3" => ($type == 'live') ?  $zero : (isset($dat->temp_extra_3) ? $dat->temp_extra_3 : $zero),
+            "temp_extra_4" => ($type == 'live') ?  $zero : (isset($dat->temp_extra_4) ? $dat->temp_extra_4 : $zero),
+            "temp_extra_5" => ($type == 'live') ?  $zero : (isset($dat->temp_extra_5) ? $dat->temp_extra_5 : $zero),
+            "temp_extra_6" => ($type == 'live') ?  $zero : (isset($dat->temp_extra_6) ? $dat->temp_extra_6 : $zero),
+            "temp_extra_7" => ($type == 'live') ?  $zero : (isset($dat->temp_extra_7) ? $dat->temp_extra_7 : $zero),
+            "relative_humidity_1" => ($type == 'live') ?  $zero : (isset($dat->relative_humidity_1) ? $dat->relative_humidity_1 : $zero),
+            "relative_humidity_2" => ($type == 'live') ?  $zero : (isset($dat->relative_humidity_2) ? $dat->relative_humidity_2 : $zero),
+            "relative_humidity_3" => ($type == 'live') ?  $zero : (isset($dat->relative_humidity_3) ? $dat->relative_humidity_3 : $zero),
+            "relative_humidity_4" => ($type == 'live') ?  $zero : (isset($dat->relative_humidity_4) ? $dat->relative_humidity_4 : $zero),
+            "relative_humidity_5" => ($type == 'live') ?  $zero : (isset($dat->relative_humidity_5) ? $dat->relative_humidity_5 : $zero),
+            "relative_humidity_6" => ($type == 'live') ?  $zero : (isset($dat->relative_humidity_6) ? $dat->relative_humidity_6 : $zero),
+            "relative_humidity_7" => ($type == 'live') ?  $zero : (isset($dat->relative_humidity_7) ? $dat->relative_humidity_7 : $zero),
+            "temp_leaf_1" => ($type == 'live') ?  $zero : (isset($dat->temp_leaf_1) ? $dat->temp_leaf_1 : $zero),
+            "temp_leaf_2" => ($type == 'live') ?  $zero : (isset($dat->temp_leaf_2) ? $dat->temp_leaf_2 : $zero),
+            "temp_soil_1" => ($type == 'live') ?  $zero : (isset($dat->temp_soil_1) ? $dat->temp_soil_1 : $zero),
+            "temp_soil_2" => ($type == 'live') ?  $zero : (isset($dat->temp_soil_2) ? $dat->temp_soil_2 : $zero),
+            "temp_soil_3" => ($type == 'live') ?  $zero : (isset($dat->temp_soil_3) ? $dat->temp_soil_3 : $zero),
+            "temp_soil_4" => ($type == 'live') ?  $zero : (isset($dat->temp_soil_4) ? $dat->temp_soil_4 : $zero),
+            "leaf_wetness_1" => ($type == 'live') ?  $zero : (isset($dat->leaf_wetness_1) ? $dat->leaf_wetness_1 : $zero),
+            "leaf_wetness_2" => ($type == 'live') ?  $zero : (isset($dat->leaf_wetness_2) ? $dat->leaf_wetness_2 : $zero),
+            "soil_moisture_1" => ($type == 'live') ?  $zero : (isset($dat->soil_moisture_1) ? $dat->soil_moisture_1 : $zero),
+            "soil_moisture_2" => ($type == 'live') ?  $zero : (isset($dat->soil_moisture_2) ? $dat->soil_moisture_2 : $zero),
+            "soil_moisture_3" => ($type == 'live') ?  $zero : (isset($dat->soil_moisture_3) ? $dat->soil_moisture_3 : $zero),
+            "soil_moisture_4" => ($type == 'live') ?  $zero : (isset($dat->soil_moisture_4) ? $dat->soil_moisture_4 : $zero),
+            "temp_day_low_f" => ($type == 'live') ?  $zero : (isset($dat->temp_day_low_f) ? $dat->temp_day_low_f : $zero),
+            "temp_month_low_f" => ($type == 'live') ?  $zero : (isset($dat->temp_month_low_f) ? $dat->temp_month_low_f : $zero),
+            "temp_year_low_f" => ($type == 'live') ?  $zero : (isset($dat->temp_year_low_f) ? $dat->temp_year_low_f : $zero),
+            "temp_day_high_f" => ($type == 'live') ?  $zero : (isset($dat->temp_day_high_f) ? $dat->temp_day_high_f : $zero),
+            "temp_month_high_f" => ($type == 'live') ?  $zero : (isset($dat->temp_month_high_f) ? $dat->temp_month_high_f : $zero),
+            "temp_year_high_f" => ($type == 'live') ?  $zero : (isset($dat->temp_year_high_f) ? $dat->temp_year_high_f : $zero),
+            "temp_day_low_time" => ($type == 'live') ?  $zero : (isset($dat->temp_day_low_time) ? $dat->temp_day_low_time : $zero),
+            "temp_day_high_time" => ($type == 'live') ?  $zero : (isset($dat->temp_day_high_time) ? $dat->temp_day_high_time : $zero),
+            "pressure_day_low_in" => ($type == 'live') ?  $zero : (isset($dat->pressure_day_low_in) ? $dat->pressure_day_low_in : $zero),
+            "pressure_month_low_in" => ($type == 'live') ?  $zero : (isset($dat->pressure_month_low_in) ? $dat->pressure_month_low_in : $zero),
+            "pressure_year_low_in" => ($type == 'live') ?  $zero : (isset($dat->pressure_year_low_in) ? $dat->pressure_year_low_in : $zero),
+            "pressure_day_high_in" => ($type == 'live') ?  $zero : (isset($dat->pressure_day_high_in) ? $dat->pressure_day_high_in : $zero),
+            "pressure_month_high_in" => ($type == 'live') ?  $zero : (isset($dat->pressure_month_high_in) ? $dat->pressure_month_high_in : $zero),
+            "pressure_year_high_in" => ($type == 'live') ?  $zero : (isset($dat->pressure_year_high_in) ? $dat->pressure_year_high_in : $zero),
+            "pressure_day_low_time" => ($type == 'live') ?  $zero : (isset($dat->pressure_day_low_time) ? $dat->pressure_day_low_time : $zero),
+            "pressure_day_high_time" => ($type == 'live') ?  $zero : (isset($dat->pressure_day_high_time) ? $dat->pressure_day_high_time : $zero),
+            "dewpoint_day_low_f" => ($type == 'live') ?  $zero : (isset($dat->dewpoint_day_low_f) ? $dat->dewpoint_day_low_f : $zero),
+            "dewpoint_month_low_f" => ($type == 'live') ?  $zero : (isset($dat->dewpoint_month_low_f) ? $dat->dewpoint_month_low_f : $zero),
+            "dewpoint_year_low_f" => ($type == 'live') ?  $zero : (isset($dat->dewpoint_year_low_f) ? $dat->dewpoint_year_low_f : $zero),
+            "dewpoint_day_high_f" => ($type == 'live') ?  $zero : (isset($dat->dewpoint_day_high_f) ? $dat->dewpoint_day_high_f : $zero),
+            "dewpoint_month_high_f" => ($type == 'live') ?  $zero : (isset($dat->dewpoint_month_high_f) ? $dat->dewpoint_month_high_f : $zero),
+            "dewpoint_year_high_f" => ($type == 'live') ?  $zero : (isset($dat->dewpoint_year_high_f) ? $dat->dewpoint_year_high_f : $zero),
+            "dewpoint_day_low_time" => ($type == 'live') ?  $zero : (isset($dat->dewpoint_day_low_time) ? $dat->dewpoint_day_low_time : $zero),
+            "dewpoint_day_high_time" => ($type == 'live') ?  $zero : (isset($dat->dewpoint_day_high_time) ? $dat->dewpoint_day_high_time : $zero),
+            "relative_humidity_day_low" => ($type == 'live') ?  $zero : (isset($dat->relative_humidity_day_low) ? $dat->relative_humidity_day_low : $zero),
+            "relative_humidity_month_low" => ($type == 'live') ?  $zero : (isset($dat->relative_humidity_month_low) ? $dat->relative_humidity_month_low : $zero),
+            "relative_humidity_year_low" => ($type == 'live') ?  $zero : (isset($dat->relative_humidity_year_low) ? $dat->relative_humidity_year_low : $zero),
+            "relative_humidity_day_high" => ($type == 'live') ?  $zero : (isset($dat->relative_humidity_day_high) ? $dat->relative_humidity_day_high : $zero),
+            "relative_humidity_month_high" => ($type == 'live') ?  $zero : (isset($dat->relative_humidity_month_high) ? $dat->relative_humidity_month_high : $zero),
+            "relative_humidity_year_high" => ($type == 'live') ?  $zero : (isset($dat->relative_humidity_year_high) ? $dat->relative_humidity_year_high : $zero),
+            "relative_humidity_day_low_time" => ($type == 'live') ?  $zero : (isset($dat->relative_humidity_day_low_time) ? $dat->relative_humidity_day_low_time : $zero),
+            "relative_humidity_day_high_time" => ($type == 'live') ?  $zero : (isset($dat->relative_humidity_day_high_time) ? $dat->relative_humidity_day_high_time : $zero),
+            "temp_extra_1_day_low" => ($type == 'live') ?  $zero : (isset($dat->temp_extra_1_day_low) ? $dat->temp_extra_1_day_low : $zero),
+            "temp_extra_1_month_low" => ($type == 'live') ?  $zero : (isset($dat->temp_extra_1_month_low) ? $dat->temp_extra_1_month_low : $zero),
+            "temp_extra_1_year_low" => ($type == 'live') ?  $zero : (isset($dat->temp_extra_1_year_low) ? $dat->temp_extra_1_year_low : $zero),
+            "temp_extra_1_day_high" => ($type == 'live') ?  $zero : (isset($dat->temp_extra_1_day_high) ? $dat->temp_extra_1_day_high : $zero),
+            "temp_extra_1_month_high" => ($type == 'live') ?  $zero : (isset($dat->temp_extra_1_month_high) ? $dat->temp_extra_1_month_high : $zero),
+            "temp_extra_1_year_high" => ($type == 'live') ?  $zero : (isset($dat->temp_extra_1_year_high) ? $dat->temp_extra_1_year_high : $zero),
+            "temp_extra_1_day_low_time" => ($type == 'live') ?  $zero : (isset($dat->temp_extra_1_day_low_time) ? $dat->temp_extra_1_day_low_time : $zero),
+            "temp_extra_1_day_high_time" => ($type == 'live') ?  $zero : (isset($dat->temp_extra_1_day_high_time) ? $dat->temp_extra_1_day_high_time : $zero),
+            "temp_extra_2_day_low" => ($type == 'live') ?  $zero : (isset($dat->temp_extra_2_day_low) ? $dat->temp_extra_2_day_low : $zero),
+            "temp_extra_2_month_low" => ($type == 'live') ?  $zero : (isset($dat->temp_extra_2_month_low) ? $dat->temp_extra_2_month_low : $zero),
+            "temp_extra_2_year_low" => ($type == 'live') ?  $zero : (isset($dat->temp_extra_2_year_low) ? $dat->temp_extra_2_year_low : $zero),
+            "temp_extra_2_day_high" => ($type == 'live') ?  $zero : (isset($dat->temp_extra_2_day_high) ? $dat->temp_extra_2_day_high : $zero),
+            "temp_extra_2_month_high" => ($type == 'live') ?  $zero : (isset($dat->temp_extra_2_month_high) ? $dat->temp_extra_2_month_high : $zero),
+            "temp_extra_2_year_high" => ($type == 'live') ?  $zero : (isset($dat->temp_extra_2_year_high) ? $dat->temp_extra_2_year_high : $zero),
+            "temp_extra_2_day_low_time" => ($type == 'live') ?  $zero : (isset($dat->temp_extra_2_day_low_time) ? $dat->temp_extra_2_day_low_time : $zero),
+            "temp_extra_2_day_high_time" => ($type == 'live') ?  $zero : (isset($dat->temp_extra_2_day_high_time) ? $dat->temp_extra_2_day_high_time : $zero),
+            "temp_extra_3_day_low" => ($type == 'live') ?  $zero : (isset($dat->temp_extra_3_day_low) ? $dat->temp_extra_3_day_low : $zero),
+            "temp_extra_3_month_low" => ($type == 'live') ?  $zero : (isset($dat->temp_extra_3_month_low) ? $dat->temp_extra_3_month_low : $zero),
+            "temp_extra_3_year_low" => ($type == 'live') ?  $zero : (isset($dat->temp_extra_3_year_low) ? $dat->temp_extra_3_year_low : $zero),
+            "temp_extra_3_day_high" => ($type == 'live') ?  $zero : (isset($dat->temp_extra_3_day_high) ? $dat->temp_extra_3_day_high : $zero),
+            "temp_extra_3_month_high" => ($type == 'live') ?  $zero : (isset($dat->temp_extra_3_month_high) ? $dat->temp_extra_3_month_high : $zero),
+            "temp_extra_3_year_high" => ($type == 'live') ?  $zero : (isset($dat->temp_extra_3_year_high) ? $dat->temp_extra_3_year_high : $zero),
+            "temp_extra_3_day_low_time" => ($type == 'live') ?  $zero : (isset($dat->temp_extra_3_day_low_time) ? $dat->temp_extra_3_day_low_time : $zero),
+            "temp_extra_3_day_high_time" => ($type == 'live') ?  $zero : (isset($dat->temp_extra_3_day_high_time) ? $dat->temp_extra_3_day_high_time : $zero),
+            "temp_extra_4_day_low" => ($type == 'live') ?  $zero : (isset($dat->temp_extra_4_day_low) ? $dat->temp_extra_4_day_low : $zero),
+            "temp_extra_4_month_low" => ($type == 'live') ?  $zero : (isset($dat->temp_extra_4_month_low) ? $dat->temp_extra_4_month_low : $zero),
+            "temp_extra_4_year_low" => ($type == 'live') ?  $zero : (isset($dat->temp_extra_4_year_low) ? $dat->temp_extra_4_year_low : $zero),
+            "temp_extra_4_day_high" => ($type == 'live') ?  $zero : (isset($dat->temp_extra_4_day_high) ? $dat->temp_extra_4_day_high : $zero),
+            "temp_extra_4_month_high" => ($type == 'live') ?  $zero : (isset($dat->temp_extra_4_month_high) ? $dat->temp_extra_4_month_high : $zero),
+            "temp_extra_4_year_high" => ($type == 'live') ?  $zero : (isset($dat->temp_extra_4_year_high) ? $dat->temp_extra_4_year_high : $zero),
+            "temp_extra_4_day_low_time" => ($type == 'live') ?  $zero : (isset($dat->temp_extra_4_day_low_time) ? $dat->temp_extra_4_day_low_time : $zero),
+            "temp_extra_4_day_high_time" => ($type == 'live') ?  $zero : (isset($dat->temp_extra_4_day_high_time) ? $dat->temp_extra_4_day_high_time : $zero),
+            "temp_extra_5_day_low" => ($type == 'live') ?  $zero : (isset($dat->temp_extra_5_day_low) ? $dat->temp_extra_5_day_low : $zero),
+            "temp_extra_5_month_low" => ($type == 'live') ?  $zero : (isset($dat->temp_extra_5_month_low) ? $dat->temp_extra_5_month_low : $zero),
+            "temp_extra_5_year_low" => ($type == 'live') ?  $zero : (isset($dat->temp_extra_5_year_low) ? $dat->temp_extra_5_year_low : $zero),
+            "temp_extra_5_day_high" => ($type == 'live') ?  $zero : (isset($dat->temp_extra_5_day_high) ? $dat->temp_extra_5_day_high : $zero),
+            "temp_extra_5_month_high" => ($type == 'live') ?  $zero : (isset($dat->temp_extra_5_month_high) ? $dat->temp_extra_5_month_high : $zero),
+            "temp_extra_5_year_high" => ($type == 'live') ?  $zero : (isset($dat->temp_extra_5_year_high) ? $dat->temp_extra_5_year_high : $zero),
+            "temp_extra_5_day_low_time" => ($type == 'live') ?  $zero : (isset($dat->temp_extra_5_day_low_time) ? $dat->temp_extra_5_day_low_time : $zero),
+            "temp_extra_5_day_high_time" => ($type == 'live') ?  $zero : (isset($dat->temp_extra_5_day_high_time) ? $dat->temp_extra_5_day_high_time : $zero),
+            "temp_extra_6_day_low" => ($type == 'live') ?  $zero : (isset($dat->temp_extra_6_day_low) ? $dat->temp_extra_6_day_low : $zero),
+            "temp_extra_6_month_low" => ($type == 'live') ?  $zero : (isset($dat->temp_extra_6_month_low) ? $dat->temp_extra_6_month_low : $zero),
+            "temp_extra_6_year_low" => ($type == 'live') ?  $zero : (isset($dat->temp_extra_6_year_low) ? $dat->temp_extra_6_year_low : $zero),
+            "temp_extra_6_day_high" => ($type == 'live') ?  $zero : (isset($dat->temp_extra_6_day_high) ? $dat->temp_extra_6_day_high : $zero),
+            "temp_extra_6_month_high" => ($type == 'live') ?  $zero : (isset($dat->temp_extra_6_month_high) ? $dat->temp_extra_6_month_high : $zero),
+            "temp_extra_6_year_high" => ($type == 'live') ?  $zero : (isset($dat->temp_extra_6_year_high) ? $dat->temp_extra_6_year_high : $zero),
+            "temp_extra_6_day_low_time" => ($type == 'live') ?  $zero : (isset($dat->temp_extra_6_day_low_time) ? $dat->temp_extra_6_day_low_time : $zero),
+            "temp_extra_6_day_high_time" => ($type == 'live') ?  $zero : (isset($dat->temp_extra_6_day_high_time) ? $dat->temp_extra_6_day_high_time : $zero),
+            "temp_extra_7_day_low" => ($type == 'live') ?  $zero : (isset($dat->temp_extra_7_day_low) ? $dat->temp_extra_7_day_low : $zero),
+            "temp_extra_7_month_low" => ($type == 'live') ?  $zero : (isset($dat->temp_extra_7_month_low) ? $dat->temp_extra_7_month_low : $zero),
+            "temp_extra_7_year_low" => ($type == 'live') ?  $zero : (isset($dat->temp_extra_7_year_low) ? $dat->temp_extra_7_year_low : $zero),
+            "temp_extra_7_day_high" => ($type == 'live') ?  $zero : (isset($dat->temp_extra_7_day_high) ? $dat->temp_extra_7_day_high : $zero),
+            "temp_extra_7_month_high" => ($type == 'live') ?  $zero : (isset($dat->temp_extra_7_month_high) ? $dat->temp_extra_7_month_high : $zero),
+            "temp_extra_7_year_high" => ($type == 'live') ?  $zero : (isset($dat->temp_extra_7_year_high) ? $dat->temp_extra_7_year_high : $zero),
+            "temp_extra_7_day_low_time" => ($type == 'live') ?  $zero : (isset($dat->temp_extra_7_day_low_time) ? $dat->temp_extra_7_day_low_time : $zero),
+            "temp_extra_7_day_high_time" => ($type == 'live') ?  $zero : (isset($dat->temp_extra_7_day_high_time) ? $dat->temp_extra_7_day_high_time : $zero),
+            "temp_leaf_1_day_low" => ($type == 'live') ?  $zero : (isset($dat->temp_leaf_1_day_low) ? $dat->temp_leaf_1_day_low : $zero),
+            "temp_leaf_1_month_low" => ($type == 'live') ?  $zero : (isset($dat->temp_leaf_1_month_low) ? $dat->temp_leaf_1_month_low : $zero),
+            "temp_leaf_1_year_low" => ($type == 'live') ?  $zero : (isset($dat->temp_leaf_1_year_low) ? $dat->temp_leaf_1_year_low : $zero),
+            "temp_leaf_1_day_high" => ($type == 'live') ?  $zero : (isset($dat->temp_leaf_1_day_high) ? $dat->temp_leaf_1_day_high : $zero),
+            "temp_leaf_1_month_high" => ($type == 'live') ?  $zero : (isset($dat->temp_leaf_1_month_high) ? $dat->temp_leaf_1_month_high : $zero),
+            "temp_leaf_1_year_high" => ($type == 'live') ?  $zero : (isset($dat->temp_leaf_1_year_high) ? $dat->temp_leaf_1_year_high : $zero),
+            "temp_leaf_1_day_low_time" => ($type == 'live') ?  $zero : (isset($dat->temp_leaf_1_day_low_time) ? $dat->temp_leaf_1_day_low_time : $zero),
+            "temp_leaf_1_day_high_time" => ($type == 'live') ?  $zero : (isset($dat->temp_leaf_1_day_high_time) ? $dat->temp_leaf_1_day_high_time : $zero),
+            "temp_leaf_2_day_low" => ($type == 'live') ?  $zero : (isset($dat->temp_leaf_2_day_low) ? $dat->temp_leaf_2_day_low : $zero),
+            "temp_leaf_2_month_low" => ($type == 'live') ?  $zero : (isset($dat->temp_leaf_2_month_low) ? $dat->temp_leaf_2_month_low : $zero),
+            "temp_leaf_2_year_low" => ($type == 'live') ?  $zero : (isset($dat->temp_leaf_2_year_low) ? $dat->temp_leaf_2_year_low : $zero),
+            "temp_leaf_2_day_high" => ($type == 'live') ?  $zero : (isset($dat->temp_leaf_2_day_high) ? $dat->temp_leaf_2_day_high : $zero),
+            "temp_leaf_2_month_high" => ($type == 'live') ?  $zero : (isset($dat->temp_leaf_2_month_high) ? $dat->temp_leaf_2_month_high : $zero),
+            "temp_leaf_2_year_high" => ($type == 'live') ?  $zero : (isset($dat->temp_leaf_2_year_high) ? $dat->temp_leaf_2_year_high : $zero),
+            "temp_leaf_2_day_low_time" => ($type == 'live') ?  $zero : (isset($dat->temp_leaf_2_day_low_time) ? $dat->temp_leaf_2_day_low_time : $zero),
+            "temp_leaf_2_day_high_time" => ($type == 'live') ?  $zero : (isset($dat->temp_leaf_2_day_high_time) ? $dat->temp_leaf_2_day_high_time : $zero),
+            "temp_soil_1_day_low" => ($type == 'live') ?  $zero : (isset($dat->temp_soil_1_day_low) ? $dat->temp_soil_1_day_low : $zero),
+            "temp_soil_1_month_low" => ($type == 'live') ?  $zero : (isset($dat->temp_soil_1_month_low) ? $dat->temp_soil_1_month_low : $zero),
+            "temp_soil_1_year_low" => ($type == 'live') ?  $zero : (isset($dat->temp_soil_1_year_low) ? $dat->temp_soil_1_year_low : $zero),
+            "temp_soil_1_day_high" => ($type == 'live') ?  $zero : (isset($dat->temp_soil_1_day_high) ? $dat->temp_soil_1_day_high : $zero),
+            "temp_soil_1_month_high" => ($type == 'live') ?  $zero : (isset($dat->temp_soil_1_month_high) ? $dat->temp_soil_1_month_high : $zero),
+            "temp_soil_1_year_high" => ($type == 'live') ?  $zero : (isset($dat->temp_soil_1_year_high) ? $dat->temp_soil_1_year_high : $zero),
+            "temp_soil_1_day_low_time" => ($type == 'live') ?  $zero : (isset($dat->temp_soil_1_day_low_time) ? $dat->temp_soil_1_day_low_time : $zero),
+            "temp_soil_1_day_high_time" => ($type == 'live') ?  $zero : (isset($dat->temp_soil_1_day_high_time) ? $dat->temp_soil_1_day_high_time : $zero),
+            "temp_soil_2_day_low" => ($type == 'live') ?  $zero : (isset($dat->temp_soil_2_day_low) ? $dat->temp_soil_2_day_low : $zero),
+            "temp_soil_2_month_low" => ($type == 'live') ?  $zero : (isset($dat->temp_soil_2_month_low) ? $dat->temp_soil_2_month_low : $zero),
+            "temp_soil_2_year_low" => ($type == 'live') ?  $zero : (isset($dat->temp_soil_2_year_low) ? $dat->temp_soil_2_year_low : $zero),
+            "temp_soil_2_day_high" => ($type == 'live') ?  $zero : (isset($dat->temp_soil_2_day_high) ? $dat->temp_soil_2_day_high : $zero),
+            "temp_soil_2_month_high" => ($type == 'live') ?  $zero : (isset($dat->temp_soil_2_month_high) ? $dat->temp_soil_2_month_high : $zero),
+            "temp_soil_2_year_high" => ($type == 'live') ?  $zero : (isset($dat->temp_soil_2_year_high) ? $dat->temp_soil_2_year_high : $zero),
+            "temp_soil_2_day_low_time" => ($type == 'live') ?  $zero : (isset($dat->temp_soil_2_day_low_time) ? $dat->temp_soil_2_day_low_time : $zero),
+            "temp_soil_2_day_high_time" => ($type == 'live') ?  $zero : (isset($dat->temp_soil_2_day_high_time) ? $dat->temp_soil_2_day_high_time : $zero),
+            "temp_soil_3_day_low" => ($type == 'live') ?  $zero : (isset($dat->temp_soil_3_day_low) ? $dat->temp_soil_3_day_low : $zero),
+            "temp_soil_3_month_low" => ($type == 'live') ?  $zero : (isset($dat->temp_soil_3_month_low) ? $dat->temp_soil_3_month_low : $zero),
+            "temp_soil_3_year_low" => ($type == 'live') ?  $zero : (isset($dat->temp_soil_3_year_low) ? $dat->temp_soil_3_year_low : $zero),
+            "temp_soil_3_day_high" => ($type == 'live') ?  $zero : (isset($dat->temp_soil_3_day_high) ? $dat->temp_soil_3_day_high : $zero),
+            "temp_soil_3_month_high" => ($type == 'live') ?  $zero : (isset($dat->temp_soil_3_month_high) ? $dat->temp_soil_3_month_high : $zero),
+            "temp_soil_3_year_high" => ($type == 'live') ?  $zero : (isset($dat->temp_soil_3_year_high) ? $dat->temp_soil_3_year_high : $zero),
+            "temp_soil_3_day_low_time" => ($type == 'live') ?  $zero : (isset($dat->temp_soil_3_day_low_time) ? $dat->temp_soil_3_day_low_time : $zero),
+            "temp_soil_3_day_high_time" => ($type == 'live') ?  $zero : (isset($dat->temp_soil_3_day_high_time) ? $dat->temp_soil_3_day_high_time : $zero),
+            "temp_soil_4_day_low" => ($type == 'live') ?  $zero : (isset($dat->temp_soil_4_day_low) ? $dat->temp_soil_4_day_low : $zero),
+            "temp_soil_4_month_low" => ($type == 'live') ?  $zero : (isset($dat->temp_soil_4_month_low) ? $dat->temp_soil_4_month_low : $zero),
+            "temp_soil_4_year_low" => ($type == 'live') ?  $zero : (isset($dat->temp_soil_4_year_low) ? $dat->temp_soil_4_year_low : $zero),
+            "temp_soil_4_day_high" => ($type == 'live') ?  $zero : (isset($dat->temp_soil_4_day_high) ? $dat->temp_soil_4_day_high : $zero),
+            "temp_soil_4_month_high" => ($type == 'live') ?  $zero : (isset($dat->temp_soil_4_month_high) ? $dat->temp_soil_4_month_high : $zero),
+            "temp_soil_4_year_high" => ($type == 'live') ?  $zero : (isset($dat->temp_soil_4_year_high) ? $dat->temp_soil_4_year_high : $zero),
+            "temp_soil_4_day_low_time" => ($type == 'live') ?  $zero : (isset($dat->temp_soil_4_day_low_time) ? $dat->temp_soil_4_day_low_time : $zero),
+            "temp_soil_4_day_high_time" => ($type == 'live') ?  $zero : (isset($dat->temp_soil_4_day_high_time) ? $dat->temp_soil_4_day_high_time : $zero),
+            "relative_humidity_1_day_low" => ($type == 'live') ?  $zero : (isset($dat->relative_humidity_1_day_low) ? $dat->relative_humidity_1_day_low : $zero),
+            "relative_humidity_1_month_low" => ($type == 'live') ?  $zero : (isset($dat->relative_humidity_1_month_low) ? $dat->relative_humidity_1_month_low : $zero),
+            "relative_humidity_1_year_low" => ($type == 'live') ?  $zero : (isset($dat->relative_humidity_1_year_low) ? $dat->relative_humidity_1_year_low : $zero),
+            "relative_humidity_1_day_high" => ($type == 'live') ?  $zero : (isset($dat->relative_humidity_1_day_high) ? $dat->relative_humidity_1_day_high : $zero),
+            "relative_humidity_1_month_high" => ($type == 'live') ?  $zero : (isset($dat->relative_humidity_1_month_high) ? $dat->relative_humidity_1_month_high : $zero),
+            "relative_humidity_1_year_high" => ($type == 'live') ?  $zero : (isset($dat->relative_humidity_1_year_high) ? $dat->relative_humidity_1_year_high : $zero),
+            "relative_humidity_1_day_low_time" => ($type == 'live') ?  $zero : (isset($dat->relative_humidity_1_day_low_time) ? $dat->relative_humidity_1_day_low_time : $zero),
+            "relative_humidity_1_day_high_time" => ($type == 'live') ?  $zero : (isset($dat->relative_humidity_1_day_high_time) ? $dat->relative_humidity_1_day_high_time : $zero),
+            "relative_humidity_2_day_low" => ($type == 'live') ?  $zero : (isset($dat->relative_humidity_2_day_low) ? $dat->relative_humidity_2_day_low : $zero),
+            "relative_humidity_2_month_low" => ($type == 'live') ?  $zero : (isset($dat->relative_humidity_2_month_low) ? $dat->relative_humidity_2_month_low : $zero),
+            "relative_humidity_2_year_low" => ($type == 'live') ?  $zero : (isset($dat->relative_humidity_2_year_low) ? $dat->relative_humidity_2_year_low : $zero),
+            "relative_humidity_2_day_high" => ($type == 'live') ?  $zero : (isset($dat->relative_humidity_2_day_high) ? $dat->relative_humidity_2_day_high : $zero),
+            "relative_humidity_2_month_high" => ($type == 'live') ?  $zero : (isset($dat->relative_humidity_2_month_high) ? $dat->relative_humidity_2_month_high : $zero),
+            "relative_humidity_2_year_high" => ($type == 'live') ?  $zero : (isset($dat->relative_humidity_2_year_high) ? $dat->relative_humidity_2_year_high : $zero),
+            "relative_humidity_2_day_low_time" => ($type == 'live') ?  $zero : (isset($dat->relative_humidity_2_day_low_time) ? $dat->relative_humidity_2_day_low_time : $zero),
+            "relative_humidity_2_day_high_time" => ($type == 'live') ?  $zero : (isset($dat->relative_humidity_2_day_high_time) ? $dat->relative_humidity_2_day_high_time : $zero),
+            "relative_humidity_3_day_low" => ($type == 'live') ?  $zero : (isset($dat->relative_humidity_3_day_low) ? $dat->relative_humidity_3_day_low : $zero),
+            "relative_humidity_3_month_low" => ($type == 'live') ?  $zero : (isset($dat->relative_humidity_3_month_low) ? $dat->relative_humidity_3_month_low : $zero),
+            "relative_humidity_3_year_low" => ($type == 'live') ?  $zero : (isset($dat->relative_humidity_3_year_low) ? $dat->relative_humidity_3_year_low : $zero),
+            "relative_humidity_3_day_high" => ($type == 'live') ?  $zero : (isset($dat->relative_humidity_3_day_high) ? $dat->relative_humidity_3_day_high : $zero),
+            "relative_humidity_3_month_high" => ($type == 'live') ?  $zero : (isset($dat->relative_humidity_3_month_high) ? $dat->relative_humidity_3_month_high : $zero),
+            "relative_humidity_3_year_high" => ($type == 'live') ?  $zero : (isset($dat->relative_humidity_3_year_high) ? $dat->relative_humidity_3_year_high : $zero),
+            "relative_humidity_3_day_low_time" => ($type == 'live') ?  $zero : (isset($dat->relative_humidity_3_day_low_time) ? $dat->relative_humidity_3_day_low_time : $zero),
+            "relative_humidity_3_day_high_time" => ($type == 'live') ?  $zero : (isset($dat->relative_humidity_3_day_high_time) ? $dat->relative_humidity_3_day_high_time : $zero),
+            "relative_humidity_4_day_low" => ($type == 'live') ?  $zero : (isset($dat->relative_humidity_4_day_low) ? $dat->relative_humidity_4_day_low : $zero),
+            "relative_humidity_4_month_low" => ($type == 'live') ?  $zero : (isset($dat->relative_humidity_4_month_low) ? $dat->relative_humidity_4_month_low : $zero),
+            "relative_humidity_4_year_low" => ($type == 'live') ?  $zero : (isset($dat->relative_humidity_4_year_low) ? $dat->relative_humidity_4_year_low : $zero),
+            "relative_humidity_4_day_high" => ($type == 'live') ?  $zero : (isset($dat->relative_humidity_4_day_high) ? $dat->relative_humidity_4_day_high : $zero),
+            "relative_humidity_4_month_high" => ($type == 'live') ?  $zero : (isset($dat->relative_humidity_4_month_high) ? $dat->relative_humidity_4_month_high : $zero),
+            "relative_humidity_4_year_high" => ($type == 'live') ?  $zero : (isset($dat->relative_humidity_4_year_high) ? $dat->relative_humidity_4_year_high : $zero),
+            "relative_humidity_4_day_low_time" => ($type == 'live') ?  $zero : (isset($dat->relative_humidity_4_day_low_time) ? $dat->relative_humidity_4_day_low_time : $zero),
+            "relative_humidity_4_day_high_time" => ($type == 'live') ?  $zero : (isset($dat->relative_humidity_4_day_high_time) ? $dat->relative_humidity_4_day_high_time : $zero),
+            "relative_humidity_5_day_low" => ($type == 'live') ?  $zero : (isset($dat->relative_humidity_5_day_low) ? $dat->relative_humidity_5_day_low : $zero),
+            "relative_humidity_5_month_low" => ($type == 'live') ?  $zero : (isset($dat->relative_humidity_5_month_low) ? $dat->relative_humidity_5_month_low : $zero),
+            "relative_humidity_5_year_low" => ($type == 'live') ?  $zero : (isset($dat->relative_humidity_5_year_low) ? $dat->relative_humidity_5_year_low : $zero),
+            "relative_humidity_5_day_high" => ($type == 'live') ?  $zero : (isset($dat->relative_humidity_5_day_high) ? $dat->relative_humidity_5_day_high : $zero),
+            "relative_humidity_5_month_high" => ($type == 'live') ?  $zero : (isset($dat->relative_humidity_5_month_high) ? $dat->relative_humidity_5_month_high : $zero),
+            "relative_humidity_5_year_high" => ($type == 'live') ?  $zero : (isset($dat->relative_humidity_5_year_high) ? $dat->relative_humidity_5_year_high : $zero),
+            "relative_humidity_5_day_low_time" => ($type == 'live') ?  $zero : (isset($dat->relative_humidity_5_day_low_time) ? $dat->relative_humidity_5_day_low_time : $zero),
+            "relative_humidity_5_day_high_time" => ($type == 'live') ?  $zero : (isset($dat->relative_humidity_5_day_high_time) ? $dat->relative_humidity_5_day_high_time : $zero),
+            "relative_humidity_6_day_low" => ($type == 'live') ?  $zero : (isset($dat->relative_humidity_6_day_low) ? $dat->relative_humidity_6_day_low : $zero),
+            "relative_humidity_6_month_low" => ($type == 'live') ?  $zero : (isset($dat->relative_humidity_6_month_low) ? $dat->relative_humidity_6_month_low : $zero),
+            "relative_humidity_6_year_low" => ($type == 'live') ?  $zero : (isset($dat->relative_humidity_6_year_low) ? $dat->relative_humidity_6_year_low : $zero),
+            "relative_humidity_6_day_high" => ($type == 'live') ?  $zero : (isset($dat->relative_humidity_6_day_high) ? $dat->relative_humidity_6_day_high : $zero),
+            "relative_humidity_6_month_high" => ($type == 'live') ?  $zero : (isset($dat->relative_humidity_6_month_high) ? $dat->relative_humidity_6_month_high : $zero),
+            "relative_humidity_6_year_high" => ($type == 'live') ?  $zero : (isset($dat->relative_humidity_6_year_high) ? $dat->relative_humidity_6_year_high : $zero),
+            "relative_humidity_6_day_low_time" => ($type == 'live') ?  $zero : (isset($dat->relative_humidity_6_day_low_time) ? $dat->relative_humidity_6_day_low_time : $zero),
+            "relative_humidity_6_day_high_time" => ($type == 'live') ?  $zero : (isset($dat->relative_humidity_6_day_high_time) ? $dat->relative_humidity_6_day_high_time : $zero),
+            "relative_humidity_7_day_low" => ($type == 'live') ?  $zero : (isset($dat->relative_humidity_7_day_low) ? $dat->relative_humidity_7_day_low : $zero),
+            "relative_humidity_7_month_low" => ($type == 'live') ?  $zero : (isset($dat->relative_humidity_7_month_low) ? $dat->relative_humidity_7_month_low : $zero),
+            "relative_humidity_7_year_low" => ($type == 'live') ?  $zero : (isset($dat->relative_humidity_7_year_low) ? $dat->relative_humidity_7_year_low : $zero),
+            "relative_humidity_7_day_high" => ($type == 'live') ?  $zero : (isset($dat->relative_humidity_7_day_high) ? $dat->relative_humidity_7_day_high : $zero),
+            "relative_humidity_7_month_high" => ($type == 'live') ?  $zero : (isset($dat->relative_humidity_7_month_high) ? $dat->relative_humidity_7_month_high : $zero),
+            "relative_humidity_7_year_high" => ($type == 'live') ?  $zero : (isset($dat->relative_humidity_7_year_high) ? $dat->relative_humidity_7_year_high : $zero),
+            "relative_humidity_7_day_low_time" => ($type == 'live') ?  $zero : (isset($dat->relative_humidity_7_day_low_time) ? $dat->relative_humidity_7_day_low_time : $zero),
+            "relative_humidity_7_day_high_time" => ($type == 'live') ?  $zero : (isset($dat->relative_humidity_7_day_high_time) ? $dat->relative_humidity_7_day_high_time : $zero),
+            "leaf_wetness_1_day_low" => ($type == 'live') ?  $zero : (isset($dat->leaf_wetness_1_day_low) ? $dat->leaf_wetness_1_day_low : $zero),
+            "leaf_wetness_1_month_low" => ($type == 'live') ?  $zero : (isset($dat->leaf_wetness_1_month_low) ? $dat->leaf_wetness_1_month_low : $zero),
+            "leaf_wetness_1_year_low" => ($type == 'live') ?  $zero : (isset($dat->leaf_wetness_1_year_low) ? $dat->leaf_wetness_1_year_low : $zero),
+            "leaf_wetness_1_day_high" => ($type == 'live') ?  $zero : (isset($dat->leaf_wetness_1_day_high) ? $dat->leaf_wetness_1_day_high : $zero),
+            "leaf_wetness_1_month_high" => ($type == 'live') ?  $zero : (isset($dat->leaf_wetness_1_month_high) ? $dat->leaf_wetness_1_month_high : $zero),
+            "leaf_wetness_1_year_high" => ($type == 'live') ?  $zero : (isset($dat->leaf_wetness_1_year_high) ? $dat->leaf_wetness_1_year_high : $zero),
+            "leaf_wetness_1_day_low_time" => ($type == 'live') ?  $zero : (isset($dat->leaf_wetness_1_day_low_time) ? $dat->leaf_wetness_1_day_low_time : $zero),
+            "leaf_wetness_1_day_high_time" => ($type == 'live') ?  $zero : (isset($dat->leaf_wetness_1_day_high_time) ? $dat->leaf_wetness_1_day_high_time : $zero),
+            "leaf_wetness_2_day_low" => ($type == 'live') ?  $zero : (isset($dat->leaf_wetness_2_day_low) ? $dat->leaf_wetness_2_day_low : $zero),
+            "leaf_wetness_2_month_low" => ($type == 'live') ?  $zero : (isset($dat->leaf_wetness_2_month_low) ? $dat->leaf_wetness_2_month_low : $zero),
+            "leaf_wetness_2_year_low" => ($type == 'live') ?  $zero : (isset($dat->leaf_wetness_2_year_low) ? $dat->leaf_wetness_2_year_low : $zero),
+            "leaf_wetness_2_day_high" => ($type == 'live') ?  $zero : (isset($dat->leaf_wetness_2_day_high) ? $dat->leaf_wetness_2_day_high : $zero),
+            "leaf_wetness_2_month_high" => ($type == 'live') ?  $zero : (isset($dat->leaf_wetness_2_month_high) ? $dat->leaf_wetness_2_month_high : $zero),
+            "leaf_wetness_2_year_high" => ($type == 'live') ?  $zero : (isset($dat->leaf_wetness_2_year_high) ? $dat->leaf_wetness_2_year_high : $zero),
+            "leaf_wetness_2_day_low_time" => ($type == 'live') ?  $zero : (isset($dat->leaf_wetness_2_day_low_time) ? $dat->leaf_wetness_2_day_low_time : $zero),
+            "leaf_wetness_2_day_high_time" => ($type == 'live') ?  $zero : (isset($dat->leaf_wetness_2_day_high_time) ? $dat->leaf_wetness_2_day_high_time : $zero),
+            "soil_moisture_1_day_low" => ($type == 'live') ?  $zero : (isset($dat->soil_moisture_1_day_low) ? $dat->soil_moisture_1_day_low : $zero),
+            "soil_moisture_1_month_low" => ($type == 'live') ?  $zero : (isset($dat->soil_moisture_1_month_low) ? $dat->soil_moisture_1_month_low : $zero),
+            "soil_moisture_1_year_low" => ($type == 'live') ?  $zero : (isset($dat->soil_moisture_1_year_low) ? $dat->soil_moisture_1_year_low : $zero),
+            "soil_moisture_1_day_high" => ($type == 'live') ?  $zero : (isset($dat->soil_moisture_1_day_high) ? $dat->soil_moisture_1_day_high : $zero),
+            "soil_moisture_1_month_high" => ($type == 'live') ?  $zero : (isset($dat->soil_moisture_1_month_high) ? $dat->soil_moisture_1_month_high : $zero),
+            "soil_moisture_1_year_high" => ($type == 'live') ?  $zero : (isset($dat->soil_moisture_1_year_high) ? $dat->soil_moisture_1_year_high : $zero),
+            "soil_moisture_1_day_low_time" => ($type == 'live') ?  $zero : (isset($dat->soil_moisture_1_day_low_time) ? $dat->soil_moisture_1_day_low_time : $zero),
+            "soil_moisture_1_day_high_time" => ($type == 'live') ?  $zero : (isset($dat->soil_moisture_1_day_high_time) ? $dat->soil_moisture_1_day_high_time : $zero),
+            "soil_moisture_2_day_low" => ($type == 'live') ?  $zero : (isset($dat->soil_moisture_2_day_low) ? $dat->soil_moisture_2_day_low : $zero),
+            "soil_moisture_2_month_low" => ($type == 'live') ?  $zero : (isset($dat->soil_moisture_2_month_low) ? $dat->soil_moisture_2_month_low : $zero),
+            "soil_moisture_2_year_low" => ($type == 'live') ?  $zero : (isset($dat->soil_moisture_2_year_low) ? $dat->soil_moisture_2_year_low : $zero),
+            "soil_moisture_2_day_high" => ($type == 'live') ?  $zero : (isset($dat->soil_moisture_2_day_high) ? $dat->soil_moisture_2_day_high : $zero),
+            "soil_moisture_2_month_high" => ($type == 'live') ?  $zero : (isset($dat->soil_moisture_2_month_high) ? $dat->soil_moisture_2_month_high : $zero),
+            "soil_moisture_2_year_high" => ($type == 'live') ?  $zero : (isset($dat->soil_moisture_2_year_high) ? $dat->soil_moisture_2_year_high : $zero),
+            "soil_moisture_2_day_low_time" => ($type == 'live') ?  $zero : (isset($dat->soil_moisture_2_day_low_time) ? $dat->soil_moisture_2_day_low_time : $zero),
+            "soil_moisture_2_day_high_time" => ($type == 'live') ?  $zero : (isset($dat->soil_moisture_2_day_high_time) ? $dat->soil_moisture_2_day_high_time : $zero),
+            "soil_moisture_3_day_low" => ($type == 'live') ?  $zero : (isset($dat->soil_moisture_3_day_low) ? $dat->soil_moisture_3_day_low : $zero),
+            "soil_moisture_3_month_low" => ($type == 'live') ?  $zero : (isset($dat->soil_moisture_3_month_low) ? $dat->soil_moisture_3_month_low : $zero),
+            "soil_moisture_3_year_low" => ($type == 'live') ?  $zero : (isset($dat->soil_moisture_3_year_low) ? $dat->soil_moisture_3_year_low : $zero),
+            "soil_moisture_3_day_high" => ($type == 'live') ?  $zero : (isset($dat->soil_moisture_3_day_high) ? $dat->soil_moisture_3_day_high : $zero),
+            "soil_moisture_3_month_high" => ($type == 'live') ?  $zero : (isset($dat->soil_moisture_3_month_high) ? $dat->soil_moisture_3_month_high : $zero),
+            "soil_moisture_3_year_high" => ($type == 'live') ?  $zero : (isset($dat->soil_moisture_3_year_high) ? $dat->soil_moisture_3_year_high : $zero),
+            "soil_moisture_3_day_low_time" => ($type == 'live') ?  $zero : (isset($dat->soil_moisture_3_day_low_time) ? $dat->soil_moisture_3_day_low_time : $zero),
+            "soil_moisture_3_day_high_time" => ($type == 'live') ?  $zero : (isset($dat->soil_moisture_3_day_high_time) ? $dat->soil_moisture_3_day_high_time : $zero),
+            "soil_moisture_4_day_low" => ($type == 'live') ?  $zero : (isset($dat->soil_moisture_4_day_low) ? $dat->soil_moisture_4_day_low : $zero),
+            "soil_moisture_4_month_low" => ($type == 'live') ?  $zero : (isset($dat->soil_moisture_4_month_low) ? $dat->soil_moisture_4_month_low : $zero),
+            "soil_moisture_4_year_low" => ($type == 'live') ?  $zero : (isset($dat->soil_moisture_4_year_low) ? $dat->soil_moisture_4_year_low : $zero),
+            "soil_moisture_4_day_high" => ($type == 'live') ?  $zero : (isset($dat->soil_moisture_4_day_high) ? $dat->soil_moisture_4_day_high : $zero),
+            "soil_moisture_4_month_high" => ($type == 'live') ?  $zero : (isset($dat->soil_moisture_4_month_high) ? $dat->soil_moisture_4_month_high : $zero),
+            "soil_moisture_4_year_high" => ($type == 'live') ?  $zero : (isset($dat->soil_moisture_4_year_high) ? $dat->soil_moisture_4_year_high : $zero),
+            "soil_moisture_4_day_low_time" => ($type == 'live') ?  $zero : (isset($dat->soil_moisture_4_day_low_time) ? $dat->soil_moisture_4_day_low_time : $zero),
+            "soil_moisture_4_day_high_time" => ($type == 'live') ?  $zero : (isset($dat->soil_moisture_4_day_high_time) ? $dat->soil_moisture_4_day_high_time : $zero),
+            "temp_in_day_low_f" => ($type == 'live') ?  $zero : (isset($dat->temp_in_day_low_f) ? $dat->temp_in_day_low_f : $zero),
+            "temp_in_month_low_f" => ($type == 'live') ?  $zero : (isset($dat->temp_in_month_low_f) ? $dat->temp_in_month_low_f : $zero),
+            "temp_in_year_low_f" => ($type == 'live') ?  $zero : (isset($dat->temp_in_year_low_f) ? $dat->temp_in_year_low_f : $zero),
+            "temp_in_day_high_f" => ($type == 'live') ?  $zero : (isset($dat->temp_in_day_high_f) ? $dat->temp_in_day_high_f : $zero),
+            "temp_in_month_high_f" => ($type == 'live') ?  $zero : (isset($dat->temp_in_month_high_f) ? $dat->temp_in_month_high_f : $zero),
+            "temp_in_year_high_f" => ($type == 'live') ?  $zero : (isset($dat->temp_in_year_high_f) ? $dat->temp_in_year_high_f : $zero),
+            "temp_in_day_low_time" => ($type == 'live') ?  $zero : (isset($dat->temp_in_day_low_time) ? $dat->temp_in_day_low_time : $zero),
+            "temp_in_day_high_time" => ($type == 'live') ?  $zero : (isset($dat->temp_in_day_high_time) ? $dat->temp_in_day_high_time : $zero),
+            "relative_humidity_in_day_low" => ($type == 'live') ?  $zero : (isset($dat->relative_humidity_in_day_low) ? $dat->relative_humidity_in_day_low : $zero),
+            "relative_humidity_in_month_low" => ($type == 'live') ?  $zero : (isset($dat->relative_humidity_in_month_low) ? $dat->relative_humidity_in_month_low : $zero),
+            "relative_humidity_in_year_low" => ($type == 'live') ?  $zero : (isset($dat->relative_humidity_in_year_low) ? $dat->relative_humidity_in_year_low : $zero),
+            "relative_humidity_in_day_high" => ($type == 'live') ?  $zero : (isset($dat->relative_humidity_in_day_high) ? $dat->relative_humidity_in_day_high : $zero),
+            "relative_humidity_in_month_high" => ($type == 'live') ?  $zero : (isset($dat->relative_humidity_in_month_high) ? $dat->relative_humidity_in_month_high : $zero),
+            "relative_humidity_in_year_high" => ($type == 'live') ?  $zero : (isset($dat->relative_humidity_in_year_high) ? $dat->relative_humidity_in_year_high : $zero),
+            "relative_humidity_in_day_low_time" => ($type == 'live') ?  $zero : (isset($dat->relative_humidity_in_day_low_time) ? $dat->relative_humidity_in_day_low_time : $zero),
+            "relative_humidity_in_day_high_time" => ($type == 'live') ?  $zero : (isset($dat->relative_humidity_in_day_high_time) ? $dat->relative_humidity_in_day_high_time : $zero),
+            "temp_day_high_f" => ($type == 'live') ?  $zero : (isset($dat->temp_day_high_f) ? $dat->temp_day_high_f : $zero),
+            "temp_month_high_f" => ($type == 'live') ?  $zero : (isset($dat->temp_month_high_f) ? $dat->temp_month_high_f : $zero),
+            "temp_year_high_f" => ($type == 'live') ?  $zero : (isset($dat->temp_year_high_f) ? $dat->temp_year_high_f : $zero),
+            "temp_day_low_f" => ($type == 'live') ?  $zero : (isset($dat->temp_day_low_f) ? $dat->temp_day_low_f : $zero),
+            "temp_month_low_f" => ($type == 'live') ?  $zero : (isset($dat->temp_month_low_f) ? $dat->temp_month_low_f : $zero),
+            "temp_year_low_f" => ($type == 'live') ?  $zero : (isset($dat->temp_year_low_f) ? $dat->temp_year_low_f : $zero),
+            "windchill_day_low_f" => ($type == 'live') ?  $zero : (isset($dat->windchill_day_low_f) ? $dat->windchill_day_low_f : $zero),
+            "windchill_day_low_time" => ($type == 'live') ?  $zero : (isset($dat->windchill_day_low_time) ? $dat->windchill_day_low_time : $zero),
+            "windchill_month_low_f" => ($type == 'live') ?  $zero : (isset($dat->windchill_month_low_f) ? $dat->windchill_month_low_f : $zero),
+            "windchill_year_low_f" => ($type == 'live') ?  $zero : (isset($dat->windchill_year_low_f) ? $dat->windchill_year_low_f : $zero),
+            "heat_index_day_high_f" => ($type == 'live') ?  $zero : (isset($dat->heat_index_day_high_f) ? $dat->heat_index_day_high_f : $zero),
+            "heat_index_day_high_time" => ($type == 'live') ?  $zero : (isset($dat->heat_index_day_high_time) ? $dat->heat_index_day_high_time : $zero),
+            "heat_index_month_high_f" => ($type == 'live') ?  $zero : (isset($dat->heat_index_month_high_f) ? $dat->heat_index_month_high_f : $zero),
+            "heat_index_year_high_f" => ($type == 'live') ?  $zero : (isset($dat->heat_index_year_high_f) ? $dat->heat_index_year_high_f : $zero),
+            "solar_radiation_day_high" => ($type == 'live') ?  $zero : (isset($dat->solar_radiation_day_high) ? $dat->solar_radiation_day_high : $zero),
+            "solar_radiation_day_high_time" => ($type == 'live') ?  $zero : (isset($dat->solar_radiation_day_high_time) ? $dat->solar_radiation_day_high_time : $zero),
+            "uv_index_day_high" => ($type == 'live') ?  $zero : (isset($dat->uv_index_day_high) ? $dat->uv_index_day_high : $zero),
+            "uv_index_day_high_time" => ($type == 'live') ?  $zero : (isset($dat->uv_index_day_high_time) ? $dat->uv_index_day_high_time : $zero),
+            "et_month" => ($type == 'live') ?  $zero : (isset($dat->et_month) ? $dat->et_month : $zero),
+            "temp_month_high_f" => ($type == 'live') ?  $zero : (isset($dat->temp_month_high_f) ? $dat->temp_month_high_f : $zero),
+            "temp_month_low_f" => ($type == 'live') ?  $zero : (isset($dat->temp_month_low_f) ? $dat->temp_month_low_f : $zero),
+            "et_year" => ($type == 'live') ?  $zero : (isset($dat->et_year) ? $dat->et_year : $zero),
+            "temp_year_high_f" => ($type == 'live') ?  $zero : (isset($dat->temp_year_high_f) ? $dat->temp_year_high_f : $zero),
+            "temp_year_low_f" => ($type == 'live') ?  $zero : (isset($dat->temp_year_low_f) ? $dat->temp_year_low_f : $zero),
+            "solar_radiation_month_high" => ($type == 'live') ?  $zero : (isset($dat->solar_radiation_month_high) ? $dat->solar_radiation_month_high : $zero),
+            "solar_radiation_year_high" => ($type == 'live') ?  $zero : (isset($dat->solar_radiation_year_high) ? $dat->solar_radiation_year_high : $zero),
+            "uv_index_month_high" => ($type == 'live') ?  $zero : (isset($dat->uv_index_month_high) ? $dat->uv_index_month_high : $zero),
+            "uv_index_year_high" => ($type == 'live') ?  $zero : (isset($dat->uv_index_year_high) ? $dat->uv_index_year_high : $zero),
+            "rain_rate_hour_high_in_per_hr" => ($type == 'live') ? $zero : (isset($dat->rain_rate_hour_high_in_per_hr) ? $dat->rain_rate_hour_high_in_per_hr : $zero),
 
             //V2
-            "time_unix" => ($station['stat_type'] == 'live') ? (isset($dat0[0]['ts']) ? $dat0[0]['ts'] : $zero) : $zero,
-            "time_zone" => ($station['stat_type'] == 'live') ? (isset($livestation['stations'][0]['time_zone']) ? $livestation['stations'][0]['time_zone'] : $zero) : $zero,
-            "bar_trend" => ($station['stat_type'] == 'live') ? (isset($dat1[0]['bar_trend']) ? $dat1[0]['bar_trend'] : $zero) : $zero,
+            "time_unix" => ($type == 'live') ? (isset($datas['ts'][0]) ? $datas['ts'][0] : $zero) : $zero,
+            "time_zone" => ($type == 'live') ? (isset($livestation['stations'][0]['time_zone']) ? $livestation['stations'][0]['time_zone'] : $zero) : $zero,
+            "bar_trend" => ($type == 'live') ? (isset($datas['bar_trend'][0]) ? $datas['bar_trend'][0] : $zero) : $zero,
+            "rainfall_last_15_min_mm" => ($type == 'live') ? (isset($datas['rainfall_last_15_min_mm'][0]) ? $datas['rainfall_last_15_min_mm'][0] : $zero) : $zero,
+            "rain_rate_hi_last_15_min_mm" => ($type == 'live') ? (isset($datas['rain_rate_hi_last_15_min_mm'][0]) ? $datas['rain_rate_hi_last_15_min_mm'][0] : $zero) : $zero,
 
             //V1 + V2
-            "latitude" => ($station['stat_type'] == 'live') ? (isset($livestation['stations'][0]['latitude']) ? $livestation['stations'][0]['latitude'] : $zero) : (isset($datas->latitude) ? $datas->latitude : $zero),
-            "longitude" => ($station['stat_type'] == 'live') ? (isset($livestation['stations'][0]['longitude']) ? $livestation['stations'][0]['longitude'] : $zero) : (isset($datas->longitude) ? $datas->longitude : $zero),
-            "station_name" => ($station['stat_type'] == 'live') ? (isset($livestation['stations'][0]['station_name']) ? $livestation['stations'][0]['station_name'] : $zero) : (isset($dat->station_name) ? $dat->station_name : $zero),
-            "location" => ($station['stat_type'] == 'live') ? (isset($livestation['stations'][0]['city']) ? $livestation['stations'][0]['city'] : $zero) : (isset($datas->location) ? $datas->location : $zero),
-            "station_id" => ($station['stat_type'] == 'live') ? (isset($livestation['stations'][0]['station_id']) ? $livestation['stations'][0]['station_id'] : $zero) : (isset($datas->station_id) ? $datas->station_id : $zero),
-            
-            "pressure_in" => ($station['stat_type'] == 'live') ? (isset($dat1[0]['bar_absolute']) ? $dat1[0]['bar_absolute'] : $zero) : ( isset($datas->pressure_in) ? $datas->pressure_in : $zero),
-            "temp_f" => ($station['stat_type'] == 'live') ? (isset($dat0[0]['temp']) ? $dat0[0]['temp'] : $zero) : (isset($datas->temp_f) ? $datas->temp_f : $zero),
-            "temp_c" => ($station['stat_type'] == 'live') ? (isset($dat0[0]['temp']) ? $this->getTempFtoC($dat0[0]['temp']) : $zero) : (isset($datas->temp_c) ? $datas->temp_c : $zero),
-            "windchill_f" => ($station['stat_type'] == 'live') ? (isset($dat0[0]['wind_chill']) ? $dat0[0]['wind_chill'] : $zero) : (isset($datas->windchill_f) ? $datas->windchill_f : $zero),
-            "heat_index_f" => ($station['stat_type'] == 'live') ? (isset($dat0[0]['heat_index']) ? $dat0[0]['heat_index'] : $zero) : (isset($datas->heat_index_f) ? $datas->heat_index_f : $zero),
-            "dewpoint_f" => ($station['stat_type'] == 'live') ? (isset($dat0[0]['dew_point']) ? $dat0[0]['dew_point'] : $zero) : (isset($datas->dewpoint_f) ? $datas->dewpoint_f : $zero),
-            "relative_humidity" => ($station['stat_type'] == 'live') ? (isset($dat0[0]['hum']) ? $dat0[0]['hum'] : $zero) : (isset($datas->relative_humidity) ? $datas->relative_humidity : $zero),
-            "wind_ten_min_avg_mph" => ($station['stat_type'] == 'live') ? (isset($dat0[0]['wind_speed_avg_last_10_min']) ? $dat0[0]['wind_speed_avg_last_10_min'] : $zero) : (isset($dat->wind_ten_min_avg_mph) ? $dat->wind_ten_min_avg_mph : $zero),
-            "wind_ten_min_gust_mph" => ($station['stat_type'] == 'live') ? (isset($dat0[0]['wind_speed_hi_last_10_min']) ? $dat0[0]['wind_speed_hi_last_10_min'] : $zero) : (isset($dat->wind_ten_min_gust_mph) ? $dat->wind_ten_min_gust_mph : $zero),
-            "rain_rate_in_per_hr" => ($station['stat_type'] == 'live') ? (isset($dat0[0]['rainfall_last_60_min_in']) ? $dat0[0]['rainfall_last_60_min_in'] : $zero) : (isset($dat->rain_rate_in_per_hr) ? $dat->rain_rate_in_per_hr : $zero),
-            "rain_day_in" => ($station['stat_type'] == 'live') ? (isset($dat0[0]['rainfall_last_24_hr_in']) ? $dat0[0]['rainfall_last_24_hr_in'] : $zero) : (isset($dat->rain_day_in) ? $dat->rain_day_in : $zero),
-            "rain_month_in" => ($station['stat_type'] == 'live') ? (isset($dat0[0]['rainfall_monthly_in']) ? $dat0[0]['rainfall_monthly_in'] : $zero) : (isset($dat->rain_month_in) ? $dat->rain_month_in : $zero),
-            "rain_year_in" => ($station['stat_type'] == 'live') ? (isset($dat0[0]['rainfall_year_in']) ? $dat0[0]['rainfall_year_in'] : $zero) : (isset($dat->rain_year_in) ? $dat->rain_year_in : $zero),
-            "solar_radiation" => ($station['stat_type'] == 'live') ? (isset($dat0[0]['solar_rad']) ? $dat0[0]['solar_rad'] : $zero) : (isset($dat->solar_radiation) ? $dat->solar_radiation : $zero),
-            "uv_index" => ($station['stat_type'] == 'live') ? (isset($dat0[0]['uv_index']) ? $dat0[0]['uv_index'] : $zero) : (isset($dat->uv_index) ? $dat->uv_index : $zero),
-            "temp_in_f" => ($station['stat_type'] == 'live') ? (isset($dat2[0]['temp_in']) ? $dat2[0]['temp_in'] : $zero) : (isset($dat->temp_in_f) ? $dat->temp_in_f : $zero),
-            "relative_humidity_in" => ($station['stat_type'] == 'live') ? (isset($dat2[0]['hum_in']) ? $dat2[0]['hum_in'] : $zero) : (isset($dat->relative_humidity_in) ? $dat->relative_humidity_in : $zero),
-            "wind_degrees" => ($station['stat_type'] == 'live') ? (isset($dat0[0]['wind_dir_last']) ? $dat0[0]['wind_dir_last'] : $zero) : (isset($datas->wind_degrees) ? $datas->wind_degrees : $zero),
+            "latitude" => ($type == 'live') ? (isset($livestation['stations'][0]['latitude']) ? $livestation['stations'][0]['latitude'] : $zero) : (isset($datas->latitude) ? $datas->latitude : $zero),
+            "longitude" => ($type == 'live') ? (isset($livestation['stations'][0]['longitude']) ? $livestation['stations'][0]['longitude'] : $zero) : (isset($datas->longitude) ? $datas->longitude : $zero),
+            "station_name" => ($type == 'live') ? (isset($livestation['stations'][0]['station_name']) ? $livestation['stations'][0]['station_name'] : $zero) : (isset($dat->station_name) ? $dat->station_name : $zero),
+            "location" => ($type == 'live') ? (isset($livestation['stations'][0]['city']) ? $livestation['stations'][0]['city'] : $zero) : (isset($datas->location) ? $datas->location : $zero),
+            "station_id" => ($type == 'live') ? (isset($livestation['stations'][0]['station_id']) ? $livestation['stations'][0]['station_id'] : $zero) : (isset($datas->station_id) ? $datas->station_id : $zero),
+
+            "pressure_in" => ($type == 'live') ? (isset($datas['bar_absolute'][0]) ? $datas['bar_absolute'][0] : $zero) : (isset($datas->pressure_in) ? $datas->pressure_in : $zero),
+            "temp_f" => ($type == 'live') ? (isset($datas['temp'][0]) ? $datas['temp'][0] : $zero) : (isset($datas->temp_f) ? $datas->temp_f : $zero),
+
+            "windchill_f" => ($type == 'live') ? (isset($datas['wind_chill'][0]) ? $datas['wind_chill'][0] : $zero) : (isset($datas->windchill_f) ? $datas->windchill_f : $zero),
+            "heat_index_f" => ($type == 'live') ? (isset($datas['heat_index'][0]) ? $datas['heat_index'][0] : $zero) : (isset($datas->heat_index_f) ? $datas->heat_index_f : $zero),
+            "dewpoint_f" => ($type == 'live') ? (isset($datas['dew_point'][0]) ? $datas['dew_point'][0] : $zero) : (isset($datas->dewpoint_f) ? $datas->dewpoint_f : $zero),
+            "relative_humidity" => ($type == 'live') ? (isset($datas['hum'][0]) ? $datas['hum'][0] : $zero) : (isset($datas->relative_humidity) ? $datas->relative_humidity : $zero),
+            "wind_ten_min_avg_mph" => ($type == 'live') ? (isset($datas['wind_speed_avg_last_10_min'][0]) ? $datas['wind_speed_avg_last_10_min'][0] : $zero) : (isset($dat->wind_ten_min_avg_mph) ? $dat->wind_ten_min_avg_mph : $zero),
+            "wind_ten_min_gust_mph" => ($type == 'live') ? (isset($datas['wind_speed_hi_last_10_min'][0]) ? $datas['wind_speed_hi_last_10_min'][0] : $zero) : (isset($dat->wind_ten_min_gust_mph) ? $dat->wind_ten_min_gust_mph : $zero),
+            "rain_rate_in_per_hr" => ($type == 'live') ? (isset($datas['rain_rate_last_in'][0]) ? $datas['rain_rate_last_in'][0] : $zero) : (isset($dat->rain_rate_in_per_hr) ? $dat->rain_rate_in_per_hr : $zero),
+            "rain_day_in" => ($type == 'live') ? (isset($datas['rainfall_last_24_hr_in'][0]) ? $datas['rainfall_last_24_hr_in'][0] : $zero) : (isset($dat->rain_day_in) ? $dat->rain_day_in : $zero),
+            "rain_month_in" => ($type == 'live') ? (isset($datas['rainfall_monthly_in'][0]) ? $datas['rainfall_monthly_in'][0] : $zero) : (isset($dat->rain_month_in) ? $dat->rain_month_in : $zero),
+            "rain_year_in" => ($type == 'live') ? (isset($datas['rainfall_year_in'][0]) ? $datas['rainfall_year_in'][0] : $zero) : (isset($dat->rain_year_in) ? $dat->rain_year_in : $zero),
+            "solar_radiation" => ($type == 'live') ? (isset($datas['solar_rad'][0]) ? $datas['solar_rad'][0] : $zero) : (isset($dat->solar_radiation) ? $dat->solar_radiation : $zero),
+            "uv_index" => ($type == 'live') ? (isset($datas['uv_index'][0]) ? $datas['uv_index'][0] : $zero) : (isset($dat->uv_index) ? $dat->uv_index : $zero),
+            "temp_in_f" => ($type == 'live') ? (isset($datas['temp_in'][0]) ? $datas['temp_in'][0] : $zero) : (isset($dat->temp_in_f) ? $dat->temp_in_f : $zero),
+            "relative_humidity_in" => ($type == 'live') ? (isset($datas['hum_in'][0]) ? $datas['hum_in'][0] : $zero) : (isset($dat->relative_humidity_in) ? $dat->relative_humidity_in : $zero),
+            "wind_degrees" => ($type == 'live') ? (isset($datas['wind_dir_last'][0]) ? $datas['wind_dir_last'][0] : $zero) : (isset($datas->wind_degrees) ? $datas->wind_degrees : $zero),
         );
 
-        return $data;
+        return $response;
     }
 
     /**
@@ -479,6 +489,8 @@ class StationView extends View
      */
     public function getAPIDatasUp($datas, $station, $livestation)
     {
+        $zero = '&#8709;';
+        $type = (isset($station['stat_type'])) ? $station['stat_type'] : $zero;
 
         $timeunix = $this->getAPIDatas($datas, $station, $livestation)['time_unix'];
         $timeRFC822 = $this->getAPIDatas($datas, $station, $livestation)['time_RFC822'];
@@ -491,14 +503,20 @@ class StationView extends View
         $bartrend = $this->getAPIDatas($datas, $station, $livestation)['bar_trend'];
         $pressurestring = $this->getAPIDatas($datas, $station, $livestation)['pressure_tendency_string'];
         $pressure_mb = $this->getAPIDatas($datas, $station, $livestation)['pressure_mb'];
+        $temp_f = $this->getAPIDatas($datas, $station, $livestation)['temp_f'];
+        $temp_c = $this->getAPIDatas($datas, $station, $livestation)['temp_c'];
+
+
 
         $data = array(
-            "time" => ($station['stat_type'] == 'live') ? $this->liveDateRFC822($timeunix, $timezone) : $timeRFC822,
-            "pressure_tendency" => ($station['stat_type'] == 'live') ? $this->livePressTrend($bartrend) : $pressurestring,
-            "fuseau" => ($station['stat_type'] == 'live') ? $timezone : $this->timeZone($timeRFC822),
-            "time_sunset" => ($station['stat_type'] == 'live') ? $this->liveDateSun($timeunix, $latitude, $longitude, $timezone, 'sunset') : $sunset,
-            "time_sunrise" => ($station['stat_type'] == 'live') ? $this->liveDateSun($timeunix, $latitude, $longitude, $timezone, 'sunrise') : $sunrise,
-            "mb_pressure" => ($station['stat_type'] == 'live') ? $this->livePress( $pressure_mb) : $pressure_mb,
+            "time" => ($type == 'live') ? $this->liveDateRFC822($timeunix, $timezone) : $timeRFC822,
+            "pressure_tendency" => ($type == 'live') ? $this->livePressTrend($bartrend) : $pressurestring,
+            "fuseau" => ($type == 'live') ? $timezone : $this->timeZone($timeRFC822),
+            "time_sunset" => ($type == 'live') ? $this->liveDateSun($timeunix, $latitude, $longitude, $timezone, 'sunset') : $sunset,
+            "time_sunrise" => ($type == 'live') ? $this->liveDateSun($timeunix, $latitude, $longitude, $timezone, 'sunrise') : $sunrise,
+            "mb_pressure" => ($type == 'live') ? $this->livePress($pressure_mb) : $pressure_mb,
+            "c_temp" => ($type == 'live') ?  $this->getTempFtoC($temp_f)  : $temp_c,
+
         );
         return $data;
     }
@@ -2644,7 +2662,7 @@ class StationView extends View
     public function incDownCloudy($config, $datas, $info, $livestation)
     {
         $temp_f = $this->getAPIDatas($datas, $info, $livestation)['temp_f'];
-        $temp_c = $this->getAPIDatas($datas, $info, $livestation)['temp_c'];
+        $temp_c = $this->getAPIDatasUp($datas, $info, $livestation)['c_temp'];
 
         $time = $this->getAPIDatasUp($datas, $info, $livestation)['time'];
         $sunset = $this->getAPIDatasUp($datas, $info, $livestation)['time_sunset'];
@@ -3131,15 +3149,34 @@ class StationView extends View
 
 
 
+    /**
+     * Création de date à partir de timestamp
+     */
+
+    public function DateCreate($datas, $lg, $timeZone)
+    {
+        if (isset($datas)) {
+            date_default_timezone_set($timeZone);
+            $date = new DateTime();
+            $date->setTimestamp($datas);
+            if ($lg == "fr") {
+                $date_time =  $date->format('d.m.Y à H:i');
+            } elseif ($lg == "en") {
+                $date_time = $date->format('m/d/Y @ h:ia');
+            }
+        } else {
+            $date_time =  '&#8709;';
+        }
+        return $date_time;
+    }
 
 
 
 
 
-
-
-
-
+    /**
+     * Création de date à partir de format RFC822
+     */
 
     public function DateStation($datas, $lg)
     {
@@ -3211,19 +3248,39 @@ class StationView extends View
         }
         return $page;
     }
+    public function getWindMphToKph($wind)
+    {
+        if ($wind != '&#8709;') {
+            $kph = round(((floatval($wind)) * 1.6093), 1);
+            $wind = $kph;
+        }
+        return $wind;
+    }
 
 
     public function getRain($switch, $rain)
     {
-        $in = round((floatval($rain)), 3);
-        $mm = round(((floatval($rain)) * 25.4), 1);
+        if ($rain != '&#8709;') {
+            $in = round((floatval($rain)), 3);
+            $mm = round(((floatval($rain)) * 25.4), 1);
 
-        if ($switch['s_rain'] == 'in') {
-            $page = $in;
-        } elseif ($switch['s_rain'] == 'mm') {
-            $page = $mm;
+            if ($switch['s_rain'] == 'in') {
+                $page = $in;
+            } elseif ($switch['s_rain'] == 'mm') {
+                $page = $mm;
+            }
+        } else {
+            $page = $rain;
         }
         return $page;
+    }
+    public function getRainInToMm($rain)
+    {
+        if ($rain != '&#8709;') {
+            $rainM = round(((floatval($rain)) * 25.4), 1);
+            $rain = $rainM;
+        }
+        return $rain;
     }
 
     public function getPress($switch, $press)

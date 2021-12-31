@@ -30,6 +30,14 @@
  *
  */
 
+/** DEBUG
+ * Pour activer les informations de débuguage de Mbell, changer "false" par "true"
+ * $debug = false; --> $debug = true;
+ */
+$debug = false;
+
+
+
 /** Réglages MySQL - Votre hébergeur doit vous fournir ces informations. 
  * Si vous êtes dans "admin_backup" :  Remplacez le contenu entre guillemets avec des accolades '{...}' par les votres '...' 
  * puis sauvegardez en admin.php (gardez toujours un exemplaire de admin_backup non modifié ; la seule exception réside dans le réglage de MB_DEBUG)
@@ -39,19 +47,19 @@
 
 /** Adresse de l’hébergement MySQL. */
 if (!defined('DB_HOST'))
-define('DB_HOST', '{bdd_localhost}');
+  define('DB_HOST', '{bdd_localhost}');
 
 /** Utilisateur de la base de données MySQL. */
 if (!defined('DB_USER'))
-define('DB_USER', '{bdd_identifiant}');
+  define('DB_USER', '{bdd_identifiant}');
 
 /** Mot de passe de la base de données MySQL. */
 if (!defined('DB_PASSWORD'))
-define('DB_PASSWORD', '{bdd_password}');
+  define('DB_PASSWORD', '{bdd_password}');
 
 /** Nom de la base de données de Mbell. */
 if (!defined('DB_NAME'))
-define('DB_NAME', '{bdd_mbell}');
+  define('DB_NAME', '{bdd_mbell}');
 
 
 
@@ -59,7 +67,7 @@ define('DB_NAME', '{bdd_mbell}');
 
 /** Jeu de caractères à utiliser par la base de données lors de la création des tables. */
 if (!defined('DB_CHARSET'))
-define('DB_CHARSET', 'utf8mb4');
+  define('DB_CHARSET', 'utf8mb4');
 
 
 /**
@@ -68,7 +76,7 @@ define('DB_CHARSET', 'utf8mb4');
  * 
  */
 if (!defined('KEY_CRYPT'))
-define('KEY_CRYPT', '{key_crypt}');
+  define('KEY_CRYPT', '{key_crypt}');
 
 
 
@@ -88,16 +96,16 @@ $table_prefix = '{bdd_meta}';
 /**
  * Pour les développeurs : le mode déboguage de MBell
  *
- * En passant la valeur suivante à "true", vous activez l’affichage des
+ * En passant la valeur $debug à "true", vous activez l’affichage des
  * notifications d’erreurs pendant vos essais. 
  * Attention cela peut vous aider à identifier les erreurs, 
- * mais peut empécher le bon fonctionnement de Mbell. 
+ * mais peut empécher aussi le bon fonctionnement de Mbell dans certaines circonstances. 
  * N'oubliez pas de remettre sur false, une fois vos essais réalisés
- * C'est le seul réglage qui peut être changé et sauvegardé en tant que "admin_backup.php" afin de controller la procédure d'installation avant la création de "admin.php"
+ * C'est le seul réglage qui peut être changé et sauvegardé en tant que "admin_backup.php" afin de controller la procédure d'installation avant la création de "admin.php" (étape 3 de l'installation)
  *
  */
 if (!defined('MB_DEBUG'))
-define('MB_DEBUG', false);
+  define('MB_DEBUG', $debug);
 
 
 /**

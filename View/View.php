@@ -16,7 +16,7 @@ abstract class View
 {
 
 
-    protected $page;  
+    protected $page;
     protected $col;
     protected $moon;
 
@@ -25,12 +25,8 @@ abstract class View
 
         $this->l = new Lang();
         $this->col = new Color();
-
-
-        if (isset($_SESSION['username'])) {
-            $logout = "<a href='index.php?controller=login&action=logout' title='Déconnexion'><i class='fas fa-sign-out-alt'></i></a>";
-        }
-
+        $this->file_admin = 'config/admin.php';
+       
     }
 
     /**
@@ -40,8 +36,8 @@ abstract class View
      */
     public function getRoot()
     {
-    $root = (!empty($_SERVER['HTTPS']) ? 'https' : 'http') . '://' . $_SERVER['HTTP_HOST'] . '/';
-    return $root;
+        $root = (!empty($_SERVER['HTTPS']) ? 'https' : 'http') . '://' . $_SERVER['HTTP_HOST'] . '/';
+        return $root;
     }
 
 
@@ -232,7 +228,7 @@ abstract class View
         $this->page .= $this->searchHTML('listInfolive', '');
         $this->page = str_replace('{_STATION_TYPE}',  $param['3'], $this->page);
         $this->page = str_replace('{_STATION_LOCATION}',  $param['4'], $this->page);
-        $this->page = str_replace('{_STATION_USER}',  $param['5'], $this->page);        
+        $this->page = str_replace('{_STATION_USER}',  $param['5'], $this->page);
         $this->page = str_replace('{_STATION_LIVEKEY}',  $param['10'], $this->page);
         $this->page = str_replace('{_STATION_LIVESECRET}',  $param['11'], $this->page);
         $this->page = str_replace('{STATION_TYPE}',  $this->l->trad('STATION_TYPE'), $this->page);
@@ -261,9 +257,9 @@ abstract class View
                 $page .= $this->getSubmit($controll, $param['STATION_BUTTON']);
                 break;
             case 'live':
-                    $page = $this->getStationLive($param);
-                    $page .= $this->getSubmit($controll, $param['STATION_BUTTON']);
-                    break;
+                $page = $this->getStationLive($param);
+                $page .= $this->getSubmit($controll, $param['STATION_BUTTON']);
+                break;
             default:
                 $page = $this->getInfo($this->l->trad('STATION_STEP6_P3'));
                 $page .= $this->getInfo($this->l->trad('STATION_STEP6_P4'));
@@ -283,11 +279,11 @@ abstract class View
         $this->page = str_replace('{CHOOSE_SELECT}',  $param['2'], $this->page);
         $this->page = str_replace('{STATION_SELECT_V1}',  $param['3'], $this->page);
         $this->page = str_replace('{STATION_SELECT_V2}',  $param['4'], $this->page);
-        $this->page = str_replace('{STATION_SELECT_LIVE}',  $param['5'], $this->page);        
+        $this->page = str_replace('{STATION_SELECT_LIVE}',  $param['5'], $this->page);
         $this->page = str_replace('{ANY}',  $this->l->trad('ANY'), $this->page);
         $this->page = str_replace('{_LG}',  $param['_LG'], $this->page);
         $this->page = str_replace('{_CONTROLLER}',  $param['_CONTROLLER'], $this->page);
-        $this->page = str_replace('{_ACTION}',  $param['_ACTION'], $this->page);          
+        $this->page = str_replace('{_ACTION}',  $param['_ACTION'], $this->page);
     }
 
 
@@ -337,7 +333,7 @@ abstract class View
     {
         $this->page .= $this->searchHTML('stationlive', 'install');
         $this->page = str_replace('{CASE_SENSITIVE}',  $this->l->trad('CASE_SENSITIVE'), $this->page);
-       /* $this->page = str_replace('{UPPERCASE}',  $this->l->trad('UPPERCASE'), $this->page);*/
+        /* $this->page = str_replace('{UPPERCASE}',  $this->l->trad('UPPERCASE'), $this->page);*/
         $this->page = str_replace('{DAVIS_LIVEKEY}',  $this->l->trad('DAVIS_LIVEKEY'), $this->page);
         $this->page = str_replace('{DAVIS_LIVEKEY_TEXT}',  $this->l->trad('DAVIS_LIVEKEY_TEXT'), $this->page);
         $this->page = str_replace('{DAVIS_LIVESECRET}',  $this->l->trad('DAVIS_LIVESECRET'), $this->page);

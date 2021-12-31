@@ -1637,8 +1637,7 @@
       "fr": "Tdx",
       "en": "Tdx"
     }
-  ]
-  ,
+  ],
   "RHN": [
     {
       "fr": "HRn",
@@ -1698,56 +1697,49 @@
       "fr": "Index UV Annuel Maximum",
       "en": "Maximum Yearly UV Index"
     }
-  ]
-  ,
+  ],
   "MIN_INDEX": [
     {
       "fr": "Indice Minimum",
       "en": "Minimum Index"
     }
-  ]
-  ,
+  ],
   "MAX_INDEX": [
     {
       "fr": "Indice Maximum",
       "en": "Maximum Index"
     }
-  ]
-  ,
+  ],
   "CHANGE_STATION": [
     {
       "fr": "CHANGER DE STATION",
       "en": "CHANGE STATION"
     }
-  ]  ,
+  ],
   "TITLE_CHANGE": [
     {
       "fr": "Autres Stations de :",
       "en": "Other Stations of:"
     }
-  ]
-  ,
+  ],
   "STATION_ACTIVE": [
     {
       "fr": "Station Active",
       "en": "Active Station "
     }
-  ]
-  ,
+  ],
   "ADD_STATION": [
     {
       "fr": "AJOUTER UNE STATION",
       "en": "ADD A STATION"
     }
-  ]
-  ,
+  ],
   "CHANGE_INFO_1": [
     {
       "fr": "Il ne peut y avoir qu'une seule station active à la fois par installation de Mbell. Si vous possédez plusieurs stations et voulez les afficher en même temps sur le même hébergement internet, une seule base de données suffit, mais vous devez réinstaller un autre mbell en utilisant un préfixe de table de bdd différent lors de cette nouvelle installation.",
       "en": "There can only be one active station per Mbell installation at a time. If you have several stations and want to display them at the same time on the same internet hosting, a single database is sufficient, but you must reinstall another mbell using a different database table prefix during this new installation. "
     }
-  ]
-  ,
+  ],
   "CHANGE_INFO_2": [
     {
       "fr": "Actuellement votre station active, a comme ID dans la BDD = ",
@@ -1776,6 +1768,119 @@
     {
       "fr": "Activer",
       "en": "Activate"
+    }
+  ],
+  "MANAGMENT": [
+    {
+      "fr": "Gestion",
+      "en": "Management"
+    }
+  ],
+  "CRON": [
+    {
+      "fr": "Cronjob",
+      "en": "Cronjob"
+    }
+  ],
+  "CRON_ACTIVE": [
+    {
+      "fr": "Activer le Cron",
+      "en": "Activate Cron"
+    }
+  ],
+  "CRON_DISACTIVE": [
+    {
+      "fr": "Désactiver le Cron",
+      "en": "Disable Cron"
+    }
+  ],
+
+  "BDD_MANAGMENT": [
+    {
+      "fr": "Gestion Cron",
+      "en": "Cron Management"
+    }
+  ],
+  "CRON_TITLE": [
+    {
+      "fr": "Sauvegarde des Données",
+      "en": "Saving data"
+    }
+  ],
+  "CRON_INFO_1": [
+    {
+      "fr": "Mbell permet de sauvegarder vos données météos dans votre propre base de données, toutes les 10mn.",
+      "en": "Mbell allows you to save your weather data in your own database, every 10 minutes. "
+    }
+  ],
+  "CRON_INFO_2": [
+    {
+      "fr": "Par défaut ce service est désactivé. En appuyant sur le bouton ci-dessous, vous aller basculer sur une page détaillant un peu plus ce processus et vous donnant la possibilité de l'activer ou le désactiver.",
+      "en": "By default this service is disabled. By pressing the button below, you will be taken to a page detailing this process a little more and giving you the possibility to activate or deactivate it. "
+    }
+  ],
+  "CRON_INFO_3": [
+    {
+      "fr": "Ce service de sauvegarde des données météos est une nouveauté de la version 2.2. En revanche, actuellement l'historique de vos données météos ainsi sauvegardé n'est pas encore exploité par Mbell (dans une prochaine version peut-être). Mais la possibilité de pouvoir sauvegarder toutes vos données météos courantes sur votre propre serveur de manière automatisé est déjà un grand pas franchi que vous pouvez utiliser ensuite pour vos propres besoins.",
+      "en": "This weather data backup service is new in version 2.2. On the other hand, currently the history of your weather data thus saved is not yet used by Mbell (in a future version perhaps). But the possibility of being able to save all your current weather data on your own server in an automated way is already a big step which you can then use for your own needs. "
+    }
+  ],
+  "CRON_INFO_4": [
+    {
+      "fr": "Mbell simule ainsi un cronjob via script PHP. Un cron est un programme qui permet d’exécuter automatiquement des scripts. En l'occurence ici, la sauvegarde de vos données météos toutes les 10mn sur votre propre bdd. Vous n'avez donc pas besoin de faire appel à un service extérieur de cronjob ou d'activer crontab sur votre serveur (vous pouvez cependant le faire si vous avez les compétences techniques).",
+      "en": "Mbell thus simulates a cronjob via PHP script. A cron is a program that automatically runs scripts. In this case, backing up your weather data every 10 minutes on your own database. So you don't need to call on an external cronjob service or activate crontab on your server (you can, however, if you have the technical skills). "
+    }
+  ],
+  "CRON_INFO_5": [
+    {
+      "fr": "Attention, si votre serveur pour une raison ou une autre est désactivé, il faudra alors le relancer manuellement. Ce type d'incident est dépendant de votre FAI (mais reste dans ce cas assez rare). En revanche, si vous travaillez en localhost, pensez que le cron se désactivera dès que vous arréterez votre serveur virtuel. Il est donc préférable d'utiliser un serveur sur un hébergement extérieur. Le local doit être réservé pour l'utilisation de l'API en direct ou pour réaliser des tests.",
+      "en": "Be careful, if your server for one reason or another is disabled, you will have to restart it manually. This type of incident is dependent on your ISP (but in this case remains quite rare). On the other hand, if you are working in localhost, think that the cron will be deactivated as soon as you stop your virtual server. It is therefore preferable to use a server on an external hosting. The room must be reserved for using the live API or for performing tests. "
+    }
+  ],
+  "CRON_INFO_6": [
+    {
+      "fr": "Attention, Il ne peut y avoir qu'1 seule table de base de données enregistrant vos données météos, par mbell. Donc 1 station météo = 1 installation de mbell. Si vous décidez de changer de station météo après avoir activé le cron, les données météos seront alors mélangé dans la même base de données, ce qui est une très mauvaise idée et faussera tout caclul éventuel à partir de cette base de données.",
+      "en": "Warning, there can only be 1 database table recording your weather data, per mbell. So 1 weather station = 1 mbell installation. If you decide to change the weather station after activating the cron, then the weather data will be mixed in the same database, which is a very bad idea and will distort any possible calculation from that database. "
+    }
+  ],
+  "CRON_INFO_7": [
+    {
+      "fr": "En effet le cron enregistrera toujours les données météos de la station active en cours sur Mbell. Réfléchissez donc bien avant de choisir votre station. Si vous voulez enregistrer les données de plusieurs stations, il est préférable d'installer un autre mbell en utilisant un autre préfixe de table (si la nouvelle installation a lieu dans la même bdd).",
+      "en": "Indeed the cron will always record the weather data of the current active station on Mbell. So think carefully before choosing your station. If you want to save data from several stations, it is preferable to install another mbell using another table prefix (if the new installation takes place in the same db). "
+    }
+  ],
+
+  "CRON_INFO_8": [
+    {
+      "fr": "Cependant il est tout à fait possible d'ajouter de nouvelles configurations de stations dans la zone 'Changer de Station' (même station avec API différentes / même station avec options, choix par défaut, configuration différentes). Vous pouvez ajouter autant de configurations de Mbell que vous voulez, à partir du moment où c'est bien toujours la même station météo réelle qui est ajouté et activé.",
+      "en": "However, it is quite possible to add new station configurations in the 'Change Station' zone (same station with different PLCs / same station with options, default choice, different configuration). You can add as many Mbell configurations as you want, as long as the same real weather station is always added and activated. "
+    }
+  ],
+  "ACTIVATED": [
+    {
+      "fr": "Activé",
+      "en": "Activated"
+    }
+  ]
+  ,
+  "DISABLED": [
+    {
+      "fr": "Désactivé",
+      "en": "Disabled"
+    }
+  ]
+  ,
+  "CRON_STATUS": [
+    {
+      "fr": "Statut du Cron",
+      "en": "Cron Status"
+    }
+  ]
+  ,
+  "CRON_TIMER": [
+    {
+      "fr": "Dernier Cron",
+      "en": "Last Cron"
     }
   ]
 }

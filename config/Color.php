@@ -9,67 +9,6 @@ class Color
     }
 
 
-    public function liveDateRFC822($time, $fuseau)
-    {
-        date_default_timezone_set($fuseau);
-        $date = date(DATE_RFC822, $time);
-        return $date;
-    }
-
-    public function liveDateSun($time, $latitude, $longitude, $fuseau, $type)
-    {
-        date_default_timezone_set($fuseau);
-        $date = date("h:i a", date_sun_info($time, $latitude, $longitude)[$type]);
-        return $date;
-    }
-
-    public function getAPIDatas($datas, $station, $livestation)
-    {
-        $zero = '&#8709;';
-        if ($station['stat_type'] == 'live') {
-            $dat0 = $datas['sensors'][0]['data'];
-            $dat1 = $datas['sensors'][1]['data'];
-            $dat2 = $datas['sensors'][2]['data'];
-            $dat3 = $datas['sensors'][3]['data'];
-        } else {
-            $dat = $datas->davis_current_observation;
-        }
-
-
-        $data = array(
-            "time_RFC822" => ($station['stat_type'] == 'live') ? $zero : (isset($datas->observation_time_rfc822) ? $datas->observation_time_rfc822 : $zero),
-            "sunset" => ($station['stat_type'] == 'live') ? $zero : (isset($dat->sunset) ? $dat->sunset : $zero),
-            "sunrise" => ($station['stat_type'] == 'live') ? $zero : (isset($dat->sunrise) ? $dat->sunrise : $zero),
-            "time_unix" => ($station['stat_type'] == 'live') ? (isset($dat0[0]['ts']) ? $dat0[0]['ts'] : $zero) : $zero,
-            "time_zone" => ($station['stat_type'] == 'live') ? (isset($livestation['stations'][0]['time_zone']) ? $livestation['stations'][0]['time_zone'] : $zero) : $zero,
-            "latitude" => ($station['stat_type'] == 'live') ? (isset($livestation['stations'][0]['latitude']) ? $livestation['stations'][0]['latitude'] : $zero) : (isset($datas->latitude) ? $datas->latitude : $zero),
-            "longitude" => ($station['stat_type'] == 'live') ? (isset($livestation['stations'][0]['longitude']) ? $livestation['stations'][0]['longitude'] : $zero) : (isset($datas->longitude) ? $datas->longitude : $zero),
-           
-        );
-        return $data;
-    }
-
-    public function getAPIDatasUp($datas, $station, $livestation)
-    {
-
-        $timeunix = $this->getAPIDatas($datas, $station, $livestation)['time_unix'];
-        $timeRFC822 = $this->getAPIDatas($datas, $station, $livestation)['time_RFC822'];
-        $timezone = $this->getAPIDatas($datas, $station, $livestation)['time_zone'];
-        $sunset = $this->getAPIDatas($datas, $station, $livestation)['sunset'];
-        $sunrise = $this->getAPIDatas($datas, $station, $livestation)['sunrise'];
-        $latitude = $this->getAPIDatas($datas, $station, $livestation)['latitude'];
-        $longitude = $this->getAPIDatas($datas, $station, $livestation)['longitude'];
-
-
-        $data = array(
-            "time" => ($station['stat_type'] == 'live') ? $this->liveDateRFC822($timeunix, $timezone) : $timeRFC822,
-            "time_sunset" => ($station['stat_type'] == 'live') ? $this->liveDateSun($timeunix, $latitude, $longitude, $timezone, 'sunset') : $sunset,
-            "time_sunrise" => ($station['stat_type'] == 'live') ? $this->liveDateSun($timeunix, $latitude, $longitude, $timezone, 'sunrise') : $sunrise,
-        );
-        return $data;
-    }
-
-
     public function arrColor($switch, $datas, $info, $livestation)
     {
 
@@ -77,14 +16,15 @@ class Color
         $col = $switch['s_color'];
         $daynight = $switch['s_daynight'];
 
+        $this->statview = new StationView();
 
-        $time = $this->getAPIDatasUp($datas, $info, $livestation)['time'];
-        $sunset = $this->getAPIDatasUp($datas, $info, $livestation)['time_sunset'];
-        $sunrise = $this->getAPIDatasUp($datas, $info, $livestation)['time_sunrise'];
+        $time = $this->statview->getAPIDatasUp($datas, $info, $livestation)['time'];
+        $sunset = $this->statview->getAPIDatasUp($datas, $info, $livestation)['time_sunset'];
+        $sunrise = $this->statview->getAPIDatasUp($datas, $info, $livestation)['time_sunrise'];
 
-        $Ttime = $this->timeStation($time);
-        $Tsunrise = $this->timeStation($sunrise);
-        $Tsunset = $this->timeStation($sunset);
+        $Ttime = $this->statview->TimeStation($time);
+        $Tsunrise = $this->statview->TimeStation($sunrise);
+        $Tsunset = $this->statview->TimeStation($sunset);
         
 
         if ($daynight == 'on') {
@@ -486,21 +426,29 @@ class Color
     /* $value = no parseJson  */
     public function colSun($switch, $value, $datas, $info, $livestation)
     {
-        $time = $this->getAPIDatasUp($datas, $info, $livestation)['time'];
-        $sunset = $this->getAPIDatasUp($datas, $info, $livestation)['time_sunset'];
-        $sunrise = $this->getAPIDatasUp($datas, $info, $livestation)['time_sunrise'];
+        $this->statview = new StationView();
+        
+        $time = $this->statview->getAPIDatasUp($datas, $info, $livestation)['time'];
+        $sunset = $this->statview->getAPIDatasUp($datas, $info, $livestation)['time_sunset'];
+        $sunrise = $this->statview->getAPIDatasUp($datas, $info, $livestation)['time_sunrise'];
 
         $col = $this->arrColor($switch, $datas, $info, $livestation);
+
         $tcol = $col['solar'] ?? '';
         $s_col = $switch['s_color'];
+
+        $Ttime = $this->statview->TimeStation($time);
+        $Tsunrise = $this->statview->TimeStation($sunrise);
+        $Tsunset = $this->statview->TimeStation($sunset); 
+
         if ($s_col == 'neutral') {
             $color = $col['1'];
         } elseif ($s_col == 'colored') {
-            $color = ($value == '&#8709;' || $value < '0') ? $col['3'] : (($this->timeStation($time) > $this->timeStation($sunrise) && $this->timeStation($time) < $this->timeStation($sunset)) ? $col['3'] : $col['5']);
+            $color = ($value == '&#8709;' || $value < '0') ? $col['3'] : (($Ttime  > $Tsunrise && $Ttime  < $Tsunset) ? $col['3'] : $col['5']);
         } elseif ($s_col == 'dynamic') {
             if ($value == '&#8709;' || $value < '0') {
                 $color =  $col['error'];
-            } elseif ($this->timeStation($time) > $this->timeStation($sunrise) && $this->timeStation($time) < $this->timeStation($sunset)) {
+            } elseif ($Ttime  > $Tsunrise && $Ttime  < $Tsunset) {
                 if ($value >= '2000') {
                     $color =  $tcol['26'];
                 } elseif ($value >= '1500' && $value < '2000') {
@@ -566,21 +514,29 @@ class Color
     /* $value = no parseJson  */
     public function colUV($switch, $value, $datas, $info, $livestation)
     {
-        $time = $this->getAPIDatasUp($datas, $info, $livestation)['time'];
-        $sunset = $this->getAPIDatasUp($datas, $info, $livestation)['time_sunset'];
-        $sunrise = $this->getAPIDatasUp($datas, $info, $livestation)['time_sunrise'];
+        $this->statview = new StationView();
+        
+        $time = $this->statview->getAPIDatasUp($datas, $info, $livestation)['time'];
+        $sunset = $this->statview->getAPIDatasUp($datas, $info, $livestation)['time_sunset'];
+        $sunrise = $this->statview->getAPIDatasUp($datas, $info, $livestation)['time_sunrise'];
 
         $col = $this->arrColor($switch, $datas, $info, $livestation);
+
         $tcol = $col['uv'] ?? '';
         $s_col = $switch['s_color'];
+
+        $Ttime = $this->statview->TimeStation($time);
+        $Tsunrise = $this->statview->TimeStation($sunrise);
+        $Tsunset = $this->statview->TimeStation($sunset); 
+
         if ($s_col == 'neutral') {
             $color = $col['1'];
         } elseif ($s_col == 'colored') {
-            $color = ($value == '&#8709;' || $value < '0') ? $col['3'] : (($this->timeStation($time) > $this->timeStation($sunrise) && $this->timeStation($time) < $this->timeStation($sunset)) ? $col['3'] : $col['5']);
+            $color = ($value == '&#8709;' || $value < '0') ? $col['3'] : (($Ttime > $Tsunrise && $Ttime < $Tsunset) ? $col['3'] : $col['5']);
         } elseif ($s_col == 'dynamic') {
             if ($value == '&#8709;' || $value < '0') {
                 $color =  $col['error'];
-            } elseif ($this->TimeStation($time) > $this->TimeStation($sunrise) && $this->TimeStation($time) < $this->TimeStation($sunset)) {
+            } elseif ($Ttime > $Tsunrise && $Ttime < $Tsunset) {
 
                 if ($value >= '16') {
                     $color = $tcol['18'];
@@ -938,13 +894,6 @@ class Color
         return $page;
     }
 
-    public function timeStation($datas)
-    {
-        $tmp_date = date_create($datas);
-        if (isset($tmp_date)) {
-            $time = date_format($tmp_date, "Hi");
-        }
-        return $time;
-    }
+
 
 }
