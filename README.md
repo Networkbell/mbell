@@ -15,7 +15,7 @@ Exemple de station météo utilisant mbell à cette adresse : http://www.meteobe
 
 # Prérequis (FR)
 
-- Disposer d'une station météo de la marque Davis Instruments avec datalogger IP (weatherlink v1 et v2) ou connexion USB (weatherlink v2)
+- Disposer d'une station météo de la marque Davis Instruments avec datalogger IP (weatherlink v1 et v2), connexion USB (weatherlink v2) ou Weatherlink Live.
 - Disposer d'un hébergement internet
 - Disposer d'1 base de données sur son hébergement internet
 
@@ -49,9 +49,27 @@ NOTE 2 : les informations de connexions à votre base de données vous sont four
 NOTE 1 : La base de données en local doit avoir comme propriétés : Adresse = localhost / Utilisateur = root / Pas besoin de mot de passe / Comme pour l'installation Internet, le nom de la base de données doit être créé au préalable avec PHPMyAdmin (même procédure)
 
 
- # Version 2.1
- 
- - 2.0  - Initial Release
- - 2.0a - Fix : Root Link - Change the root link
- - 2.0b - Fix : Github Footer Link - Change the footer link to Github
- - 2.1  - Addon : Weatherlink Live
+ # Versions
+
+    2.0 (-0.55) - Initial Release
+    2.1 (-0.58) - Addon : Weatherlink Live
+
+Version actuelle = Publique 2.1 (Développement -0.58)
+
+
+# Problèmes connus
+
+ ## Général :
+
+- bug introduit avec la version 2.1 : si vous ajoutez une station dans "Changer Station" un message d'erreur PHP a lieu, mais la station est bien ajoutée (sera réparé dans la prochaine version)
+
+## Avec Weatherlink Live :
+
+- Toutes les infos de stations ne sont pas proposés, je recherche des personnes possédant ce type de sondes auxiliaires, afin de réaliser des tests et les ajouter à Mbell :
+
+1. Station Météo Auxiliaire de Température Air-Eau-Sol (6372)
+2. Station Météo Auxiliaire de Température & Humidité de l'Air (6382)
+3. Station Météo Auxiliaire Humectation du Feuillage / Température & Humidité du Sol (6345)
+
+- L'API Weatherlink Live en gratuite est très basique et possède beaucoup moins d'informations proposées qu'auparavant, je ne peux donc afficher toutes les informations que Mbell propose avec les API précédentes, le template Mbell a été donc allégé en conséquence.
+- Un bug provenant de weatherlink lui-même rend aléatoire la génération de leur API et provoque alors des bugs sur certaines stations. (une méthode pour contourner ce problème, sera effective dans la prochaine version) 
