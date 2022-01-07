@@ -69,13 +69,15 @@ class InstallModel extends Model
         $live_secret = $paramPost['stat_livesecret'];
         $live_id = $this->getStationID($live_key, $live_secret, $stat_type);
         $stat_active = 1;
-       
+
 
         try {
             $req = "INSERT INTO $station_tab VALUES(
             NULL, :stat_type, :stat_did, :stat_key,  
             :stat_users, :stat_password, :stat_token, 
-            :stat_livekey, :stat_livesecret, :stat_liveid, :stat_active, :user_id
+            :stat_livekey, :stat_livesecret, :stat_liveid, 
+            :stat_wxurl, :stat_wxid, :stat_wxkey, :stat_wxsign,
+            :stat_active, :user_id
             )";
 
             $this->requete = $this->connexion->prepare($req);
@@ -88,6 +90,10 @@ class InstallModel extends Model
             $this->requete->bindParam(':stat_livekey', $live_key);
             $this->requete->bindParam(':stat_livesecret', $live_secret);
             $this->requete->bindParam(':stat_liveid', $live_id);
+            $this->requete->bindParam(':stat_wxurl', $paramPost['stat_wxurl']);
+            $this->requete->bindParam(':stat_wxid', $paramPost['stat_wxid']);
+            $this->requete->bindParam(':stat_wxkey', $paramPost['stat_wxkey']);
+            $this->requete->bindParam(':stat_wxsign', $paramPost['stat_wxsign']);
             $this->requete->bindParam(':stat_active', $stat_active);
             $this->requete->bindParam(':user_id', $paramPost['user_id']);
 
@@ -230,6 +236,10 @@ class InstallModel extends Model
                 stat_livekey varchar(60) NOT NULL default '',
                 stat_livesecret varchar(60) NOT NULL default '',
                 stat_liveid varchar(60) NOT NULL default '',
+                stat_wxurl varchar(60) NOT NULL default '', 
+                stat_wxid varchar(60) NOT NULL default '', 
+                stat_wxkey varchar(60) NOT NULL default '', 
+                stat_wxsign varchar(60) NOT NULL default '',               
                 stat_active tinyint(1) NOT NULL default 0,
                 user_id int(11) NOT NULL,
                 CONSTRAINT PK_stat_id PRIMARY KEY (stat_id),
@@ -345,7 +355,7 @@ class InstallModel extends Model
 
     public function dropBDD()
     {
-
+        //on ne supprime jamais la table mb_data
         if (file_exists($this->file_admin)) {
             require $this->file_admin;
             try {
@@ -379,7 +389,12 @@ class InstallModel extends Model
         }
     }
 
-
+    /**
+     * Supression de la table
+     *
+     * @param [string] $tab
+     * @return string
+     */
     public function dropTab($tab)
     {
         $drop_tab = "DROP TABLE IF EXISTS $tab";
@@ -409,17 +424,126 @@ class InstallModel extends Model
     }
 
     /**
-     * Défini Mbell comme étant installé
+     * Défini Mbell comme étant installé avec numéro de version installé
      * 
      * @return void
      */
     public function InstallTrue()
     {
         require $this->file_admin;
+        $version = $this->dispatcher->versionNumURL(false);
+        $version_string = strval($version);
 
-        // Injection dans admin.php de installed_true
+        // Injection dans admin.php de $installed et $version_installed
         $file_content = file_get_contents($this->file_admin);
-        $file_content = str_replace('{installed_false}', 'installed_true', $file_content);
+        $file_content = str_replace($installed, 'yes', $file_content);
+        $file_content = str_replace($version_installed, $version_string, $file_content);
         file_put_contents($this->file_admin, $file_content);
+        return $version_installed;
     }
+
+    /**
+     * Défini Mbell comme étant installé avec numéro de version installé
+     * 
+     * @return void
+     */
+    public function InstallNo()
+    {
+        require $this->file_admin;
+        // Injection dans admin.php de $version_installed
+        $file_content = file_get_contents($this->file_admin);
+
+        $file_content = str_replace($installed, 'no', $file_content);
+        file_put_contents($this->file_admin, $file_content);
+        return $installed;
+    }
+
+
+    /**
+     * Maj de 2.0 à 2.1 
+     *
+     * @return boolean
+     */
+    public function Maj20To21()
+    {
+        require $this->file_admin;
+        $station_tab = $table_prefix . 'station';
+        try {
+            $req = "ALTER TABLE $station_tab
+            ADD COLUMN stat_livekey varchar(60) NOT NULL default '' AFTER stat_token,
+            ADD COLUMN stat_livesecret varchar(60) NOT NULL default '' AFTER stat_livekey,
+            ADD COLUMN stat_liveid varchar(60) NOT NULL default '' AFTER stat_livesecret
+            ";
+            $this->requete = $this->connexion->prepare($req);
+            $result = $this->requete->execute();
+            $row = ($result) ? 1 : null;
+        } catch (Exception $e) {
+            if (MB_DEBUG) {
+                var_dump($e->getMessage());
+            }
+            $row = null;
+        }
+        return $row;
+    }
+
+    /**
+     * Maj de 2.1 à 2.2 
+     *
+     * @return boolean
+     */
+    public function Maj21To22()
+    {
+        require $this->file_admin;
+        $config_tab = $table_prefix . 'config';
+        $data_tab = $table_prefix . 'data';
+        try {
+            $req1 = "ALTER TABLE $config_tab
+            ADD COLUMN config_cron tinyint(1) NOT NULL default 0 AFTER config_icon
+            ";
+            $req2 = $this->createData($data_tab, DB_CHARSET);
+            $this->requete = $this->connexion->prepare($req1);
+            $result1 = $this->requete->execute();
+            $this->requete = $this->connexion->prepare($req2);
+            $result2 = $this->requete->execute();            
+            $row = ($result1 && $result2) ? 1 : null;
+        } catch (Exception $e) {
+            if (MB_DEBUG) {
+                var_dump($e->getMessage());
+            }
+            $row = null;
+        }
+        return $row;
+    }
+
+
+     /**
+     * Maj de 2.2 à 2.3
+     *
+     * @return boolean
+     */
+    public function Maj22To23()
+    {
+        require $this->file_admin;
+        $station_tab = $table_prefix . 'station';
+        try {
+            $req = "ALTER TABLE $station_tab
+            ADD COLUMN stat_wxurl varchar(60) NOT NULL default '' AFTER stat_liveid,
+            ADD COLUMN stat_wxid varchar(60) NOT NULL default '' AFTER stat_wxurl,
+            ADD COLUMN stat_wxkey varchar(60) NOT NULL default '' AFTER stat_wxid,
+            ADD COLUMN stat_wxsign varchar(60) NOT NULL default '' AFTER stat_wxkey
+            ";
+            $this->requete = $this->connexion->prepare($req);
+            $result = $this->requete->execute();           
+            $row = ($result) ? 1 : null;
+        } catch (Exception $e) {
+            if (MB_DEBUG) {
+                var_dump($e->getMessage());
+            }
+            $row = null;
+        }
+        return $row;
+    }
+
+
+    
 }

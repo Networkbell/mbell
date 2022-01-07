@@ -7,7 +7,7 @@ class PrefModel extends Model
     }
 
 
- 
+
 
 
 
@@ -16,7 +16,8 @@ class PrefModel extends Model
      * 
      * @return boolean
      */
-    public function updateConfig($config){
+    public function updateConfig($config)
+    {
 
         require $this->file_admin;
         $config_tab = $table_prefix . 'config';
@@ -26,15 +27,15 @@ class PrefModel extends Model
         $aux1 = isset($config['var_aux1']) ? 1 : 0;
         $aux2 = isset($config['var_aux2']) ? 1 : 0;
         $aux3 = isset($config['var_aux3']) ? 1 : 0;
-        
+
         try {
-            $this->requete= $this->connexion->prepare($req);
+            $this->requete = $this->connexion->prepare($req);
             $this->requete->bindParam(':config_id', $config['config_id']);
             $this->requete->bindParam(':config_sun', $config['var_sun']);
             $this->requete->bindParam(':config_aux1', $aux1);
             $this->requete->bindParam(':config_aux2', $aux2);
             $this->requete->bindParam(':config_aux3', $aux3);
-            $result = $this->requete->execute(); 
+            $result = $this->requete->execute();
             $row = ($result) ? 1 : null;
             return $row;
         } catch (Exception $e) {
@@ -47,21 +48,22 @@ class PrefModel extends Model
     }
 
 
-        /**
+    /**
      * Modification dans la BDD "config" des zones Default
      * 
      * @return boolean
      */
-    public function updateDefault($config){
+    public function updateDefault($config)
+    {
 
         require $this->file_admin;
         $config_tab = $table_prefix . 'config';
 
         $req = "UPDATE $config_tab SET config_lang = :config_lang, config_temp = :config_temp, config_wind = :config_wind, config_rain = :config_rain, config_press = :config_press, config_css = :config_css, config_daynight = :config_daynight, config_color = :config_color, config_icon = :config_icon WHERE config_id = :config_id";
 
-        
+
         try {
-            $this->requete= $this->connexion->prepare($req);
+            $this->requete = $this->connexion->prepare($req);
             $this->requete->bindParam(':config_id', $config['config_id']);
             $this->requete->bindParam(':config_lang', $config['var_lang']);
             $this->requete->bindParam(':config_temp', $config['var_temp']);
@@ -72,8 +74,8 @@ class PrefModel extends Model
             $this->requete->bindParam(':config_daynight', $config['var_daynight']);
             $this->requete->bindParam(':config_color', $config['var_color']);
             $this->requete->bindParam(':config_icon', $config['var_icon']);
-           /* $this->requete->bindParam(':config_cron', $config['var_cron']);*/ // inutile d'updater ici config_cron
-            $result = $this->requete->execute(); 
+            /* $this->requete->bindParam(':config_cron', $config['var_cron']);*/ // inutile d'updater ici config_cron
+            $result = $this->requete->execute();
             $row = ($result) ? 1 : null;
             return $row;
         } catch (Exception $e) {
@@ -85,24 +87,25 @@ class PrefModel extends Model
         }
     }
 
-     /**
+    /**
      * Modification dans la BDD "tab" de la zone lines
      * 
      * @return boolean
      */
-    public function updateLines($tab){
+    public function updateLines($tab)
+    {
 
         require $this->file_admin;
         $tab_tab = $table_prefix . 'tab';
 
         $req = "UPDATE $tab_tab SET tab_lines = :tab_lines WHERE tab_id = :tab_id";
 
-        
+
         try {
-            $this->requete= $this->connexion->prepare($req);
+            $this->requete = $this->connexion->prepare($req);
             $this->requete->bindParam(':tab_id', $tab['tab_id']);
             $this->requete->bindParam(':tab_lines', $tab['var_lines']);
-            $result = $this->requete->execute(); 
+            $result = $this->requete->execute();
             $row = ($result) ? 1 : null;
             return $row;
         } catch (Exception $e) {
@@ -116,12 +119,13 @@ class PrefModel extends Model
 
 
 
-     /**
+    /**
      * Modification dans la BDD "tab" des zones tab_1a à tab_10c
      * 
      * @return boolean
      */
-    public function updateTab($tab){
+    public function updateTab($tab)
+    {
 
         require $this->file_admin;
         $tab_tab = $table_prefix . 'tab';
@@ -138,9 +142,9 @@ class PrefModel extends Model
          tab_9a = :tab_9a, tab_9b = :tab_9b, tab_9c = :tab_9c, 
          tab_10a = :tab_10a, tab_10b = :tab_10b, tab_10c = :tab_10c 
          WHERE tab_id = :tab_id";
-       
+
         try {
-            $this->requete= $this->connexion->prepare($req);
+            $this->requete = $this->connexion->prepare($req);
             $this->requete->bindParam(':tab_id', $tab['tab_id']);
             $this->requete->bindParam(':tab_1a', $tab['tab_1a']);
             $this->requete->bindParam(':tab_1b', $tab['tab_1b']);
@@ -172,7 +176,7 @@ class PrefModel extends Model
             $this->requete->bindParam(':tab_10a', $tab['tab_10a']);
             $this->requete->bindParam(':tab_10b', $tab['tab_10b']);
             $this->requete->bindParam(':tab_10c', $tab['tab_10c']);
-            $result = $this->requete->execute(); 
+            $result = $this->requete->execute();
             $row = ($result) ? 1 : null;
             return $row;
         } catch (Exception $e) {
@@ -183,6 +187,59 @@ class PrefModel extends Model
             return $row;
         }
     }
-
-    
+/**
+ * CURL de downlaod ZIP
+ * MAJ MBELL
+ *
+ * @param [float] $version
+ * @param [string] $zipFile
+ * @return string
+ */
+    public function downloadZip($version, $zipFile)
+    {
+        $ver = str_replace(".", "_", strval($version));
+        $version_url = 'v' . $ver . 'mbell.zip';
+        $url = 'http://www.meteobell.com/fichiers/zip/' . $version_url;
+        $zipResource = fopen($zipFile, "w");
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, $url);
+        curl_setopt($ch, CURLOPT_FAILONERROR, true);
+        curl_setopt($ch, CURLOPT_HEADER, 0);
+        curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+        curl_setopt($ch, CURLOPT_AUTOREFERER, true);
+        curl_setopt($ch, CURLOPT_TIMEOUT, 10);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
+        curl_setopt($ch, CURLOPT_FILE, $zipResource);
+        $page = curl_exec($ch);
+        if (!$page) {
+            $rep = "Error :- " . curl_error($ch);
+        } else {
+            $rep = false;
+        }
+        curl_close($ch);
+        return $rep;
+    }
+    /**
+     * Extract ZIP Archive
+     * MAJ MBELL
+     *
+     * @param [string] $zipFile
+     * @return string
+     */
+    public function extractZip($zipFile)
+    {
+        require $this->file_admin;
+        $zip = new ZipArchive;
+        $extractPath = $dir;
+        $open = $zip->open($zipFile);
+        if ($open == true) {
+            $zip->extractTo($extractPath);
+            $zip->close();
+            $rep = false;
+        } else {
+            $rep = "Error :- " . $zip->getStatusString();
+        }
+        return $rep;
+    }
 }

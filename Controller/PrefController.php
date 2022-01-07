@@ -21,7 +21,7 @@ class PrefController extends Controller
     public function listAction()
     {
         $active = $this->paramStat->getStationActive();
-        $liveStation = ($active['stat_type']=='live') ? $this->model->getLiveAPIStation($active['stat_livekey'], $active['stat_livesecret']): '';   
+        $liveStation = ($active['stat_type'] == 'live') ? $this->model->getLiveAPIStation($active['stat_livekey'], $active['stat_livesecret']) : '';
         $paramJson = $this->paramStat->getAPI();
         $config = $this->model->getConfigActive();
         $tab = $this->model->getTabActive();
@@ -81,4 +81,35 @@ class PrefController extends Controller
     }
 
 
+    /**
+     * $reponse return string si erreur, sinon retourne false
+     *
+     * @return void
+     */
+    public function patchAction()
+    {
+        $lg = $this->l->getLg();
+        $version = $this->dispatcher->versionNumURL(true);
+        $zipFile = 'mbellmaj.zip';
+        $reponse1 = $this->model->downloadZip($version, $zipFile);
+        if (!$reponse1) {
+            $reponse2 =  $this->model->extractZip($zipFile);
+            if (!$reponse2) {
+                header('location:index.php?controller=install&action=maj&lg=' . $lg);
+            } else {
+                if (MB_DEBUG) {
+                    var_dump($reponse2);
+                } else {
+                    header('location:index.php?controller=pref&action=error&lg=' . $lg);
+                }
+            }
+            unlink($zipFile);
+        } else {
+            if (MB_DEBUG) {
+                var_dump($reponse1);
+            } else {
+                header('location:index.php?controller=pref&action=error&lg=' . $lg);
+            }
+        }
+    }
 }

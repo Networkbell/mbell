@@ -43,7 +43,7 @@ class ChangeView extends View
         $this->page = str_replace('{LOGOUT2}',  $this->l->trad('LOGOUT2'), $this->page);
     }
 
-    public function changeList($infoV1, $infoV2, $infoLive, $station, $datas, $livestation)
+    public function changeList($infoV1, $infoV2, $infoLive, $infoWeewx, $station, $datas, $livestation)
     {
         $location = $this->statview->getAPIDatas($datas, $station, $livestation)['location'];
         $station_id = $this->statview->getAPIDatas($datas, $station, $livestation)['station_id'];
@@ -74,22 +74,22 @@ class ChangeView extends View
         $this->page .= $this->getInfo($param['CHANGE_INFO_2']);
         if ($station['stat_type'] == 'v1') {
             $this->page .= $this->getListInfov1($param);
-        }
-        if ($station['stat_type'] == 'v2') {
+        } elseif ($station['stat_type'] == 'v2') {
             $this->page .= $this->getListInfov2($param);
-        }
-        if ($station['stat_type'] == 'live') {
+        } elseif ($station['stat_type'] == 'live') {
             $this->page .= $this->getListInfoLive($param);
+        } elseif ($station['stat_type'] == 'weewx') {
+            $this->page .= $this->getListInfoWx($param);
         }
         $this->page .= '</section>';
         $this->page .= '<section>';
         $this->page .= '<h1>' . $this->l->trad('TITLE_CHANGE') . ' ' . $_SESSION['user_login'] . '</h1>';
-        
+
         $this->page .= "<table class='table table-striped table-bordered'>";
         $x1 = 1;
         //$lenght1 = count($infoV1); //compte si on est arrivé en bas du tableau
-        foreach ($infoV1 as $listv1 ) {          
-            $idv1  = $listv1 ['stat_id'];
+        foreach ($infoV1 as $listv1) {
+            $idv1  = $listv1['stat_id'];
             if ($x1  === 1) {
                 $this->page .= "<thead>";
                 $this->page .= "<tr>";
@@ -105,10 +105,10 @@ class ChangeView extends View
             $this->page .= "<tbody>";
             $this->page .= "<tr>";
             $this->page .= "<td>" . $idv1  . "</td>";
-            $this->page .= "<td>" . $listv1 ['stat_type'] . "</td>";
-            $this->page .= "<td>" . $listv1 ['stat_did'] . "</td>";
-            $this->page .= "<td>" . $listv1 ['stat_key'] . "</td>";
-            $this->page .= "<td>" . $listv1 ['stat_users'] . "</td>";
+            $this->page .= "<td>" . $listv1['stat_type'] . "</td>";
+            $this->page .= "<td>" . $listv1['stat_did'] . "</td>";
+            $this->page .= "<td>" . $listv1['stat_key'] . "</td>";
+            $this->page .= "<td>" . $listv1['stat_users'] . "</td>";
             $this->page .= "<td class='td_button' ><a title='" . $param['UPDATE_INFO'] . "' class='text-primary' href='index.php?controller=change&action=update&stat_id=$idv1'><i class='fas fa-pen-square'></i></a> ";
             $this->page .= "<a class='text-secondary' title='" . $param['DELETE_INFO'] . "' href='index.php?controller=change&action=delete&stat_id=$idv1&lg=$lg'><i class='fas fa-trash-alt'></i></a>";
             $this->page .= "<a class='lock_unlock text-danger' title='" . $param['ACTIVE_INFO'] . "' href='index.php?controller=change&action=active&stat_id=$idv1&lg=$lg'><i class='fas fa-toggle-off icon-unlock'></i><i class='fas fa-toggle-on icon-lock'></i></a></td>";
@@ -119,7 +119,7 @@ class ChangeView extends View
         $this->page .= "</table>";
         $this->page .= "<table class='table table-striped table-bordered'>";
         $x2 = 1;
-        foreach ($infoV2 as $listv2) {          
+        foreach ($infoV2 as $listv2) {
             $idv2 = $listv2['stat_id'];
             if ($x2  === 1) {
                 $this->page .= "<thead>";
@@ -152,7 +152,7 @@ class ChangeView extends View
         $this->page .= "</table>";
         $this->page .= "<table class='table table-striped table-bordered'>";
         $x3 = 1;
-        foreach ($infoLive as $listv3) {         
+        foreach ($infoLive as $listv3) {
             $idv3 = $listv3['stat_id'];
             if ($x3  === 1) {
                 $this->page .= "<thead>";
@@ -180,7 +180,7 @@ class ChangeView extends View
             $this->page .= "</tbody>";
             $x3++;
         }
-        $this->page .= "</table>";     
+        $this->page .= "</table>";
 
         $this->page .= $this->getButton($this->l->getLg(), 'change', 'choose', $this->l->trad('ADD_STATION'));
         $this->page .= '</section>';
@@ -188,7 +188,7 @@ class ChangeView extends View
         $this->display();
     }
 
-    public function addStation($station, $paramGet)
+    public function addStationView($station, $paramGet)
     {
         $item = $paramGet['user_id'];
 
@@ -200,6 +200,7 @@ class ChangeView extends View
             "3" => $this->l->trad('STATION_SELECT_V1'),
             "4" => $this->l->trad('STATION_SELECT_V2'),
             "5" => $this->l->trad('STATION_SELECT_LIVE'),
+            "6" => $this->l->trad('STATION_SELECT_WX'),
             "STATION_STEP6_P1" => $this->l->trad('STATION_STEP6_P1'),
             "STATION_STEP6_P2" => $this->l->trad('STATION_STEP6_P2'),
             "INFO_STATION" => $this->l->trad('INFO_STATION'),
@@ -216,6 +217,10 @@ class ChangeView extends View
             "_VAL_STAT_LIVESECRET" => '',
             "_VAL_STAT_LIVEID" => '',
             "_VAL_STAT_ID" => '',
+            "_VAL_STAT_WXURL" => '',
+            "_VAL_STAT_WXID" => '',
+            "_VAL_STAT_WXKEY" => '',
+            "_VAL_STAT_WXSIGN" => '',
             "STATION_BUTTON" => $this->l->trad('ADD_STATION')
 
         );
@@ -247,6 +252,7 @@ class ChangeView extends View
             "3" => $this->l->trad('STATION_SELECT_V1'),
             "4" => $this->l->trad('STATION_SELECT_V2'),
             "5" => $this->l->trad('STATION_SELECT_LIVE'),
+            "6" => $this->l->trad('STATION_SELECT_WX'),
             "STATION_STEP6_P1" => $this->l->trad('STATION_STEP6_P1'),
             "STATION_STEP6_P2" => $this->l->trad('STATION_STEP6_P2'),
             "INFO_STATION" => $this->l->trad('INFO_STATION'),
@@ -263,6 +269,10 @@ class ChangeView extends View
             "_VAL_STAT_LIVESECRET" => $station['stat_livesecret'],
             "_VAL_STAT_LIVEID" => $station['stat_liveid'],
             "_VAL_STAT_ID" => $station['stat_id'],
+            "_VAL_STAT_WXURL" => $station['stat_wxurl'],
+            "_VAL_STAT_WXID" => $station['stat_wxid'],
+            "_VAL_STAT_WXKEY" => $station['stat_wxkey'],
+            "_VAL_STAT_WXSIGN" => $station['stat_wxsign'],
             "STATION_BUTTON" => $this->l->trad('UPDATE_STATION')
 
         );

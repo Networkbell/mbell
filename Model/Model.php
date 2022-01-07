@@ -10,6 +10,7 @@ abstract class Model
 
     public function __construct()
     {
+       $this->dispatcher = new Dispatcher;
         $this->l = new Lang();
         $this->file_admin = 'config/admin.php';
 
@@ -47,7 +48,7 @@ abstract class Model
      */
     public function getStation()
     {
-        $station = (isset($_GET['station']) ? ((in_array($_GET['station'], array('v0', 'v1', 'v2', 'live'))) ? $_GET['station'] : 'v0') : 'v0');
+        $station = (isset($_GET['station']) ? ((in_array($_GET['station'], array('v0', 'v1', 'v2', 'live', 'weewx'))) ? $_GET['station'] : 'v0') : 'v0');
         return $station;
     }
 
@@ -356,7 +357,7 @@ abstract class Model
     }
 
 
-        /**
+    /**
      * Selection d'un élément dans la BDD config et de la station associé
      * 
      * @return type(string, int)
@@ -390,9 +391,9 @@ abstract class Model
 
 
 
-    
 
-        /**
+
+    /**
      * Selection d'un élément dans la BDD tab et de la station associé
      * 
      * @return type(string, int)
@@ -408,7 +409,7 @@ abstract class Model
         $stat_active = 1;
 
         $req = "SELECT tab_id, tab_lines, tab_1a, tab_1b, tab_1c, tab_2a, tab_2b, tab_2c, tab_3a, tab_3b, tab_3c, tab_4a, tab_4b, tab_4c, tab_5a, tab_5b, tab_5c, tab_6a, tab_6b, tab_6c, tab_7a, tab_7b, tab_7c, tab_8a, tab_8b, tab_8c, tab_9a, tab_9b, tab_9c, tab_10a, tab_10b, tab_10c, $tab_statid FROM $tab_tab INNER JOIN $station_tab ON $tab_statid = $stat_statid WHERE stat_active = :stat_active";
-        
+
         try {
             $this->requete = $this->connexion->prepare($req);
             $this->requete->bindParam(':stat_active', $stat_active);
@@ -425,4 +426,6 @@ abstract class Model
             }
         }
     }
+
+
 }

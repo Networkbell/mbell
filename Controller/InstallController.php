@@ -13,6 +13,7 @@ class InstallController extends Controller
         $this->view = new InstallView();
         $this->model = new InstallModel();
         $this->paramStat = new StationModel();
+        
 
         parent::__construct();
     }
@@ -85,6 +86,8 @@ class InstallController extends Controller
     }
     public function step6Action()
     {
+        $this->model->truncateTable('tab');
+        $this->model->truncateTable('config');
         $this->model->truncateTable('station');
         $user = $this->model->getUserSession();
         $station = $this->model->getStation();
@@ -93,7 +96,9 @@ class InstallController extends Controller
 
     public function step7Action()
     {
-        $lg = $this->l->getLg();       
+
+        $lg = $this->l->getLg();
+
         $response = $this->model->addStation($this->paramPost);
         //var_dump($response);
         if ($response) {
@@ -131,15 +136,118 @@ class InstallController extends Controller
     public function step8Action()
     {
         $active = $this->paramStat->getStationActive();
-        $paramJson = $this->paramStat->getAPI();       
-        $liveStation = ($active['stat_type']=='live') ? $this->model->getLiveAPIStation($active['stat_livekey'], $active['stat_livesecret']): '';    
+        $paramJson = $this->paramStat->getAPI();
+        $liveStation = ($active['stat_type'] == 'live') ? $this->model->getLiveAPIStation($active['stat_livekey'], $active['stat_livesecret']) : '';
         $this->view->InstallMain8($active, $paramJson, $liveStation);
     }
 
     public function step9Action()
     {
-        $this->model->InstallTrue();
+        require $this->file_admin;
+        $response =  $this->model->InstallTrue();
         $lg = $this->l->getLg();
-        header('location:index.php?controller=pref&action=list&lg=' . $lg);
+        if ($response) {
+            header('location:index.php?controller=pref&action=list&lg=' . $lg);
+        }
+    }
+
+    /**
+     * Système de réinstallation avec mise en place de maj futur
+     * Effectif à partir de version 2.3 pour version installé inférieur à 2.3
+     *
+     * @return void
+     */
+    public function errorAction()
+    {
+        //on supprime toutes les tables (sauf mb_data) et le fichier admin.php
+        $this->model->dropBDD();
+        $this->view->InstallError();
+    }
+
+
+    public function majAction()
+    {
+        $this->view->InstallMaj();
+    }
+    /**
+     * Système de maj
+     * Effectif à partir de version 2.4 pour version installé à partir de 2.3
+     *
+     * @return header
+     */
+    public function majstepAction()
+    {
+        $lg = $this->l->getLg();
+        require 'config/version.txt';
+        $version = $this->dispatcher->versionNumURL(false);
+        $version_installed = (isset($version_installed)) ? floatval($version_installed) : ($version + 1);
+
+        //EXEMPLE SI SYSTEME DE PATCH AVAIT ETE MIS DES LA V2.0
+        /*
+        $valid1 = true;
+        $valid2 = ($version_installed >= 2.1) ? true : false;
+        $valid3 = ($version_installed >= 2.2) ? true : false;
+        $valid4 = ($version_installed >= 2.3) ? true : false;
+
+        //tous
+        if ($version >= 2.0 && $version_installed <= $version) {
+            $response1 = $this->model->InstallNo();
+            $valid1 = ($response1) ? true : false;
+        }
+        //si installed < 2.1
+        if ($version >= 2.1 && $valid1 && $version_installed <= $version && $version_installed < 2.1) {
+            $response2 = $this->model->Maj20To21();
+            $valid2 = ($response2) ? true : false;
+        }
+        //si installed < 2.2
+        if ($version >= 2.2 && $valid1 && $valid2 && $version_installed <= $version && $version_installed < 2.2) {
+            $response3 = $this->model->Maj21To22();
+            $valid3 = ($response3) ? true : false;
+        }
+        //si installed < 2.3
+        if ($version >= 2.3 && $valid1 && $valid2 && $valid3 && $version_installed <= $version && $version_installed < 2.3) {
+            $response4 = $this->model->Maj22To23();
+            $valid4 = ($response4) ? true : false;
+        }
+        else {
+            $valid1 = $valid2 = $valid3 = $valid4 = false;
+        }
+
+        if ($valid1 && $valid2 && $valid3 && $valid4) {
+            header('location:index.php?controller=install&action=step8&lg=' . $lg);
+        } else {
+            header('location:index.php?controller=install&action=error&lg=' . $lg);
+        }*/
+
+        //version_installed n'existe pas avant 2.3
+        if (!($version_installed)) {
+            header('location:index.php?controller=install&action=step8&lg=' . $lg);
+        }
+        
+        //MAJ 2.3 à dernière
+        if ($version_installed <= 2.3 && $version_installed <= $version) {
+        /*    $response1 = $this->model->Maj23To24();
+            $ver = ($response1) ? 2.4 : false;
+            $response2 = $this->model->Maj24To25();
+            $ver = ($response2) ? 2.5 : false;
+        */ }
+        if ($version_installed <= 2.4 && $version_installed <= $version) {
+     /*       $response2 = $this->model->Maj24To25();
+          $ver = ($response2) ? 2.5 : false;
+    */      }
+
+    //provisoire 
+    $ver=$version;
+        if ($ver) {
+            $rep = $this->model->InstallNo($ver);
+            if ($rep) {
+                header('location:index.php?controller=install&action=step8&lg=' . $lg);
+            } else {
+                header('location:index.php?controller=install&action=error&lg=' . $lg);
+            }
+        } else {
+            header('location:index.php?controller=install&action=error&lg=' . $lg);
+        }
+        
     }
 }

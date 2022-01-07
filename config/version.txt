@@ -1,0 +1,107 @@
+2.3
+// NE PAS DEPLACER OU SUPPRIMER LA 1ere LIGNE, MBELL L'UTLISE COMME CODE
+
+// Version 2.3-0.65 - Janvier 2022
+
+/** VERSION
+ * Dernier numéro de version de Mbell
+ * _________________________________
+ * 
+ * Sert lors de l'installation pour comparer votre version actuelle et celle que vous essayez d'installer, 
+ * si vous avez écrasé les nouveaux fichiers sans supprimer le fichier "admin.php", 
+ * ce qui est la méthode recommandé lorsqu'on veut mettre à jour mbell
+ * 
+ * Le numéro $version_installed dans admin.php se met à jour en fin d'installation à partir du fichier version.txt
+ * Le numéro $version dans version.txt est fixe est change à chaque nouvelle version de Mbell
+ * 
+ * 1. Si c'est la première fois que vous installez mbell, l'installation se poursuit normalement (pas de version à comparer puisque admin.php n'existe pas encore)
+ * 2. Si vous tentez d'installer une version plus ancienne, l'installation échoue et s'arrête
+ * 3. Si vous réinstallez la même version, Mbell considérera que vous tentez une réinstallation complète, 
+ * il supprimera toutes les tables de la bdd déjà installé (sauf mb_data), exactement comme si vous aviez supprimé le fichier admin.php ou mis $installed = 'no';
+ * Notez que supprimer le fichier admin.php réinitialise l'installation depuis le début.
+ * 4. Si vous installez une version plus récente, il s'agit d'une mise à jour, si des tables existent dans la bdd, elles ne sont pas supprimés, mais simplement mises à jour
+ */
+
+
+Mbell Version 2
+
+- 0.01 : Construction des dossiers et fichiers de base en architecture MVC/POO + 1ère ébauche des View en HTML5 et CSS Bootstrap (header, titre, corps sans SQL, footer). Home, Login, Pref.
+- 0.02 : 1er template MVC avec dispatcher et Controllers (Model vide, View simple)
+- 0.03 : Ajouts des classes mères et filles pour le controller (Controller, HomeController, LoginController, PrefController), le view (simple) et le model (vide)
+- 0.04 : Authentification avec Login sur la page pref dans le dispatcher. Ajouts de sécurité dans le dispatcher.
+- 0.05 : Ajout de InstallController et système d'installation unique si pas de connexion à base de données (avec si var.enc est vide, alors Dispatcher -> InstallController)
+- 0.06 : Optimisation du Dispatcher et des Controllers. Création de la class BddController.
+- 0.07 : Remplacement de BddController par la fonction files_exists. Création du fichier config.php. (méthode inspiré de l'installation de Wordpress)
+- 0.08 : Mise en place en MVC/POO avec Templating du script de traduction en plusieurs langues (en / fr) avec array[]. Class Lang()
+- 0.09 : Dossier lang. Utilisation de .json pour le script de traduction. Simplification des scripts de traduction.
+- 0.10 : Mise en place de l'architecture des dossiers (images, js, css, font) et 1ers designs (images + css + favicon). Création du header avec cdn (normalize, jquery, bootstrap, jasny).
+- 0.11 : Intégration du header + footer en architecture MVC avec templating et class Lang()
+- 0.12 : Création de la page d'Installation étape 1 -> Choix de langue + Habillage CSS + JQ + Création Logo + Drapeaux + Bienvenue sur Mbell + Description des étapes d'installation
+- 0.13 : Création de tous les textes de toutes les étapes de l'installation dans lg.json + polissage Installview
+- 0.14 : Polissage et optimisation de InstallView (sous-dossiers dans /template)
+- 0.15 : Création de la page d'Installation étape 2 -> Formulaire de BDD -> Tests basiques validation formulaire -> Test traitement $_POST vers -> Page d'Installation étape 3
+- 0.16 : Mis en Place du 1er Modèle addBDD() -> Création du fichier admin.php -> Tests sur la page d'installation étape 3 -> Test connexion BDD en PDO
+- 0.17 : Création Table avec Merise -> Installation Primaire de la BDD -> Test de la BDD et des tables -> Création des tables SQL -> Tests SQL -> tests SQL page d'installation étape 3 
+- 0.18 : Optimisation de la création des tables -> Test supplémentaires création des tables (si existants) -> Test avec Drop des tables avant création (pour le retour à l'étape 2)
+- 0.19 : Création de la page d'Installation étape 4 -> Formulaire LOGIN + Password + Inscritpion Bdd table user -> Redirections étape 5 -> Création de la page Login -> Vérification LOGIN + PASSWORD
+- 0.20 : Création de la page d'Installation étape 6 -> choix du type de stations (weatherlink v1 / v2) -> Formulaire de stations v1 ou v2
+- 0.21 : Texte si aucune station choisie étape 6 -> Inscription Bdd table station -> Jointure table user/station en fonction de $_session user
+- 0.22 : Création de la page d'Installation étape 7 -> Affichage Résultats avec Jointure table user/station -> Connexion à l'API en Json en fonction de la version weatherlink -> Création Model et View Station -> Récupération en json de l'API -> Tests debuging Json -> Tests Json si résultat null
+- 0.23 : Finalisation page d'installation partie 7 (texte et css) -> Tests finaux -> Lien vers page Préférence
+- 0.24 : Optimisation code partie Installation + Simplification -> Réarangement des Controllers -> (Essai de division de addBdd() : Annulé)
+- 0.25 : Création Template + View de la page Pref -> Head + Header + Zone User + Zone Station -> CSS + JQuery -> Flèches FontAwesome Dynamique -> MediaQuery du Header (Boutons FontAwesome)
+- 0.26 : View page Pref : Zone Options -> Polissage JQuery / CSS -> Model Install : AddConfig + AddTab + InstallTrue -> Modif Dispatcher + admin.php (Mbell installed) + Controller
+- 0.27 : Pilotage BDD : Affichage et Update du checkbox Options de la zone Pref (checkbox avec et sans array)
+- 0.28 : Zone Pref : Affichage html - view de la zone Default (Template : defaultForm) -> Affichage Login + Verfif Login pour la zone Pref -> Traduction lg.json zone Default
+- 0.29 : Pilotage BDD : Affichage et Update du checkradio Default de la zone Pref -> Ajout de config_lang avec getLg() dans la bdd
+- 0.30 : Zone Pref : Affichage html-css - view de la zone Lines (Template : linesForm) -> Pilotage BDD : Affichage du checkradio Lines de la zone Pref
+- 0.31 : Zone Pref : Pilotage BDD : Update du checkradio Lines -> Affichage html-css - view de la zone Tab (Template : tabSelect) + Pilotage Bdd : Affichage des Tab choisi / Système d'affichage des tab en fonction du nombre de lignes / Optimisation dans des boucles 
+- 0.32 : Traduction lg.json des 44 tabs possibles + Optimisation dans StationView -> Réalisation des Options-Select avec boucles et double array -> Pilotage BDD : Updates des selects Tab
+- 0.33 : Réalisation du Footer -> View-Controller page Home (HTML - CSS) -> Réalisation du head - header - menu -> Système Jquery Offcanvas du menu -> Menu en jasny-bootstrap + push submenu Jquery
+- 0.34 : Polissage css, mediaquery du menu burger -> Polissage Général du Menu -> Réalisation des submenus (en foreach-array) -> Traduction lg.json du Menu
+- 0.35 : Model Home : Système $_POST formulaire des sous-menus avec Cookies / En lien avec les "choix par défaut" de la bdd + Javascript auto-submit des sous-menus. Mise en boucle foreach du système.
+- 0.36 : Architecture Global Main de Home en fonction de Config-Row et Config-Tab -> Optimisation CSS et Multi Design CSS avec $switch[s_css] (pour l'instant centré sur bluedark) -> Création date + localisation du HomeTitle -> Création design général Main/Home avec mediaquery -> Création html-css des Inc_Tab du haut avec $switch[s_icon]
+- 0.37 : Mise en place d'un système de modeles des Tab (dossier inc) pour les 44 cases. Création de la fonction is_tab(). Première ébauche html des 7 modèles
+- 0.38 : Création du 1er modèle (simple) avec l'array corespondant (4 cases sur 44) -> Création html-css de Inc-Tab du milieu et du bas -> Formules vent-pluie-unités - Class config/Color (neutral + colored)
+- 0.39 : Optimisation de la class Color + création des array de Color -> Système DMY -> Création du 2nd modèle avec système DMY -> Formules temp -> 1er test avec 2nd modèle (array temp)
+- 0.40 : Finalisation de la class Color (Dynamic) - Création du modèle 8 et de quelques array (avec modèle 2)
+- 0.41 : Optimisation des modèles -> création de sous-modèles (tab_up / tab_mid / tab_down) -> transformation des cases créées en version 0.38-0.40 avec les nouveaux sous-modèles (1-2-7-13-14)
+- 0.42 : Optimisation des sous-modèles -> Construction des cases 4-5-6-45 (avec les systèmes de switch)
+- 0.43 : Construction de la case spéciale 8 (sun - uv - moon - sunset - sunrise) -> Class Moon (fonction des phases de la Lune) -> activation des tooltips
+- 0.44 : Construction de la case spéciale 3 (cloudy) et 9 (évapo) -> fonction is_sun() -> formule ETR
+- 0.45 : Construction de la case spéciale 10 (pression) + case standard 11-12 + case 0 aucun choix
+- 0.46 : OBSOLETE - Construction cases standards 15 à 23, tentative de résolution des bugs NOTICE de soucis d'isset (parseJson) -> version obsolete (trop de bugs et mauvaise direction)
+- 0.47 : A partir de 0.45 (identification du probleme de ralentissement à partir de la version 0.40). Résolution de ce bug majeur - Reconstruction des cases standards 15 à 23
+- 0.48 : Résolution du bug NOTICE de soucis d'isset (parseJson) sans alourdir le code cette fois (contrairement à la v0.46) -> résolution bug constant already defined -> resolution bug Time object
+- 0.49 : Construction des cases standards 24 à 44. Résolution des derniers bugs NOTICE.
+- 0.50 : Construction des Designs Bluelight/white/Black -> Mise en place du switch css Jour-Nuit -> Design DMY:hover (+ correction petit décalage flèche) -> Filtrage des arrays de addSelect() en fonction des options choisis
+- 0.51 : Création de clef "pepper" aléatoire dans admin.php -> chiffrement du mot de passe dans la bdd -> Résolution du bug "déconnexion login" -> quelques ajustements css pour mobile -> correction unité des intensités pluvieuse / Correction fautes d'orthographes
+- 0.52 : version finale du projet présenté à l'examen de Développeur Web
+- 0.53 : correction bug pour installation en localhost / Texte info de non-compatibilité pour WeatherlinkLive / 1ere itération controller-view de la zone ChangeStation / Affichage de la Station active avec infos / Affichage tableau des autres stations de l'user / affichage du choix v0-v1-v2 pour de nouvelles stations
+- 0.54 : CRUD add Station / update Station / delete Station 
+- 0.55 : Active ou non un profil de station - Ajout de Mbell sur Github (fichiers installation + wiki FR)
+___________
+VERSION 2.0 -0.55 : Initial Release
+
+- 0.56 : Calcul de l'ID Station avec WeatherlinkLive / Génération du nouveau système d'API avec Weatherlink Live / Changements dans la bdd stat_station / Mis à jour des formulaires et textes pour le choix WheatherLink Live / CRUD add/update Station avec Wheatherlink Live
+- 0.57 : changements des calculs datas et test datas-json (isset) pour les différentes API Json (ajout Wheatherlink Live)
+- 0.58 : ajout infos stations à Install/Pref/Change / Réorganisation du tableau dans ChangeStation par stat_type / Tests du CRUD avec la nouvelle API
+___________
+VERSION 2.1 -0.58 : Addon Weatherlink Live
+
+- 0.59 : Polissage de l'affichage avec nouvelle API Weatherlink Live suite au manque de données (record high-low notamment) / MVC Cron et 1ère ébauche du Cronjob php avec fichier test simplifié
+- 0.60 : ajout dans la BDD config du statut cron activé ou non. CRUD du Cron et lien avec station active dans ChangeStation. Bouton Activation/Désactivation dans CronView 
+- 0.61 : Création de la table mb_data et CRUD d'ajout des données météos dans mb_data - Uniformisation des données des différentes API avant envoi dans la bdd
+- 0.62 : Polissage du système CRON (cookies) - Désactivation auto du statut cron si cron désactivé (système de cookies) - Arrondi du Temps pour que le cron tombe toujours juste - prise en compte de l'écart temps serveur temps API
+- 0.63 : Résolution du bug Warning dans ChangeStation - Résolution du bug introduit par weatherlink live avec génération d'ordre de station aléatoire dans API - Polissage type de données dans mb_data - Polissage temps arrondi et temps cron avec API weatherlink live
+___________
+VERSION 2.2 -0.63 : Addon Cronjob
+
+- 0.64 : Création dans le bdd Station des tables pour Weewx et mise en place du choix de station weewx avec AddStation en phase d'Installation (weewx commencé mais mis en pause provisoirement - besoin sur l'API_MBell_Weewx)
+- 0.65 : Refonte totale du Dispatcher avec prise en charge du numéro de version - Création d'une phase View de Réinstallation et de Mise à Jour - Système de versioning modifiant la bdd depuis 2.0 jusqu'à 2.3 - Système de vérification de version disponible, téléchargé ou installé - Système de download de version - Système d'extraction de zip version - Système d'information de version dans zone Propriété avec bouton pour patcher Mbell - Refonte du fichier admin.php et nouveau fichier version.txt dans /config - Modifification dans ChangeModel pour bdd avec Weewx
+___________
+VERSION 2.3 -0.65 : Update Auto System
+
+ 
+
+

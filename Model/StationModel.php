@@ -13,7 +13,7 @@ class StationModel extends Model
 
 
 
-        /**
+    /**
      * Retourne l'URL de l'API Live current : https://api.weatherlink.com/v2/stations/
      * 
      * 
@@ -37,7 +37,7 @@ class StationModel extends Model
         }
 
         $apiSignature = hash_hmac("sha256", $data, $apiSecret);
-        $apiCurrent = "https://api.weatherlink.com/v2/current/" . $parameters["station-id"] . "?api-key=" . $parameters["api-key"] . "&api-signature=" . $apiSignature . "&t=" . $parameters["t"] ;
+        $apiCurrent = "https://api.weatherlink.com/v2/current/" . $parameters["station-id"] . "?api-key=" . $parameters["api-key"] . "&api-signature=" . $apiSignature . "&t=" . $parameters["t"];
 
 
         return $apiCurrent;
@@ -101,13 +101,13 @@ class StationModel extends Model
             $json = json_decode($data);
             $this->jsonDebug();
         }
-        if ($my_type == 'live') {            
-            $data = @file_get_contents($this->getLiveURLCurrent($my_livekey, $my_livesecret, $my_liveid));           
-            $array= json_decode($data, true);
+        if ($my_type == 'live') {
+            $data = file_get_contents($this->getLiveURLCurrent($my_livekey, $my_livesecret, $my_liveid));
+            $array = json_decode($data, true);
             $this->jsonDebug();
             $json = $this->liveAPIreduc($array);
-        }        
-        return $json;   
+        }
+        return $json;
     }
 
 
@@ -128,7 +128,7 @@ class StationModel extends Model
         $stat_active = 1;
 
         $req = "SELECT stat_id, stat_type, stat_did, stat_key, stat_users, stat_password, 
-        stat_token, stat_livekey, stat_livesecret, stat_liveid, stat_active, $stat_userid, user_login, user_password, user_email 
+        stat_token, stat_livekey, stat_livesecret, stat_liveid, stat_wxurl, stat_wxid, stat_wxkey, stat_wxsign, stat_active, $stat_userid, user_login, user_password, user_email 
         FROM $station_tab 
         INNER JOIN $user_tab 
         ON $stat_userid = $user_userid 

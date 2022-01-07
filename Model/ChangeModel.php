@@ -25,7 +25,13 @@ class ChangeModel extends Model
 
         try {
 
-            $req = "SELECT stat_id, stat_type, stat_did, stat_key, stat_users, stat_password, stat_token, stat_livekey, stat_livesecret, stat_liveid, $id_stat_station FROM $station_tab INNER JOIN $user_tab ON $id_stat_station = $id_stat_user WHERE user_login = :user_login AND stat_active = :stat_active AND stat_type = :stat_type";
+            $req = "SELECT stat_id, stat_type, stat_did, stat_key, 
+            stat_users, stat_password, stat_token, 
+            stat_livekey, stat_livesecret, stat_liveid, 
+            stat_wxurl, stat_wxid, stat_wxkey, stat_wxsign, 
+            $id_stat_station FROM $station_tab INNER JOIN $user_tab ON $id_stat_station = $id_stat_user 
+            WHERE user_login = :user_login AND stat_active = :stat_active AND stat_type = :stat_type
+            ";
 
             $this->requete = $this->connexion->prepare($req);
             $this->requete->bindParam(':user_login', $_SESSION['user_login']);
@@ -79,7 +85,7 @@ class ChangeModel extends Model
      * 
      * @return void
      */
-    public function addStation($paramPost)
+    public function addStationChange($paramPost)
     {
 
         require $this->file_admin;
@@ -95,7 +101,7 @@ class ChangeModel extends Model
             $req = "INSERT INTO $station_tab VALUES(
             NULL, :stat_type, :stat_did, :stat_key, 
             :stat_users, :stat_password, :stat_token,  
-            :stat_livekey, :stat_livesecret, :stat_liveid, :stat_active, :user_id
+            :stat_livekey, :stat_livesecret, :stat_liveid, :stat_wxurl, :stat_wxid, :stat_wxkey, :stat_wxsign, :stat_active, :user_id
             )";
 
             $this->requete = $this->connexion->prepare($req);
@@ -108,6 +114,10 @@ class ChangeModel extends Model
             $this->requete->bindParam(':stat_livekey', $live_key);
             $this->requete->bindParam(':stat_livesecret', $live_secret);
             $this->requete->bindParam(':stat_liveid', $live_id);
+            $this->requete->bindParam(':stat_wxurl', $paramPost['stat_wxurl']);
+            $this->requete->bindParam(':stat_wxid', $paramPost['stat_wxid']);
+            $this->requete->bindParam(':stat_wxkey', $paramPost['stat_wxkey']);
+            $this->requete->bindParam(':stat_wxsign', $paramPost['stat_wxsign']);
             $this->requete->bindParam(':stat_active', $stat_active);
             $this->requete->bindParam(':user_id', $paramPost['user_id']);
 
@@ -192,7 +202,8 @@ class ChangeModel extends Model
 
         $req = "UPDATE $station_tab SET stat_did = :stat_did, stat_key = :stat_key, stat_users = :stat_users, 
         stat_password = :stat_password, stat_token = :stat_token,
-        stat_livekey = :stat_livekey, stat_livesecret = :stat_livesecret, stat_liveid = :stat_liveid
+        stat_livekey = :stat_livekey, stat_livesecret = :stat_livesecret, stat_liveid = :stat_liveid,
+        stat_wxurl = :stat_wxurl, stat_wxid = :stat_wxid, stat_wxkey = :stat_wxkey, stat_wxsign = :stat_wxsign
         WHERE stat_id = :stat_id";
 
 
@@ -207,6 +218,10 @@ class ChangeModel extends Model
             $this->requete->bindParam(':stat_livekey', $live_key);
             $this->requete->bindParam(':stat_livesecret', $live_secret);
             $this->requete->bindParam(':stat_liveid', $live_id);
+            $this->requete->bindParam(':stat_wxurl', $paramPost['stat_wxurl']);
+            $this->requete->bindParam(':stat_wxid', $paramPost['stat_wxid']);
+            $this->requete->bindParam(':stat_wxkey', $paramPost['stat_wxkey']);
+            $this->requete->bindParam(':stat_wxsign', $paramPost['stat_wxsign']);
 
             $result = $this->requete->execute();
             $row = ($result) ? 1 : null;
@@ -267,7 +282,7 @@ class ChangeModel extends Model
             $this->requete->bindParam(':config_id_activate', $id_stat['stat_id']);
             $this->requete->bindParam(':config_activate', $cron_activate);
             $result4 = $this->requete->execute();
-            $row = ($result1 && $result2&& $result3&& $result4) ? 1 : null;
+            $row = ($result1 && $result2 && $result3 && $result4) ? 1 : null;
             return $row;
         } catch (Exception $e) {
             if (MB_DEBUG) {

@@ -26,7 +26,7 @@ abstract class View
         $this->l = new Lang();
         $this->col = new Color();
         $this->file_admin = 'config/admin.php';
-       
+        $this->dispatcher = new Dispatcher();
     }
 
     /**
@@ -96,7 +96,6 @@ abstract class View
 
     public function stationActive($station)
     {
-
         switch ($station) {
             case 'v0':
                 $page = $this->l->trad('NONE_CHOSEN');
@@ -106,6 +105,12 @@ abstract class View
                 break;
             case 'v2':
                 $page = $this->l->trad('STATION_SELECT_V2');;
+                break;
+            case 'live':
+                $page = $this->l->trad('STATION_SELECT_LIVE');;
+                break;
+            case 'weewx':
+                $page = $this->l->trad('STATION_SELECT_WX');;
                 break;
             default:
                 $page = $this->l->trad('NONE_CHOSEN');
@@ -155,8 +160,10 @@ abstract class View
         $this->page = str_replace('{BY}',  $this->l->trad('BY'), $this->page);
         $this->page = str_replace('{DATA_FROM}',  $this->l->trad('DATA_FROM'), $this->page);
         $this->page = str_replace('{_YEAR}',  date("Y"), $this->page);
+        $this->page = str_replace('{_VERSION}',  $this->dispatcher->version(), $this->page);
         echo $this->page;
     }
+
 
 
     /**
@@ -187,6 +194,8 @@ abstract class View
         $this->page .= $this->searchHTML('listInfo', '');
         $this->page = str_replace('{_INFO_LOGIN}',  $param['1'], $this->page);
         $this->page = str_replace('{_INFO_EMAIL}',  $param['2'], $this->page);
+        $this->page = str_replace('{VERSION}',  $this->l->trad('VERSION'), $this->page);
+        $this->page = str_replace('{_VERSION}',  $param['12'], $this->page);
         $this->page = str_replace('{LOGIN_USER_LABEL}',  $this->l->trad('LOGIN_USER_LABEL'), $this->page);
         $this->page = str_replace('{LOGIN_PASSWORD_LABEL}',  $this->l->trad('LOGIN_PASSWORD_LABEL'), $this->page);
         $this->page = str_replace('{LOGIN_EMAIL_LABEL}',  $this->l->trad('LOGIN_EMAIL_LABEL'), $this->page);
@@ -238,8 +247,28 @@ abstract class View
         $this->page = str_replace('{STATION_LIVESECRET}',  'API SECRET', $this->page);
     }
 
+    public function getListInfoWx($param)
+    {
+        $this->page .= $this->searchHTML('listInfowx', '');
+        $this->page = str_replace('{_STATION_TYPE}',  $param['3'], $this->page);
+        $this->page = str_replace('{_STATION_LOCATION}',  $param['4'], $this->page);
+        $this->page = str_replace('{_STATION_USER}',  $param['5'], $this->page);
+        $this->page = str_replace('{_STATION_WXURL}',  $param['12'], $this->page);
+        $this->page = str_replace('{_STATION_WXID}',  $param['13'], $this->page);
+        $this->page = str_replace('{_STATION_WXKEY}',  $param['14'], $this->page);
+        $this->page = str_replace('{_STATION_WXSIGN}',  $param['15'], $this->page);
+        $this->page = str_replace('{STATION_TYPE}',  $this->l->trad('STATION_TYPE'), $this->page);
+        $this->page = str_replace('{STATION_LOCATION}',  $this->l->trad('STATION_LOCATION'), $this->page);
+        $this->page = str_replace('{STATION_USER}',  $this->l->trad('STATION_USER'), $this->page);
+        $this->page = str_replace('{STATION_WXURL}',  'API URL', $this->page);
+        $this->page = str_replace('{STATION_WXID}',  'API ID', $this->page);
+        $this->page = str_replace('{STATION_WXKEY}',  'API KEY', $this->page);
+        $this->page = str_replace('{STATION_WXSIGN}',  'API SIGNATURE', $this->page);
+    }
+
     public function getFormStation($station, $param, $controll)
     {
+
         switch ($station) {
             case 'v0':
                 $page = $this->getInfo($this->l->trad('STATION_STEP6_P3'));
@@ -258,6 +287,10 @@ abstract class View
                 break;
             case 'live':
                 $page = $this->getStationLive($param);
+                $page .= $this->getSubmit($controll, $param['STATION_BUTTON']);
+                break;
+            case 'weewx':
+                $page = $this->getStationWx($param);
                 $page .= $this->getSubmit($controll, $param['STATION_BUTTON']);
                 break;
             default:
@@ -280,6 +313,7 @@ abstract class View
         $this->page = str_replace('{STATION_SELECT_V1}',  $param['3'], $this->page);
         $this->page = str_replace('{STATION_SELECT_V2}',  $param['4'], $this->page);
         $this->page = str_replace('{STATION_SELECT_LIVE}',  $param['5'], $this->page);
+        $this->page = str_replace('{STATION_SELECT_WX}',  $param['6'], $this->page);
         $this->page = str_replace('{ANY}',  $this->l->trad('ANY'), $this->page);
         $this->page = str_replace('{_LG}',  $param['_LG'], $this->page);
         $this->page = str_replace('{_CONTROLLER}',  $param['_CONTROLLER'], $this->page);
@@ -306,6 +340,10 @@ abstract class View
         $this->page = str_replace('{_VAL_STAT_LIVEKEY}',  $param['_VAL_STAT_LIVEKEY'], $this->page);
         $this->page = str_replace('{_VAL_STAT_LIVESECRET}',  $param['_VAL_STAT_LIVESECRET'], $this->page);
         $this->page = str_replace('{_VAL_STAT_LIVEID}',  $param['_VAL_STAT_LIVEID'], $this->page);
+        $this->page = str_replace('{_VAL_STAT_WXURL}',  $param['_VAL_STAT_WXURL'], $this->page);
+        $this->page = str_replace('{_VAL_STAT_WXID}',  $param['_VAL_STAT_WXID'], $this->page);
+        $this->page = str_replace('{_VAL_STAT_WXKEY}',  $param['_VAL_STAT_WXKEY'], $this->page);
+        $this->page = str_replace('{_VAL_STAT_WXSIGN}',  $param['_VAL_STAT_WXSIGN'], $this->page);
     }
     public function getStationV2($param)
     {
@@ -328,6 +366,10 @@ abstract class View
         $this->page = str_replace('{_VAL_STAT_LIVEKEY}',  $param['_VAL_STAT_LIVEKEY'], $this->page);
         $this->page = str_replace('{_VAL_STAT_LIVESECRET}',  $param['_VAL_STAT_LIVESECRET'], $this->page);
         $this->page = str_replace('{_VAL_STAT_LIVEID}',  $param['_VAL_STAT_LIVEID'], $this->page);
+        $this->page = str_replace('{_VAL_STAT_WXURL}',  $param['_VAL_STAT_WXURL'], $this->page);
+        $this->page = str_replace('{_VAL_STAT_WXID}',  $param['_VAL_STAT_WXID'], $this->page);
+        $this->page = str_replace('{_VAL_STAT_WXKEY}',  $param['_VAL_STAT_WXKEY'], $this->page);
+        $this->page = str_replace('{_VAL_STAT_WXSIGN}',  $param['_VAL_STAT_WXSIGN'], $this->page);
     }
     public function getStationLive($param)
     {
@@ -348,5 +390,37 @@ abstract class View
         $this->page = str_replace('{_VAL_STAT_LIVEKEY}',  $param['_VAL_STAT_LIVEKEY'], $this->page);
         $this->page = str_replace('{_VAL_STAT_LIVESECRET}',  $param['_VAL_STAT_LIVESECRET'], $this->page);
         $this->page = str_replace('{_VAL_STAT_LIVEID}',  $param['_VAL_STAT_LIVEID'], $this->page);
+        $this->page = str_replace('{_VAL_STAT_WXURL}',  $param['_VAL_STAT_WXURL'], $this->page);
+        $this->page = str_replace('{_VAL_STAT_WXID}',  $param['_VAL_STAT_WXID'], $this->page);
+        $this->page = str_replace('{_VAL_STAT_WXKEY}',  $param['_VAL_STAT_WXKEY'], $this->page);
+        $this->page = str_replace('{_VAL_STAT_WXSIGN}',  $param['_VAL_STAT_WXSIGN'], $this->page);
+    }
+    public function getStationWx($param)
+    {
+        $this->page .= $this->searchHTML('stationwx', 'install');
+        $this->page = str_replace('{CASE_SENSITIVE}',  $this->l->trad('CASE_SENSITIVE'), $this->page);
+        /* $this->page = str_replace('{UPPERCASE}',  $this->l->trad('UPPERCASE'), $this->page);*/
+        $this->page = str_replace('{WEEWX_URL}',  $this->l->trad('WEEWX_URL'), $this->page);
+        $this->page = str_replace('{WEEWX_URL_TEXT}',  $this->l->trad('WEEWX_URL_TEXT'), $this->page);
+        $this->page = str_replace('{WEEWX_ID}',  $this->l->trad('WEEWX_ID'), $this->page);
+        $this->page = str_replace('{WEEWX_ID_TEXT}',  $this->l->trad('WEEWX_ID_TEXT'), $this->page);
+        $this->page = str_replace('{WEEWX_KEY}',  $this->l->trad('WEEWX_KEY'), $this->page);
+        $this->page = str_replace('{WEEWX_KEY_TEXT}',  $this->l->trad('WEEWX_KEY_TEXT'), $this->page);
+        $this->page = str_replace('{WEEWX_SIGN}',  $this->l->trad('WEEWX_SIGN'), $this->page);
+        $this->page = str_replace('{WEEWX_SIGN_TEXT}',  $this->l->trad('WEEWX_SIGN_TEXT'), $this->page);
+        $this->page = str_replace('{_USER_ID}',  $param['_USER_ID'], $this->page);
+        $this->page = str_replace('{_VAL_STAT_DID}',  $param['_VAL_STAT_DID'], $this->page);
+        $this->page = str_replace('{_VAL_STAT_KEY}',  $param['_VAL_STAT_KEY'], $this->page);
+        $this->page = str_replace('{_VAL_STAT_USERS}',  $param['_VAL_STAT_USERS'], $this->page);
+        $this->page = str_replace('{_VAL_STAT_PASSWORD}',  $param['_VAL_STAT_PASSWORD'], $this->page);
+        $this->page = str_replace('{_VAL_STAT_TOKEN}',  $param['_VAL_STAT_TOKEN'], $this->page);
+        $this->page = str_replace('{_VAL_STAT_ID}',  $param['_VAL_STAT_ID'], $this->page);
+        $this->page = str_replace('{_VAL_STAT_LIVEKEY}',  $param['_VAL_STAT_LIVEKEY'], $this->page);
+        $this->page = str_replace('{_VAL_STAT_LIVESECRET}',  $param['_VAL_STAT_LIVESECRET'], $this->page);
+        $this->page = str_replace('{_VAL_STAT_LIVEID}',  $param['_VAL_STAT_LIVEID'], $this->page);
+        $this->page = str_replace('{_VAL_STAT_WXURL}',  $param['_VAL_STAT_WXURL'], $this->page);
+        $this->page = str_replace('{_VAL_STAT_WXID}',  $param['_VAL_STAT_WXID'], $this->page);
+        $this->page = str_replace('{_VAL_STAT_WXKEY}',  $param['_VAL_STAT_WXKEY'], $this->page);
+        $this->page = str_replace('{_VAL_STAT_WXSIGN}',  $param['_VAL_STAT_WXSIGN'], $this->page);
     }
 }

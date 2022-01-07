@@ -50,6 +50,7 @@ class PrefView extends View
             "9" => $info['stat_token'],
             "10" => $info['stat_livekey'],
             "11" => $info['stat_livesecret'],
+            "12" => $this->versionInstalled() . $this->versionCompare(),
             "_LG" => $this->l->getLg(),
             "SAVE" => $this->l->trad('SAVE'),
             "CHANGE_STATION" => $this->l->trad('CHANGE_STATION'),
@@ -62,21 +63,24 @@ class PrefView extends View
         $this->page .= $this->titleMenu($this->l->trad('USER_TITLE'), '0');
         $this->page .= '<div class="section_show" id="show_hide0">';
         $this->page .= $this->getListInfov0($param);
+        if (!($this->isVersionCompare())) {
+            $this->page .= $this->getButton($this->l->getLg(), 'pref', 'patch', $this->l->trad('MAJ_MBELL'));
+        }
         $this->page .= '</div>';
 
         $this->page .= $this->titleMenu($this->l->trad('STATION_TITLE'), '1');
         $this->page .= '<div class="section_show" id="show_hide1">';
         if ($info['stat_type'] == 'v1') {
             $this->page .= $this->getListInfov1($param);
-        }
-        if ($info['stat_type'] == 'v2') {
+        } elseif ($info['stat_type'] == 'v2') {
             $this->page .= $this->getListInfov2($param);
-        }
-        if ($info['stat_type'] == 'live') {
+        } elseif ($info['stat_type'] == 'live') {
             $this->page .= $this->getListInfoLive($param);
+        } elseif ($info['stat_type'] == 'weewx') {
+            $this->page .= $this->getListInfoWx($param);
         }
         $this->page .= $this->getButton($this->l->getLg(), 'change', 'list', $param['CHANGE_STATION']);
-        $this->page .= '</div>';       
+        $this->page .= '</div>';
         $this->page .= '</section>';
         $this->page .= '<section>';
         $this->page .= $this->titleMenu($this->l->trad('OPTION_TITLE'), '2');
@@ -111,7 +115,7 @@ class PrefView extends View
         $this->page .= '<div class="section_show" id="show_hide5">';
         $this->page .= $this->getInfo($this->l->trad('CRON_INFO_1'));
         $this->page .= $this->getInfo($this->l->trad('CRON_INFO_2'));
-        
+
         $this->page .= $this->getButton($this->l->getLg(), 'cron', 'list', $param['CRON_TITLE']);
         $this->page .= '</div>';
         $this->page .= '</section>';
@@ -163,36 +167,36 @@ class PrefView extends View
     {
         $addOptions = '';
         $i = 0;
-        $arr = array();       
+        $arr = array();
 
         //array_push additionne dans un tableau vide $arr les valeurs sélectionnés
 
         //si les options dans config[] sont absentes on filtre
         if ($config['config_sun'] == 'sun') {
-            array_push($arr,'23');
+            array_push($arr, '23');
         }
         if ($config['config_sun'] == 'uv') {
-            array_push($arr,'22');
+            array_push($arr, '22');
         }
-        if($config['config_sun'] == ''){
-            array_push($arr,'22','23');
+        if ($config['config_sun'] == '') {
+            array_push($arr, '22', '23');
         }
-        if ($config['config_aux1'] == '0' && $config['config_aux2'] != '1'){
-            array_push($arr,'15','16','17','18','19','20','21');
+        if ($config['config_aux1'] == '0' && $config['config_aux2'] != '1') {
+            array_push($arr, '15', '16', '17', '18', '19', '20', '21');
         }
         if ($config['config_aux2'] == '0') {
-            array_push($arr, '30','31','32','33','34','35','36');
+            array_push($arr, '30', '31', '32', '33', '34', '35', '36');
         }
         if ($config['config_aux3'] == '0') {
-            array_push($arr,'24','25','26','27','28','29','37','38','39','40','41','42');
+            array_push($arr, '24', '25', '26', '27', '28', '29', '37', '38', '39', '40', '41', '42');
         }
-        
+
         //permet de filtrer le tableau $options en enlevant $arr (définis comme clefs)
         $result = array_diff_key($options, array_flip($arr));
-            
-        foreach ($result as $key => $values) {                         
-                $addOptions .= '<option class="small1000" value="' . $key . '">' . ++$i . '- ' . $values['txt'] . '</option>';
-                $addOptions .= '<option class="large1000" value="' . $key . '">' . $i . '- ' . $values['text'] . '</option>';        
+
+        foreach ($result as $key => $values) {
+            $addOptions .= '<option class="small1000" value="' . $key . '">' . ++$i . '- ' . $values['txt'] . '</option>';
+            $addOptions .= '<option class="large1000" value="' . $key . '">' . $i . '- ' . $values['text'] . '</option>';
         }
         return $addOptions;
     }
@@ -425,5 +429,48 @@ class PrefView extends View
         return $checked;
     }
 
+    public function versionCompare()
+    {
+        $version = $this->dispatcher->versionNumURL(true);
+        if ($this->isVersionCompare()) {
+            $rep = " - vous avez la dernière version installée";
+        } elseif (!($this->isVersionCompare())) {
+            $rep = " - une version plus récente est disponible (" . $version . ")";
+        } else {
+            $rep = '';
+        }
+        return $rep;
+    }
 
+
+    public function versionInstalled()
+    {
+        require $this->file_admin;
+
+        $version = $this->dispatcher->version();
+        if ($version_installed == '{version}') {
+            $rep = $version;
+        } else {
+            $rep = $version_installed;
+        }
+        return $rep;
+    }
+
+    /**
+     * if true = version égal
+     * if false = version pas à jour
+     * return boolean
+     */
+    public function isVersionCompare()
+    {
+        require $this->file_admin;
+        $version = $this->dispatcher->versionNumURL(true);
+        if ($version == $version_installed) {
+            $rep = true;
+        } else {
+            $rep = false;
+        }
+
+        return $rep;
+    }
 }

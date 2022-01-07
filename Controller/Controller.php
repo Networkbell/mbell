@@ -20,7 +20,7 @@ require 'config/Moon.php';
 
 abstract class Controller
 {
-    protected $l;
+    
     protected $model;
     protected $view;
     protected $paramGet;
@@ -31,8 +31,8 @@ abstract class Controller
     {
 
         $this->l = new Lang();
-
-
+        $this->dispatcher = new Dispatcher();
+        $this->file_admin = 'config/admin.php';
 
         if (!empty($_GET)) {
             foreach ($_GET as $key => $value) {

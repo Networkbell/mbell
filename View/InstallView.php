@@ -45,6 +45,10 @@ class InstallView extends View
             "9" => $info['stat_token'],
             "10" => $info['stat_livekey'],
             "11" => $info['stat_livesecret'],
+            "12" => $info['stat_wxurl'],
+            "13" => $info['stat_wxid'],
+            "14" => $info['stat_wxkey'],
+            "15" => $info['stat_wxsign'],
             "MBELL_INSTALLED" => $this->l->trad('MBELL_INSTALLED'),
             "STATION_STEP7_P1" => $this->l->trad('STATION_STEP7_P1'),
             "USER_INFO" => $this->l->trad('USER_INFO'),
@@ -62,11 +66,14 @@ class InstallView extends View
         if ($info['stat_type'] == 'v1') {
             $this->page .= $this->getListInfov1($param);
         }
-        if ($info['stat_type'] == 'v2') {
+        elseif ($info['stat_type'] == 'v2') {
             $this->page .= $this->getListInfov2($param);
         }
-        if ($info['stat_type'] == 'live') {
+        elseif ($info['stat_type'] == 'live') {
             $this->page .= $this->getListInfoLive($param);
+        }
+        elseif ($info['stat_type'] == 'weewx') {
+            $this->page .= $this->getListInfoWx($param);
         }
         $this->page .= $this->getButton($this->l->getLg(), 'install', 'step9', $param['VALIDATE']);
         $this->page .= '</section>';
@@ -76,8 +83,7 @@ class InstallView extends View
 
     public function InstallStation($station, $paramGet)
     {
-        $item = $paramGet['user_id'];
-
+        $item = $paramGet['user_id'];      
         $this->constructHead();
         $param = array(
             "STATION_CHOOSE" => $this->l->trad('STATION_CHOOSE'),
@@ -86,6 +92,7 @@ class InstallView extends View
             "3" => $this->l->trad('STATION_SELECT_V1'),
             "4" => $this->l->trad('STATION_SELECT_V2'),
             "5" => $this->l->trad('STATION_SELECT_LIVE'),
+            "6" => $this->l->trad('STATION_SELECT_WX'),
             "STATION_STEP6_P1" => $this->l->trad('STATION_STEP6_P1'),
             "STATION_STEP6_P2" => $this->l->trad('STATION_STEP6_P2'),
             "INFO_STATION" => $this->l->trad('INFO_STATION'),
@@ -102,6 +109,10 @@ class InstallView extends View
             "_VAL_STAT_LIVESECRET" => '',
             "_VAL_STAT_LIVEID" => '',
             "_VAL_STAT_ID" => '',
+            "_VAL_STAT_WXURL" => '',
+            "_VAL_STAT_WXID" => '',
+            "_VAL_STAT_WXKEY" => '',
+            "_VAL_STAT_WXSIGN" => '',
             "STATION_BUTTON" => $this->l->trad('INSTALL_STEP6')
 
         );
@@ -409,4 +420,62 @@ class InstallView extends View
         $this->page = str_replace('{BDD_NAME_LABEL}',  $param['8'], $this->page);
         $this->page = str_replace('{BDD_META_LABEL}',  $param['9'], $this->page);
     }
+
+
+
+    public function InstallError()
+    {
+        $param = array(
+            "1" => $this->l->trad('ERROR_INSTALL'),
+            "6" => $this->l->getLg(),
+            "7" => 'install',
+            "8" => 'step1',
+            "9" => $this->l->trad('RESTART'),
+        );
+        $this->constructHead();
+        $this->page .= '<main id="main_installer">';
+        $this->page .= '<section>';
+        $this->page .= '<h1>' . $param['1'] . '</h1>';
+        $this->page .= $this->getInfo($this->l->trad('ERROR_INSTALL_1'));
+        $this->page .= $this->getInfo($this->l->trad('ERROR_INSTALL_2'));
+        $this->page .= $this->getInfo($this->l->trad('ERROR_INSTALL_3'));
+        $this->page .= $this->getInfo($this->l->trad('ERROR_INSTALL_4'));
+        $this->page .= $this->getInfo($this->l->trad('ERROR_INSTALL_5'));
+        $this->page .= $this->getButton($param['6'], $param['7'], $param['8'], $param['9']);
+        $this->page .= '</section>';
+        $this->page .= '</main>';
+        $this->display();
+    }
+
+    public function InstallMaj()
+    {
+      
+      
+        $param = array(
+            "1" => $this->l->trad('MAJ_INSTALL'),
+            "2" => $this->dispatcher->version(),
+            "6" => $this->l->getLg(),
+            "7" => 'install',
+            "8" => 'step1',
+            "9" => $this->l->trad('REINSTALL'),
+            "10" => 'majstep',
+            "11" => $this->l->trad('MAJ'),
+        );
+        $this->constructHead();
+        $this->page .= '<main id="main_installer">';
+        $this->page .= '<section>';
+        $this->page .= '<h1>' . $param['1'] . '</h1>';
+        $this->page .= $this->getInfo($this->l->trad('MAJ_INSTALL_1'));
+        $this->page .= $this->getInfo($this->l->trad('MAJ_INSTALL_2'));
+        $this->page .= $this->getButton($param['6'], $param['7'], $param['8'], $param['9']);
+        $this->page .= $this->getInfo($this->l->trad('MAJ_INSTALL_3'));
+        $this->page .= $this->getButton($param['6'], $param['7'], $param['10'], $param['11']);
+        $this->page .= '</section>';
+        $this->page .= '</main>';
+        $this->display();
+    }
+
+
+
+
 }
