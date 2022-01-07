@@ -1,4 +1,4 @@
-# Read-Me (EN) : go to below
+# Read-Me (EN) : soon
 CMS for weather station (Davis-Weatherlink)
 # Lisez-Moi (FR) :
 CMS pour station météo (Davis-Weatherlink)
