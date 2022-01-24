@@ -98,7 +98,10 @@ Version actuelle = Publique 2.3 (Développement -0.65)
 
  ## Général :
 
+- bug introduit en version 2.1 : ni la zone Configuration, ni l'affiche de la zone Home ne fonctionne, dès lors que la case "Cumul de Pluie" est choisi en même temps que la zone Précipitation Mensuelle ou Annuelle et provoque une Erreur PHP Fatal = bug sur le switch Cumul de Pluie <-> Précipitation du Jour (réparé dans la prochaine version)
+- bug introduit en version 2.1 : Impossible de choisir l'Option : Sonde d'Indice UV (6490) seul, sans cocher en même temps le capteur de rayonnement solaire (6450) car provoque une Erreur Fatal PHP : réparé dans la prochaine version
 - le système de cronjob introduit en 2.2 est très/trop sensible aux désactivations serveurs, il se désactive donc souvent si votre hébergement est un peu trop instable et doit être relancé manuellement (réparé dans une future version)
+
 
 ## Avec Weatherlink Live :
 
