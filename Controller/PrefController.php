@@ -31,7 +31,10 @@ class PrefController extends Controller
     public function configAction()
     {
         $lg = $this->l->getLg();
+
         $response = $this->model->updateConfig($this->paramPost);
+
+
         if ($response) {
             header('location:index.php?controller=pref&action=list&lg=' . $lg);
         } else {
@@ -112,4 +115,10 @@ class PrefController extends Controller
             }
         }
     }
+
+    public function sasAction()
+    {    
+        $this->view->sasPref();                 
+    }
+
 }

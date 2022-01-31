@@ -120,7 +120,7 @@ class InstallModel extends Model
     public function addBDD($paramPost)
     {
 
-        $file_source = 'config/admin_backup.php';
+        $file_source = dirname(dirname(__FILE__)) . '/config/admin_backup.php';
 
 
         // Tests sur "admin_backup.php" et chmod du FTP
@@ -269,6 +269,7 @@ class InstallModel extends Model
                 config_color varchar(24) NOT NULL default 'colored',
                 config_icon tinyint(1) NOT NULL default 1,
                 config_cron tinyint(1) NOT NULL default 0,
+                config_crontime tinyint(4) NOT NULL default 0,
                 stat_id int(11) NOT NULL,
                 CONSTRAINT PK_config_id PRIMARY KEY (config_id),
                 CONSTRAINT $constraint FOREIGN KEY (stat_id) REFERENCES $tab2(stat_id),
@@ -504,7 +505,7 @@ class InstallModel extends Model
             $this->requete = $this->connexion->prepare($req1);
             $result1 = $this->requete->execute();
             $this->requete = $this->connexion->prepare($req2);
-            $result2 = $this->requete->execute();            
+            $result2 = $this->requete->execute();
             $row = ($result1 && $result2) ? 1 : null;
         } catch (Exception $e) {
             if (MB_DEBUG) {
@@ -516,7 +517,7 @@ class InstallModel extends Model
     }
 
 
-     /**
+    /**
      * Maj de 2.2 à 2.3
      *
      * @return boolean
@@ -533,7 +534,7 @@ class InstallModel extends Model
             ADD COLUMN stat_wxsign varchar(60) NOT NULL default '' AFTER stat_wxkey
             ";
             $this->requete = $this->connexion->prepare($req);
-            $result = $this->requete->execute();           
+            $result = $this->requete->execute();
             $row = ($result) ? 1 : null;
         } catch (Exception $e) {
             if (MB_DEBUG) {
@@ -544,6 +545,40 @@ class InstallModel extends Model
         return $row;
     }
 
+    /**
+     * Maj de 2.3 à 2.4 
+     *
+     * @return boolean
+     */
+    public function Maj23To24()
+    {
+        require $this->file_admin;
+        $config_tab = $table_prefix . 'config';
+        try {
+            $req = "ALTER TABLE $config_tab
+            ADD COLUMN config_crontime tinyint(4) NOT NULL default 0 AFTER config_cron";
+            $this->requete = $this->connexion->prepare($req);
+            $result1 = $this->requete->execute();
+            $result2 = $this->trim_lines($this->file_admin, 30);
+            $row = ($result1 && $result2) ? 1 : null;
+        } catch (Exception $e) {
+            if (MB_DEBUG) {
+                var_dump($e->getMessage());
+            }
+            $row = null;
+        }
+        return $row;
+    }
 
-    
+    public function trim_lines($path, $max)
+    {
+        $lines = file($path);
+        $counter = 0;
+        while ($counter < $max) {
+            array_pop($lines);
+            $counter++;
+        }
+        $return = file_put_contents($path, implode('', $lines));
+        return $return;
+    }
 }

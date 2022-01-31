@@ -24,11 +24,8 @@ class HomeController  extends Controller
         $liveStation = ($active['stat_type'] == 'live') ? $this->model->getLiveAPIStation($active['stat_livekey'], $active['stat_livesecret']) : '';
         $config = $this->model->getConfigActive();
         $tab = $this->model->getTabActive();
-        $switch = $this->model->allChoice($config);
-        $lg = $this->l->getLg();
-
-
-
+        $switch = $this->model->allChoice($config);     
+        
         $this->view->displayHome($active, $paramJson, $config, $tab, $switch, $liveStation);
     }
 

@@ -37,7 +37,7 @@ class Lang
 
     public function trad($text)
     {
-        $data = file_get_contents("lang/lg.json");
+        $data = file_get_contents( MBELLPATH."lang/lg.json");
         $json = json_decode($data);
         $lg = $this->getLg();
 

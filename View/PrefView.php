@@ -35,7 +35,6 @@ class PrefView extends View
     {
         $location = $this->statview->getAPIDatas($datas, $info, $livestation)['location'];
         $station_id = $this->statview->getAPIDatas($datas, $info, $livestation)['station_id'];
-
         $param = array(
             "config_id" => $config['config_id'],
             "tab_id" => $tab['tab_id'],
@@ -50,26 +49,49 @@ class PrefView extends View
             "9" => $info['stat_token'],
             "10" => $info['stat_livekey'],
             "11" => $info['stat_livesecret'],
-            "12" => $this->versionInstalled() . $this->versionCompare(),
+            "12" => $info['stat_wxurl'],
+            "13" => $info['stat_wxid'],
+            "14" => $info['stat_wxkey'],
+            "15" => $info['stat_wxsign'],
+            "16" => $this->statview->getAPIDatas($datas, $info, $livestation)['location'],
             "_LG" => $this->l->getLg(),
             "SAVE" => $this->l->trad('SAVE'),
             "CHANGE_STATION" => $this->l->trad('CHANGE_STATION'),
             "CRON_TITLE" => $this->l->trad('CRON_TITLE'),
+            "_VERSION" => $this->versionInstalled(),
+            "__VERSION" => $this->versionCompare(),
+            "VERSION" => $this->l->trad('VERSION'),
         );
 
         $this->constructHead();
         $this->page .= '<main id="main_pref">';
         $this->page .= '<section>';
-        $this->page .= $this->titleMenu($this->l->trad('USER_TITLE'), '0');
+        $this->page .= $this->titleMenu('Mbell', '0');
         $this->page .= '<div class="section_show" id="show_hide0">';
-        $this->page .= $this->getListInfov0($param);
-        if (!($this->isVersionCompare())) {
+        $this->page .=  $this->getListInfoVersion($param);
+        /*
+        $this->getInfo($param['VERSION'] . $param['_VERSION']);
+        $this->getInfo($param['__VERSION']);
+        */
+        if (!($this->isVersionCompare()) && $this->isExtensionLoaded('curl')) {
             $this->page .= $this->getButton($this->l->getLg(), 'pref', 'patch', $this->l->trad('MAJ_MBELL'));
         }
+        elseif (!($this->isVersionCompare()) && !($this->isExtensionLoaded('curl'))) {
+            $this->page .=  '<div class="pref_btn">';
+            $this->page .='<a class="btn btn-primary" href="https://github.com/Networkbell/mbell" role="button">';
+            $this->page .=  $this->l->trad('MAJ_MBELL');
+            $this->page .=  '</a>';
+            $this->page .= '</div>';
+        }
         $this->page .= '</div>';
-
-        $this->page .= $this->titleMenu($this->l->trad('STATION_TITLE'), '1');
+        $this->page .= $this->titleMenu($this->l->trad('USER_TITLE'), '1');
         $this->page .= '<div class="section_show" id="show_hide1">';
+        $this->page .= $this->getListInfov0($param);
+        $this->page .= '</div>';
+        $this->page .= '</section>';
+        $this->page .= '<section>';
+        $this->page .= $this->titleMenu($this->l->trad('STATION_TITLE'), '2');
+        $this->page .= '<div class="section_show" id="show_hide2">';
         if ($info['stat_type'] == 'v1') {
             $this->page .= $this->getListInfov1($param);
         } elseif ($info['stat_type'] == 'v2') {
@@ -80,16 +102,13 @@ class PrefView extends View
             $this->page .= $this->getListInfoWx($param);
         }
         $this->page .= $this->getButton($this->l->getLg(), 'change', 'list', $param['CHANGE_STATION']);
-        $this->page .= '</div>';
-        $this->page .= '</section>';
-        $this->page .= '<section>';
-        $this->page .= $this->titleMenu($this->l->trad('OPTION_TITLE'), '2');
-        $this->page .= '<div class="section_show" id="show_hide2">';
         $this->page .= '<form action="index.php?controller=pref&action=config&lg=' . $param['_LG'] . '" method="POST">';
         $this->page .= $this->getOptions($param, $config);
         $this->page .= $this->getSubmit('pref', $param['SAVE']);
         $this->page .= '</form>';
         $this->page .= '</div>';
+        $this->page .= '</section>';
+        $this->page .= '<section>';
         $this->page .= $this->titleMenu($this->l->trad('DEFAULT_CHOICE'), '3');
         $this->page .= '<div class="section_show" id="show_hide3">';
         $this->page .= '<form action="index.php?controller=pref&action=default&lg=' . $param['_LG'] . '" method="POST">';
@@ -109,13 +128,10 @@ class PrefView extends View
         $this->page .= $this->getSubmit('pref', $param['SAVE']);
         $this->page .= '</form>';
         $this->page .= '</div>';
-        $this->page .= '</section>';
-        $this->page .= '<section>';
         $this->page .= $this->titleMenu($this->l->trad('MANAGMENT'), '5');
         $this->page .= '<div class="section_show" id="show_hide5">';
         $this->page .= $this->getInfo($this->l->trad('CRON_INFO_1'));
         $this->page .= $this->getInfo($this->l->trad('CRON_INFO_2'));
-
         $this->page .= $this->getButton($this->l->getLg(), 'cron', 'list', $param['CRON_TITLE']);
         $this->page .= '</div>';
         $this->page .= '</section>';
@@ -123,7 +139,24 @@ class PrefView extends View
         $this->display();
     }
 
-
+    public function sasPref()
+    {
+        $param = array(
+            "6" => $this->l->getLg(),
+            "7" => 'pref',
+            "8" => 'list',
+            "9" => $this->l->trad('CONTINUE'),
+        );
+        $this->constructHead();
+        $this->page .= '<main id="main_installer">';
+        $this->page .= '<section>';
+        $this->page .= '<h1>' . $this->l->trad('MBELL_INSTALLED') . '</h1>';
+        $this->page .= $this->getInfo($this->l->trad('STATION_STEP7_P1'));
+        $this->page .= $this->getButton($param['6'], $param['7'], $param['8'], $param['9']);
+        $this->page .= '</section>';
+        $this->page .= '</main>';
+        $this->display();
+    }
 
     public function getTab($param, $tab, $tab_txt, $options, $config)
     {
@@ -433,9 +466,9 @@ class PrefView extends View
     {
         $version = $this->dispatcher->versionNumURL(true);
         if ($this->isVersionCompare()) {
-            $rep = " - vous avez la dernière version installée";
+            $rep = "Vous avez la dernière version installée";
         } elseif (!($this->isVersionCompare())) {
-            $rep = " - une version plus récente est disponible (" . $version . ")";
+            $rep = "Une version plus récente est disponible : <strong>" . $version . "</strong>";
         } else {
             $rep = '';
         }
@@ -465,12 +498,35 @@ class PrefView extends View
     {
         require $this->file_admin;
         $version = $this->dispatcher->versionNumURL(true);
-        if ($version == $version_installed) {
+        if ($version <= $version_installed) {
             $rep = true;
         } else {
             $rep = false;
         }
 
         return $rep;
+    }
+
+    /**
+     * pour CURL 'curl'
+     */
+    function isExtensionLoaded($extension_name)
+    {
+        if (extension_loaded($extension_name)) {
+            $rep = true;
+        } else {
+            $rep = false;
+        }
+        return $rep;
+    }
+
+
+
+    public function getListInfoVersion($param)
+    {
+        $this->page .= $this->searchHTML('listInfoVersion', 'pref');
+        $this->page = str_replace('{VERSION}',  $param['VERSION'], $this->page);
+        $this->page = str_replace('{_VERSION}',  $param['_VERSION'], $this->page);
+        $this->page = str_replace('{__VERSION}',  $param['__VERSION'], $this->page);
     }
 }

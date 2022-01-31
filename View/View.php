@@ -6,7 +6,7 @@
  * @method View
  * @abstract 
  * 
- * @return void
+ * @return class
  */
 
 
@@ -25,20 +25,11 @@ abstract class View
 
         $this->l = new Lang();
         $this->col = new Color();
-        $this->file_admin = 'config/admin.php';
+        $this->file_admin = dirname(dirname(__FILE__)) . '/config/admin.php';
         $this->dispatcher = new Dispatcher();
     }
 
-    /**
-     * Lien vers racine du site 
-     * 
-     * @return string
-     */
-    public function getRoot()
-    {
-        $root = (!empty($_SERVER['HTTPS']) ? 'https' : 'http') . '://' . $_SERVER['HTTP_HOST'] . '/';
-        return $root;
-    }
+
 
 
     /**
@@ -56,7 +47,17 @@ abstract class View
         $this->page = str_replace('{_CSS}',  $param['_CSS'], $this->page);
         echo $this->page;
     }
-
+    
+    /**
+     * Lien vers racine du site 
+     * 
+     * @return string
+     */
+    public function getRoot()
+    {
+        $root = (!empty($_SERVER['HTTPS']) ? 'https' : 'http') . '://' . $_SERVER['HTTP_HOST'] . '/';
+        return $root;
+    }
 
     /**
      * Construction des drapeaux de langues
@@ -174,9 +175,9 @@ abstract class View
     public function searchHTML($files, $folder)
     {
         if ($folder != '') {
-            $search = file_get_contents('template/' . $folder . '/' . $files . '.html');
+            $search = file_get_contents(MBELLPATH . 'template/' . $folder . '/' . $files . '.html');
         } else {
-            $search = file_get_contents('template/' . $files . '.html');
+            $search = file_get_contents(MBELLPATH . 'template/' . $files . '.html');
         }
         return $search;
     }
@@ -194,8 +195,6 @@ abstract class View
         $this->page .= $this->searchHTML('listInfo', '');
         $this->page = str_replace('{_INFO_LOGIN}',  $param['1'], $this->page);
         $this->page = str_replace('{_INFO_EMAIL}',  $param['2'], $this->page);
-        $this->page = str_replace('{VERSION}',  $this->l->trad('VERSION'), $this->page);
-        $this->page = str_replace('{_VERSION}',  $param['12'], $this->page);
         $this->page = str_replace('{LOGIN_USER_LABEL}',  $this->l->trad('LOGIN_USER_LABEL'), $this->page);
         $this->page = str_replace('{LOGIN_PASSWORD_LABEL}',  $this->l->trad('LOGIN_PASSWORD_LABEL'), $this->page);
         $this->page = str_replace('{LOGIN_EMAIL_LABEL}',  $this->l->trad('LOGIN_EMAIL_LABEL'), $this->page);
@@ -251,15 +250,13 @@ abstract class View
     {
         $this->page .= $this->searchHTML('listInfowx', '');
         $this->page = str_replace('{_STATION_TYPE}',  $param['3'], $this->page);
-        $this->page = str_replace('{_STATION_LOCATION}',  $param['4'], $this->page);
-        $this->page = str_replace('{_STATION_USER}',  $param['5'], $this->page);
+        $this->page = str_replace('{_STATION_LOCATION}',  $param['16'], $this->page);
         $this->page = str_replace('{_STATION_WXURL}',  $param['12'], $this->page);
         $this->page = str_replace('{_STATION_WXID}',  $param['13'], $this->page);
         $this->page = str_replace('{_STATION_WXKEY}',  $param['14'], $this->page);
         $this->page = str_replace('{_STATION_WXSIGN}',  $param['15'], $this->page);
         $this->page = str_replace('{STATION_TYPE}',  $this->l->trad('STATION_TYPE'), $this->page);
         $this->page = str_replace('{STATION_LOCATION}',  $this->l->trad('STATION_LOCATION'), $this->page);
-        $this->page = str_replace('{STATION_USER}',  $this->l->trad('STATION_USER'), $this->page);
         $this->page = str_replace('{STATION_WXURL}',  'API URL', $this->page);
         $this->page = str_replace('{STATION_WXID}',  'API ID', $this->page);
         $this->page = str_replace('{STATION_WXKEY}',  'API KEY', $this->page);

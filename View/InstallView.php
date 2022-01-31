@@ -49,20 +49,17 @@ class InstallView extends View
             "13" => $info['stat_wxid'],
             "14" => $info['stat_wxkey'],
             "15" => $info['stat_wxsign'],
-            "MBELL_INSTALLED" => $this->l->trad('MBELL_INSTALLED'),
-            "STATION_STEP7_P1" => $this->l->trad('STATION_STEP7_P1'),
-            "USER_INFO" => $this->l->trad('USER_INFO'),
-            "STATION_INFO" => $this->l->trad('STATION_INFO'),
+            "16" => $this->statview->getAPIDatas($datas, $info, $livestation)['location'],
             "VALIDATE" => $this->l->trad('VALIDATE'),
         );
         $this->constructHead();
         $this->page .= '<main id="main_installer">';
         $this->page .= '<section>';
-        $this->page .= '<h1>' . $param['MBELL_INSTALLED'] . '</h1>';
-        $this->page .= $this->getInfo($param['STATION_STEP7_P1']);
-        $this->page .= '<h1>' . $param['USER_INFO'] . '</h1>';
+        $this->page .= '<h1>' . $this->l->trad('RECAP') . '</h1>';
+        $this->page .= $this->getInfo($this->l->trad('STATION_STEP7_P2'));
+        $this->page .= '<h1>' . $this->l->trad('USER_INFO') . '</h1>';
         $this->page .= $this->getListInfov0($param);
-        $this->page .= '<h1>' . $param['STATION_INFO'] . '</h1>';
+        $this->page .= '<h1>' . $this->l->trad('STATION_INFO') . '</h1>';
         if ($info['stat_type'] == 'v1') {
             $this->page .= $this->getListInfov1($param);
         }
@@ -467,9 +464,9 @@ class InstallView extends View
         $this->page .= '<h1>' . $param['1'] . '</h1>';
         $this->page .= $this->getInfo($this->l->trad('MAJ_INSTALL_1'));
         $this->page .= $this->getInfo($this->l->trad('MAJ_INSTALL_2'));
-        $this->page .= $this->getButton($param['6'], $param['7'], $param['8'], $param['9']);
-        $this->page .= $this->getInfo($this->l->trad('MAJ_INSTALL_3'));
         $this->page .= $this->getButton($param['6'], $param['7'], $param['10'], $param['11']);
+        $this->page .= $this->getInfo($this->l->trad('MAJ_INSTALL_3'));
+        $this->page .= $this->getButton($param['6'], $param['7'], $param['8'], $param['9']);        
         $this->page .= '</section>';
         $this->page .= '</main>';
         $this->display();

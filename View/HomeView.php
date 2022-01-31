@@ -9,13 +9,15 @@ class HomeView extends View
         parent::__construct();
     }
 
-    public function constructHead($switch, $datas,$info, $liveStation)
+    public function constructHead($switch, $datas, $info, $liveStation)
     {
+        require $this->file_admin;
+
         $param = array(
             "META_KEY" => $this->l->trad('META_KEY'),
             "META_DESCRIPTION" => $this->l->trad('META_DESCRIPTION'),
             "MBELL_TITRE" => $this->l->trad('MBELL_TITRE_HOME'),
-            "_CSS" => $this->getCSS($switch, $datas,$info, $liveStation),
+            "_CSS" => $this->getCSS($switch, $datas, $info, $liveStation),
             "_LOGO" => "1",
             "_ROOT" => $this->getRoot(),
             "_LG" => $this->l->getLg(),
@@ -30,15 +32,15 @@ class HomeView extends View
     }
 
 
-//datas = api datas
-//info = stat_type
+    //datas = api datas
+    //info = stat_type
     public function displayHome($info, $datas, $config, $tab, $switch, $liveStation)
     {
         $param = array(
             "_LG" => $this->l->getLg(),
         );
 
-        $this->constructHead($switch, $datas,$info, $liveStation);
+        $this->constructHead($switch, $datas, $info, $liveStation);
         $this->page .= '<main id="main_index">';
         $this->page .= '<section class="container-fluid" id="home_title">';
         $this->page .= $this->getTitle($param, $datas, $info, $liveStation);
@@ -52,8 +54,8 @@ class HomeView extends View
         $this->page .= '</main>';
 
         $this->display();
-        if($info['stat_type']=='live'){
-           echo '<style>
+        if ($info['stat_type'] == 'live' || $info['stat_type'] == 'weewx') {
+            echo '<style>
            /*on supprime le tab_down */
            .tab_down{
                display:none;
@@ -138,7 +140,7 @@ class HomeView extends View
             case '6':
                 $up = ($this->statview->is_tab($tab, '13') == false && $this->statview->is_tab($tab, '14') == false) ? $this->modUp1('6', $config, $switch, $datas, $info, $liveStation) : $this->modUp1('45', $config, $switch, $datas, $info, $liveStation);
                 $mid = $this->modMid1($ntab, $config, $switch, $datas, $info, $liveStation);
-                $down = ($this->statview->is_tab($tab, '13') == false && $this->statview->is_tab($tab, '14') == false) ? $this->modDown5('6', $config, $switch, $datas, $info, $liveStation) : $this->modDown1('6', $switch, $datas, $info, $liveStation);
+                $down = ($this->statview->is_tab($tab, '13') == false && $this->statview->is_tab($tab, '14') == false) ? $this->modDown5('6', $config, $switch, $datas, $info, $liveStation) : $this->modDown1('6', $datas, $info, $liveStation);
                 break;
             case '7':
                 $up = $this->modUp1('7', $config, $switch, $datas, $info, $liveStation);
@@ -333,7 +335,7 @@ class HomeView extends View
             default:
                 $up = $this->modUp1('0', $config, $switch, $datas, $info, $liveStation);
                 $mid = $this->modMid1('0', $config, $switch, $datas, $info, $liveStation);
-                $down = $this->modDown1('0', $datas, $info, $liveStation, $info, $liveStation);
+                $down = $this->modDown1('0', $datas, $info, $liveStation);
                 break;
         }
 
@@ -383,10 +385,10 @@ class HomeView extends View
 
 
     //Up Unique Sun-UV
-    public function modUp3($switch, $config, $tab, $datas,$info, $livestation)
+    public function modUp3($switch, $config, $tab, $datas, $info, $livestation)
     {
         $page = $this->searchHTML('up_3', 'inc');
-        $page = str_replace('{UP_SPECIAL}',  $this->statview->incUpSun($switch, $config, $tab, $datas,$info, $livestation), $page);
+        $page = str_replace('{UP_SPECIAL}',  $this->statview->incUpSun($switch, $config, $tab, $datas, $info, $livestation), $page);
         return $page;
     }
 
@@ -830,7 +832,7 @@ class HomeView extends View
     }
 
 
-    public function getCSS($switch, $datas,$info, $liveStation)
+    public function getCSS($switch, $datas, $info, $liveStation)
     {
 
         $time = $this->statview->getAPIDatasUp($datas, $info, $liveStation)['time'];

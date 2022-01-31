@@ -45,6 +45,42 @@ class StationModel extends Model
 
 
     /**
+     * Retourne l'URL de l'API Live evapo : https://api.weatherlink.com/v2/report/et/
+     * 
+     * 
+     */
+    public function getLiveEvapo($key, $secret, $live_id)
+    {
+        $zero = '&#8709;';
+        $parameters = array(
+            "api-key" => $key,
+            "api-secret" => $secret,
+            "station-id" => $live_id,
+            "t" => time()
+        );
+        ksort($parameters);
+        $apiSecret = $parameters["api-secret"];
+        unset($parameters["api-secret"]);
+        $data = "";
+        foreach ($parameters as $key => $value) {
+            $data = $data . $key . $value;
+        }
+        $apiSignature = hash_hmac("sha256", $data, $apiSecret);
+        $apiCurrent = "https://api.weatherlink.com/v2/report/et/" . $parameters["station-id"] . "?api-key=" . $parameters["api-key"] . "&api-signature=" . $apiSignature . "&t=" . $parameters["t"];
+        $data = file_get_contents($apiCurrent);
+        $array = json_decode($data, true);
+        $this->jsonDebug();
+        if (isset($array)) {
+            $json = $this->liveAPIreduc($array);
+            $et['et_last'][0] = $json['et'][0];
+        } else {
+            $et =  array('et_last' => array(0 => $zero));
+        }
+        return $et;
+    }
+
+
+    /**
      * simplifie l'API live 
      * array_merge_recursive génère un $single_array[key][0,1] si il y 2 clefs identiques (exemples plusieurs stations)
      *
@@ -90,6 +126,11 @@ class StationModel extends Model
         $my_livekey = $active['stat_livekey'];
         $my_livesecret = $active['stat_livesecret'];
         $my_liveid = $active['stat_liveid'];
+        $my_wxurl = $active['stat_wxurl'];
+        $my_wxid = $active['stat_wxid'];
+        $my_wxkey = $active['stat_wxkey'];
+        $my_wxsign = $active['stat_wxsign'];
+        $time = time();
 
         if ($my_type == 'v1') {
             $data = file_get_contents('http://api.weatherlink.com/v1/NoaaExt.json?DID=' . $my_did . '&key=' . $my_key);
@@ -105,7 +146,25 @@ class StationModel extends Model
             $data = file_get_contents($this->getLiveURLCurrent($my_livekey, $my_livesecret, $my_liveid));
             $array = json_decode($data, true);
             $this->jsonDebug();
-            $json = $this->liveAPIreduc($array);
+            $reduc = $this->liveAPIreduc($array);
+            //ajout eventuel de l'API évapotranspiration
+            if (!(isset($reduc['et_day']))) {
+                $et =  $this->getLiveEvapo($my_livekey, $my_livesecret, $my_liveid);
+                $json = array_merge($reduc, $et);
+            } else {
+                $json = $reduc;
+            }
+        }
+        if ($my_type == 'weewx') {
+            $data = file_get_contents($my_wxurl . '?t=' . $time . '&id=' . $my_wxid . '&apikey=' . $my_wxkey . '&apisignature=' . $my_wxsign);
+            $array = json_decode($data, true);
+            $this->jsonDebug();
+            $reduc = $this->liveAPIreduc($array);           
+            $merge = $array['user'][0];
+            foreach ($merge as $key => $value) {
+                $new[$key][0] = $value;
+            }
+            $json = array_merge($new, $reduc);
         }
         return $json;
     }
@@ -135,6 +194,7 @@ class StationModel extends Model
         WHERE stat_active = :stat_active";
 
         try {
+            $this->requete = $this->connexion->query("SET SESSION WAIT_TIMEOUT=3300"); //55mn
             $this->requete = $this->connexion->prepare($req);
             $this->requete->bindParam(':stat_active', $stat_active);
 
@@ -143,6 +203,7 @@ class StationModel extends Model
             if ($result) {
                 $list = $this->requete->fetch(PDO::FETCH_ASSOC);
             }
+            $this->close($this->connexion, $this->requete);
             return $list;
         } catch (Exception $e) {
             die('Erreur:' . $e->getMessage());

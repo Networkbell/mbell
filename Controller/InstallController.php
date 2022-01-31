@@ -144,12 +144,18 @@ class InstallController extends Controller
     public function step9Action()
     {
         require $this->file_admin;
+       
         $response =  $this->model->InstallTrue();
         $lg = $this->l->getLg();
         if ($response) {
-            header('location:index.php?controller=pref&action=list&lg=' . $lg);
+            header('Location:index.php?controller=pref&action=sas&lg=' . $lg);
+            exit;         
         }
     }
+
+
+
+
 
     /**
      * Système de réinstallation avec mise en place de maj futur
@@ -176,9 +182,10 @@ class InstallController extends Controller
      * @return header
      */
     public function majstepAction()
-    {
+    {        
+        require $this->file_admin ;
         $lg = $this->l->getLg();
-        require 'config/version.txt';
+
         $version = $this->dispatcher->versionNumURL(false);
         $version_installed = (isset($version_installed)) ? floatval($version_installed) : ($version + 1);
 
@@ -226,18 +233,18 @@ class InstallController extends Controller
         
         //MAJ 2.3 à dernière
         if ($version_installed <= 2.3 && $version_installed <= $version) {
-        /*    $response1 = $this->model->Maj23To24();
+            $response1 = $this->model->Maj23To24();
+
             $ver = ($response1) ? 2.4 : false;
-            $response2 = $this->model->Maj24To25();
-            $ver = ($response2) ? 2.5 : false;
-        */ }
+          /*  $response2 = $this->model->Maj24To25();
+            $ver = ($response2) ? 2.5 : false;*/
+         }
         if ($version_installed <= 2.4 && $version_installed <= $version) {
      /*       $response2 = $this->model->Maj24To25();
           $ver = ($response2) ? 2.5 : false;
     */      }
 
-    //provisoire 
-    $ver=$version;
+
         if ($ver) {
             $rep = $this->model->InstallNo($ver);
             if ($rep) {

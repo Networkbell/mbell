@@ -39,9 +39,6 @@
 $debug = false;
 
 
-
-
-
 /** Réglages MySQL - Votre hébergeur doit vous fournir ces informations (sinon en local)
  * Si vous êtes dans "admin_backup" :  Remplacez le contenu entre guillemets avec des accolades '{...}' par les votres '...' 
  * puis sauvegardez en admin.php (gardez toujours un exemplaire de admin_backup non modifié ; la seule exception réside dans le réglage de MB_DEBUG)
@@ -79,7 +76,6 @@ if (!defined('KEY_CRYPT'))
   define('KEY_CRYPT', '{key_crypt}');
 
 
-
 /**
  * Préfixe de base de données pour les tables de Mbell.
  *
@@ -89,7 +85,6 @@ if (!defined('KEY_CRYPT'))
  */
 
 $table_prefix = '{bdd_meta}';
-
 
 
 /** Version Installé
@@ -103,7 +98,6 @@ $table_prefix = '{bdd_meta}';
  * 4. Si vous installez une version plus récente, il s'agit d'une mise à jour, si des tables existent dans la bdd, elles ne sont pas supprimés, mais seront mises à jour selon les besoins de la version que vous installez
  */
 $version_installed = '{version}';
-
 
 
 /**
@@ -133,8 +127,6 @@ $version_installed = '{version}';
 $installed = '{no}';
 
 
-
-
 /**
  * Pour les développeurs : le mode déboguage de MBell
  *
@@ -151,32 +143,6 @@ if (!defined('MB_DEBUG'))
 
 
 
-/**
- * Différentes façon de retrouver l'URL 
- * et la Racine du site où Mbell est installé
- *
- */
-
-$dir_temp = dirname(__FILE__);
-
-/** 
- * $dir
- * URL avant le dossier /config = mbell/ 
- */
-$dir = substr($dir_temp, 0, -7);
-
-/** 
- * DIRPATH
- * Chemin absolu vers le dossier config/
- */
-if (!defined('DIRPATH'))
-  define('DIRPATH', $dir_temp . '/');
-
-/** 
- * $root
- * URL Racine du site
- */
-$root = (!empty($_SERVER['HTTPS']) ? 'https' : 'http') . '://' . $_SERVER['HTTP_HOST'] . '/';
 
 
 

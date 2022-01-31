@@ -7,7 +7,6 @@ class ChangeModel extends Model
     }
 
 
-
     /**
      * Selection de toute la liste dans BDD station et user associé de user connecté avec stations non-activé et stat_type == v1/v2/live
      * 

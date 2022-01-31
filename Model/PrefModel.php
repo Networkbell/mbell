@@ -27,7 +27,7 @@ class PrefModel extends Model
         $aux1 = isset($config['var_aux1']) ? 1 : 0;
         $aux2 = isset($config['var_aux2']) ? 1 : 0;
         $aux3 = isset($config['var_aux3']) ? 1 : 0;
-
+        
         try {
             $this->requete = $this->connexion->prepare($req);
             $this->requete->bindParam(':config_id', $config['config_id']);
@@ -37,14 +37,13 @@ class PrefModel extends Model
             $this->requete->bindParam(':config_aux3', $aux3);
             $result = $this->requete->execute();
             $row = ($result) ? 1 : null;
-            return $row;
         } catch (Exception $e) {
             if (MB_DEBUG) {
                 var_dump($e->getMessage());
             }
             $row = null;
-            return $row;
         }
+        return $row;
     }
 
 
@@ -74,7 +73,6 @@ class PrefModel extends Model
             $this->requete->bindParam(':config_daynight', $config['var_daynight']);
             $this->requete->bindParam(':config_color', $config['var_color']);
             $this->requete->bindParam(':config_icon', $config['var_icon']);
-            /* $this->requete->bindParam(':config_cron', $config['var_cron']);*/ // inutile d'updater ici config_cron
             $result = $this->requete->execute();
             $row = ($result) ? 1 : null;
             return $row;
@@ -187,18 +185,18 @@ class PrefModel extends Model
             return $row;
         }
     }
-/**
- * CURL de downlaod ZIP
- * MAJ MBELL
- *
- * @param [float] $version
- * @param [string] $zipFile
- * @return string
- */
+    /**
+     * CURL de downlaod ZIP
+     * MAJ MBELL
+     *
+     * @param [float] $version
+     * @param [string] $zipFile
+     * @return string
+     */
     public function downloadZip($version, $zipFile)
     {
         $ver = str_replace(".", "_", strval($version));
-        $version_url = 'v' . $ver . 'mbell.zip';
+        $version_url = 'v' . $ver . 'mbell.zip'; // Exemple : v2_3mbell.zip
         $url = 'http://www.meteobell.com/fichiers/zip/' . $version_url;
         $zipResource = fopen($zipFile, "w");
         $ch = curl_init();
@@ -231,7 +229,7 @@ class PrefModel extends Model
     {
         require $this->file_admin;
         $zip = new ZipArchive;
-        $extractPath = $dir;
+        $extractPath = MBELLPATH;
         $open = $zip->open($zipFile);
         if ($open == true) {
             $zip->extractTo($extractPath);

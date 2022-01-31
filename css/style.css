@@ -317,19 +317,19 @@ header {
 /******************/
 
 
-#install_btn,
-#login_btn,
-#pref_btn,
-#change_btn,
-#cron_btn {
+.install_btn,
+.login_btn,
+.pref_btn,
+.change_btn,
+.cron_btn {
 	margin: auto;
 	text-align: center;
 	padding: 20px 0;
 }
 
-#pref_btn,
-#change_btn,
-#cron_btn {
+.pref_btn,
+.change_btn,
+.cron_btn {
 	margin-top: 20px;
 }
 

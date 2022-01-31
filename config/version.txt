@@ -1,7 +1,7 @@
-2.3
+2.4
 // NE PAS DEPLACER OU SUPPRIMER LA 1ere LIGNE, MBELL L'UTLISE COMME CODE
 
-// Version 2.3-0.65 - Janvier 2022
+// Version 2.4-0.71 - Février 2022
 
 /** VERSION
  * Dernier numéro de version de Mbell
@@ -97,11 +97,17 @@ VERSION 2.1 -0.58 : Addon Weatherlink Live
 ___________
 VERSION 2.2 -0.63 : Addon Cronjob
 
-- 0.64 : Création dans le bdd Station des tables pour Weewx et mise en place du choix de station weewx avec AddStation en phase d'Installation (weewx commencé mais mis en pause provisoirement - besoin sur l'API_MBell_Weewx)
+- 0.64 : Création dans le bdd Station des tables pour Weewx et mise en place du choix de station weewx avec AddStation en phase d'Installation
 - 0.65 : Refonte totale du Dispatcher avec prise en charge du numéro de version - Création d'une phase View de Réinstallation et de Mise à Jour - Système de versioning modifiant la bdd depuis 2.0 jusqu'à 2.3 - Système de vérification de version disponible, téléchargé ou installé - Système de download de version - Système d'extraction de zip version - Système d'information de version dans zone Propriété avec bouton pour patcher Mbell - Refonte du fichier admin.php et nouveau fichier version.txt dans /config - Modifification dans ChangeModel pour bdd avec Weewx
 ___________
 VERSION 2.3 -0.65 : Update Auto System
 
- 
+- 0.66 : Changements visuels dans Pref (nouvelle zone Mbell) - Ajout API Weewx et Uniformisation API Weewx pour Mbell - Nombreux tests simples sur technologies crons - Réécriture de la zone CronView
+- 0.67 : Ecriture zone CronServer - Script cron_server.php sans class et tests cron sur hébergement - Polissage du script selon tests
+- 0.68 : Transformation de tous les chemins de Mbell en chemin absolu dirname(__FILE__) - Utilisation des classes sur cron_server.php et tests crons sur hébergement - Résolution bug "MySQL server has gone away" avec cron - Reécriture de la zone CronServer + Traduction
+- 0.69 : Ajout ds bdd de config_crontime (crud Install-Change-Patch) - formulaire de crontime dans View CronServer - update config_crontime dans bdd avec formulaire - Test version PHP 7 à 7.4 - Debug case "Cumul de Pluie" avec switch 
+- 0.70 : Script cron_server.php avec crontime - modif activation/désactivation cron avec intéraction cron_server + alert javascript - ajout API évapotranspiration avec Weatherlink Live - ajout données ISS pour Weatherlink IP avec Weatherlink Live (sauf pluie, signalement bug chez weatherlink)
+- 0.71 : Ajout de User ds Api Weewx - Affichage Weewx ds ChangeStation - Uniformisation des APIs WL-V1 avec Weewx - modifs Weewx ds recap station ChangeView-PrefView-InstallView - Résolution bug capteur UV seul - Résolution bug décochage sondes UV - Solaire - Mis à Jour fonction patch 2.3 à 2.4 - test CURL - Résolution bug maj valeur étape fin install - Résolution bug weatherlink live Rain jour-mois-année manquante avec station IP - Harmonisation API Weewx avec Mbell
 
-
+___________
+VERSION 2.4 -0.71 : Addon Weewx - Update Cronjob System - Correction Bugs - Optimisation Code

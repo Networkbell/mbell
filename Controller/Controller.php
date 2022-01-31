@@ -1,26 +1,26 @@
 <?php
 
-require 'View/InstallView.php';
-require 'Model/InstallModel.php';
-require 'View/LoginView.php';
-require 'Model/LoginModel.php';
-require 'View/PrefView.php';
-require 'Model/PrefModel.php';
-require 'View/HomeView.php';
-require 'Model/HomeModel.php';
-require 'View/StationView.php';
-require 'Model/StationModel.php';
-require 'View/ChangeView.php';
-require 'Model/ChangeModel.php';
-require 'View/CronView.php';
-require 'Model/CronModel.php';
-require 'config/Color.php';
-require 'config/Moon.php';
+require MBELLPATH . 'View/InstallView.php';
+require MBELLPATH . 'Model/InstallModel.php';
+require MBELLPATH . 'View/LoginView.php';
+require MBELLPATH . 'Model/LoginModel.php';
+require MBELLPATH . 'View/PrefView.php';
+require MBELLPATH . 'Model/PrefModel.php';
+require MBELLPATH . 'View/HomeView.php';
+require MBELLPATH . 'Model/HomeModel.php';
+require MBELLPATH . 'View/StationView.php';
+require MBELLPATH . 'Model/StationModel.php';
+require MBELLPATH . 'View/ChangeView.php';
+require MBELLPATH . 'Model/ChangeModel.php';
+require MBELLPATH . 'View/CronView.php';
+require MBELLPATH . 'Model/CronModel.php';
+require MBELLPATH . 'config/Color.php';
+require MBELLPATH . 'config/Moon.php';
 
 
 abstract class Controller
 {
-    
+
     protected $model;
     protected $view;
     protected $paramGet;
@@ -32,7 +32,7 @@ abstract class Controller
 
         $this->l = new Lang();
         $this->dispatcher = new Dispatcher();
-        $this->file_admin = 'config/admin.php';
+        $this->file_admin = dirname(dirname(__FILE__)) . '/config/admin.php';
 
         if (!empty($_GET)) {
             foreach ($_GET as $key => $value) {
@@ -47,6 +47,8 @@ abstract class Controller
             } else {
                 $_POST["var_sun"] = $_POST["var_sun"][0];
             }
+        } else {
+            $_POST["var_sun"] = '';
         }
 
         if (!empty($_POST)) {
@@ -55,15 +57,10 @@ abstract class Controller
             }
         }
 
-        
+
         if (empty($this->paramPost["metabdd"])) {
             $this->paramPost["metabdd"] = "mb_";
         }
-
-
-
-
-
     }
 
     private function protected_values($values)
@@ -72,5 +69,13 @@ abstract class Controller
         $values = stripslashes($values);
         $values = htmlspecialchars($values);
         return $values;
+    }
+
+    public function root()
+    {
+        $root = (!empty($_SERVER['HTTPS']) ? 'https' : 'http') . '://' . $_SERVER['HTTP_HOST'] . '/';
+        $path = rtrim(dirname($_SERVER['PHP_SELF']), '/\\');
+        $response = $root.$path;
+        return $response;
     }
 }

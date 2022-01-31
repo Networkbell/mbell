@@ -121,7 +121,7 @@ class CronModel extends Model
         ignore_user_abort(true);
         set_time_limit(0);
 
-        while ($this->getConfigActiveCron()['config_cron'] == 1) {
+        while ($this->getConfigActiveCron()['config_cron'] == 1 && $this->getConfigActiveCron()['config_crontime'] == 0) {
 
             //on va chercher les valeurs dans la boucle plutôt que le controller en amont pour que les données de l'API se mettent bien à jour une fois le cron lancé
             $station = $this->paramStat->getStationActive();
@@ -131,7 +131,7 @@ class CronModel extends Model
             $datas1 = $this->paramStat->getAPI();
             $dateString = $this->stationview->getAPIDatasUp($datas1, $station, $liveStation1)['time'];
 
-            $time_sleep = ($type == 'live') ? 780 : 480; // 480 = 8 minutes / 780 = 13 minutes
+            $time_sleep = ($type == 'live') ? 780 : 480; // 780 = 13 minutes / 480 = 8 minutes
             $time_precision = ($type == 'live') ? 15 : 10; // API v2 = 15mn / API v1 = 10mn
             $time_deviation = ($type == 'live') ? 0 : $this->waitDeviationCron($dateString, $time_precision); // pas de déviation avec API v2 car on utilise time() dans l'API
 
@@ -163,11 +163,13 @@ class CronModel extends Model
         $req = "UPDATE $config_tab SET config_cron = :config_cron WHERE config_id = :config_id";
 
         try {
+            $this->requete = $this->connexion->query("SET SESSION WAIT_TIMEOUT=3300"); //55mn
             $this->requete = $this->connexion->prepare($req);
             $this->requete->bindParam(':config_id', $config['config_id']);
             $this->requete->bindParam(':config_cron', $status_cron);
             $result = $this->requete->execute();
             $row = ($result) ? 1 : null;
+            $this->close($this->connexion, $this->requete);
         } catch (Exception $e) {
             if (MB_DEBUG) {
                 var_dump($e->getMessage());
@@ -193,9 +195,10 @@ class CronModel extends Model
         $config_statid = $config_tab . '.stat_id';
         $stat_active = 1;
 
-        $req = "SELECT config_id, config_cron, $config_statid FROM $config_tab INNER JOIN $station_tab ON $config_statid = $stat_statid WHERE stat_active = :stat_active";
+        $req = "SELECT config_id, config_cron, config_crontime, $config_statid FROM $config_tab INNER JOIN $station_tab ON $config_statid = $stat_statid WHERE stat_active = :stat_active";
 
         try {
+            $this->requete = $this->connexion->query("SET SESSION WAIT_TIMEOUT=3300"); //55mn
             $this->requete = $this->connexion->prepare($req);
             $this->requete->bindParam(':stat_active', $stat_active);
 
@@ -204,18 +207,19 @@ class CronModel extends Model
             if ($result) {
                 $list = $this->requete->fetch(PDO::FETCH_ASSOC);
             }
+            $this->close($this->connexion, $this->requete);
             return $list;
         } catch (Exception $e) {
             die('Erreur:' . $e->getMessage());
         }
     }
 
-/**
- * Transforme en float les résultats (0 différent de null)
- *
- * @param [int, string, float] $data
- * @return float
- */
+    /**
+     * Transforme en float les résultats (0 différent de null)
+     *
+     * @param [int, string, float] $data
+     * @return float
+     */
     public function floaVal($data)
     {
         if ($data == '&#8709;' && ($data != '0' || $data != 0.0 || $data != 0)) {
@@ -307,7 +311,7 @@ class CronModel extends Model
             :data_rain_day, :data_rr_high_15mn, :data_rr_high_hour, :data_rr_last,
             :data_solar, :data_uv
             )";
-
+            $this->requete = $this->connexion->query("SET SESSION WAIT_TIMEOUT=3300"); //55mn
             $this->requete = $this->connexion->prepare($req);
             $this->requete->bindParam(':data_time_cron', $data_time_cron);
             $this->requete->bindParam(':data_time_api', $data_time_api);
@@ -330,6 +334,7 @@ class CronModel extends Model
 
             $result = $this->requete->execute();
             $row = ($result) ? 1 : null;
+            $this->close($this->connexion, $this->requete);
             return $row;
         } catch (Exception $e) {
             if (MB_DEBUG) {
@@ -353,12 +358,14 @@ class CronModel extends Model
         $req = "SELECT data_time_cron FROM $data_tab ORDER BY data_id DESC LIMIT 1";
 
         try {
+            $this->requete = $this->connexion->query("SET SESSION WAIT_TIMEOUT=3300"); //55mn
             $this->requete = $this->connexion->prepare($req);
             $result = $this->requete->execute();
             $list = array();
             if ($result) {
                 $list = $this->requete->fetch(PDO::FETCH_ASSOC);
             }
+            $this->close($this->connexion, $this->requete);
             return $list;
         } catch (Exception $e) {
             die('Erreur:' . $e->getMessage());
@@ -381,5 +388,32 @@ class CronModel extends Model
             $response = false;
         }
         return $response;
+    }
+
+
+    /**
+     * Modification dans la BDD "config" de config_crontime
+     * 
+     * @return boolean
+     */
+    public function updateCron($post)
+    {
+        require $this->file_admin;
+        $tab_config = $table_prefix . 'config';
+        try {
+            $req = "UPDATE $tab_config SET config_crontime = :config_crontime WHERE config_id = :config_id";
+            $this->requete = $this->connexion->prepare($req);
+            $this->requete->bindParam(':config_id', $post['config_id']);
+            $this->requete->bindParam(':config_crontime', $post['config_crontime']);
+            $result = $this->requete->execute();
+            $row = ($result) ? 1 : null;
+            return $row;
+        } catch (Exception $e) {
+            if (MB_DEBUG) {
+                var_dump($e->getMessage());
+            }
+            $row = null;
+            return $row;
+        }
     }
 }

@@ -8,8 +8,8 @@ class CronView extends View
         $this->statview = new StationView();
     }
 
-    
-    public function constructHead()
+
+    public function constructHead($url)
     {
         $param = array(
             "META_KEY" => $this->l->trad('META_KEY'),
@@ -18,7 +18,7 @@ class CronView extends View
             "_CSS" => "maincolor",
             "_LOGO" => "1",
             "_ROOT" => $this->getRoot(),
-            "_URL" => 'index.php?controller=pref&action=list&',
+            "_URL" => $url,
             "_LG" => $this->l->getLg(),
             "HOMEPAGE" => $this->l->trad('SETTINGS'),
             "HOMESCREEN" => $this->l->trad('SETTINGS'),
@@ -52,29 +52,112 @@ class CronView extends View
             "2" => $location,
             "3" => ($config['config_cron'] == 1) ? $this->l->trad('ACTIVATED') : $this->l->trad('DISABLED'),
             "4" => $this->statview->DateCreate($timeCron['data_time_cron'], $this->l->getLg(), $timeZone),
+            "5" => ($active['stat_type'] == 'live') ? '15mn' : '10mn',
+            "_URL" => 'index.php?controller=pref&action=list&',
         );
 
-        $this->constructHead();
+        $this->constructHead($param['_URL']);
         $this->page .= '<main id="main_installer">';
         $this->page .= '<section>';
         $this->page .= '<h1>' . $this->l->trad('BDD_MANAGMENT') . '</h1>';
         $this->page .= $this->getListInfoCron($param);
-        $this->page .= ($config['config_cron'] == 1) ? $this->getButton($this->l->getLg(), 'cron', 'disactive', $this->l->trad('CRON_DISACTIVE')) : $this->getButton($this->l->getLg(), 'cron', 'active', $this->l->trad('CRON_ACTIVE'));
         $this->page .= '</section>';
         $this->page .= '<section>';
         $this->page .= '<h1>' . $this->l->trad('CRON') . '</h1>';
         $this->page .= $this->getInfo($this->l->trad('CRON_INFO_1'));
         $this->page .= $this->getInfo($this->l->trad('CRON_INFO_3'));
+        $this->page .= $this->getInfo($this->l->trad('CRON_INFO_8'));
         $this->page .= $this->getInfo($this->l->trad('CRON_INFO_4'));
         $this->page .= $this->getInfo($this->l->trad('CRON_INFO_5'));
+        $this->page .= '<div id="cronserver_btn">';
+        $this->page .= ($config['config_cron'] == 1) ? $this->getButton($this->l->getLg(), 'cron', 'disactive', $this->l->trad('CRON_DISACTIVE')) : $this->getButton($this->l->getLg(), 'cron', 'active', $this->l->trad('CRON_ACTIVE'));
+        $this->page .= '</div><br>';
         $this->page .= $this->getInfo($this->l->trad('CRON_INFO_6'));
+        $this->page .= $this->getButton($this->l->getLg(), 'cron', 'server', $this->l->trad('CRON_SERVER'));
+        $this->page .= '<br>';
         $this->page .= $this->getInfo($this->l->trad('CRON_INFO_7'));
-        $this->page .= $this->getInfo($this->l->trad('CRON_INFO_8'));
+
         $this->page .= '</section>';
         $this->page .= '</main>';
         $this->display();
     }
 
+    public function serverList($config, $active, $paramJson, $liveStation, $timeCron)
+    {
+        $zero = '&#8709;';
+        $param = array(
+            "1" => ($this->getLocalhost()) ? dirname(dirname(__FILE__)) . '/Model/cron/cron_server.php' : dirname(dirname(__FILE__)) . '\Model\cron\cron_server.php',
+            "2" => ($config['config_crontime'] == '0') ? $zero : $config['config_crontime'] . ' mn',
+            "_LG" => $this->l->getLg(),
+            "SAVE" => $this->l->trad('SAVE'),
+            "_URL" => 'index.php?controller=cron&action=list&',
+        );
+        $this->constructHead($param['_URL']);
+        $this->page .= '<main id="main_installer">';
+        $this->page .= '<section>';
+        $this->page .= '<h1>' . $this->l->trad('CRON_SERVER') . '</h1>';
+        $this->page .= $this->getListCronServer($param);
+        $this->page .= '<form action="index.php?controller=cron&action=timer&lg=' . $param['_LG'] . '" method="POST">';
+        $this->page .= '<div class="container-fluid conteneur_row_pref px-0">';
+        $this->page .= $this->getSelectCron($config, $active);
+        $this->page .= '</div>';
+        $this->page .= $this->getSubmit('pref', $param['SAVE']);
+        $this->page .= '</form>';
+        $this->page .= '</section>';
+        $this->page .= '<section>';
+        $this->page .= '<h1>' . $this->l->trad('CRON_SERVER_TITLE') . '</h1>';
+        $this->page .= $this->getInfo($this->l->trad('CRON_SERVER_1'));
+        $this->page .= $this->getInfo($this->l->trad('CRON_SERVER_2'));
+        $this->page .= $this->getInfo($this->l->trad('CRON_SERVER_3'));
+        $this->page .= $this->getInfo($this->l->trad('CRON_SERVER_4'));
+        $this->page .= '</section>';
+        $this->page .= '</main>';
+        $this->display();
+    }
+
+    public function getSelectCron($config, $active)
+    {
+        $page = $this->searchHTML('selectCron', 'cron');
+        $page = str_replace('{CHOOSE_SELECT}',  $this->l->trad('CHOOSE_SELECT'), $page);
+        $page = str_replace('{DELETE}', $this->l->trad('DELETE_INFO'), $page);
+        $page = str_replace('{CRON_OPTION}', $this->getOptionCron($active), $page);
+        $page = str_replace('{_CRON_ID}', $config['config_id'], $page);
+        return $page;
+    }
+
+    public function getOptionCron($active)
+    {
+        $page = '';
+        if ($active['stat_type'] == 'v1' || $active['stat_type'] == 'v2') {
+            $page .=  '<option value="20">20 mn</option>';
+        }
+        $page .=  '<option value="30">30 mn</option>';
+        $page .=  '<option value="60">60 mn</option>';
+        return $page;
+    }
+
+    public function getLocalhost()
+    {
+        $whitelist = array(
+            '127.0.0.1',
+            '::1'
+        );
+
+        if (!in_array($_SERVER['REMOTE_ADDR'], $whitelist)) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public function getListCronServer($param)
+    {
+        $this->page .= $this->searchHTML('listCronServer', 'cron');
+        $this->page = str_replace('{_CRON_PATH}',  $param['1'], $this->page);
+        $this->page = str_replace('{_CRONTAB_TIME}',  $param['2'], $this->page);
+        $this->page = str_replace('{CRON_PATH}',  $this->l->trad('CRON_PATH'), $this->page);
+        $this->page = str_replace('{CRONTAB_TIME}',  $this->l->trad('CRONTAB_TIME'), $this->page);
+    }
 
     public function getListInfoCron($param)
     {
@@ -83,9 +166,20 @@ class CronView extends View
         $this->page = str_replace('{_STATION_LOCATION}',  $param['2'], $this->page);
         $this->page = str_replace('{_CRON_STATUS}',  $param['3'], $this->page);
         $this->page = str_replace('{_CRON_TIMER}',  $param['4'], $this->page);
+        $this->page = str_replace('{_CRON_TYPE}',  $param['5'], $this->page);
         $this->page = str_replace('{STATION_TYPE}',  $this->l->trad('STATION_TYPE'), $this->page);
         $this->page = str_replace('{STATION_LOCATION}',  $this->l->trad('STATION_LOCATION'), $this->page);
         $this->page = str_replace('{CRON_STATUS}',  $this->l->trad('CRON_STATUS'), $this->page);
         $this->page = str_replace('{CRON_TIMER}',  $this->l->trad('CRON_TIMER'), $this->page);
+        $this->page = str_replace('{CRON_TYPE}',  $this->l->trad('CRON_TYPE'), $this->page);
+    }
+
+    public function alertCron($dial, $lg, $url)
+    {
+        $page = '<script type="text/javascript">';
+        $page .= ' alert("' . $dial . '");';
+        $page .= 'window.location.replace("index.php?' . $url . '&lg=' . $lg . '");';
+        $page .= '</script>';
+        echo $page;
     }
 }

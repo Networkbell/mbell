@@ -10,9 +10,9 @@ abstract class Model
 
     public function __construct()
     {
-       $this->dispatcher = new Dispatcher;
+        $this->dispatcher = new Dispatcher;
         $this->l = new Lang();
-        $this->file_admin = 'config/admin.php';
+        $this->file_admin = dirname(dirname(__FILE__)) . '/config/admin.php';
 
         //CONNEXION BDD
         if (file_exists($this->file_admin)) {
@@ -40,6 +40,32 @@ abstract class Model
             }
         }
     }
+
+    public function __destruct()
+    {
+        try {
+            $this->connexion = null; //Closes connection
+            $this->requete = null;
+        } catch (PDOException $e) {
+            if (MB_DEBUG) {
+                die($e->getMessage());
+            }
+        }
+    }
+
+    public function close($connexion, $requete)
+    {
+        try {
+            $connexion = null; //Closes connection
+            $requete = null;
+        } catch (PDOException $e) {
+            if (MB_DEBUG) {
+                die($e->getMessage());
+            }
+        }
+    }
+
+
 
     /**
      * Type de station
@@ -134,9 +160,10 @@ abstract class Model
         $config_color = 'colored';
         $config_icon = 1;
         $config_cron = 0;
+        $config_crontime = 0;
         $stat_id = $info['stat_id'];
 
-        $req = "INSERT INTO $config_tab VALUES(NULL, :config_lang, :config_sun, :config_aux1, :config_aux2, :config_aux3, :config_temp, :config_wind, :config_rain, :config_press, :config_css, :config_daynight, :config_color, :config_icon, :config_cron, :stat_id)";
+        $req = "INSERT INTO $config_tab VALUES(NULL, :config_lang, :config_sun, :config_aux1, :config_aux2, :config_aux3, :config_temp, :config_wind, :config_rain, :config_press, :config_css, :config_daynight, :config_color, :config_icon, :config_cron, :config_crontime, :stat_id)";
         try {
             $this->requete = $this->connexion->prepare($req);
             $this->requete->bindParam(':config_lang', $config_lang);
@@ -153,6 +180,7 @@ abstract class Model
             $this->requete->bindParam(':config_color', $config_color);
             $this->requete->bindParam(':config_icon', $config_icon);
             $this->requete->bindParam(':config_cron', $config_cron);
+            $this->requete->bindParam(':config_crontime', $config_crontime);
             $this->requete->bindParam(':stat_id', $stat_id);
             $result = $this->requete->execute();
             $row = ($result) ? $stat_id : null;
@@ -175,6 +203,7 @@ abstract class Model
     {
         require $this->file_admin;
         $tab_tab = $table_prefix . 'tab';
+        $type = $info['stat_type'];
 
         //DEFAULT VALUE
         $tab_lines = 4;
@@ -184,16 +213,16 @@ abstract class Model
         $tab_2a = 4;
         $tab_2b = 5;
         $tab_2c = 6;
-        $tab_3a = ($info['stat_type'] == "live") ? 12 : 7;
+        $tab_3a = ($type == "live" || $type == "weewx") ? 12 : 7; //12 hum relative / 7 +forte rafale
         $tab_3b = 8;
-        $tab_3c = ($info['stat_type'] == "live") ? 13 : 9;
+        $tab_3c = ($type == "live" || $type == "weewx") ? 13 : 9; //13 precip mois / 9 évapo
         $tab_4a = 10;
         $tab_4b = 11;
-        $tab_4c = ($info['stat_type'] == "live") ? 14 : 12;
+        $tab_4c = ($type == "live" || $type == "weewx") ? 14 :  12;  // 14 precip annuel / 12 hum relative
         $tab_5a = 43;
         $tab_5b = 44;
-        $tab_5c = ($info['stat_type'] == "live") ? 9 : 13;
-        $tab_6a = ($info['stat_type'] == "live") ? 7 : 14;
+        $tab_5c = ($type == "live" || $type == "weewx") ? 9 : 13; //9 évapo / 13 precip mois
+        $tab_6a = ($type == "live" || $type == "weewx") ? 7 : 14; //7 +forte rafale / 14 precip annuel
         $tab_6b = 15;
         $tab_6c = 16;
         $tab_7a = 30;
@@ -372,7 +401,7 @@ abstract class Model
         $config_statid = $config_tab . '.stat_id';
         $stat_active = 1;
 
-        $req = "SELECT config_id, config_lang, config_sun, config_aux1, config_aux2, config_aux3, config_temp, config_wind, config_rain, config_press, config_css, config_daynight, config_color, config_icon, config_cron, $config_statid FROM $config_tab INNER JOIN $station_tab ON $config_statid = $stat_statid WHERE stat_active = :stat_active";
+        $req = "SELECT config_id, config_lang, config_sun, config_aux1, config_aux2, config_aux3, config_temp, config_wind, config_rain, config_press, config_css, config_daynight, config_color, config_icon, config_cron, config_crontime, $config_statid FROM $config_tab INNER JOIN $station_tab ON $config_statid = $stat_statid WHERE stat_active = :stat_active";
 
         try {
             $this->requete = $this->connexion->prepare($req);
@@ -426,6 +455,4 @@ abstract class Model
             }
         }
     }
-
-
 }

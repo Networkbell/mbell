@@ -1,15 +1,15 @@
 <?php
-require 'lang/Lang.php';
-require 'View/View.php';
-require 'Model/Model.php';
-require 'Controller/Controller.php';
+require MBELLPATH . 'lang/Lang.php';
+require MBELLPATH . 'View/View.php';
+require MBELLPATH . 'Model/Model.php';
+require MBELLPATH . 'Controller/Controller.php';
 
-require 'Controller/InstallController.php';
-require 'Controller/LoginController.php';
-require 'Controller/PrefController.php';
-require 'Controller/HomeController.php';
-require 'Controller/ChangeController.php';
-require 'Controller/CronController.php';
+require MBELLPATH . 'Controller/InstallController.php';
+require MBELLPATH . 'Controller/LoginController.php';
+require MBELLPATH . 'Controller/PrefController.php';
+require MBELLPATH . 'Controller/HomeController.php';
+require MBELLPATH . 'Controller/ChangeController.php';
+require MBELLPATH . 'Controller/CronController.php';
 
 class Dispatcher
 {
@@ -21,16 +21,19 @@ class Dispatcher
     public function dispatch()
     {
         //déjà installé 1 fois
-        if (file_exists('config/admin.php')) {
+        if (file_exists(MBELLPATH . 'config/admin.php')) {
             if (MB_DEBUG) {
                 var_dump('Dispatch : 0');
             }
-            require 'config/admin.php';
+            require  MBELLPATH . 'config/admin.php';
             $version = $this->versionNumURL(false);
 
             $controller = (isset($_GET['controller'])) ? $_GET['controller'] : "home";
             $action = (isset($_GET['action'])) ? $_GET['action'] : "index";
+
             $version_installed = (isset($version_installed)) ? floatval($version_installed) : ($version + 1);
+
+
 
             // on empéche d'accéder à install si install est terminé
             if ($controller == "install" && $installed == 'yes' && $version == $version_installed) {
@@ -40,7 +43,9 @@ class Dispatcher
                 $controller = 'home';
                 $action = 'index';
                 // phase d'install principal
-            } elseif ((($installed == 'no' || $installed == '{no}') && $version == $version_installed && $controller != 'install') || (($installed == 'no' || $installed == '{no}') &&  $controller == 'install')) {
+            } elseif ((($installed == 'no' || $installed == '{no}') && $version == $version_installed && $controller != 'install') 
+            || (($installed == 'no' || $installed == '{no}') &&  $controller == 'install')
+            ) {
                 if (MB_DEBUG) {
                     var_dump('Dispatch : 2');
                 }
@@ -48,7 +53,7 @@ class Dispatcher
                 $action = (isset($_GET['action'])) ? $_GET['action'] : "step1";
             }
             // ecrasement de fichier avec version plus ancienne ou version inférieur à 2.3
-            elseif (($installed == 'yes' || $installed == 'installed_true') && $version < $version_installed && ($controller == 'install' || !class_exists($controller))) {
+            elseif (($installed == 'yes' || $installed == 'installed_true' || $installed == '{no}') && $version < $version_installed && ($controller == 'install' || !class_exists($controller))) {
                 if (MB_DEBUG) {
                     var_dump('Dispatch : 3');
                 }
@@ -66,10 +71,10 @@ class Dispatcher
             } elseif (($installed == 'no' || $installed == '{no}') && $version > $version_installed && $controller == 'pref' && isset($_SESSION['user_login'])) {
                 if (MB_DEBUG) {
                     var_dump('Dispatch : 5');
-                }
-                $controller = 'pref';
-                $action = (isset($_GET['action'])) ? $_GET['action'] : "list";
-                //étape de login dans l'installation
+                }              
+                $controller =  "pref";
+                $action = 'sas';                           
+                   //étape de login dans l'installation 
             } elseif (($installed == 'no' || $installed == '{no}') && $controller == 'login') {
                 if (MB_DEBUG) {
                     var_dump('Dispatch : 6');
@@ -168,7 +173,7 @@ class Dispatcher
             $action = (isset($_GET['action'])) ? $_GET['action'] : 'step1';
             $action = ($action != 'step1') ? $action : 'step1';
         }
-        if (file_exists('config/admin.php')) {
+        if (file_exists(MBELLPATH . 'config/admin.php')) {
             if (MB_DEBUG) {
                 var_dump('Controller = ' . $controller);
                 var_dump('Action = ' . $action);
@@ -185,7 +190,7 @@ class Dispatcher
 
 
 
-        /**
+    /**
      * Retourne le numéro de version de Mbell disponible en téléchargement (true) ou installable (false)
      *
      * @param [boolean] $true = true (meteobell.com) / false (mbell)
@@ -193,7 +198,7 @@ class Dispatcher
      */
     public function versionNumURL($true)
     {
-        $pathVersion = 'config/version.txt';
+        $pathVersion =  'config/version.txt';
         if ($true == true) {
             $version_file = file_get_contents('http://www.meteobell.com/mbell/' . $pathVersion);
         } elseif ($true == false) {
