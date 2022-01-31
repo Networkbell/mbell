@@ -119,6 +119,6 @@ Version actuelle = Publique 2.4 (Développement -0.71)
 - bug introduit en 2.3 : une fois coché, la Sonde d'Indice UV (6490) et/ou le Capteur de Rayonnement Solaire (6450) étaient impossible à décocher (la nouvelle configuration ne se mettant pas à jour une fois validé) : réparé en 2.4
 
 
-## Remerciement :
+# Remerciement :
 
 Merci à Bug-Storm (alias 970hPa) pour son API Weewx : https://github.com/Bug-Storm/API_Weewx_Mbell
