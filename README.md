@@ -97,6 +97,10 @@ Version actuelle = Publique 2.4 (Développement -0.71)
 
 # Problèmes connus
 
+## Général
+
+* bug introduit en 2.3 : si vous ne disposez pas de l'extension CURL sur votre hébergement, il est possible que vous ne puissez pas patcher automatiquement Mbell dans le version suivante. Vous devez alors passer par Github pour patcher mbell : réparé en 2.4 (mais ne sera visible que quand la version 2.5 sera disponible)
+
 ## Avec Weatherlink Live et Weewx :
 
 - Toutes les infos de stations ne sont pas proposés, les sondes auxiliaires suivantes ne sont pas encore prise en compte :
