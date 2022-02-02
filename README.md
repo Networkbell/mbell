@@ -97,6 +97,7 @@ Version actuelle = Publique 2.4 (Développement -0.71)
 ## Général
 
 * bug introduit en 2.3 : si vous ne disposez pas de l'extension CURL sur votre hébergement, il est possible que vous ne puissez pas patcher automatiquement Mbell dans la version suivante. Vous devez alors passer par Github pour patcher mbell : réparé en 2.4 (mais ne sera visible que quand la version 2.5 sera disponible)
+* bug introduit en version 2.4 : Impossible de modifier les cases dans la zone Configuration (sauf si vous avez choisi le maximum de lignes à 10) 
 
 ## Avec Weatherlink Live et Weewx :
 
@@ -107,6 +108,7 @@ Version actuelle = Publique 2.4 (Développement -0.71)
 3. Station Météo Auxiliaire Humectation du Feuillage / Température & Humidité du Sol (6345)
 
 - L'API Weatherlink Live (version gratuite) et Weewx sont encore en phase d'expérimentation et nécéssitent un cronjob pour fonctionner aussi bien que les API précédentes. Elles possèdent donc beaucoup moins d'informations et le template de Mbell a été donc allégé en conséquence.
+- Les précipitations du jour affichent les précipitations du mois pour les stations foncitonnant uniquement avec Weatherlink Live
 
 
 # Bugs corrigés
