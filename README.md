@@ -1,21 +1,18 @@
-# Read-Me (EN) : soon
-CMS for weather station (Davis-Weatherlink)
-# Lisez-Moi (FR) :
 CMS pour station météo (Davis-Weatherlink)
 
 Pour de plus amples détails, aller sur le wiki de Mbell : https://github.com/Networkbell/mbell/wiki/MBell-fr
 
 
-# Description (FR)
+# Description
 
 MBell est un système de gestion de contenu (CMS - content management system) pour propriétaire de stations météos disposant d'une API au format json, leur permettant de diffuser leurs données météorologiques en temps réel sur leur propre hébergement internet.
 
 Exemple de station météo utilisant mbell à cette adresse : http://www.meteobell.com/mbell/index.php
 
 
-# Prérequis (FR)
+# Prérequis
 
-- Disposer d'une station météo de la marque Davis Instruments avec datalogger IP (weatherlink v1 et v2), connexion USB (weatherlink v2) ou Weatherlink Live.
+- Disposer d'une station météo de la marque Davis Instruments avec datalogger IP (weatherlink v1 et v2), connexion USB (weatherlink v2), Weatherlink Live ou Weewx.
 - Disposer d'un hébergement internet (en PHP 7 à 7.4)
 - Disposer d'1 base de données sur son hébergement internet
 
@@ -24,14 +21,14 @@ NOTE 1 : Si vous ne disposez ni d'hébergement internet et/ou ni de base de donn
 NOTE 2 : Une base de donnée est nécessaire depuis la version 2.0 de mbell, mais vous pouvez toutefois télécharger la version précédente, sans base de données, à cette adresse, avec mbell 1.6 : http://www.meteobell.com/mbell.php Attention cette version, bien que parfaitement opérationnelle, ne sera plus mis à jour et ne disposera donc pas des dernières évolutions depuis la version 2.0. Contrairement à la version 2.0, cette version 1.6, plus ancienne, nécessite une inscription obligatoire sur meteobell.com.
 
 
-# Installation (FR)
+# Installation
 
 1. Télécharger MBell sur Github (clic sur le bouton vert "Code" -> "Download ZIP")
 2. Dézipper le fichier mbell-main.zip
 
 NOTE 1 : le dossier "mbell-main" obtenus peut être renommé comme bon vous semble.
 
-## Installation sur Internet (FR)
+## Installation sur Internet
 
 3. Avec un logiciel FTP (exemple FileZilla), installer le dossier "mbell-main" sur votre site internet
 4. Aller à l'adresse url de votre site à l'emplacement de mbell : http://www.votre-site.com/mbell-main/
@@ -41,7 +38,7 @@ NOTE 1 : vous pouvez placer le dossier "mbell-main" à n'importe quel endroit de
 
 NOTE 2 : les informations de connexions à votre base de données vous sont fournis par votre hébergeur. Il vous sera peut-être nécessaire de créer la base de données (avec PHPMyAdmin) si elle n'existe pas encore (clic sur "Nouvelle base de données"). Dans ce cas vous n'avez qu'à donner un nom de base de donnée et choisissez l'encodage "utf8_general_ci". Enfin préférez MariaDB que MySQL si possible.
 
-## Installation en localhost (FR)
+## Installation en localhost
 
 3. Avec un logiciel de serveur virtuel (Wamp ou EasyPHP) aller à l'emplacement du dossier "mbell-main" sur votre disque dur
 4. La procédure d'installation se lance automatiquement en vous guidant pas à pas
@@ -90,26 +87,38 @@ $debug = false;
     2.1 (-0.58) - Addon : Weatherlink Live
     2.2 (-0.63) - Addon : Cron Weather Backup
     2.3 (-0.65) - Addon : Auto Update System
+    2.4 (-0.71) - Addon : Weewx / Update : Cronjob System
+    2.41 (-0.72) - Correctif : Optimisation Code + Addon Wind Direction Box
 
-Version actuelle = Publique 2.3 (Développement -0.65)
+Version actuelle = Publique 2.41 (Développement -0.72)
 
 
 # Problèmes connus
 
- ## Général :
+## Avec Weatherlink Live et Weewx :
 
-- bug introduit en version 2.1 : ni la zone Configuration, ni l'affiche de la zone Home ne fonctionne, dès lors que la case "Cumul de Pluie" est choisi en même temps que la zone Précipitation Mensuelle ou Annuelle et provoque une Erreur PHP Fatal = bug sur le switch Cumul de Pluie <-> Précipitation du Jour (réparé dans la prochaine version)
-- bug introduit en version 2.1 : Impossible de choisir l'Option : Sonde d'Indice UV (6490) seul, sans cocher en même temps le capteur de rayonnement solaire (6450) car provoque une Erreur Fatal PHP : réparé dans la prochaine version
-- le système de cronjob introduit en 2.2 est très/trop sensible aux désactivations serveurs, il se désactive donc souvent si votre hébergement est un peu trop instable et doit être relancé manuellement (réparé dans une future version)
-- bug : une fois coché, la Sonde d'Indice UV (6490) et/ou le Capteur de Rayonnement Solaire (6450) étaient impossible à décocher (la nouvelle configuration ne se mettant pas à jour une fois validé) : réparé dans la prochaine version
-
-
-## Avec Weatherlink Live :
-
-- Toutes les infos de stations ne sont pas proposés, je recherche des personnes possédant ce type de sondes auxiliaires, afin de réaliser des tests et les ajouter à Mbell :
+- Toutes les infos de stations ne sont pas proposés, les sondes auxiliaires suivantes ne sont pas encore prise en compte :
 
 1. Station Météo Auxiliaire de Température Air-Eau-Sol (6372)
 2. Station Météo Auxiliaire de Température & Humidité de l'Air (6382)
 3. Station Météo Auxiliaire Humectation du Feuillage / Température & Humidité du Sol (6345)
 
-- L'API Weatherlink Live en gratuite est très basique et possède beaucoup moins d'informations proposées qu'auparavant, je ne peux donc afficher toutes les informations que Mbell propose avec les API précédentes, le template Mbell a été donc allégé en conséquence.
+- L'API Weatherlink Live (version gratuite) et Weewx sont encore en phase d'expérimentation et nécéssitent un cronjob pour fonctionner aussi bien que les API précédentes. Elles possèdent donc beaucoup moins d'informations et le template de Mbell a été donc allégé en conséquence.
+
+
+# Bugs corrigés
+
+- bug introduit en 2.1 : Bug provenant de weatherlink lui-même et rendant aléatoire la génération de leur API. Provoque alors des bugs sur certaines stations : réparé en 2.2 
+- bug introduit en 2.1 : si vous ajoutez une station dans "Changer Station" un message d'erreur PHP a lieu, mais la station est bien ajoutée : réparé en 2.2
+- bug : une maj de mbell sans supprimer le fichier admin.php (écrasement des anciens fichiers) rend la nouvelle installation impossible : réparé en 2.3 
+- bug introduit en 2.1 : ni la zone Configuration, ni l'affiche de la zone Home ne fonctionne, dès lors que la case "Cumul de Pluie" est choisi en même temps que la zone Précipitation Mensuelle ou Annuelle et provoque une Erreur PHP Fatal = bug sur le switch Cumul de Pluie <-> Précipitation du Jour : réparé en 2.4
+- bug introduit en 2.1 : impossible de choisir l'Option : Sonde d'Indice UV (6490) seul, sans cocher en même temps le capteur de rayonnement solaire (6450) car provoque une Erreur Fatal PHP : réparé en 2.4
+- bug introduit en 2.2 : le système de cronjob est très/trop sensible aux désactivations serveurs, il se désactive donc souvent si votre hébergement est un peu trop instable et doit être relancé manuellement : réparé en 2.4
+- bug introduit en 2.3 : une fois coché, la Sonde d'Indice UV (6490) et/ou le Capteur de Rayonnement Solaire (6450) étaient impossible à décocher (la nouvelle configuration ne se mettant pas à jour une fois validé) : réparé en 2.4
+- bug introduit en 2.3 : si vous ne disposez pas de l'extension CURL sur votre hébergement, il est possible que vous ne puissez pas patcher automatiquement Mbell dans la version suivante. Vous devez alors passer par Github pour patcher mbell : réparé en patchant la version 2.4 à 2.41
+- bug introduit en version 2.4 : Impossible de modifier les cases dans la zone Configuration (sauf si vous avez choisi le maximum de lignes à 10) : réparé en 2.41
+
+
+# Remerciement :
+
+Merci à Bug-Storm (alias 970hPa) pour son API Weewx : https://github.com/Bug-Storm/API_Weewx_Mbell
