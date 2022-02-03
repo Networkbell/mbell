@@ -88,16 +88,12 @@ $debug = false;
     2.2 (-0.63) - Addon : Cron Weather Backup
     2.3 (-0.65) - Addon : Auto Update System
     2.4 (-0.71) - Addon : Weewx / Update : Cronjob System
+    2.41 (-0.72) - Correctif : Optimisation Code + Addon Wind Direction Box
 
-Version actuelle = Publique 2.4 (Développement -0.71)
+Version actuelle = Publique 2.41 (Développement -0.72)
 
 
 # Problèmes connus
-
-## Général
-
-* bug introduit en 2.3 : si vous ne disposez pas de l'extension CURL sur votre hébergement, il est possible que vous ne puissez pas patcher automatiquement Mbell dans la version suivante. Vous devez alors passer par Github pour patcher mbell : réparé en 2.4 (mais ne sera visible que quand la version 2.5 sera disponible)
-* bug introduit en version 2.4 : Impossible de modifier les cases dans la zone Configuration (sauf si vous avez choisi le maximum de lignes à 10) 
 
 ## Avec Weatherlink Live et Weewx :
 
@@ -108,7 +104,6 @@ Version actuelle = Publique 2.4 (Développement -0.71)
 3. Station Météo Auxiliaire Humectation du Feuillage / Température & Humidité du Sol (6345)
 
 - L'API Weatherlink Live (version gratuite) et Weewx sont encore en phase d'expérimentation et nécéssitent un cronjob pour fonctionner aussi bien que les API précédentes. Elles possèdent donc beaucoup moins d'informations et le template de Mbell a été donc allégé en conséquence.
-- Les précipitations du jour affichent les précipitations du mois pour les stations fonctionnant uniquement avec Weatherlink Live
 
 
 # Bugs corrigés
@@ -120,6 +115,8 @@ Version actuelle = Publique 2.4 (Développement -0.71)
 - bug introduit en 2.1 : impossible de choisir l'Option : Sonde d'Indice UV (6490) seul, sans cocher en même temps le capteur de rayonnement solaire (6450) car provoque une Erreur Fatal PHP : réparé en 2.4
 - bug introduit en 2.2 : le système de cronjob est très/trop sensible aux désactivations serveurs, il se désactive donc souvent si votre hébergement est un peu trop instable et doit être relancé manuellement : réparé en 2.4
 - bug introduit en 2.3 : une fois coché, la Sonde d'Indice UV (6490) et/ou le Capteur de Rayonnement Solaire (6450) étaient impossible à décocher (la nouvelle configuration ne se mettant pas à jour une fois validé) : réparé en 2.4
+- bug introduit en 2.3 : si vous ne disposez pas de l'extension CURL sur votre hébergement, il est possible que vous ne puissez pas patcher automatiquement Mbell dans la version suivante. Vous devez alors passer par Github pour patcher mbell : réparé en patchant la version 2.4 à 2.41
+- bug introduit en version 2.4 : Impossible de modifier les cases dans la zone Configuration (sauf si vous avez choisi le maximum de lignes à 10) : réparé en 2.41
 
 
 # Remerciement :
