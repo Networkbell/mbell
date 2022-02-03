@@ -251,9 +251,6 @@ class StationView extends View
             "wind_day_high_time" => ($type == 'live' || $type == 'weewx') ?  $zero : ($dat->wind_day_high_time ?? $zero),
             "wind_month_high_mph" => ($type == 'live' || $type == 'weewx') ?  $zero : ($dat->wind_month_high_mph ?? $zero),
             "wind_year_high_mph" => ($type == 'live' || $type == 'weewx') ?  $zero : ($dat->wind_year_high_mph ?? $zero),
-
-            "temp_day_high_f" => ($type == 'live' || $type == 'weewx') ?  $zero : (isset($dat->temp_day_high_f) ? $dat->temp_day_high_f : $zero),
-            "temp_day_low_f" => ($type == 'live' || $type == 'weewx') ?  $zero : (isset($dat->temp_day_low_f) ? $dat->temp_day_low_f : $zero),
             "temp_extra_1" => ($type == 'live' || $type == 'weewx') ?  $zero : (isset($dat->temp_extra_1) ? $dat->temp_extra_1 : $zero),
             "temp_extra_2" => ($type == 'live' || $type == 'weewx') ?  $zero : (isset($dat->temp_extra_2) ? $dat->temp_extra_2 : $zero),
             "temp_extra_3" => ($type == 'live' || $type == 'weewx') ?  $zero : (isset($dat->temp_extra_3) ? $dat->temp_extra_3 : $zero),
@@ -279,15 +276,8 @@ class StationView extends View
             "soil_moisture_1" => ($type == 'live' || $type == 'weewx') ?  $zero : (isset($dat->soil_moisture_1) ? $dat->soil_moisture_1 : $zero),
             "soil_moisture_2" => ($type == 'live' || $type == 'weewx') ?  $zero : (isset($dat->soil_moisture_2) ? $dat->soil_moisture_2 : $zero),
             "soil_moisture_3" => ($type == 'live' || $type == 'weewx') ?  $zero : (isset($dat->soil_moisture_3) ? $dat->soil_moisture_3 : $zero),
-            "soil_moisture_4" => ($type == 'live' || $type == 'weewx') ?  $zero : (isset($dat->soil_moisture_4) ? $dat->soil_moisture_4 : $zero),
-            "temp_day_low_f" => ($type == 'live' || $type == 'weewx') ?  $zero : (isset($dat->temp_day_low_f) ? $dat->temp_day_low_f : $zero),
-            "temp_month_low_f" => ($type == 'live' || $type == 'weewx') ?  $zero : (isset($dat->temp_month_low_f) ? $dat->temp_month_low_f : $zero),
-            "temp_year_low_f" => ($type == 'live' || $type == 'weewx') ?  $zero : (isset($dat->temp_year_low_f) ? $dat->temp_year_low_f : $zero),
-            "temp_day_high_f" => ($type == 'live' || $type == 'weewx') ?  $zero : (isset($dat->temp_day_high_f) ? $dat->temp_day_high_f : $zero),
-            "temp_month_high_f" => ($type == 'live' || $type == 'weewx') ?  $zero : (isset($dat->temp_month_high_f) ? $dat->temp_month_high_f : $zero),
-            "temp_year_high_f" => ($type == 'live' || $type == 'weewx') ?  $zero : (isset($dat->temp_year_high_f) ? $dat->temp_year_high_f : $zero),
-            "temp_day_low_time" => ($type == 'live' || $type == 'weewx') ?  $zero : (isset($dat->temp_day_low_time) ? $dat->temp_day_low_time : $zero),
-            "temp_day_high_time" => ($type == 'live' || $type == 'weewx') ?  $zero : (isset($dat->temp_day_high_time) ? $dat->temp_day_high_time : $zero),
+            "soil_moisture_4" => ($type == 'live' || $type == 'weewx') ?  $zero : (isset($dat->soil_moisture_4) ? $dat->soil_moisture_4 : $zero),            
+
             "pressure_day_low_in" => ($type == 'live' || $type == 'weewx') ?  $zero : (isset($dat->pressure_day_low_in) ? $dat->pressure_day_low_in : $zero),
             "pressure_month_low_in" => ($type == 'live' || $type == 'weewx') ?  $zero : (isset($dat->pressure_month_low_in) ? $dat->pressure_month_low_in : $zero),
             "pressure_year_low_in" => ($type == 'live' || $type == 'weewx') ?  $zero : (isset($dat->pressure_year_low_in) ? $dat->pressure_year_low_in : $zero),
@@ -542,6 +532,8 @@ class StationView extends View
             "temp_day_low_f" => ($type == 'live' || $type == 'weewx') ?  $zero : (isset($dat->temp_day_low_f) ? $dat->temp_day_low_f : $zero),
             "temp_month_low_f" => ($type == 'live' || $type == 'weewx') ?  $zero : (isset($dat->temp_month_low_f) ? $dat->temp_month_low_f : $zero),
             "temp_year_low_f" => ($type == 'live' || $type == 'weewx') ?  $zero : (isset($dat->temp_year_low_f) ? $dat->temp_year_low_f : $zero),
+            "temp_day_low_time" => ($type == 'live' || $type == 'weewx') ?  $zero : (isset($dat->temp_day_low_time) ? $dat->temp_day_low_time : $zero),
+            "temp_day_high_time" => ($type == 'live' || $type == 'weewx') ?  $zero : (isset($dat->temp_day_high_time) ? $dat->temp_day_high_time : $zero),
             "windchill_day_low_f" => ($type == 'live' || $type == 'weewx') ?  $zero : (isset($dat->windchill_day_low_f) ? $dat->windchill_day_low_f : $zero),
             "windchill_day_low_time" => ($type == 'live' || $type == 'weewx') ?  $zero : (isset($dat->windchill_day_low_time) ? $dat->windchill_day_low_time : $zero),
             "windchill_month_low_f" => ($type == 'live' || $type == 'weewx') ?  $zero : (isset($dat->windchill_month_low_f) ? $dat->windchill_month_low_f : $zero),
@@ -553,13 +545,7 @@ class StationView extends View
             "solar_radiation_day_high" => ($type == 'live' || $type == 'weewx') ?  $zero : (isset($dat->solar_radiation_day_high) ? $dat->solar_radiation_day_high : $zero),
             "solar_radiation_day_high_time" => ($type == 'live' || $type == 'weewx') ?  $zero : (isset($dat->solar_radiation_day_high_time) ? $dat->solar_radiation_day_high_time : $zero),
             "uv_index_day_high" => ($type == 'live' || $type == 'weewx') ?  $zero : (isset($dat->uv_index_day_high) ? $dat->uv_index_day_high : $zero),
-            "uv_index_day_high_time" => ($type == 'live' || $type == 'weewx') ?  $zero : (isset($dat->uv_index_day_high_time) ? $dat->uv_index_day_high_time : $zero),
-
-            "temp_month_high_f" => ($type == 'live' || $type == 'weewx') ?  $zero : (isset($dat->temp_month_high_f) ? $dat->temp_month_high_f : $zero),
-            "temp_month_low_f" => ($type == 'live' || $type == 'weewx') ?  $zero : (isset($dat->temp_month_low_f) ? $dat->temp_month_low_f : $zero),
-
-            "temp_year_high_f" => ($type == 'live' || $type == 'weewx') ?  $zero : (isset($dat->temp_year_high_f) ? $dat->temp_year_high_f : $zero),
-            "temp_year_low_f" => ($type == 'live' || $type == 'weewx') ?  $zero : (isset($dat->temp_year_low_f) ? $dat->temp_year_low_f : $zero),
+            "uv_index_day_high_time" => ($type == 'live' || $type == 'weewx') ?  $zero : (isset($dat->uv_index_day_high_time) ? $dat->uv_index_day_high_time : $zero),         
             "solar_radiation_month_high" => ($type == 'live' || $type == 'weewx') ?  $zero : (isset($dat->solar_radiation_month_high) ? $dat->solar_radiation_month_high : $zero),
             "solar_radiation_year_high" => ($type == 'live' || $type == 'weewx') ?  $zero : (isset($dat->solar_radiation_year_high) ? $dat->solar_radiation_year_high : $zero),
             "uv_index_month_high" => ($type == 'live' || $type == 'weewx') ?  $zero : (isset($dat->uv_index_month_high) ? $dat->uv_index_month_high : $zero),
@@ -620,36 +606,19 @@ class StationView extends View
     public function getAPIDatasUp($datas, $station, $livestation)
     {
         $zero = '&#8709;';
+        $apiDatas = $this->getAPIDatas($datas, $station, $livestation);
         $type = (isset($station['stat_type'])) ? $station['stat_type'] : $zero;
 
-        $timeunix = $this->getAPIDatas($datas, $station, $livestation)['time_unix'];
-        $timeRFC822 = $this->getAPIDatas($datas, $station, $livestation)['time_RFC822'];
-        $offset = $this->getAPIDatas($datas, $station, $livestation)['offset'];
-
-        $sunset = $this->getAPIDatas($datas, $station, $livestation)['sunset'];
-        $sunrise = $this->getAPIDatas($datas, $station, $livestation)['sunrise'];
-        $latitude = $this->getAPIDatas($datas, $station, $livestation)['latitude'];
-        $longitude = $this->getAPIDatas($datas, $station, $livestation)['longitude'];
-        $timezone = ($type == 'weewx') ? $this->timeZoneWeewx($offset) : $this->getAPIDatas($datas, $station, $livestation)['time_zone'];
-
-        $bartrend = $this->getAPIDatas($datas, $station, $livestation)['bar_trend'];
-        $pressurestring = $this->getAPIDatas($datas, $station, $livestation)['pressure_tendency_string'];
-        $pressure_in = $this->getAPIDatas($datas, $station, $livestation)['pressure_in'];
-        $temp_f = $this->getAPIDatas($datas, $station, $livestation)['temp_f'];
-        $temp_c = $this->getAPIDatas($datas, $station, $livestation)['temp_c'];
+        $timezone = ($type == 'weewx') ? $this->timeZoneWeewx($apiDatas['offset']) : $apiDatas['time_zone'];
 
         $data = array(
-
-            "time" => ($type == 'live') ? $this->liveDateRFC822($timeunix, $timezone) : (($type == 'weewx') ? $this->weewxDateRFC822($timeunix, $offset) : $timeRFC822),
-            "pressure_tendency" => ($type == 'live') ? $this->livePressTrend($bartrend) : $pressurestring,
-            "fuseau" => ($type == 'live' || $type == 'weewx') ? $timezone : $this->timeZone($timeRFC822),
-            "time_sunset" => ($type == 'live' || $type == 'weewx') ? $this->liveDateSun($timeunix, $latitude, $longitude, $timezone, 'sunset') : $sunset,
-            "time_sunrise" => ($type == 'live' || $type == 'weewx') ? $this->liveDateSun($timeunix, $latitude, $longitude, $timezone, 'sunrise') : $sunrise,
-            "mb_pressure" => ($type == 'live' || $type == 'weewx') ? $this->pressIntoMb($pressure_in) : $pressure_in,
-            "c_temp" => ($type == 'live' || $type == 'weewx') ?  $this->getTempFtoC($temp_f)  : $temp_c,
-
-
-
+            "time" => ($type == 'live') ? $this->liveDateRFC822($apiDatas['time_unix'], $timezone) : (($type == 'weewx') ? $this->weewxDateRFC822($apiDatas['time_unix'], $apiDatas['offset']) : $apiDatas['time_RFC822']),
+            "pressure_tendency" => ($type == 'live') ? $this->livePressTrend($apiDatas['bar_trend']) : $apiDatas['pressure_tendency_string'],
+            "fuseau" => ($type == 'live' || $type == 'weewx') ? $timezone : $this->timeZone($apiDatas['time_RFC822']),
+            "time_sunset" => ($type == 'live' || $type == 'weewx') ? $this->liveDateSun($apiDatas['time_unix'], $apiDatas['latitude'], $apiDatas['longitude'], $timezone, 'sunset') : $apiDatas['sunset'],
+            "time_sunrise" => ($type == 'live' || $type == 'weewx') ? $this->liveDateSun($apiDatas['time_unix'], $apiDatas['latitude'], $apiDatas['longitude'], $timezone, 'sunrise') : $apiDatas['sunrise'],
+            "mb_pressure" => ($type == 'live' || $type == 'weewx') ? $this->pressIntoMb($apiDatas['pressure_in']) : $apiDatas['pressure_in'],
+            "c_temp" => ($type == 'live' || $type == 'weewx') ?  $this->getTempFtoC($apiDatas['temp_f'])  : $apiDatas['temp_c'],
         );
 
         return $data;
@@ -842,6 +811,10 @@ class StationView extends View
             "44" => array(
                 "txt" => $this->l->trad('RH_IN'),
                 "text" => $this->l->trad('HUMIDITY_IN')
+            ),
+            "46" => array(
+                "txt" => $this->l->trad('WIND_DIR'),
+                "text" => $this->l->trad('WIND_DIRECTION')
             )
         );
 
@@ -853,6 +826,8 @@ class StationView extends View
      */
     public function incUp1($datas, $switch, $config, $info, $livestation)
     {
+        $apiDatas =  $this->getAPIDatas($datas, $info, $livestation);
+        $apiDatasUP =  $this->getAPIDatasUp($datas, $info, $livestation);
 
         $inc = array(
             "0" => array(
@@ -889,7 +864,7 @@ class StationView extends View
                 "H2_TXT" => $this->l->trad('FEEL_LIKE'),
                 "H2_TEXT" => $this->l->trad('FEEL_LIKE_TEMP'),
                 "ICON" => $this->getIcon($switch, '\'<i class="wi wi-thermometer-exterior"></i>\''),
-                "ICON_TOOLTIP" => ($this->is_Temp('59', $this->getAPIDatas($datas, $info, $livestation)['temp_f']) == true) ? $this->getIconTooltip($switch, '\'<i class="wi wi-thermometer-exterior"></i>\'', $this->l->trad('WINDCHILL_SMALL'), '') : $this->getIconTooltip($switch, '\'<i class="wi wi-thermometer-exterior"></i>\'', $this->l->trad('HEAT'), ''),
+                "ICON_TOOLTIP" => ($this->is_Temp('59', $apiDatas['temp_f']) == true) ? $this->getIconTooltip($switch, '\'<i class="wi wi-thermometer-exterior"></i>\'', $this->l->trad('WINDCHILL_SMALL'), '') : $this->getIconTooltip($switch, '\'<i class="wi wi-thermometer-exterior"></i>\'', $this->l->trad('HEAT'), ''),
             ),
             "6" => array(
                 "H2_TXT" => $this->l->trad('CUMULATIVE_RAIN'),
@@ -910,10 +885,10 @@ class StationView extends View
                 "ICON_TOOLTIP" => ($config['config_sun'] == 'sun' || $config['config_sun'] == 'sun_uv') ? $this->getIconTooltip($switch, '<i class="wi wi-cloud-up"></i>', $this->l->trad('PET'), '') : $this->getIconTooltip($switch, '<i class="wi wi-cloud-up"></i>', $this->l->trad('ETA'), ''),
             ),
             "10" => array(
-                "H2_TXT" => ($info['stat_type'] == 'weewx') ? '' : '<img class="arrowpress" alt="arrow"  src="' . $this->pressImg($this->getAPIDatasUp($datas, $info, $livestation)['pressure_tendency'])  . '" />',
+                "H2_TXT" => ($info['stat_type'] == 'weewx') ? '' : '<img class="arrowpress" alt="arrow"  src="' . $this->pressImg($apiDatasUP['pressure_tendency'])  . '" />',
                 "H2_TEXT" => $this->l->trad('PRESSURE'),
                 "ICON" => $this->getIcon($switch, '<i class="wi wi-barometer"></i>'),
-                "ICON_TOOLTIP" => ($info['stat_type'] == 'weewx') ? $this->getIconTooltip($switch, '<i class="wi wi-barometer"></i>', $this->l->trad('PRESSURE'), '') :   $this->getIconTooltip($switch, '<i class="wi wi-barometer"></i>', $this->l->pressTrad($this->getAPIDatasUp($datas, $info, $livestation)['pressure_tendency'], $this->l->getLg()), ' <img class="arrowpress" alt="arrow"  src="' . $this->pressImg($this->getAPIDatasUp($datas, $info, $livestation)['pressure_tendency'])  . '" />'),
+                "ICON_TOOLTIP" => ($info['stat_type'] == 'weewx') ? $this->getIconTooltip($switch, '<i class="wi wi-barometer"></i>', $this->l->trad('PRESSURE'), '') :   $this->getIconTooltip($switch, '<i class="wi wi-barometer"></i>', $this->l->pressTrad($apiDatasUP['pressure_tendency'], $this->l->getLg()), ' <img class="arrowpress" alt="arrow"  src="' . $this->pressImg($apiDatasUP['pressure_tendency'])  . '" />'),
             ),
             "11" => array(
                 "H2_TXT" => $this->l->trad('DEWPT'),
@@ -1125,6 +1100,12 @@ class StationView extends View
                 "ICON" => $this->getIcon($switch, '<i class="wi wi-raindrop"></i>'),
                 "ICON_TOOLTIP" => $this->getIconTooltip($switch, '<i class="wi wi-raindrop"></i>', $this->l->trad('DAY_RAIN'), ' ' . $this->l->trad('D')),
             ),
+            "46" => array(
+                "H2_TXT" => $this->l->trad('WIND_DIR'),
+                "H2_TEXT" => $this->l->trad('WIND_DIRECTION'),
+                "ICON" => $this->getIcon($switch, '<i class="far fa-compass"></i>'),
+                "ICON_TOOLTIP" => $this->getIconTooltip($switch, '<i class="far fa-compass"></i>', $this->l->trad('WIND_DIR'), ''),
+            ),
         );
 
         return $inc;
@@ -1136,64 +1117,7 @@ class StationView extends View
     public function incMid1($datas, $switch, $config, $info, $livestation)
     {
         $zero = '&#8709;';
-
-
-        $temp_f = $this->getAPIDatas($datas, $info, $livestation)['temp_f'];
-        $windchill_f = $this->getAPIDatas($datas, $info, $livestation)['windchill_f'];
-
-        $heat_index_f  = $this->getAPIDatas($datas, $info, $livestation)['heat_index_f'];
-        $dewpoint_f  = $this->getAPIDatas($datas, $info, $livestation)['dewpoint_f'];
-        $relative_humidity  = $this->getAPIDatas($datas, $info, $livestation)['relative_humidity'];
-
-        $wind_ten_min_avg_mph = $this->getAPIDatas($datas, $info, $livestation)['wind_ten_min_avg_mph'];
-        $wind_ten_min_gust_mph = $this->getAPIDatas($datas, $info, $livestation)['wind_ten_min_gust_mph'];
-        $wind_day_high_mph = $this->getAPIDatas($datas, $info, $livestation)['wind_day_high_mph'];
-
-        $rain_rate_in_per_hr = $this->getAPIDatas($datas, $info, $livestation)['rain_rate_in_per_hr'];
-        $rain_day_in = $this->getAPIDatas($datas, $info, $livestation)['rain_day_in'];
-        $rain_month_in = $this->getAPIDatas($datas, $info, $livestation)['rain_month_in'];
-        $rain_year_in = $this->getAPIDatas($datas, $info, $livestation)['rain_year_in'];
-
-        $et_day = $this->getAPIDatas($datas, $info, $livestation)['et_day'];
-        $et_last = $this->getAPIDatas($datas, $info, $livestation)['et_last'];
-
-
-        $temp_day_high_f = $this->getAPIDatas($datas, $info, $livestation)['temp_day_high_f'];
-        $temp_day_low_f = $this->getAPIDatas($datas, $info, $livestation)['temp_day_low_f'];
-
-        $temp_extra_1 = $this->getAPIDatas($datas, $info, $livestation)['temp_extra_1'];
-        $temp_extra_2 = $this->getAPIDatas($datas, $info, $livestation)['temp_extra_2'];
-        $temp_extra_3 = $this->getAPIDatas($datas, $info, $livestation)['temp_extra_3'];
-        $temp_extra_4 = $this->getAPIDatas($datas, $info, $livestation)['temp_extra_4'];
-        $temp_extra_5 = $this->getAPIDatas($datas, $info, $livestation)['temp_extra_5'];
-        $temp_extra_6 = $this->getAPIDatas($datas, $info, $livestation)['temp_extra_6'];
-        $temp_extra_7 = $this->getAPIDatas($datas, $info, $livestation)['temp_extra_7'];
-
-        $temp_leaf_1 = $this->getAPIDatas($datas, $info, $livestation)['temp_leaf_1'];
-        $temp_leaf_2 = $this->getAPIDatas($datas, $info, $livestation)['temp_leaf_2'];
-
-        $temp_soil_1 = $this->getAPIDatas($datas, $info, $livestation)['temp_soil_1'];
-        $temp_soil_2 = $this->getAPIDatas($datas, $info, $livestation)['temp_soil_2'];
-        $temp_soil_3 = $this->getAPIDatas($datas, $info, $livestation)['temp_soil_3'];
-        $temp_soil_4 = $this->getAPIDatas($datas, $info, $livestation)['temp_soil_4'];
-
-        $relative_humidity_1 = $this->getAPIDatas($datas, $info, $livestation)['relative_humidity_1'];
-        $relative_humidity_2 = $this->getAPIDatas($datas, $info, $livestation)['relative_humidity_2'];
-        $relative_humidity_3 = $this->getAPIDatas($datas, $info, $livestation)['relative_humidity_3'];
-        $relative_humidity_4 = $this->getAPIDatas($datas, $info, $livestation)['relative_humidity_4'];
-        $relative_humidity_5 = $this->getAPIDatas($datas, $info, $livestation)['relative_humidity_5'];
-        $relative_humidity_6 = $this->getAPIDatas($datas, $info, $livestation)['relative_humidity_6'];
-        $relative_humidity_7 = $this->getAPIDatas($datas, $info, $livestation)['relative_humidity_7'];
-        $leaf_wetness_1 = $this->getAPIDatas($datas, $info, $livestation)['leaf_wetness_1'];
-        $leaf_wetness_2 = $this->getAPIDatas($datas, $info, $livestation)['leaf_wetness_2'];
-
-        $soil_moisture_1 = $this->getAPIDatas($datas, $info, $livestation)['soil_moisture_1'];
-        $soil_moisture_2 = $this->getAPIDatas($datas, $info, $livestation)['soil_moisture_2'];
-        $soil_moisture_3 = $this->getAPIDatas($datas, $info, $livestation)['soil_moisture_3'];
-        $soil_moisture_4 = $this->getAPIDatas($datas, $info, $livestation)['soil_moisture_4'];
-
-        $temp_in_f = $this->getAPIDatas($datas, $info, $livestation)['temp_in_f'];
-        $relative_humidity_in = $this->getAPIDatas($datas, $info, $livestation)['relative_humidity_in'];
+        $apiDatas = $this->getAPIDatas($datas, $info, $livestation);
 
         $inc = array(
             "0" => array(
@@ -1204,284 +1128,291 @@ class StationView extends View
                 "color" => ''
             ),
             "1" => array(
-                "_VALUE_MAIN" => $this->getWind($switch, $wind_ten_min_avg_mph),
+                "_VALUE_MAIN" => $this->getWind($switch, $apiDatas['wind_ten_min_avg_mph']),
                 "_UNIT" => $this->getUnit($switch, 'wind'),
                 "_CLASS_UNIT_SMALL" => '05',
                 "_CLASS_UNIT_LARGE" => '06',
-                "color" => $this->col->colWind($switch, $wind_ten_min_avg_mph, $datas, $info, $livestation)
+                "color" => $this->col->colWind($switch, $apiDatas['wind_ten_min_avg_mph'], $datas, $info, $livestation)
             ),
             "2" => array(
-                "_VALUE_MAIN" => $this->getTemp($switch, $temp_f),
+                "_VALUE_MAIN" => $this->getTemp($switch, $apiDatas['temp_f']),
                 "_UNIT" => $this->getUnit($switch, 'temp'),
                 "_CLASS_UNIT_SMALL" => '08',
                 "_CLASS_UNIT_LARGE" => '09',
-                "color" => $this->col->colTemp($switch, $temp_f, $datas, $info, $livestation)
+                "color" => $this->col->colTemp($switch, $apiDatas['temp_f'], $datas, $info, $livestation)
             ),
             "3" => array(
-                "_VALUE_MAIN" => $this->getRain($switch, $rain_rate_in_per_hr),
+                "_VALUE_MAIN" => $this->getRain($switch, $apiDatas['rain_rate_in_per_hr']),
                 "_UNIT" => $this->getUnit($switch, 'rain') . '/h',
                 "_CLASS_UNIT_SMALL" => '05',
                 "_CLASS_UNIT_LARGE" => '06',
-                "color" => $this->col->colRain($switch, $rain_rate_in_per_hr, $datas, $info, $livestation)
+                "color" => $this->col->colRain($switch, $apiDatas['rain_rate_in_per_hr'], $datas, $info, $livestation)
             ),
             "4" => array(
-                "_VALUE_MAIN" => $this->getWind($switch, $wind_ten_min_gust_mph),
+                "_VALUE_MAIN" => $this->getWind($switch, $apiDatas['wind_ten_min_gust_mph']),
                 "_UNIT" => $this->getUnit($switch, 'wind'),
                 "_CLASS_UNIT_SMALL" => '05',
                 "_CLASS_UNIT_LARGE" => '06',
-                "color" => $this->col->colWind($switch, $wind_ten_min_gust_mph, $datas, $info, $livestation)
+                "color" => $this->col->colWind($switch, $apiDatas['wind_ten_min_gust_mph'], $datas, $info, $livestation)
             ),
             "5" => array(
-                "_VALUE_MAIN" => ($this->is_Temp('59', $temp_f) == true) ? $this->getTemp($switch, $windchill_f) : $this->getTemp($switch, $heat_index_f),
+                "_VALUE_MAIN" => ($this->is_Temp('59', $apiDatas['temp_f']) == true) ? $this->getTemp($switch, $apiDatas['windchill_f']) : $this->getTemp($switch, $apiDatas['heat_index_f']),
                 "_UNIT" => $this->getUnit($switch, 'temp'),
                 "_CLASS_UNIT_SMALL" => '08',
                 "_CLASS_UNIT_LARGE" => '09',
-                "color" => ($this->is_Temp('59', $temp_f) == true) ? $this->col->colWindchill($switch, $windchill_f, $datas, $info, $livestation) : $this->col->colHeat($switch, $heat_index_f, $datas, $info, $livestation)
+                "color" => ($this->is_Temp('59', $apiDatas['temp_f']) == true) ? $this->col->colWindchill($switch, $apiDatas['windchill_f'], $datas, $info, $livestation) : $this->col->colHeat($switch, $apiDatas['heat_index_f'], $datas, $info, $livestation)
             ),
             "6" => array(
-                "_VALUE_MAIN" => $this->getRain($switch, $rain_day_in),
+                "_VALUE_MAIN" => $this->getRain($switch, $apiDatas['rain_day_in']),
                 "_UNIT" => $this->getUnit($switch, 'rain'),
                 "_CLASS_UNIT_SMALL" => '05',
                 "_CLASS_UNIT_LARGE" => '06',
-                "color" => $this->col->colRain($switch, $rain_day_in, $datas, $info, $livestation)
+                "color" => $this->col->colRain($switch, $apiDatas['rain_day_in'], $datas, $info, $livestation)
             ),
             "7" => array(
-                "_VALUE_MAIN" => $this->getWind($switch, $wind_day_high_mph),
+                "_VALUE_MAIN" => $this->getWind($switch, $apiDatas['wind_day_high_mph']),
                 "_UNIT" => $this->getUnit($switch, 'wind'),
                 "_CLASS_UNIT_SMALL" => '05',
                 "_CLASS_UNIT_LARGE" => '06',
-                "color" => $this->col->colWind($switch, $wind_day_high_mph, $datas, $info, $livestation)
+                "color" => $this->col->colWind($switch, $apiDatas['wind_day_high_mph'], $datas, $info, $livestation)
             ),
             "9" => array(
-                "_VALUE_MAIN" => (($config['config_sun'] == 'sun' || $config['config_sun'] == 'sun_uv') ? ($et_day != $zero ? $this->getRain($switch, $et_day) :  $this->getRain($switch, $et_last)) : $this->getRain($switch, $this->ETR_in($temp_day_high_f, $temp_day_low_f, $rain_day_in))),
+                "_VALUE_MAIN" => (($config['config_sun'] == 'sun' || $config['config_sun'] == 'sun_uv') ? ($apiDatas['et_day'] != $zero ? $this->getRain($switch, $apiDatas['et_day']) :  $this->getRain($switch, $apiDatas['et_last'])) : $this->getRain($switch, $this->ETR_in($apiDatas['temp_day_high_f'], $apiDatas['temp_day_low_f'], $apiDatas['rain_day_in']))),
                 "_UNIT" =>  $this->getUnit($switch, 'rain'),
                 "_CLASS_UNIT_SMALL" => '05',
                 "_CLASS_UNIT_LARGE" => '06',
-                "color" => ($config['config_sun'] == 'sun' || $config['config_sun'] == 'sun_uv') ? $this->col->colRain($switch, $et_day, $datas, $info, $livestation) : $this->col->colRain($switch, $this->ETR_in($temp_day_high_f, $temp_day_low_f, $rain_day_in), $datas, $info, $livestation)
+                "color" => ($config['config_sun'] == 'sun' || $config['config_sun'] == 'sun_uv') ? $this->col->colRain($switch, $apiDatas['et_day'], $datas, $info, $livestation) : $this->col->colRain($switch, $this->ETR_in($apiDatas['temp_day_high_f'], $apiDatas['temp_day_low_f'], $apiDatas['rain_day_in']), $datas, $info, $livestation)
             ),
             "11" => array(
-                "_VALUE_MAIN" => $this->getTemp($switch, $dewpoint_f),
+                "_VALUE_MAIN" => $this->getTemp($switch, $apiDatas['dewpoint_f']),
                 "_UNIT" =>  $this->getUnit($switch, 'temp'),
                 "_CLASS_UNIT_SMALL" => '08',
                 "_CLASS_UNIT_LARGE" => '09',
-                "color" => $this->col->colTemp($switch, $dewpoint_f, $datas, $info, $livestation)
+                "color" => $this->col->colTemp($switch, $apiDatas['dewpoint_f'], $datas, $info, $livestation)
             ),
             "12" => array(
-                "_VALUE_MAIN" => $relative_humidity,
+                "_VALUE_MAIN" => $apiDatas['relative_humidity'],
                 "_UNIT" =>  '%',
                 "_CLASS_UNIT_SMALL" => '06',
                 "_CLASS_UNIT_LARGE" => '08',
-                "color" => $this->col->colHumidity($switch, $relative_humidity, $datas, $info, $livestation)
+                "color" => $this->col->colHumidity($switch, $apiDatas['relative_humidity'], $datas, $info, $livestation)
             ),
             "13" => array(
-                "_VALUE_MAIN" => $this->getRain($switch, $rain_month_in),
+                "_VALUE_MAIN" => $this->getRain($switch, $apiDatas['rain_month_in']),
                 "_UNIT" => $this->getUnit($switch, 'rain'),
                 "_CLASS_UNIT_SMALL" => '05',
                 "_CLASS_UNIT_LARGE" => '06',
-                "color" => $this->col->colRain($switch, $rain_month_in, $datas, $info, $livestation)
+                "color" => $this->col->colRain($switch, $apiDatas['rain_month_in'], $datas, $info, $livestation)
             ),
             "14" => array(
-                "_VALUE_MAIN" => $this->getRain($switch, $rain_year_in),
+                "_VALUE_MAIN" => $this->getRain($switch, $apiDatas['rain_year_in']),
                 "_UNIT" => $this->getUnit($switch, 'rain'),
                 "_CLASS_UNIT_SMALL" => '05',
                 "_CLASS_UNIT_LARGE" => '06',
-                "color" => $this->col->colRain($switch, $rain_year_in, $datas, $info, $livestation)
+                "color" => $this->col->colRain($switch, $apiDatas['rain_year_in'], $datas, $info, $livestation)
             ),
             "15" => array(
-                "_VALUE_MAIN" => $this->getTemp($switch, $temp_extra_1),
+                "_VALUE_MAIN" => $this->getTemp($switch, $apiDatas['temp_extra_1']),
                 "_UNIT" => $this->getUnit($switch, 'temp'),
                 "_CLASS_UNIT_SMALL" => '08',
                 "_CLASS_UNIT_LARGE" => '09',
-                "color" => $this->col->colTemp($switch, $temp_extra_1, $datas, $info, $livestation)
+                "color" => $this->col->colTemp($switch, $apiDatas['temp_extra_1'], $datas, $info, $livestation)
             ),
             "16" => array(
-                "_VALUE_MAIN" => $this->getTemp($switch, $temp_extra_2),
+                "_VALUE_MAIN" => $this->getTemp($switch, $apiDatas['temp_extra_2']),
                 "_UNIT" => $this->getUnit($switch, 'temp'),
                 "_CLASS_UNIT_SMALL" => '08',
                 "_CLASS_UNIT_LARGE" => '09',
-                "color" => $this->col->colTemp($switch, $temp_extra_2, $datas, $info, $livestation)
+                "color" => $this->col->colTemp($switch, $apiDatas['temp_extra_2'], $datas, $info, $livestation)
             ),
             "17" => array(
-                "_VALUE_MAIN" => $this->getTemp($switch, $temp_extra_3),
+                "_VALUE_MAIN" => $this->getTemp($switch, $apiDatas['temp_extra_3']),
                 "_UNIT" => $this->getUnit($switch, 'temp'),
                 "_CLASS_UNIT_SMALL" => '08',
                 "_CLASS_UNIT_LARGE" => '09',
-                "color" => $this->col->colTemp($switch, $temp_extra_3, $datas, $info, $livestation)
+                "color" => $this->col->colTemp($switch, $apiDatas['temp_extra_3'], $datas, $info, $livestation)
             ),
             "18" => array(
-                "_VALUE_MAIN" => $this->getTemp($switch, $temp_extra_4),
+                "_VALUE_MAIN" => $this->getTemp($switch, $apiDatas['temp_extra_4']),
                 "_UNIT" => $this->getUnit($switch, 'temp'),
                 "_CLASS_UNIT_SMALL" => '08',
                 "_CLASS_UNIT_LARGE" => '09',
-                "color" => $this->col->colTemp($switch, $temp_extra_4, $datas, $info, $livestation)
+                "color" => $this->col->colTemp($switch, $apiDatas['temp_extra_4'], $datas, $info, $livestation)
             ),
             "19" => array(
-                "_VALUE_MAIN" => $this->getTemp($switch, $temp_extra_5),
+                "_VALUE_MAIN" => $this->getTemp($switch, $apiDatas['temp_extra_5']),
                 "_UNIT" => $this->getUnit($switch, 'temp'),
                 "_CLASS_UNIT_SMALL" => '08',
                 "_CLASS_UNIT_LARGE" => '09',
-                "color" => $this->col->colTemp($switch, $temp_extra_5, $datas, $info, $livestation)
+                "color" => $this->col->colTemp($switch, $apiDatas['temp_extra_5'], $datas, $info, $livestation)
             ),
             "20" => array(
-                "_VALUE_MAIN" => $this->getTemp($switch, $temp_extra_6),
+                "_VALUE_MAIN" => $this->getTemp($switch, $apiDatas['temp_extra_6']),
                 "_UNIT" => $this->getUnit($switch, 'temp'),
                 "_CLASS_UNIT_SMALL" => '08',
                 "_CLASS_UNIT_LARGE" => '09',
-                "color" => $this->col->colTemp($switch, $temp_extra_6, $datas, $info, $livestation)
+                "color" => $this->col->colTemp($switch, $apiDatas['temp_extra_6'], $datas, $info, $livestation)
             ),
             "21" => array(
-                "_VALUE_MAIN" => $this->getTemp($switch, $temp_extra_7),
+                "_VALUE_MAIN" => $this->getTemp($switch, $apiDatas['temp_extra_7']),
                 "_UNIT" => $this->getUnit($switch, 'temp'),
                 "_CLASS_UNIT_SMALL" => '08',
                 "_CLASS_UNIT_LARGE" => '09',
-                "color" => $this->col->colTemp($switch, $temp_extra_7, $datas, $info, $livestation)
+                "color" => $this->col->colTemp($switch, $apiDatas['temp_extra_7'], $datas, $info, $livestation)
             ),
             "24" => array(
-                "_VALUE_MAIN" => $this->getTemp($switch, $temp_leaf_1),
+                "_VALUE_MAIN" => $this->getTemp($switch, $apiDatas['temp_leaf_1']),
                 "_UNIT" => $this->getUnit($switch, 'temp'),
                 "_CLASS_UNIT_SMALL" => '08',
                 "_CLASS_UNIT_LARGE" => '09',
-                "color" => $this->col->colTemp($switch, $temp_leaf_1, $datas, $info, $livestation)
+                "color" => $this->col->colTemp($switch, $apiDatas['temp_leaf_1'], $datas, $info, $livestation)
             ),
             "25" => array(
-                "_VALUE_MAIN" => $this->getTemp($switch, $temp_leaf_2),
+                "_VALUE_MAIN" => $this->getTemp($switch, $apiDatas['temp_leaf_2']),
                 "_UNIT" => $this->getUnit($switch, 'temp'),
                 "_CLASS_UNIT_SMALL" => '08',
                 "_CLASS_UNIT_LARGE" => '09',
-                "color" => $this->col->colTemp($switch, $temp_leaf_2, $datas, $info, $livestation)
+                "color" => $this->col->colTemp($switch, $apiDatas['temp_leaf_2'], $datas, $info, $livestation)
             ),
             "26" => array(
-                "_VALUE_MAIN" => $this->getTemp($switch, $temp_soil_1),
+                "_VALUE_MAIN" => $this->getTemp($switch, $apiDatas['temp_soil_1']),
                 "_UNIT" => $this->getUnit($switch, 'temp'),
                 "_CLASS_UNIT_SMALL" => '08',
                 "_CLASS_UNIT_LARGE" => '09',
-                "color" => $this->col->colTemp($switch, $temp_soil_1, $datas, $info, $livestation)
+                "color" => $this->col->colTemp($switch, $apiDatas['temp_soil_1'], $datas, $info, $livestation)
             ),
             "27" => array(
-                "_VALUE_MAIN" => $this->getTemp($switch, $temp_soil_2),
+                "_VALUE_MAIN" => $this->getTemp($switch, $apiDatas['temp_soil_2']),
                 "_UNIT" => $this->getUnit($switch, 'temp'),
                 "_CLASS_UNIT_SMALL" => '08',
                 "_CLASS_UNIT_LARGE" => '09',
-                "color" => $this->col->colTemp($switch, $temp_soil_2, $datas, $info, $livestation)
+                "color" => $this->col->colTemp($switch, $apiDatas['temp_soil_2'], $datas, $info, $livestation)
             ),
             "28" => array(
-                "_VALUE_MAIN" => $this->getTemp($switch, $temp_soil_3),
+                "_VALUE_MAIN" => $this->getTemp($switch, $apiDatas['temp_soil_3']),
                 "_UNIT" => $this->getUnit($switch, 'temp'),
                 "_CLASS_UNIT_SMALL" => '08',
                 "_CLASS_UNIT_LARGE" => '09',
-                "color" => $this->col->colTemp($switch, $temp_soil_3, $datas, $info, $livestation)
+                "color" => $this->col->colTemp($switch, $apiDatas['temp_soil_3'], $datas, $info, $livestation)
             ),
             "29" => array(
-                "_VALUE_MAIN" => $this->getTemp($switch, $temp_soil_4),
+                "_VALUE_MAIN" => $this->getTemp($switch, $apiDatas['temp_soil_4']),
                 "_UNIT" => $this->getUnit($switch, 'temp'),
                 "_CLASS_UNIT_SMALL" => '08',
                 "_CLASS_UNIT_LARGE" => '09',
-                "color" => $this->col->colTemp($switch, $temp_soil_4, $datas, $info, $livestation)
+                "color" => $this->col->colTemp($switch, $apiDatas['temp_soil_4'], $datas, $info, $livestation)
             ),
             "30" => array(
-                "_VALUE_MAIN" => $relative_humidity_1,
+                "_VALUE_MAIN" => $apiDatas['relative_humidity_1'],
                 "_UNIT" =>  '%',
                 "_CLASS_UNIT_SMALL" => '06',
                 "_CLASS_UNIT_LARGE" => '08',
-                "color" => $this->col->colHumidity($switch, $relative_humidity_1, $datas, $info, $livestation)
+                "color" => $this->col->colHumidity($switch, $apiDatas['relative_humidity_1'], $datas, $info, $livestation)
             ),
             "31" => array(
-                "_VALUE_MAIN" => $relative_humidity_2,
+                "_VALUE_MAIN" => $apiDatas['relative_humidity_2'],
                 "_UNIT" =>  '%',
                 "_CLASS_UNIT_SMALL" => '06',
                 "_CLASS_UNIT_LARGE" => '08',
-                "color" => $this->col->colHumidity($switch, $relative_humidity_2, $datas, $info, $livestation)
+                "color" => $this->col->colHumidity($switch, $apiDatas['relative_humidity_2'], $datas, $info, $livestation)
             ),
             "32" => array(
-                "_VALUE_MAIN" => $relative_humidity_3,
+                "_VALUE_MAIN" => $apiDatas['relative_humidity_3'],
                 "_UNIT" =>  '%',
                 "_CLASS_UNIT_SMALL" => '06',
                 "_CLASS_UNIT_LARGE" => '08',
-                "color" => $this->col->colHumidity($switch, $relative_humidity_3, $datas, $info, $livestation)
+                "color" => $this->col->colHumidity($switch, $apiDatas['relative_humidity_3'], $datas, $info, $livestation)
             ),
             "33" => array(
-                "_VALUE_MAIN" => $relative_humidity_4,
+                "_VALUE_MAIN" => $apiDatas['relative_humidity_4'],
                 "_UNIT" =>  '%',
                 "_CLASS_UNIT_SMALL" => '06',
                 "_CLASS_UNIT_LARGE" => '08',
-                "color" => $this->col->colHumidity($switch, $relative_humidity_4, $datas, $info, $livestation)
+                "color" => $this->col->colHumidity($switch, $apiDatas['relative_humidity_4'], $datas, $info, $livestation)
             ),
             "34" => array(
-                "_VALUE_MAIN" => $relative_humidity_5,
+                "_VALUE_MAIN" => $apiDatas['relative_humidity_5'],
                 "_UNIT" =>  '%',
                 "_CLASS_UNIT_SMALL" => '06',
                 "_CLASS_UNIT_LARGE" => '08',
-                "color" => $this->col->colHumidity($switch, $relative_humidity_5, $datas, $info, $livestation)
+                "color" => $this->col->colHumidity($switch, $apiDatas['relative_humidity_5'], $datas, $info, $livestation)
             ),
             "35" => array(
-                "_VALUE_MAIN" => $relative_humidity_6,
+                "_VALUE_MAIN" => $apiDatas['relative_humidity_6'],
                 "_UNIT" =>  '%',
                 "_CLASS_UNIT_SMALL" => '06',
                 "_CLASS_UNIT_LARGE" => '08',
-                "color" => $this->col->colHumidity($switch, $relative_humidity_6, $datas, $info, $livestation)
+                "color" => $this->col->colHumidity($switch, $apiDatas['relative_humidity_6'], $datas, $info, $livestation)
             ),
             "36" => array(
-                "_VALUE_MAIN" => $relative_humidity_7,
+                "_VALUE_MAIN" => $apiDatas['relative_humidity_7'],
                 "_UNIT" =>  '%',
                 "_CLASS_UNIT_SMALL" => '06',
                 "_CLASS_UNIT_LARGE" => '08',
-                "color" => $this->col->colHumidity($switch, $relative_humidity_7, $datas, $info, $livestation)
+                "color" => $this->col->colHumidity($switch, $apiDatas['relative_humidity_7'], $datas, $info, $livestation)
             ),
             "37" => array(
-                "_VALUE_MAIN" => $leaf_wetness_1,
+                "_VALUE_MAIN" => $apiDatas['leaf_wetness_1'],
                 "_UNIT" =>  '',
                 "_CLASS_UNIT_SMALL" => '06',
                 "_CLASS_UNIT_LARGE" => '08',
-                "color" => $this->col->colLeaf($switch, $leaf_wetness_1, $datas, $info, $livestation)
+                "color" => $this->col->colLeaf($switch, $apiDatas['leaf_wetness_1'], $datas, $info, $livestation)
             ),
             "38" => array(
-                "_VALUE_MAIN" => $leaf_wetness_2,
+                "_VALUE_MAIN" => $apiDatas['leaf_wetness_2'],
                 "_UNIT" =>  '',
                 "_CLASS_UNIT_SMALL" => '06',
                 "_CLASS_UNIT_LARGE" => '08',
-                "color" => $this->col->colLeaf($switch, $leaf_wetness_2, $datas, $info, $livestation)
+                "color" => $this->col->colLeaf($switch, $apiDatas['leaf_wetness_2'], $datas, $info, $livestation)
             ),
             "39" => array(
-                "_VALUE_MAIN" => $soil_moisture_1,
+                "_VALUE_MAIN" => $apiDatas['soil_moisture_1'],
                 "_UNIT" =>  'cB',
                 "_CLASS_UNIT_SMALL" => '06',
                 "_CLASS_UNIT_LARGE" => '08',
-                "color" => $this->col->colSoil($switch, $soil_moisture_1, $datas, $info, $livestation)
+                "color" => $this->col->colSoil($switch, $apiDatas['soil_moisture_1'], $datas, $info, $livestation)
             ),
             "40" => array(
-                "_VALUE_MAIN" => $soil_moisture_2,
+                "_VALUE_MAIN" => $apiDatas['soil_moisture_2'],
                 "_UNIT" =>  'cB',
                 "_CLASS_UNIT_SMALL" => '06',
                 "_CLASS_UNIT_LARGE" => '08',
-                "color" => $this->col->colSoil($switch, $soil_moisture_2, $datas, $info, $livestation)
+                "color" => $this->col->colSoil($switch, $apiDatas['soil_moisture_2'], $datas, $info, $livestation)
             ),
             "41" => array(
-                "_VALUE_MAIN" => $soil_moisture_3,
+                "_VALUE_MAIN" => $apiDatas['soil_moisture_3'],
                 "_UNIT" =>  'cB',
                 "_CLASS_UNIT_SMALL" => '06',
                 "_CLASS_UNIT_LARGE" => '08',
-                "color" => $this->col->colSoil($switch, $soil_moisture_3, $datas, $info, $livestation)
+                "color" => $this->col->colSoil($switch, $apiDatas['soil_moisture_3'], $datas, $info, $livestation)
             ),
             "42" => array(
-                "_VALUE_MAIN" => $soil_moisture_4,
+                "_VALUE_MAIN" => $apiDatas['soil_moisture_4'],
                 "_UNIT" =>  'cB',
                 "_CLASS_UNIT_SMALL" => '06',
                 "_CLASS_UNIT_LARGE" => '08',
-                "color" => $this->col->colSoil($switch, $soil_moisture_4, $datas, $info, $livestation)
+                "color" => $this->col->colSoil($switch, $apiDatas['soil_moisture_4'], $datas, $info, $livestation)
             ),
             "43" => array(
-                "_VALUE_MAIN" => $this->getTemp($switch, $temp_in_f),
+                "_VALUE_MAIN" => $this->getTemp($switch, $apiDatas['temp_in_f']),
                 "_UNIT" => $this->getUnit($switch, 'temp'),
                 "_CLASS_UNIT_SMALL" => '08',
                 "_CLASS_UNIT_LARGE" => '09',
-                "color" => $this->col->colTemp($switch, $temp_in_f, $datas, $info, $livestation)
+                "color" => $this->col->colTemp($switch, $apiDatas['temp_in_f'], $datas, $info, $livestation)
             ),
             "44" => array(
-                "_VALUE_MAIN" => $relative_humidity_in,
+                "_VALUE_MAIN" => $apiDatas['relative_humidity_in'],
                 "_UNIT" =>  '%',
                 "_CLASS_UNIT_SMALL" => '06',
                 "_CLASS_UNIT_LARGE" => '08',
-                "color" => $this->col->colHumidity($switch, $relative_humidity_in, $datas, $info, $livestation)
+                "color" => $this->col->colHumidity($switch, $apiDatas['relative_humidity_in'], $datas, $info, $livestation)
+            ),
+            "46" => array(
+                "_VALUE_MAIN" =>'<a data-toggle="tooltip" title="' . $this->l->degToCompass($apiDatas['wind_degrees'], $this->l->getLg()) . '"><i class="boussole wi wi-wind from-'.$apiDatas['wind_degrees'].'-deg"></i></a>',
+                "_UNIT" =>  '',
+                "_CLASS_UNIT_SMALL" => '',
+                "_CLASS_UNIT_LARGE" => '',
+                "color" => $this->col->colWind($switch, $apiDatas['wind_degrees'], $datas, $info, $livestation)
             ),
         );
 
@@ -1493,26 +1424,23 @@ class StationView extends View
      */
     public function incMid2($datas, $switch, $info, $livestation)
     {
-
-
-        $pressure_mb = $this->getAPIDatasUp($datas, $info, $livestation)['mb_pressure'];
-        $pressure_in = $this->getAPIDatas($datas, $info, $livestation)['pressure_in'];
-
+        $apiDatas = $this->getAPIDatas($datas, $info, $livestation);
+        $apiDatasUP = $this->getAPIDatasUp($datas, $info, $livestation);
 
         $inc = array(
             "10" => array(
-                "_VALUE_MAIN" => $this->getPress($switch, $pressure_in),
+                "_VALUE_MAIN" => $this->getPress($switch, $apiDatas['pressure_in']),
                 "TEXT_TOOLTIP_S" => $this->l->trad('PRESSURE'),
                 "TEXT_TOOLTIP_M" => $this->l->trad('PRESSURE'),
-                "TEXT_TOOLTIP_L" => ($info['stat_type'] == 'weewx') ? $this->l->trad('PRESSURE') : $this->l->pressTrad($this->getAPIDatasUp($datas, $info, $livestation)['pressure_tendency'], $this->l->getLg()),
+                "TEXT_TOOLTIP_L" => ($info['stat_type'] == 'weewx') ? $this->l->trad('PRESSURE') : $this->l->pressTrad($apiDatasUP['pressure_tendency'], $this->l->getLg()),
                 "_UNIT_S" => '',
                 "_UNIT_M" =>  $this->getUnit($switch, 'press'),
                 "_UNIT_L" =>  $this->getUnit($switch, 'press'),
                 "_CLASS_UNIT_SMALL" => '05',
                 "_CLASS_UNIT_MIDDLE" => '05',
                 "_CLASS_UNIT_LARGE" => '06',
-                "TXT_ALTERN" => ($info['stat_type'] == 'weewx') ? '' : '&nbsp;<img class="arrowpress2" alt="arrow" src="' . $this->pressImg($this->getAPIDatasUp($datas, $info, $livestation)['pressure_tendency'])  . '" />',
-                "color" => $this->col->colPress($switch, $pressure_mb, $datas, $info, $livestation)
+                "TXT_ALTERN" => ($info['stat_type'] == 'weewx') ? '' : '&nbsp;<img class="arrowpress2" alt="arrow" src="' . $this->pressImg($apiDatasUP['pressure_tendency'])  . '" />',
+                "color" => $this->col->colPress($switch, $apiDatasUP['mb_pressure'], $datas, $info, $livestation)
             ),
         );
 
@@ -1524,34 +1452,28 @@ class StationView extends View
      */
     public function incMid3($datas, $switch, $info, $livestation)
     {
-        $solar_radiation = $this->getAPIDatas($datas, $info, $livestation)['solar_radiation'];
-        $solar_radiation_day_high = $this->getAPIDatas($datas, $info, $livestation)['solar_radiation_day_high'];
-        $solar_radiation_day_high_time = $this->getAPIDatas($datas, $info, $livestation)['solar_radiation_day_high_time'];
-
-        $uv_index = $this->getAPIDatas($datas, $info, $livestation)['uv_index'];
-        $uv_index_day_high = $this->getAPIDatas($datas, $info, $livestation)['uv_index_day_high'];
-        $uv_index_day_high_time = $this->getAPIDatas($datas, $info, $livestation)['uv_index_day_high_time'];
+        $apiDatas = $this->getAPIDatas($datas, $info, $livestation);
 
         $inc = array(
             "22" => array(
-                "_VALUE_MAIN" => $solar_radiation,
-                "TEXT_TOOLTIP_S" => $this->l->trad('MAX') . ' : ' . $solar_radiation_day_high . ' W/m² ' . $this->l->trad('AT') . ' ' . $this->l->timeTrad($solar_radiation_day_high_time, $this->l->getLg()),
-                "TEXT_TOOLTIP_L" => $this->l->trad('MAX') . ' : ' . $solar_radiation_day_high . ' W/m² ' . $this->l->trad('AT') . ' ' . $this->l->timeTrad($solar_radiation_day_high_time, $this->l->getLg()),
+                "_VALUE_MAIN" => $apiDatas['solar_radiation'],
+                "TEXT_TOOLTIP_S" => $this->l->trad('MAX') . ' : ' . $apiDatas['solar_radiation_day_high'] . ' W/m² ' . $this->l->trad('AT') . ' ' . $this->l->timeTrad($apiDatas['solar_radiation_day_high_time'], $this->l->getLg()),
+                "TEXT_TOOLTIP_L" => $this->l->trad('MAX') . ' : ' . $apiDatas['solar_radiation_day_high'] . ' W/m² ' . $this->l->trad('AT') . ' ' . $this->l->timeTrad($apiDatas['solar_radiation_day_high_time'], $this->l->getLg()),
                 "_UNIT_S" => 'W/m²',
                 "_UNIT_L" =>  '&nbsp;W/m²',
                 "_CLASS_UNIT_SMALL" => '05',
                 "_CLASS_UNIT_LARGE" => '06',
-                "color" => $this->col->colSun($switch, $solar_radiation, $datas, $info, $livestation)
+                "color" => $this->col->colSun($switch, $apiDatas['solar_radiation'], $datas, $info, $livestation)
             ),
             "23" => array(
-                "_VALUE_MAIN" => $uv_index,
-                "TEXT_TOOLTIP_S" => $this->l->trad('MAX') . ' : ' . $uv_index_day_high . ' W/m² ' . $this->l->trad('AT') . ' ' . $this->l->timeTrad($uv_index_day_high_time, $this->l->getLg()),
-                "TEXT_TOOLTIP_L" => $this->l->trad('MAX') . ' : ' . $uv_index_day_high . ' W/m² ' . $this->l->trad('AT') . ' ' . $this->l->timeTrad($uv_index_day_high_time, $this->l->getLg()),
+                "_VALUE_MAIN" => $apiDatas['uv_index'],
+                "TEXT_TOOLTIP_S" => $this->l->trad('MAX') . ' : ' . $apiDatas['uv_index_day_high'] . ' W/m² ' . $this->l->trad('AT') . ' ' . $this->l->timeTrad($apiDatas['uv_index_day_high_time'], $this->l->getLg()),
+                "TEXT_TOOLTIP_L" => $this->l->trad('MAX') . ' : ' . $apiDatas['uv_index_day_high'] . ' W/m² ' . $this->l->trad('AT') . ' ' . $this->l->timeTrad($apiDatas['uv_index_day_high_time'], $this->l->getLg()),
                 "_UNIT_S" => '',
                 "_UNIT_L" =>  '&nbsp;/16',
                 "_CLASS_UNIT_SMALL" => '05',
                 "_CLASS_UNIT_LARGE" => '06',
-                "color" => $this->col->colUV($switch, $uv_index, $datas, $info, $livestation)
+                "color" => $this->col->colUV($switch, $apiDatas['uv_index'], $datas, $info, $livestation)
             ),
         );
 
@@ -1563,10 +1485,7 @@ class StationView extends View
      */
     public function incDown1($datas, $info, $livestation)
     {
-
-
-        $wind_degrees = $this->getAPIDatas($datas, $info, $livestation)['wind_degrees'];
-        $wind_day_high_time = $this->getAPIDatas($datas, $info, $livestation)['wind_day_high_time'];
+        $apiDatas = $this->getAPIDatas($datas, $info, $livestation);
 
         $inc = array(
             "0" => array(
@@ -1576,8 +1495,8 @@ class StationView extends View
             ),
             "1" => array(
                 "CSS_DOWN" => '500',
-                "_VALUE_DOWN_S" =>  $this->l->degToCompassSmall($wind_degrees, $this->l->getLg()),
-                "_VALUE_DOWN_L" => $this->l->degToCompass($wind_degrees, $this->l->getLg())
+                "_VALUE_DOWN_S" =>  $this->l->degToCompassSmall($apiDatas['wind_degrees'], $this->l->getLg()),
+                "_VALUE_DOWN_L" => $this->l->degToCompass($apiDatas['wind_degrees'], $this->l->getLg())
             ),
             "4" => array(
                 "CSS_DOWN" => '500',
@@ -1591,8 +1510,8 @@ class StationView extends View
             ),
             "7" => array(
                 "CSS_DOWN" => '800',
-                "_VALUE_DOWN_S" => $this->l->trad('AT') . ' ' . $this->l->timeTrad($wind_day_high_time, $this->l->getLg()),
-                "_VALUE_DOWN_L" => $this->l->trad('TODAY') . ' ' . $this->l->trad('AT') . ' ' . $this->l->timeTrad($wind_day_high_time, $this->l->getLg())
+                "_VALUE_DOWN_S" => $this->l->trad('AT') . ' ' . $this->l->timeTrad($apiDatas['wind_day_high_time'], $this->l->getLg()),
+                "_VALUE_DOWN_L" => $this->l->trad('TODAY') . ' ' . $this->l->trad('AT') . ' ' . $this->l->timeTrad($apiDatas['wind_day_high_time'], $this->l->getLg())
             ),
             "13" => array(
                 "CSS_DOWN" => '800',
@@ -1603,6 +1522,11 @@ class StationView extends View
                 "CSS_DOWN" => '800',
                 "_VALUE_DOWN_S" => $this->l->trad('ACCRUED'),
                 "_VALUE_DOWN_L" => $this->l->trad('ACCUMULATED')
+            ),
+            "46" => array(
+                "CSS_DOWN" => '800',
+                "_VALUE_DOWN_S" => $apiDatas['wind_degrees'].'°',
+                "_VALUE_DOWN_L" => $apiDatas['wind_degrees'].'°'
             ),
         );
 
@@ -1617,327 +1541,318 @@ class StationView extends View
 
     public function incDown2($datas, $switch, $info, $livestation)
     {
-
-        $temp_day_low_f = $this->getAPIDatas($datas, $info, $livestation)['temp_day_low_f'];
-        $temp_month_low_f = $this->getAPIDatas($datas, $info, $livestation)['temp_month_low_f'];
-        $temp_year_low_f = $this->getAPIDatas($datas, $info, $livestation)['temp_year_low_f'];
-        $temp_day_high_f = $this->getAPIDatas($datas, $info, $livestation)['temp_day_high_f'];
-        $temp_month_high_f = $this->getAPIDatas($datas, $info, $livestation)['temp_month_high_f'];
-        $temp_year_high_f = $this->getAPIDatas($datas, $info, $livestation)['temp_year_high_f'];
-
-        $temp_day_low_time = $this->getAPIDatas($datas, $info, $livestation)['temp_day_low_time'];
-        $temp_day_high_time = $this->getAPIDatas($datas, $info, $livestation)['temp_day_high_time'];
-
-        $pressure_day_low_in = $this->getAPIDatas($datas, $info, $livestation)['pressure_day_low_in'];
-        $pressure_month_low_in = $this->getAPIDatas($datas, $info, $livestation)['pressure_month_low_in'];
-        $pressure_year_low_in = $this->getAPIDatas($datas, $info, $livestation)['pressure_year_low_in'];
-        $pressure_day_high_in = $this->getAPIDatas($datas, $info, $livestation)['pressure_day_high_in'];
-        $pressure_month_high_in = $this->getAPIDatas($datas, $info, $livestation)['pressure_month_high_in'];
-        $pressure_year_high_in = $this->getAPIDatas($datas, $info, $livestation)['pressure_year_high_in'];
-
-        $pressure_day_low_time = $this->getAPIDatas($datas, $info, $livestation)['pressure_day_low_time'];
-        $pressure_day_high_time = $this->getAPIDatas($datas, $info, $livestation)['pressure_day_high_time'];
-
-        $dewpoint_day_low_f = $this->getAPIDatas($datas, $info, $livestation)['dewpoint_day_low_f'];
-        $dewpoint_month_low_f = $this->getAPIDatas($datas, $info, $livestation)['dewpoint_month_low_f'];
-        $dewpoint_year_low_f = $this->getAPIDatas($datas, $info, $livestation)['dewpoint_year_low_f'];
-        $dewpoint_day_high_f = $this->getAPIDatas($datas, $info, $livestation)['dewpoint_day_high_f'];
-        $dewpoint_month_high_f = $this->getAPIDatas($datas, $info, $livestation)['dewpoint_month_high_f'];
-        $dewpoint_year_high_f = $this->getAPIDatas($datas, $info, $livestation)['dewpoint_year_high_f'];
-
-        $dewpoint_day_low_time = $this->getAPIDatas($datas, $info, $livestation)['dewpoint_day_low_time'];
-        $dewpoint_day_high_time = $this->getAPIDatas($datas, $info, $livestation)['dewpoint_day_high_time'];
-
-        $relative_humidity_day_low = $this->getAPIDatas($datas, $info, $livestation)['relative_humidity_day_low'];
-        $relative_humidity_month_low = $this->getAPIDatas($datas, $info, $livestation)['relative_humidity_month_low'];
-        $relative_humidity_year_low = $this->getAPIDatas($datas, $info, $livestation)['relative_humidity_year_low'];
-        $relative_humidity_day_high = $this->getAPIDatas($datas, $info, $livestation)['relative_humidity_day_high'];
-        $relative_humidity_month_high = $this->getAPIDatas($datas, $info, $livestation)['relative_humidity_month_high'];
-        $relative_humidity_year_high = $this->getAPIDatas($datas, $info, $livestation)['relative_humidity_year_high'];
-
-        $relative_humidity_day_low_time = $this->getAPIDatas($datas, $info, $livestation)['relative_humidity_day_low_time'];
-        $relative_humidity_day_high_time = $this->getAPIDatas($datas, $info, $livestation)['relative_humidity_day_high_time'];
-
-        $temp_extra_1_day_low = $this->getAPIDatas($datas, $info, $livestation)['temp_extra_1_day_low'];
-        $temp_extra_1_month_low = $this->getAPIDatas($datas, $info, $livestation)['temp_extra_1_month_low'];
-        $temp_extra_1_year_low = $this->getAPIDatas($datas, $info, $livestation)['temp_extra_1_year_low'];
-        $temp_extra_1_day_high = $this->getAPIDatas($datas, $info, $livestation)['temp_extra_1_day_high'];
-        $temp_extra_1_month_high = $this->getAPIDatas($datas, $info, $livestation)['temp_extra_1_month_high'];
-        $temp_extra_1_year_high = $this->getAPIDatas($datas, $info, $livestation)['temp_extra_1_year_high'];
-
-        $temp_extra_1_day_low_time = $this->getAPIDatas($datas, $info, $livestation)['temp_extra_1_day_low_time'];
-        $temp_extra_1_day_high_time = $this->getAPIDatas($datas, $info, $livestation)['temp_extra_1_day_high_time'];
-
-        $temp_extra_2_day_low = $this->getAPIDatas($datas, $info, $livestation)['temp_extra_2_day_low'];
-        $temp_extra_2_month_low = $this->getAPIDatas($datas, $info, $livestation)['temp_extra_2_month_low'];
-        $temp_extra_2_year_low = $this->getAPIDatas($datas, $info, $livestation)['temp_extra_2_year_low'];
-        $temp_extra_2_day_high = $this->getAPIDatas($datas, $info, $livestation)['temp_extra_2_day_high'];
-        $temp_extra_2_month_high = $this->getAPIDatas($datas, $info, $livestation)['temp_extra_2_month_high'];
-        $temp_extra_2_year_high = $this->getAPIDatas($datas, $info, $livestation)['temp_extra_2_year_high'];
-
-        $temp_extra_2_day_low_time = $this->getAPIDatas($datas, $info, $livestation)['temp_extra_2_day_low_time'];
-        $temp_extra_2_day_high_time = $this->getAPIDatas($datas, $info, $livestation)['temp_extra_2_day_high_time'];
-
-        $temp_extra_3_day_low = $this->getAPIDatas($datas, $info, $livestation)['temp_extra_3_day_low'];
-        $temp_extra_3_month_low = $this->getAPIDatas($datas, $info, $livestation)['temp_extra_3_month_low'];
-        $temp_extra_3_year_low = $this->getAPIDatas($datas, $info, $livestation)['temp_extra_3_year_low'];
-        $temp_extra_3_day_high = $this->getAPIDatas($datas, $info, $livestation)['temp_extra_3_day_high'];
-        $temp_extra_3_month_high = $this->getAPIDatas($datas, $info, $livestation)['temp_extra_3_month_high'];
-        $temp_extra_3_year_high = $this->getAPIDatas($datas, $info, $livestation)['temp_extra_3_year_high'];
-
-        $temp_extra_3_day_low_time = $this->getAPIDatas($datas, $info, $livestation)['temp_extra_3_day_low_time'];
-        $temp_extra_3_day_high_time = $this->getAPIDatas($datas, $info, $livestation)['temp_extra_3_day_high_time'];
-
-        $temp_extra_4_day_low = $this->getAPIDatas($datas, $info, $livestation)['temp_extra_4_day_low'];
-        $temp_extra_4_month_low = $this->getAPIDatas($datas, $info, $livestation)['temp_extra_4_month_low'];
-        $temp_extra_4_year_low = $this->getAPIDatas($datas, $info, $livestation)['temp_extra_4_year_low'];
-        $temp_extra_4_day_high = $this->getAPIDatas($datas, $info, $livestation)['temp_extra_4_day_high'];
-        $temp_extra_4_month_high = $this->getAPIDatas($datas, $info, $livestation)['temp_extra_4_month_high'];
-        $temp_extra_4_year_high = $this->getAPIDatas($datas, $info, $livestation)['temp_extra_4_year_high'];
-
-        $temp_extra_4_day_low_time = $this->getAPIDatas($datas, $info, $livestation)['temp_extra_4_day_low_time'];
-        $temp_extra_4_day_high_time = $this->getAPIDatas($datas, $info, $livestation)['temp_extra_4_day_high_time'];
-
-        $temp_extra_5_day_low = $this->getAPIDatas($datas, $info, $livestation)['temp_extra_5_day_low'];
-        $temp_extra_5_month_low = $this->getAPIDatas($datas, $info, $livestation)['temp_extra_5_month_low'];
-        $temp_extra_5_year_low = $this->getAPIDatas($datas, $info, $livestation)['temp_extra_5_year_low'];
-        $temp_extra_5_day_high = $this->getAPIDatas($datas, $info, $livestation)['temp_extra_5_day_high'];
-        $temp_extra_5_month_high = $this->getAPIDatas($datas, $info, $livestation)['temp_extra_5_month_high'];
-        $temp_extra_5_year_high = $this->getAPIDatas($datas, $info, $livestation)['temp_extra_5_year_high'];
-
-        $temp_extra_5_day_low_time = $this->getAPIDatas($datas, $info, $livestation)['temp_extra_5_day_low_time'];
-        $temp_extra_5_day_high_time = $this->getAPIDatas($datas, $info, $livestation)['temp_extra_5_day_high_time'];
-
-        $temp_extra_6_day_low = $this->getAPIDatas($datas, $info, $livestation)['temp_extra_6_day_low'];
-        $temp_extra_6_month_low = $this->getAPIDatas($datas, $info, $livestation)['temp_extra_6_month_low'];
-        $temp_extra_6_year_low = $this->getAPIDatas($datas, $info, $livestation)['temp_extra_6_year_low'];
-        $temp_extra_6_day_high = $this->getAPIDatas($datas, $info, $livestation)['temp_extra_6_day_high'];
-        $temp_extra_6_month_high = $this->getAPIDatas($datas, $info, $livestation)['temp_extra_6_month_high'];
-        $temp_extra_6_year_high = $this->getAPIDatas($datas, $info, $livestation)['temp_extra_6_year_high'];
-
-        $temp_extra_6_day_low_time = $this->getAPIDatas($datas, $info, $livestation)['temp_extra_6_day_low_time'];
-        $temp_extra_6_day_high_time = $this->getAPIDatas($datas, $info, $livestation)['temp_extra_6_day_high_time'];
-
-        $temp_extra_7_day_low = $this->getAPIDatas($datas, $info, $livestation)['temp_extra_7_day_low'];
-        $temp_extra_7_month_low = $this->getAPIDatas($datas, $info, $livestation)['temp_extra_7_month_low'];
-        $temp_extra_7_year_low = $this->getAPIDatas($datas, $info, $livestation)['temp_extra_7_year_low'];
-        $temp_extra_7_day_high = $this->getAPIDatas($datas, $info, $livestation)['temp_extra_7_day_high'];
-        $temp_extra_7_month_high = $this->getAPIDatas($datas, $info, $livestation)['temp_extra_7_month_high'];
-        $temp_extra_7_year_high = $this->getAPIDatas($datas, $info, $livestation)['temp_extra_7_year_high'];
-
-        $temp_extra_7_day_low_time = $this->getAPIDatas($datas, $info, $livestation)['temp_extra_7_day_low_time'];
-        $temp_extra_7_day_high_time = $this->getAPIDatas($datas, $info, $livestation)['temp_extra_7_day_high_time'];
-
-        $temp_leaf_1_day_low = $this->getAPIDatas($datas, $info, $livestation)['temp_leaf_1_day_low'];
-        $temp_leaf_1_month_low = $this->getAPIDatas($datas, $info, $livestation)['temp_leaf_1_month_low'];
-        $temp_leaf_1_year_low = $this->getAPIDatas($datas, $info, $livestation)['temp_leaf_1_year_low'];
-        $temp_leaf_1_day_high = $this->getAPIDatas($datas, $info, $livestation)['temp_leaf_1_day_high'];
-        $temp_leaf_1_month_high = $this->getAPIDatas($datas, $info, $livestation)['temp_leaf_1_month_high'];
-        $temp_leaf_1_year_high = $this->getAPIDatas($datas, $info, $livestation)['temp_leaf_1_year_high'];
-
-        $temp_leaf_1_day_low_time = $this->getAPIDatas($datas, $info, $livestation)['temp_leaf_1_day_low_time'];
-        $temp_leaf_1_day_high_time = $this->getAPIDatas($datas, $info, $livestation)['temp_leaf_1_day_high_time'];
-
-        $temp_leaf_2_day_low = $this->getAPIDatas($datas, $info, $livestation)['temp_leaf_2_day_low'];
-        $temp_leaf_2_month_low = $this->getAPIDatas($datas, $info, $livestation)['temp_leaf_2_month_low'];
-        $temp_leaf_2_year_low = $this->getAPIDatas($datas, $info, $livestation)['temp_leaf_2_year_low'];
-        $temp_leaf_2_day_high = $this->getAPIDatas($datas, $info, $livestation)['temp_leaf_2_day_high'];
-        $temp_leaf_2_month_high = $this->getAPIDatas($datas, $info, $livestation)['temp_leaf_2_month_high'];
-        $temp_leaf_2_year_high = $this->getAPIDatas($datas, $info, $livestation)['temp_leaf_2_year_high'];
-
-        $temp_leaf_2_day_low_time = $this->getAPIDatas($datas, $info, $livestation)['temp_leaf_2_day_low_time'];
-        $temp_leaf_2_day_high_time = $this->getAPIDatas($datas, $info, $livestation)['temp_leaf_2_day_high_time'];
-
-        $temp_soil_1_day_low = $this->getAPIDatas($datas, $info, $livestation)['temp_soil_1_day_low'];
-        $temp_soil_1_month_low = $this->getAPIDatas($datas, $info, $livestation)['temp_soil_1_month_low'];
-        $temp_soil_1_year_low = $this->getAPIDatas($datas, $info, $livestation)['temp_soil_1_year_low'];
-        $temp_soil_1_day_high = $this->getAPIDatas($datas, $info, $livestation)['temp_soil_1_day_high'];
-        $temp_soil_1_month_high = $this->getAPIDatas($datas, $info, $livestation)['temp_soil_1_month_high'];
-        $temp_soil_1_year_high = $this->getAPIDatas($datas, $info, $livestation)['temp_soil_1_year_high'];
-
-        $temp_soil_1_day_low_time = $this->getAPIDatas($datas, $info, $livestation)['temp_soil_1_day_low_time'];
-        $temp_soil_1_day_high_time = $this->getAPIDatas($datas, $info, $livestation)['temp_soil_1_day_high_time'];
-
-        $temp_soil_2_day_low = $this->getAPIDatas($datas, $info, $livestation)['temp_soil_2_day_low'];
-        $temp_soil_2_month_low = $this->getAPIDatas($datas, $info, $livestation)['temp_soil_2_month_low'];
-        $temp_soil_2_year_low = $this->getAPIDatas($datas, $info, $livestation)['temp_soil_2_year_low'];
-        $temp_soil_2_day_high = $this->getAPIDatas($datas, $info, $livestation)['temp_soil_2_day_high'];
-        $temp_soil_2_month_high = $this->getAPIDatas($datas, $info, $livestation)['temp_soil_2_month_high'];
-        $temp_soil_2_year_high = $this->getAPIDatas($datas, $info, $livestation)['temp_soil_2_year_high'];
-
-        $temp_soil_2_day_low_time = $this->getAPIDatas($datas, $info, $livestation)['temp_soil_2_day_low_time'];
-        $temp_soil_2_day_high_time = $this->getAPIDatas($datas, $info, $livestation)['temp_soil_2_day_high_time'];
-
-        $temp_soil_3_day_low = $this->getAPIDatas($datas, $info, $livestation)['temp_soil_3_day_low'];
-        $temp_soil_3_month_low = $this->getAPIDatas($datas, $info, $livestation)['temp_soil_3_month_low'];
-        $temp_soil_3_year_low = $this->getAPIDatas($datas, $info, $livestation)['temp_soil_3_year_low'];
-        $temp_soil_3_day_high = $this->getAPIDatas($datas, $info, $livestation)['temp_soil_3_day_high'];
-        $temp_soil_3_month_high = $this->getAPIDatas($datas, $info, $livestation)['temp_soil_3_month_high'];
-        $temp_soil_3_year_high = $this->getAPIDatas($datas, $info, $livestation)['temp_soil_3_year_high'];
-
-        $temp_soil_3_day_low_time = $this->getAPIDatas($datas, $info, $livestation)['temp_soil_3_day_low_time'];
-        $temp_soil_3_day_high_time = $this->getAPIDatas($datas, $info, $livestation)['temp_soil_3_day_high_time'];
-
-        $temp_soil_4_day_low = $this->getAPIDatas($datas, $info, $livestation)['temp_soil_4_day_low'];
-        $temp_soil_4_month_low = $this->getAPIDatas($datas, $info, $livestation)['temp_soil_4_month_low'];
-        $temp_soil_4_year_low = $this->getAPIDatas($datas, $info, $livestation)['temp_soil_4_year_low'];
-        $temp_soil_4_day_high = $this->getAPIDatas($datas, $info, $livestation)['temp_soil_4_day_high'];
-        $temp_soil_4_month_high = $this->getAPIDatas($datas, $info, $livestation)['temp_soil_4_month_high'];
-        $temp_soil_4_year_high = $this->getAPIDatas($datas, $info, $livestation)['temp_soil_4_year_high'];
-
-        $temp_soil_4_day_low_time = $this->getAPIDatas($datas, $info, $livestation)['temp_soil_4_day_low_time'];
-        $temp_soil_4_day_high_time = $this->getAPIDatas($datas, $info, $livestation)['temp_soil_4_day_high_time'];
-
-
-        $relative_humidity_1_day_low = $this->getAPIDatas($datas, $info, $livestation)['relative_humidity_1_day_low'];
-        $relative_humidity_1_month_low = $this->getAPIDatas($datas, $info, $livestation)['relative_humidity_1_month_low'];
-        $relative_humidity_1_year_low = $this->getAPIDatas($datas, $info, $livestation)['relative_humidity_1_year_low'];
-        $relative_humidity_1_day_high = $this->getAPIDatas($datas, $info, $livestation)['relative_humidity_1_day_high'];
-        $relative_humidity_1_month_high = $this->getAPIDatas($datas, $info, $livestation)['relative_humidity_1_month_high'];
-        $relative_humidity_1_year_high = $this->getAPIDatas($datas, $info, $livestation)['relative_humidity_1_year_high'];
-
-        $relative_humidity_1_day_low_time = $this->getAPIDatas($datas, $info, $livestation)['relative_humidity_1_day_low_time'];
-        $relative_humidity_1_day_high_time = $this->getAPIDatas($datas, $info, $livestation)['relative_humidity_1_day_high_time'];
-
-        $relative_humidity_2_day_low = $this->getAPIDatas($datas, $info, $livestation)['relative_humidity_2_day_low'];
-        $relative_humidity_2_month_low = $this->getAPIDatas($datas, $info, $livestation)['relative_humidity_2_month_low'];
-        $relative_humidity_2_year_low = $this->getAPIDatas($datas, $info, $livestation)['relative_humidity_2_year_low'];
-        $relative_humidity_2_day_high = $this->getAPIDatas($datas, $info, $livestation)['relative_humidity_2_day_high'];
-        $relative_humidity_2_month_high = $this->getAPIDatas($datas, $info, $livestation)['relative_humidity_2_month_high'];
-        $relative_humidity_2_year_high = $this->getAPIDatas($datas, $info, $livestation)['relative_humidity_2_year_high'];
-
-        $relative_humidity_2_day_low_time = $this->getAPIDatas($datas, $info, $livestation)['relative_humidity_2_day_low_time'];
-        $relative_humidity_2_day_high_time = $this->getAPIDatas($datas, $info, $livestation)['relative_humidity_2_day_high_time'];
-
-        $relative_humidity_3_day_low = $this->getAPIDatas($datas, $info, $livestation)['relative_humidity_3_day_low'];
-        $relative_humidity_3_month_low = $this->getAPIDatas($datas, $info, $livestation)['relative_humidity_3_month_low'];
-        $relative_humidity_3_year_low = $this->getAPIDatas($datas, $info, $livestation)['relative_humidity_3_year_low'];
-        $relative_humidity_3_day_high = $this->getAPIDatas($datas, $info, $livestation)['relative_humidity_3_day_high'];
-        $relative_humidity_3_month_high = $this->getAPIDatas($datas, $info, $livestation)['relative_humidity_3_month_high'];
-        $relative_humidity_3_year_high = $this->getAPIDatas($datas, $info, $livestation)['relative_humidity_3_year_high'];
-
-        $relative_humidity_3_day_low_time = $this->getAPIDatas($datas, $info, $livestation)['relative_humidity_3_day_low_time'];
-        $relative_humidity_3_day_high_time = $this->getAPIDatas($datas, $info, $livestation)['relative_humidity_3_day_high_time'];
-
-        $relative_humidity_4_day_low = $this->getAPIDatas($datas, $info, $livestation)['relative_humidity_4_day_low'];
-        $relative_humidity_4_month_low = $this->getAPIDatas($datas, $info, $livestation)['relative_humidity_4_month_low'];
-        $relative_humidity_4_year_low = $this->getAPIDatas($datas, $info, $livestation)['relative_humidity_4_year_low'];
-        $relative_humidity_4_day_high = $this->getAPIDatas($datas, $info, $livestation)['relative_humidity_4_day_high'];
-        $relative_humidity_4_month_high = $this->getAPIDatas($datas, $info, $livestation)['relative_humidity_4_month_high'];
-        $relative_humidity_4_year_high = $this->getAPIDatas($datas, $info, $livestation)['relative_humidity_4_year_high'];
-
-        $relative_humidity_4_day_low_time = $this->getAPIDatas($datas, $info, $livestation)['relative_humidity_4_day_low_time'];
-        $relative_humidity_4_day_high_time = $this->getAPIDatas($datas, $info, $livestation)['relative_humidity_4_day_high_time'];
-
-        $relative_humidity_5_day_low = $this->getAPIDatas($datas, $info, $livestation)['relative_humidity_5_day_low'];
-        $relative_humidity_5_month_low = $this->getAPIDatas($datas, $info, $livestation)['relative_humidity_5_month_low'];
-        $relative_humidity_5_year_low = $this->getAPIDatas($datas, $info, $livestation)['relative_humidity_5_year_low'];
-        $relative_humidity_5_day_high = $this->getAPIDatas($datas, $info, $livestation)['relative_humidity_5_day_high'];
-        $relative_humidity_5_month_high = $this->getAPIDatas($datas, $info, $livestation)['relative_humidity_5_month_high'];
-        $relative_humidity_5_year_high = $this->getAPIDatas($datas, $info, $livestation)['relative_humidity_5_year_high'];
-
-        $relative_humidity_5_day_low_time = $this->getAPIDatas($datas, $info, $livestation)['relative_humidity_5_day_low_time'];
-        $relative_humidity_5_day_high_time = $this->getAPIDatas($datas, $info, $livestation)['relative_humidity_5_day_high_time'];
-
-        $relative_humidity_6_day_low = $this->getAPIDatas($datas, $info, $livestation)['relative_humidity_6_day_low'];
-        $relative_humidity_6_month_low = $this->getAPIDatas($datas, $info, $livestation)['relative_humidity_6_month_low'];
-        $relative_humidity_6_year_low = $this->getAPIDatas($datas, $info, $livestation)['relative_humidity_6_year_low'];
-        $relative_humidity_6_day_high = $this->getAPIDatas($datas, $info, $livestation)['relative_humidity_6_day_high'];
-        $relative_humidity_6_month_high = $this->getAPIDatas($datas, $info, $livestation)['relative_humidity_6_month_high'];
-        $relative_humidity_6_year_high = $this->getAPIDatas($datas, $info, $livestation)['relative_humidity_6_year_high'];
-
-        $relative_humidity_6_day_low_time = $this->getAPIDatas($datas, $info, $livestation)['relative_humidity_6_day_low_time'];
-        $relative_humidity_6_day_high_time = $this->getAPIDatas($datas, $info, $livestation)['relative_humidity_6_day_high_time'];
-
-        $relative_humidity_7_day_low = $this->getAPIDatas($datas, $info, $livestation)['relative_humidity_7_day_low'];
-        $relative_humidity_7_month_low = $this->getAPIDatas($datas, $info, $livestation)['relative_humidity_7_month_low'];
-        $relative_humidity_7_year_low = $this->getAPIDatas($datas, $info, $livestation)['relative_humidity_7_year_low'];
-        $relative_humidity_7_day_high = $this->getAPIDatas($datas, $info, $livestation)['relative_humidity_7_day_high'];
-        $relative_humidity_7_month_high = $this->getAPIDatas($datas, $info, $livestation)['relative_humidity_7_month_high'];
-        $relative_humidity_7_year_high = $this->getAPIDatas($datas, $info, $livestation)['relative_humidity_7_year_high'];
-
-        $relative_humidity_7_day_low_time = $this->getAPIDatas($datas, $info, $livestation)['relative_humidity_7_day_low_time'];
-        $relative_humidity_7_day_high_time = $this->getAPIDatas($datas, $info, $livestation)['relative_humidity_7_day_high_time'];
-
-        $leaf_wetness_1_day_low = $this->getAPIDatas($datas, $info, $livestation)['leaf_wetness_1_day_low'];
-        $leaf_wetness_1_month_low = $this->getAPIDatas($datas, $info, $livestation)['leaf_wetness_1_month_low'];
-        $leaf_wetness_1_year_low = $this->getAPIDatas($datas, $info, $livestation)['leaf_wetness_1_year_low'];
-        $leaf_wetness_1_day_high = $this->getAPIDatas($datas, $info, $livestation)['leaf_wetness_1_day_high'];
-        $leaf_wetness_1_month_high = $this->getAPIDatas($datas, $info, $livestation)['leaf_wetness_1_month_high'];
-        $leaf_wetness_1_year_high = $this->getAPIDatas($datas, $info, $livestation)['leaf_wetness_1_year_high'];
-
-        $leaf_wetness_1_day_low_time = $this->getAPIDatas($datas, $info, $livestation)['leaf_wetness_1_day_low_time'];
-        $leaf_wetness_1_day_high_time = $this->getAPIDatas($datas, $info, $livestation)['leaf_wetness_1_day_high_time'];
-
-        $leaf_wetness_2_day_low = $this->getAPIDatas($datas, $info, $livestation)['leaf_wetness_2_day_low'];
-        $leaf_wetness_2_month_low = $this->getAPIDatas($datas, $info, $livestation)['leaf_wetness_2_month_low'];
-        $leaf_wetness_2_year_low = $this->getAPIDatas($datas, $info, $livestation)['leaf_wetness_2_year_low'];
-        $leaf_wetness_2_day_high = $this->getAPIDatas($datas, $info, $livestation)['leaf_wetness_2_day_high'];
-        $leaf_wetness_2_month_high = $this->getAPIDatas($datas, $info, $livestation)['leaf_wetness_2_month_high'];
-        $leaf_wetness_2_year_high = $this->getAPIDatas($datas, $info, $livestation)['leaf_wetness_2_year_high'];
-
-        $leaf_wetness_2_day_low_time = $this->getAPIDatas($datas, $info, $livestation)['leaf_wetness_2_day_low_time'];
-        $leaf_wetness_2_day_high_time = $this->getAPIDatas($datas, $info, $livestation)['leaf_wetness_2_day_high_time'];
-
-        $soil_moisture_1_day_low = $this->getAPIDatas($datas, $info, $livestation)['soil_moisture_1_day_low'];
-        $soil_moisture_1_month_low = $this->getAPIDatas($datas, $info, $livestation)['soil_moisture_1_month_low'];
-        $soil_moisture_1_year_low = $this->getAPIDatas($datas, $info, $livestation)['soil_moisture_1_year_low'];
-        $soil_moisture_1_day_high = $this->getAPIDatas($datas, $info, $livestation)['soil_moisture_1_day_high'];
-        $soil_moisture_1_month_high = $this->getAPIDatas($datas, $info, $livestation)['soil_moisture_1_month_high'];
-        $soil_moisture_1_year_high = $this->getAPIDatas($datas, $info, $livestation)['soil_moisture_1_year_high'];
-
-        $soil_moisture_1_day_low_time = $this->getAPIDatas($datas, $info, $livestation)['soil_moisture_1_day_low_time'];
-        $soil_moisture_1_day_high_time = $this->getAPIDatas($datas, $info, $livestation)['soil_moisture_1_day_high_time'];
-
-        $soil_moisture_2_day_low = $this->getAPIDatas($datas, $info, $livestation)['soil_moisture_2_day_low'];
-        $soil_moisture_2_month_low = $this->getAPIDatas($datas, $info, $livestation)['soil_moisture_2_month_low'];
-        $soil_moisture_2_year_low = $this->getAPIDatas($datas, $info, $livestation)['soil_moisture_2_year_low'];
-        $soil_moisture_2_day_high = $this->getAPIDatas($datas, $info, $livestation)['soil_moisture_2_day_high'];
-        $soil_moisture_2_month_high = $this->getAPIDatas($datas, $info, $livestation)['soil_moisture_2_month_high'];
-        $soil_moisture_2_year_high = $this->getAPIDatas($datas, $info, $livestation)['soil_moisture_2_year_high'];
-
-        $soil_moisture_2_day_low_time = $this->getAPIDatas($datas, $info, $livestation)['soil_moisture_2_day_low_time'];
-        $soil_moisture_2_day_high_time = $this->getAPIDatas($datas, $info, $livestation)['soil_moisture_2_day_high_time'];
-
-        $soil_moisture_3_day_low = $this->getAPIDatas($datas, $info, $livestation)['soil_moisture_3_day_low'];
-        $soil_moisture_3_month_low = $this->getAPIDatas($datas, $info, $livestation)['soil_moisture_3_month_low'];
-        $soil_moisture_3_year_low = $this->getAPIDatas($datas, $info, $livestation)['soil_moisture_3_year_low'];
-        $soil_moisture_3_day_high = $this->getAPIDatas($datas, $info, $livestation)['soil_moisture_3_day_high'];
-        $soil_moisture_3_month_high = $this->getAPIDatas($datas, $info, $livestation)['soil_moisture_3_month_high'];
-        $soil_moisture_3_year_high = $this->getAPIDatas($datas, $info, $livestation)['soil_moisture_3_year_high'];
-
-        $soil_moisture_3_day_low_time = $this->getAPIDatas($datas, $info, $livestation)['soil_moisture_3_day_low_time'];
-        $soil_moisture_3_day_high_time = $this->getAPIDatas($datas, $info, $livestation)['soil_moisture_3_day_high_time'];
-
-        $soil_moisture_4_day_low = $this->getAPIDatas($datas, $info, $livestation)['soil_moisture_4_day_low'];
-        $soil_moisture_4_month_low = $this->getAPIDatas($datas, $info, $livestation)['soil_moisture_4_month_low'];
-        $soil_moisture_4_year_low = $this->getAPIDatas($datas, $info, $livestation)['soil_moisture_4_year_low'];
-        $soil_moisture_4_day_high = $this->getAPIDatas($datas, $info, $livestation)['soil_moisture_4_day_high'];
-        $soil_moisture_4_month_high = $this->getAPIDatas($datas, $info, $livestation)['soil_moisture_4_month_high'];
-        $soil_moisture_4_year_high = $this->getAPIDatas($datas, $info, $livestation)['soil_moisture_4_year_high'];
-
-        $soil_moisture_4_day_low_time = $this->getAPIDatas($datas, $info, $livestation)['soil_moisture_4_day_low_time'];
-        $soil_moisture_4_day_high_time = $this->getAPIDatas($datas, $info, $livestation)['soil_moisture_4_day_high_time'];
-
-        $temp_in_day_low_f = $this->getAPIDatas($datas, $info, $livestation)['temp_in_day_low_f'];
-        $temp_in_month_low_f = $this->getAPIDatas($datas, $info, $livestation)['temp_in_month_low_f'];
-        $temp_in_year_low_f = $this->getAPIDatas($datas, $info, $livestation)['temp_in_year_low_f'];
-        $temp_in_day_high_f = $this->getAPIDatas($datas, $info, $livestation)['temp_in_day_high_f'];
-        $temp_in_month_high_f = $this->getAPIDatas($datas, $info, $livestation)['temp_in_month_high_f'];
-        $temp_in_year_high_f = $this->getAPIDatas($datas, $info, $livestation)['temp_in_year_high_f'];
-
-        $temp_in_day_low_time = $this->getAPIDatas($datas, $info, $livestation)['temp_in_day_low_time'];
-        $temp_in_day_high_time = $this->getAPIDatas($datas, $info, $livestation)['temp_in_day_high_time'];
-
-        $relative_humidity_in_day_low = $this->getAPIDatas($datas, $info, $livestation)['relative_humidity_in_day_low'];
-        $relative_humidity_in_month_low = $this->getAPIDatas($datas, $info, $livestation)['relative_humidity_in_month_low'];
-        $relative_humidity_in_year_low = $this->getAPIDatas($datas, $info, $livestation)['relative_humidity_in_year_low'];
-        $relative_humidity_in_day_high = $this->getAPIDatas($datas, $info, $livestation)['relative_humidity_in_day_high'];
-        $relative_humidity_in_month_high = $this->getAPIDatas($datas, $info, $livestation)['relative_humidity_in_month_high'];
-        $relative_humidity_in_year_high = $this->getAPIDatas($datas, $info, $livestation)['relative_humidity_in_year_high'];
-
-        $relative_humidity_in_day_low_time = $this->getAPIDatas($datas, $info, $livestation)['relative_humidity_in_day_low_time'];
-        $relative_humidity_in_day_high_time = $this->getAPIDatas($datas, $info, $livestation)['relative_humidity_in_day_high_time'];
+        $apiDatas = $this->getAPIDatas($datas, $info, $livestation);
+
+        $pressure_day_low_in = $apiDatas['pressure_day_low_in'];
+        $pressure_month_low_in = $apiDatas['pressure_month_low_in'];
+        $pressure_year_low_in = $apiDatas['pressure_year_low_in'];
+        $pressure_day_high_in = $apiDatas['pressure_day_high_in'];
+        $pressure_month_high_in = $apiDatas['pressure_month_high_in'];
+        $pressure_year_high_in = $apiDatas['pressure_year_high_in'];
+
+        $pressure_day_low_time = $apiDatas['pressure_day_low_time'];
+        $pressure_day_high_time = $apiDatas['pressure_day_high_time'];
+
+        $dewpoint_day_low_f = $apiDatas['dewpoint_day_low_f'];
+        $dewpoint_month_low_f = $apiDatas['dewpoint_month_low_f'];
+        $dewpoint_year_low_f = $apiDatas['dewpoint_year_low_f'];
+        $dewpoint_day_high_f = $apiDatas['dewpoint_day_high_f'];
+        $dewpoint_month_high_f = $apiDatas['dewpoint_month_high_f'];
+        $dewpoint_year_high_f = $apiDatas['dewpoint_year_high_f'];
+
+        $dewpoint_day_low_time = $apiDatas['dewpoint_day_low_time'];
+        $dewpoint_day_high_time = $apiDatas['dewpoint_day_high_time'];
+
+        $relative_humidity_day_low = $apiDatas['relative_humidity_day_low'];
+        $relative_humidity_month_low = $apiDatas['relative_humidity_month_low'];
+        $relative_humidity_year_low = $apiDatas['relative_humidity_year_low'];
+        $relative_humidity_day_high = $apiDatas['relative_humidity_day_high'];
+        $relative_humidity_month_high = $apiDatas['relative_humidity_month_high'];
+        $relative_humidity_year_high = $apiDatas['relative_humidity_year_high'];
+
+        $relative_humidity_day_low_time = $apiDatas['relative_humidity_day_low_time'];
+        $relative_humidity_day_high_time = $apiDatas['relative_humidity_day_high_time'];
+
+        $temp_extra_1_day_low = $apiDatas['temp_extra_1_day_low'];
+        $temp_extra_1_month_low = $apiDatas['temp_extra_1_month_low'];
+        $temp_extra_1_year_low = $apiDatas['temp_extra_1_year_low'];
+        $temp_extra_1_day_high = $apiDatas['temp_extra_1_day_high'];
+        $temp_extra_1_month_high = $apiDatas['temp_extra_1_month_high'];
+        $temp_extra_1_year_high = $apiDatas['temp_extra_1_year_high'];
+
+        $temp_extra_1_day_low_time = $apiDatas['temp_extra_1_day_low_time'];
+        $temp_extra_1_day_high_time = $apiDatas['temp_extra_1_day_high_time'];
+
+        $temp_extra_2_day_low = $apiDatas['temp_extra_2_day_low'];
+        $temp_extra_2_month_low = $apiDatas['temp_extra_2_month_low'];
+        $temp_extra_2_year_low = $apiDatas['temp_extra_2_year_low'];
+        $temp_extra_2_day_high = $apiDatas['temp_extra_2_day_high'];
+        $temp_extra_2_month_high = $apiDatas['temp_extra_2_month_high'];
+        $temp_extra_2_year_high = $apiDatas['temp_extra_2_year_high'];
+
+        $temp_extra_2_day_low_time = $apiDatas['temp_extra_2_day_low_time'];
+        $temp_extra_2_day_high_time = $apiDatas['temp_extra_2_day_high_time'];
+
+        $temp_extra_3_day_low = $apiDatas['temp_extra_3_day_low'];
+        $temp_extra_3_month_low = $apiDatas['temp_extra_3_month_low'];
+        $temp_extra_3_year_low = $apiDatas['temp_extra_3_year_low'];
+        $temp_extra_3_day_high = $apiDatas['temp_extra_3_day_high'];
+        $temp_extra_3_month_high = $apiDatas['temp_extra_3_month_high'];
+        $temp_extra_3_year_high = $apiDatas['temp_extra_3_year_high'];
+
+        $temp_extra_3_day_low_time = $apiDatas['temp_extra_3_day_low_time'];
+        $temp_extra_3_day_high_time = $apiDatas['temp_extra_3_day_high_time'];
+
+        $temp_extra_4_day_low = $apiDatas['temp_extra_4_day_low'];
+        $temp_extra_4_month_low = $apiDatas['temp_extra_4_month_low'];
+        $temp_extra_4_year_low = $apiDatas['temp_extra_4_year_low'];
+        $temp_extra_4_day_high = $apiDatas['temp_extra_4_day_high'];
+        $temp_extra_4_month_high = $apiDatas['temp_extra_4_month_high'];
+        $temp_extra_4_year_high = $apiDatas['temp_extra_4_year_high'];
+
+        $temp_extra_4_day_low_time = $apiDatas['temp_extra_4_day_low_time'];
+        $temp_extra_4_day_high_time = $apiDatas['temp_extra_4_day_high_time'];
+
+        $temp_extra_5_day_low = $apiDatas['temp_extra_5_day_low'];
+        $temp_extra_5_month_low = $apiDatas['temp_extra_5_month_low'];
+        $temp_extra_5_year_low = $apiDatas['temp_extra_5_year_low'];
+        $temp_extra_5_day_high = $apiDatas['temp_extra_5_day_high'];
+        $temp_extra_5_month_high = $apiDatas['temp_extra_5_month_high'];
+        $temp_extra_5_year_high = $apiDatas['temp_extra_5_year_high'];
+
+        $temp_extra_5_day_low_time = $apiDatas['temp_extra_5_day_low_time'];
+        $temp_extra_5_day_high_time = $apiDatas['temp_extra_5_day_high_time'];
+
+        $temp_extra_6_day_low = $apiDatas['temp_extra_6_day_low'];
+        $temp_extra_6_month_low = $apiDatas['temp_extra_6_month_low'];
+        $temp_extra_6_year_low = $apiDatas['temp_extra_6_year_low'];
+        $temp_extra_6_day_high = $apiDatas['temp_extra_6_day_high'];
+        $temp_extra_6_month_high = $apiDatas['temp_extra_6_month_high'];
+        $temp_extra_6_year_high = $apiDatas['temp_extra_6_year_high'];
+
+        $temp_extra_6_day_low_time = $apiDatas['temp_extra_6_day_low_time'];
+        $temp_extra_6_day_high_time = $apiDatas['temp_extra_6_day_high_time'];
+
+        $temp_extra_7_day_low = $apiDatas['temp_extra_7_day_low'];
+        $temp_extra_7_month_low = $apiDatas['temp_extra_7_month_low'];
+        $temp_extra_7_year_low = $apiDatas['temp_extra_7_year_low'];
+        $temp_extra_7_day_high = $apiDatas['temp_extra_7_day_high'];
+        $temp_extra_7_month_high = $apiDatas['temp_extra_7_month_high'];
+        $temp_extra_7_year_high = $apiDatas['temp_extra_7_year_high'];
+
+        $temp_extra_7_day_low_time = $apiDatas['temp_extra_7_day_low_time'];
+        $temp_extra_7_day_high_time = $apiDatas['temp_extra_7_day_high_time'];
+
+        $temp_leaf_1_day_low = $apiDatas['temp_leaf_1_day_low'];
+        $temp_leaf_1_month_low = $apiDatas['temp_leaf_1_month_low'];
+        $temp_leaf_1_year_low = $apiDatas['temp_leaf_1_year_low'];
+        $temp_leaf_1_day_high = $apiDatas['temp_leaf_1_day_high'];
+        $temp_leaf_1_month_high = $apiDatas['temp_leaf_1_month_high'];
+        $temp_leaf_1_year_high = $apiDatas['temp_leaf_1_year_high'];
+
+        $temp_leaf_1_day_low_time = $apiDatas['temp_leaf_1_day_low_time'];
+        $temp_leaf_1_day_high_time = $apiDatas['temp_leaf_1_day_high_time'];
+
+        $temp_leaf_2_day_low = $apiDatas['temp_leaf_2_day_low'];
+        $temp_leaf_2_month_low = $apiDatas['temp_leaf_2_month_low'];
+        $temp_leaf_2_year_low = $apiDatas['temp_leaf_2_year_low'];
+        $temp_leaf_2_day_high = $apiDatas['temp_leaf_2_day_high'];
+        $temp_leaf_2_month_high = $apiDatas['temp_leaf_2_month_high'];
+        $temp_leaf_2_year_high = $apiDatas['temp_leaf_2_year_high'];
+
+        $temp_leaf_2_day_low_time = $apiDatas['temp_leaf_2_day_low_time'];
+        $temp_leaf_2_day_high_time = $apiDatas['temp_leaf_2_day_high_time'];
+
+        $temp_soil_1_day_low = $apiDatas['temp_soil_1_day_low'];
+        $temp_soil_1_month_low = $apiDatas['temp_soil_1_month_low'];
+        $temp_soil_1_year_low = $apiDatas['temp_soil_1_year_low'];
+        $temp_soil_1_day_high = $apiDatas['temp_soil_1_day_high'];
+        $temp_soil_1_month_high = $apiDatas['temp_soil_1_month_high'];
+        $temp_soil_1_year_high = $apiDatas['temp_soil_1_year_high'];
+
+        $temp_soil_1_day_low_time = $apiDatas['temp_soil_1_day_low_time'];
+        $temp_soil_1_day_high_time = $apiDatas['temp_soil_1_day_high_time'];
+
+        $temp_soil_2_day_low = $apiDatas['temp_soil_2_day_low'];
+        $temp_soil_2_month_low = $apiDatas['temp_soil_2_month_low'];
+        $temp_soil_2_year_low = $apiDatas['temp_soil_2_year_low'];
+        $temp_soil_2_day_high = $apiDatas['temp_soil_2_day_high'];
+        $temp_soil_2_month_high = $apiDatas['temp_soil_2_month_high'];
+        $temp_soil_2_year_high = $apiDatas['temp_soil_2_year_high'];
+
+        $temp_soil_2_day_low_time = $apiDatas['temp_soil_2_day_low_time'];
+        $temp_soil_2_day_high_time = $apiDatas['temp_soil_2_day_high_time'];
+
+        $temp_soil_3_day_low = $apiDatas['temp_soil_3_day_low'];
+        $temp_soil_3_month_low = $apiDatas['temp_soil_3_month_low'];
+        $temp_soil_3_year_low = $apiDatas['temp_soil_3_year_low'];
+        $temp_soil_3_day_high = $apiDatas['temp_soil_3_day_high'];
+        $temp_soil_3_month_high = $apiDatas['temp_soil_3_month_high'];
+        $temp_soil_3_year_high = $apiDatas['temp_soil_3_year_high'];
+
+        $temp_soil_3_day_low_time = $apiDatas['temp_soil_3_day_low_time'];
+        $temp_soil_3_day_high_time = $apiDatas['temp_soil_3_day_high_time'];
+
+        $temp_soil_4_day_low = $apiDatas['temp_soil_4_day_low'];
+        $temp_soil_4_month_low = $apiDatas['temp_soil_4_month_low'];
+        $temp_soil_4_year_low = $apiDatas['temp_soil_4_year_low'];
+        $temp_soil_4_day_high = $apiDatas['temp_soil_4_day_high'];
+        $temp_soil_4_month_high = $apiDatas['temp_soil_4_month_high'];
+        $temp_soil_4_year_high = $apiDatas['temp_soil_4_year_high'];
+
+        $temp_soil_4_day_low_time = $apiDatas['temp_soil_4_day_low_time'];
+        $temp_soil_4_day_high_time = $apiDatas['temp_soil_4_day_high_time'];
+
+
+        $relative_humidity_1_day_low = $apiDatas['relative_humidity_1_day_low'];
+        $relative_humidity_1_month_low = $apiDatas['relative_humidity_1_month_low'];
+        $relative_humidity_1_year_low = $apiDatas['relative_humidity_1_year_low'];
+        $relative_humidity_1_day_high = $apiDatas['relative_humidity_1_day_high'];
+        $relative_humidity_1_month_high = $apiDatas['relative_humidity_1_month_high'];
+        $relative_humidity_1_year_high = $apiDatas['relative_humidity_1_year_high'];
+
+        $relative_humidity_1_day_low_time = $apiDatas['relative_humidity_1_day_low_time'];
+        $relative_humidity_1_day_high_time = $apiDatas['relative_humidity_1_day_high_time'];
+
+        $relative_humidity_2_day_low = $apiDatas['relative_humidity_2_day_low'];
+        $relative_humidity_2_month_low = $apiDatas['relative_humidity_2_month_low'];
+        $relative_humidity_2_year_low = $apiDatas['relative_humidity_2_year_low'];
+        $relative_humidity_2_day_high = $apiDatas['relative_humidity_2_day_high'];
+        $relative_humidity_2_month_high = $apiDatas['relative_humidity_2_month_high'];
+        $relative_humidity_2_year_high = $apiDatas['relative_humidity_2_year_high'];
+
+        $relative_humidity_2_day_low_time = $apiDatas['relative_humidity_2_day_low_time'];
+        $relative_humidity_2_day_high_time = $apiDatas['relative_humidity_2_day_high_time'];
+
+        $relative_humidity_3_day_low = $apiDatas['relative_humidity_3_day_low'];
+        $relative_humidity_3_month_low = $apiDatas['relative_humidity_3_month_low'];
+        $relative_humidity_3_year_low = $apiDatas['relative_humidity_3_year_low'];
+        $relative_humidity_3_day_high = $apiDatas['relative_humidity_3_day_high'];
+        $relative_humidity_3_month_high = $apiDatas['relative_humidity_3_month_high'];
+        $relative_humidity_3_year_high = $apiDatas['relative_humidity_3_year_high'];
+
+        $relative_humidity_3_day_low_time = $apiDatas['relative_humidity_3_day_low_time'];
+        $relative_humidity_3_day_high_time = $apiDatas['relative_humidity_3_day_high_time'];
+
+        $relative_humidity_4_day_low = $apiDatas['relative_humidity_4_day_low'];
+        $relative_humidity_4_month_low = $apiDatas['relative_humidity_4_month_low'];
+        $relative_humidity_4_year_low = $apiDatas['relative_humidity_4_year_low'];
+        $relative_humidity_4_day_high = $apiDatas['relative_humidity_4_day_high'];
+        $relative_humidity_4_month_high = $apiDatas['relative_humidity_4_month_high'];
+        $relative_humidity_4_year_high = $apiDatas['relative_humidity_4_year_high'];
+
+        $relative_humidity_4_day_low_time = $apiDatas['relative_humidity_4_day_low_time'];
+        $relative_humidity_4_day_high_time = $apiDatas['relative_humidity_4_day_high_time'];
+
+        $relative_humidity_5_day_low = $apiDatas['relative_humidity_5_day_low'];
+        $relative_humidity_5_month_low = $apiDatas['relative_humidity_5_month_low'];
+        $relative_humidity_5_year_low = $apiDatas['relative_humidity_5_year_low'];
+        $relative_humidity_5_day_high = $apiDatas['relative_humidity_5_day_high'];
+        $relative_humidity_5_month_high = $apiDatas['relative_humidity_5_month_high'];
+        $relative_humidity_5_year_high = $apiDatas['relative_humidity_5_year_high'];
+
+        $relative_humidity_5_day_low_time = $apiDatas['relative_humidity_5_day_low_time'];
+        $relative_humidity_5_day_high_time = $apiDatas['relative_humidity_5_day_high_time'];
+
+        $relative_humidity_6_day_low = $apiDatas['relative_humidity_6_day_low'];
+        $relative_humidity_6_month_low = $apiDatas['relative_humidity_6_month_low'];
+        $relative_humidity_6_year_low = $apiDatas['relative_humidity_6_year_low'];
+        $relative_humidity_6_day_high = $apiDatas['relative_humidity_6_day_high'];
+        $relative_humidity_6_month_high = $apiDatas['relative_humidity_6_month_high'];
+        $relative_humidity_6_year_high = $apiDatas['relative_humidity_6_year_high'];
+
+        $relative_humidity_6_day_low_time = $apiDatas['relative_humidity_6_day_low_time'];
+        $relative_humidity_6_day_high_time = $apiDatas['relative_humidity_6_day_high_time'];
+
+        $relative_humidity_7_day_low = $apiDatas['relative_humidity_7_day_low'];
+        $relative_humidity_7_month_low = $apiDatas['relative_humidity_7_month_low'];
+        $relative_humidity_7_year_low = $apiDatas['relative_humidity_7_year_low'];
+        $relative_humidity_7_day_high = $apiDatas['relative_humidity_7_day_high'];
+        $relative_humidity_7_month_high = $apiDatas['relative_humidity_7_month_high'];
+        $relative_humidity_7_year_high = $apiDatas['relative_humidity_7_year_high'];
+
+        $relative_humidity_7_day_low_time = $apiDatas['relative_humidity_7_day_low_time'];
+        $relative_humidity_7_day_high_time = $apiDatas['relative_humidity_7_day_high_time'];
+
+        $leaf_wetness_1_day_low = $apiDatas['leaf_wetness_1_day_low'];
+        $leaf_wetness_1_month_low = $apiDatas['leaf_wetness_1_month_low'];
+        $leaf_wetness_1_year_low = $apiDatas['leaf_wetness_1_year_low'];
+        $leaf_wetness_1_day_high = $apiDatas['leaf_wetness_1_day_high'];
+        $leaf_wetness_1_month_high = $apiDatas['leaf_wetness_1_month_high'];
+        $leaf_wetness_1_year_high = $apiDatas['leaf_wetness_1_year_high'];
+
+        $leaf_wetness_1_day_low_time = $apiDatas['leaf_wetness_1_day_low_time'];
+        $leaf_wetness_1_day_high_time = $apiDatas['leaf_wetness_1_day_high_time'];
+
+        $leaf_wetness_2_day_low = $apiDatas['leaf_wetness_2_day_low'];
+        $leaf_wetness_2_month_low = $apiDatas['leaf_wetness_2_month_low'];
+        $leaf_wetness_2_year_low = $apiDatas['leaf_wetness_2_year_low'];
+        $leaf_wetness_2_day_high = $apiDatas['leaf_wetness_2_day_high'];
+        $leaf_wetness_2_month_high = $apiDatas['leaf_wetness_2_month_high'];
+        $leaf_wetness_2_year_high = $apiDatas['leaf_wetness_2_year_high'];
+
+        $leaf_wetness_2_day_low_time = $apiDatas['leaf_wetness_2_day_low_time'];
+        $leaf_wetness_2_day_high_time = $apiDatas['leaf_wetness_2_day_high_time'];
+
+        $soil_moisture_1_day_low = $apiDatas['soil_moisture_1_day_low'];
+        $soil_moisture_1_month_low = $apiDatas['soil_moisture_1_month_low'];
+        $soil_moisture_1_year_low = $apiDatas['soil_moisture_1_year_low'];
+        $soil_moisture_1_day_high = $apiDatas['soil_moisture_1_day_high'];
+        $soil_moisture_1_month_high = $apiDatas['soil_moisture_1_month_high'];
+        $soil_moisture_1_year_high = $apiDatas['soil_moisture_1_year_high'];
+
+        $soil_moisture_1_day_low_time = $apiDatas['soil_moisture_1_day_low_time'];
+        $soil_moisture_1_day_high_time = $apiDatas['soil_moisture_1_day_high_time'];
+
+        $soil_moisture_2_day_low = $apiDatas['soil_moisture_2_day_low'];
+        $soil_moisture_2_month_low = $apiDatas['soil_moisture_2_month_low'];
+        $soil_moisture_2_year_low = $apiDatas['soil_moisture_2_year_low'];
+        $soil_moisture_2_day_high = $apiDatas['soil_moisture_2_day_high'];
+        $soil_moisture_2_month_high = $apiDatas['soil_moisture_2_month_high'];
+        $soil_moisture_2_year_high = $apiDatas['soil_moisture_2_year_high'];
+
+        $soil_moisture_2_day_low_time = $apiDatas['soil_moisture_2_day_low_time'];
+        $soil_moisture_2_day_high_time = $apiDatas['soil_moisture_2_day_high_time'];
+
+        $soil_moisture_3_day_low = $apiDatas['soil_moisture_3_day_low'];
+        $soil_moisture_3_month_low = $apiDatas['soil_moisture_3_month_low'];
+        $soil_moisture_3_year_low = $apiDatas['soil_moisture_3_year_low'];
+        $soil_moisture_3_day_high = $apiDatas['soil_moisture_3_day_high'];
+        $soil_moisture_3_month_high = $apiDatas['soil_moisture_3_month_high'];
+        $soil_moisture_3_year_high = $apiDatas['soil_moisture_3_year_high'];
+
+        $soil_moisture_3_day_low_time = $apiDatas['soil_moisture_3_day_low_time'];
+        $soil_moisture_3_day_high_time = $apiDatas['soil_moisture_3_day_high_time'];
+
+        $soil_moisture_4_day_low = $apiDatas['soil_moisture_4_day_low'];
+        $soil_moisture_4_month_low = $apiDatas['soil_moisture_4_month_low'];
+        $soil_moisture_4_year_low = $apiDatas['soil_moisture_4_year_low'];
+        $soil_moisture_4_day_high = $apiDatas['soil_moisture_4_day_high'];
+        $soil_moisture_4_month_high = $apiDatas['soil_moisture_4_month_high'];
+        $soil_moisture_4_year_high = $apiDatas['soil_moisture_4_year_high'];
+
+        $soil_moisture_4_day_low_time = $apiDatas['soil_moisture_4_day_low_time'];
+        $soil_moisture_4_day_high_time = $apiDatas['soil_moisture_4_day_high_time'];
+
+        $temp_in_day_low_f = $apiDatas['temp_in_day_low_f'];
+        $temp_in_month_low_f = $apiDatas['temp_in_month_low_f'];
+        $temp_in_year_low_f = $apiDatas['temp_in_year_low_f'];
+        $temp_in_day_high_f = $apiDatas['temp_in_day_high_f'];
+        $temp_in_month_high_f = $apiDatas['temp_in_month_high_f'];
+        $temp_in_year_high_f = $apiDatas['temp_in_year_high_f'];
+
+        $temp_in_day_low_time = $apiDatas['temp_in_day_low_time'];
+        $temp_in_day_high_time = $apiDatas['temp_in_day_high_time'];
+
+        $relative_humidity_in_day_low = $apiDatas['relative_humidity_in_day_low'];
+        $relative_humidity_in_month_low = $apiDatas['relative_humidity_in_month_low'];
+        $relative_humidity_in_year_low = $apiDatas['relative_humidity_in_year_low'];
+        $relative_humidity_in_day_high = $apiDatas['relative_humidity_in_day_high'];
+        $relative_humidity_in_month_high = $apiDatas['relative_humidity_in_month_high'];
+        $relative_humidity_in_year_high = $apiDatas['relative_humidity_in_year_high'];
+
+        $relative_humidity_in_day_low_time = $apiDatas['relative_humidity_in_day_low_time'];
+        $relative_humidity_in_day_high_time = $apiDatas['relative_humidity_in_day_high_time'];
 
         $inc = array(
             "2" => array(
@@ -1950,10 +1865,10 @@ class StationView extends View
                 "CLASS_UNIT_DOWN_LARGE" => '09',
                 "_UNIT_DOWN_SMALL" => '°',
                 "_UNIT_DOWN_LARGE" => $this->getUnit($switch, 'temp'),
-                "_DMY_VALUE_n" => $this->getDMY($switch, $this->getTemp($switch, $temp_day_low_f), $this->getTemp($switch, $temp_month_low_f), $this->getTemp($switch, $temp_year_low_f)),
-                "_DMY_VALUE_x" => $this->getDMY($switch, $this->getTemp($switch, $temp_day_high_f), $this->getTemp($switch, $temp_month_high_f), $this->getTemp($switch, $temp_year_high_f)),
-                "DMY_OF_DOWN_n" =>  $this->getDMY($switch, $this->l->trad('AT') . ' ' . $this->l->timeTrad($temp_day_low_time, $this->l->getLg()), $this->l->trad('OF_THE_MONTH'), $this->l->trad('OF_THE_YEAR')),
-                "DMY_OF_DOWN_x" =>  $this->getDMY($switch, $this->l->trad('AT') . ' ' . $this->l->timeTrad($temp_day_high_time, $this->l->getLg()), $this->l->trad('OF_THE_MONTH'), $this->l->trad('OF_THE_YEAR')),
+                "_DMY_VALUE_n" => $this->getDMY($switch, $this->getTemp($switch, $apiDatas['temp_day_low_f']), $this->getTemp($switch, $apiDatas['temp_month_low_f']), $this->getTemp($switch, $apiDatas['temp_year_low_f'])),
+                "_DMY_VALUE_x" => $this->getDMY($switch, $this->getTemp($switch, $apiDatas['temp_day_high_f']), $this->getTemp($switch, $apiDatas['temp_month_high_f']), $this->getTemp($switch, $apiDatas['temp_year_high_f'])),
+                "DMY_OF_DOWN_n" =>  $this->getDMY($switch, $this->l->trad('AT') . ' ' . $this->l->timeTrad($apiDatas['temp_day_low_time'], $this->l->getLg()), $this->l->trad('OF_THE_MONTH'), $this->l->trad('OF_THE_YEAR')),
+                "DMY_OF_DOWN_x" =>  $this->getDMY($switch, $this->l->trad('AT') . ' ' . $this->l->timeTrad($apiDatas['temp_day_high_time'], $this->l->getLg()), $this->l->trad('OF_THE_MONTH'), $this->l->trad('OF_THE_YEAR')),
                 "DMY_TXT_TOOLTIP" => $this->getDMY($switch, $this->l->trad('DAILY'), $this->l->trad('MONTHLY'), $this->l->trad('YEARLY'))
             ),
             "10" => array(
@@ -2462,24 +2377,24 @@ class StationView extends View
      */
     public function incDown3($datas, $switch, $info, $livestation)
     {
-        $wind_day_high_time = $this->getAPIDatas($datas, $info, $livestation)['wind_day_high_time'];
-        $wind_day_high_mph = $this->getAPIDatas($datas, $info, $livestation)['wind_day_high_mph'];
-        $wind_month_high_mph = $this->getAPIDatas($datas, $info, $livestation)['wind_month_high_mph'];
-        $wind_year_high_mph = $this->getAPIDatas($datas, $info, $livestation)['wind_year_high_mph'];
+        $apiDatas = $this->getAPIDatas($datas, $info, $livestation);
+
+        $wind_month_high_mph = $apiDatas['wind_month_high_mph'];
+        $wind_year_high_mph = $apiDatas['wind_year_high_mph'];
 
         $inc = array(
             "4" => array(
                 "CSS_DOWN" => '500',
                 "TEXT_DOWN_SMALL" => $this->getDMY($switch, $this->l->trad('TODAY'), $this->l->trad('MAX_GUST'), $this->l->trad('MAX_GUST')),
                 "TEXT_DOWN_LARGE" => $this->getDMY($switch, $this->l->trad('TODAY'), $this->l->trad('MAX_GUST'), $this->l->trad('MAX_GUST')),
-                "DMY_OF_DOWN" =>  $this->getDMY($switch, $this->l->trad('AT') . ' ' . $this->l->timeTrad($wind_day_high_time, $this->l->getLg()), $this->l->trad('OF_THE_MONTH'), $this->l->trad('OF_THE_YEAR')),
+                "DMY_OF_DOWN" =>  $this->getDMY($switch, $this->l->trad('AT') . ' ' . $this->l->timeTrad($apiDatas['wind_day_high_time'], $this->l->getLg()), $this->l->trad('OF_THE_MONTH'), $this->l->trad('OF_THE_YEAR')),
                 "ALTERN_TXT_S_1" => $this->l->trad('MAX') . ' : ',
                 "ALTERN_TXT_S_2" => '',
                 "ALTERN_TXT_S_3" => '',
                 "ALTERN_TXT_L_1" => $this->l->trad('MAX_GUST') . ' : ',
                 "ALTERN_TXT_L_2" => '',
                 "ALTERN_TXT_L_3" => '',
-                "_DMY_VALUE" => $this->getDMY($switch, $this->getWind($switch, $wind_day_high_mph), $this->getWind($switch, $wind_month_high_mph), $this->getWind($switch, $wind_year_high_mph)),
+                "_DMY_VALUE" => $this->getDMY($switch, $this->getWind($switch, $apiDatas['wind_day_high_mph']), $this->getWind($switch, $wind_month_high_mph), $this->getWind($switch, $wind_year_high_mph)),
                 "CLASS_UNIT_DOWN_SMALL" => '08',
                 "CLASS_UNIT_DOWN_LARGE" => '08',
                 "_UNIT_DOWN_SMALL" => $this->getUnit($switch, 'wind'),
@@ -2495,29 +2410,24 @@ class StationView extends View
      */
     public function incDown5($datas, $switch, $config, $info, $livestation)
     {
-        $rain_month_in = $this->getAPIDatas($datas, $info, $livestation)['rain_month_in'];
-        $rain_year_in = $this->getAPIDatas($datas, $info, $livestation)['rain_year_in'];
+        $apiDatas = $this->getAPIDatas($datas, $info, $livestation);
 
-        $et_month = $this->getAPIDatas($datas, $info, $livestation)['et_month'];
-        $temp_month_high_f = $this->getAPIDatas($datas, $info, $livestation)['temp_month_high_f'];
-        $temp_month_low_f = $this->getAPIDatas($datas, $info, $livestation)['temp_month_low_f'];
+        $et_month = $apiDatas['et_month'];
+       
+        $et_year = $apiDatas['et_year'];
 
-        $et_year = $this->getAPIDatas($datas, $info, $livestation)['et_year'];
-        $temp_year_high_f = $this->getAPIDatas($datas, $info, $livestation)['temp_year_high_f'];
-        $temp_year_low_f = $this->getAPIDatas($datas, $info, $livestation)['temp_year_low_f'];
+        $solar_radiation_month_high = $apiDatas['solar_radiation_month_high'];
+        $solar_radiation_year_high = $apiDatas['solar_radiation_year_high'];
 
-        $solar_radiation_month_high = $this->getAPIDatas($datas, $info, $livestation)['solar_radiation_month_high'];
-        $solar_radiation_year_high = $this->getAPIDatas($datas, $info, $livestation)['solar_radiation_year_high'];
-
-        $uv_index_month_high = $this->getAPIDatas($datas, $info, $livestation)['uv_index_month_high'];
-        $uv_index_year_high = $this->getAPIDatas($datas, $info, $livestation)['uv_index_year_high'];
+        $uv_index_month_high = $apiDatas['uv_index_month_high'];
+        $uv_index_year_high = $apiDatas['uv_index_year_high'];
 
         $inc = array(
             "6" => array(
                 "CSS_DOWN" => '500',
                 "TEXT_DOWN_SMALL_n" => $this->l->trad('MONTH_PRECIP'),
                 "ALTERN_TXT_S_1n" => '',
-                "_VALUE_n" =>  $this->getRain($switch, $rain_month_in),
+                "_VALUE_n" =>  $this->getRain($switch, $apiDatas['rain_month_in']),
                 "ALTERN_TXT_S_2n" => '',
                 "CLASS_UNIT_DOWN_SMALLn" => '',
                 "_UNIT_DOWN_SMALLn" => '',
@@ -2530,7 +2440,7 @@ class StationView extends View
                 "ALTERN_TXT_L_3n" => '',
                 "TEXT_DOWN_SMALL_x" => $this->l->trad('YEAR_PRECIP'),
                 "ALTERN_TXT_S_1x" => '',
-                "_VALUE_x" =>  $this->getRain($switch, $rain_year_in),
+                "_VALUE_x" =>  $this->getRain($switch, $apiDatas['rain_year_in']),
                 "ALTERN_TXT_S_2x" => '',
                 "CLASS_UNIT_DOWN_SMALLx" => '',
                 "_UNIT_DOWN_SMALLx" => '',
@@ -2546,7 +2456,7 @@ class StationView extends View
                 "CSS_DOWN" => '500',
                 "TEXT_DOWN_SMALL_n" => $this->l->trad('MONTH_EVAPO'),
                 "ALTERN_TXT_S_1n" => '',
-                "_VALUE_n" => ($config['config_sun'] == 'sun' || $config['config_sun'] == 'sun_uv') ? $this->getRain($switch, $et_month) : $this->getRain($switch, $this->ETR_in($temp_month_high_f, $temp_month_low_f, $rain_month_in)),
+                "_VALUE_n" => ($config['config_sun'] == 'sun' || $config['config_sun'] == 'sun_uv') ? $this->getRain($switch, $et_month) : $this->getRain($switch, $this->ETR_in($apiDatas['temp_month_high_f'], $apiDatas['temp_month_low_f'], $apiDatas['rain_month_in'])),
                 "ALTERN_TXT_S_2n" => '',
                 "CLASS_UNIT_DOWN_SMALLn" => '',
                 "_UNIT_DOWN_SMALLn" => '',
@@ -2559,7 +2469,7 @@ class StationView extends View
                 "ALTERN_TXT_L_3n" => '',
                 "TEXT_DOWN_SMALL_x" => $this->l->trad('YEAR_EVAPO'),
                 "ALTERN_TXT_S_1x" => '',
-                "_VALUE_x" => ($config['config_sun'] == 'sun' || $config['config_sun'] == 'sun_uv') ? $this->getRain($switch, $et_year) : $this->getRain($switch, $this->ETR_in($temp_year_high_f, $temp_year_low_f, $rain_year_in)),
+                "_VALUE_x" => ($config['config_sun'] == 'sun' || $config['config_sun'] == 'sun_uv') ? $this->getRain($switch, $et_year) : $this->getRain($switch, $this->ETR_in($apiDatas['temp_year_high_f'], $apiDatas['temp_year_low_f'], $apiDatas['rain_year_in'])),
                 "ALTERN_TXT_S_2x" => '',
                 "CLASS_UNIT_DOWN_SMALLx" => '',
                 "_UNIT_DOWN_SMALLx" => '',
@@ -2713,7 +2623,9 @@ class StationView extends View
             "41" => $this->tabTxt($config)['41'],
             "42" => $this->tabTxt($config)['42'],
             "43" => $this->tabTxt($config)['43'],
-            "44" => $this->tabTxt($config)['44']
+            "44" => $this->tabTxt($config)['44'],
+           
+            "46" => $this->tabTxt($config)['46'],
         );
         return $optionValue;
     }
@@ -2723,33 +2635,26 @@ class StationView extends View
      */
     public function downHeatWind($switch, $datas, $info, $livestation)
     {
+        $apiDatas = $this->getAPIDatas($datas, $info, $livestation);
 
-        $temp_day_high_f = $this->getAPIDatas($datas, $info, $livestation)['temp_day_high_f'];
-        $temp_month_high_f = $this->getAPIDatas($datas, $info, $livestation)['temp_month_high_f'];
-        $temp_year_high_f = $this->getAPIDatas($datas, $info, $livestation)['temp_year_high_f'];
+        $windchill_day_low_f = $apiDatas['windchill_day_low_f'];
+        $windchill_day_low_time = $apiDatas['windchill_day_low_time'];
+        $windchill_month_low_f = $apiDatas['windchill_month_low_f'];
+        $windchill_year_low_f = $apiDatas['windchill_year_low_f'];
 
-        $temp_day_low_f = $this->getAPIDatas($datas, $info, $livestation)['temp_day_low_f'];
-        $temp_month_low_f = $this->getAPIDatas($datas, $info, $livestation)['temp_month_low_f'];
-        $temp_year_low_f = $this->getAPIDatas($datas, $info, $livestation)['temp_year_low_f'];
-
-        $windchill_day_low_f = $this->getAPIDatas($datas, $info, $livestation)['windchill_day_low_f'];
-        $windchill_day_low_time = $this->getAPIDatas($datas, $info, $livestation)['windchill_day_low_time'];
-        $windchill_month_low_f = $this->getAPIDatas($datas, $info, $livestation)['windchill_month_low_f'];
-        $windchill_year_low_f = $this->getAPIDatas($datas, $info, $livestation)['windchill_year_low_f'];
-
-        $heat_index_day_high_f = $this->getAPIDatas($datas, $info, $livestation)['heat_index_day_high_f'];
-        $heat_index_day_high_time = $this->getAPIDatas($datas, $info, $livestation)['heat_index_day_high_time'];
-        $heat_index_month_high_f = $this->getAPIDatas($datas, $info, $livestation)['heat_index_month_high_f'];
-        $heat_index_year_high_f = $this->getAPIDatas($datas, $info, $livestation)['heat_index_year_high_f'];
+        $heat_index_day_high_f = $apiDatas['heat_index_day_high_f'];
+        $heat_index_day_high_time = $apiDatas['heat_index_day_high_time'];
+        $heat_index_month_high_f = $apiDatas['heat_index_month_high_f'];
+        $heat_index_year_high_f = $apiDatas['heat_index_year_high_f'];
 
         $page = '';
-        if ($this->is_Temp('59', $this->getDMY($switch, $temp_day_high_f, $temp_month_high_f, $temp_year_high_f)) == true) {
+        if ($this->is_Temp('59', $this->getDMY($switch, $apiDatas['temp_day_high_f'], $apiDatas['temp_month_high_f'], $apiDatas['temp_year_high_f'])) == true) {
             $page .= '<a data-toggle="tooltip" title="' . $this->getDMY($switch, $this->l->trad('DAILY'), $this->l->trad('MONTHLY'), $this->l->trad('YEARLY')) . '">' . $this->l->trad('MIN') . ' :</a> ';
         }
-        if ($this->is_Temp('59', $this->getDMY($switch, $temp_day_low_f, $temp_month_low_f, $temp_year_low_f)) == false) {
+        if ($this->is_Temp('59', $this->getDMY($switch, $apiDatas['temp_day_low_f'], $apiDatas['temp_month_low_f'], $apiDatas['temp_year_low_f'])) == false) {
             $page .= '<a data-toggle="tooltip" title="' . $this->getDMY($switch, $this->l->trad('DAILY'), $this->l->trad('MONTHLY'), $this->l->trad('YEARLY')) . '">' . $this->l->trad('MAX') . ' :</a> ';
         }
-        if ($this->is_Temp('59', $this->getDMY($switch, $temp_day_low_f, $temp_month_low_f, $temp_year_low_f)) == true) {
+        if ($this->is_Temp('59', $this->getDMY($switch, $apiDatas['temp_day_low_f'], $apiDatas['temp_month_low_f'], $apiDatas['temp_year_low_f'])) == true) {
             $page .= '<div class="small500">';
             $page .= '<a data-toggle="tooltip" title="' . $this->l->trad('WINDCHILL_SMALL') . ' ' . $this->getDMY($switch, $this->l->trad('AT') . ' ' . $this->l->timeTrad($windchill_day_low_time, $this->l->getLg()), $this->l->trad('OF_THE_MONTH'), $this->l->trad('OF_THE_YEAR')) . '">';
             $page .= $this->getDMY($switch, $this->getTemp($switch, $windchill_day_low_f), $this->getTemp($switch, $windchill_month_low_f), $this->getTemp($switch, $windchill_year_low_f));
@@ -2763,7 +2668,7 @@ class StationView extends View
             $page .= '</a>';
             $page .= '</div>';
         }
-        if ($this->is_Temp('59', $this->getDMY($switch, $temp_day_low_f, $temp_month_low_f, $temp_year_low_f)) == true && $this->is_Temp('59', $this->getDMY($switch, $temp_day_high_f, $temp_month_high_f, $temp_year_high_f)) == false) {
+        if ($this->is_Temp('59', $this->getDMY($switch, $apiDatas['temp_day_low_f'], $apiDatas['temp_month_low_f'], $apiDatas['temp_year_low_f'])) == true && $this->is_Temp('59', $this->getDMY($switch, $apiDatas['temp_day_high_f'],$apiDatas['temp_month_high_f'], $apiDatas['temp_year_high_f'])) == false) {
             $page  .= '<div class="small500">';
             $page .= '<div class="dmy_display_on">';
             $page .= '<a data-toggle="tooltip" title="' . $this->getDMY($switch, $this->l->trad('DAILY'), $this->l->trad('MONTHLY'), $this->l->trad('YEARLY')) . '">';
@@ -2782,7 +2687,7 @@ class StationView extends View
             $page .= '</div>';
             $page .= '</div>';
         }
-        if ($this->is_Temp('59', $this->getDMY($switch, $temp_day_high_f, $temp_month_high_f, $temp_year_high_f)) == false) {
+        if ($this->is_Temp('59', $this->getDMY($switch, $apiDatas['temp_day_high_f'], $apiDatas['temp_month_high_f'], $apiDatas['temp_year_high_f'])) == false) {
             $page .= '<div class="small500">';
             $page .= '<a data-toggle="tooltip" title="' . $this->l->trad('HEAT') . ' ' . $this->getDMY($switch, $this->l->trad('AT') . ' ' . $this->l->timeTrad($heat_index_day_high_time, $this->l->getLg()), $this->l->trad('OF_THE_MONTH'), $this->l->trad('OF_THE_YEAR')) . '">';
             $page .= $this->getDMY($switch, $this->getTemp($switch, $heat_index_day_high_f), $this->getTemp($switch, $heat_index_month_high_f), $this->getTemp($switch, $heat_index_year_high_f));
@@ -2805,16 +2710,17 @@ class StationView extends View
     public function incDownCloudy($config, $datas, $info, $livestation)
     {
         $zero = '&#8709;';
+        $apiDatas = $this->getAPIDatas($datas, $info, $livestation);
+        $apiDatasUP = $this->getAPIDatasUp($datas, $info, $livestation);
 
-        $temp_f = $this->getAPIDatas($datas, $info, $livestation)['temp_f'];
-        $temp_c = $this->getAPIDatasUp($datas, $info, $livestation)['c_temp'];
+        $temp_c = $apiDatasUP['c_temp'];
 
-        $time = $this->getAPIDatasUp($datas, $info, $livestation)['time'];
-        $sunset = $this->getAPIDatasUp($datas, $info, $livestation)['time_sunset'];
-        $sunrise = $this->getAPIDatasUp($datas, $info, $livestation)['time_sunrise'];
+        $time = $apiDatasUP['time'];
+        $sunset = $apiDatasUP['time_sunset'];
+        $sunrise = $apiDatasUP['time_sunrise'];
 
-        $longitude = $this->getAPIDatas($datas, $info, $livestation)['longitude'];
-        $latitude = $this->getAPIDatas($datas, $info, $livestation)['latitude'];
+        $longitude = $apiDatas['longitude'];
+        $latitude = $apiDatas['latitude'];
 
         $tmp_date = date_create($time);
         $jour = date_format($tmp_date, "d");
@@ -2825,22 +2731,18 @@ class StationView extends View
         $heure_utc = date_format($utc_date, "H");
         $minute_utc = date_format($utc_date, "i");
 
-        $relative_humidity = $this->getAPIDatas($datas, $info, $livestation)['relative_humidity'];
-        $solar_radiation = $this->getAPIDatas($datas, $info, $livestation)['solar_radiation'];
-        $rain_rate_in_per_hr = $this->getAPIDatas($datas, $info, $livestation)['rain_rate_in_per_hr'];
-        $rain_day_in = $this->getAPIDatas($datas, $info, $livestation)['rain_day_in'];
-
-        if ($rain_rate_in_per_hr == '0') {
+      
+        if ($apiDatas['rain_rate_in_per_hr'] == '0') {
             if ($config['config_sun'] == 'sun' || $config['config_sun'] == 'sun_uv') {
-                if ($this->is_Temp('32', $temp_f) == true) {
-                    if (($relative_humidity  >= '98') && ($this->is_sun($longitude, $latitude, $jour, $mois, $annee, $heure_utc, $minute_utc, $temp_c, $solar_radiation) == false)) {
+                if ($this->is_Temp('32', $apiDatas['temp_f']) == true) {
+                    if (($apiDatas['relative_humidity']  >= '98') && ($this->is_sun($longitude, $latitude, $jour, $mois, $annee, $heure_utc, $minute_utc, $temp_c, $apiDatas['solar_radiation']) == false)) {
                         $page = '<div class="large500">' . $this->l->trad('FREEZING_FOG') . '</div><div class="small500">' . $this->l->trad('FROST_FOG') . '</div>';
-                    } elseif ((($relative_humidity  >= '96') && ($relative_humidity < '98')) && ($this->is_sun($longitude, $latitude, $jour, $mois, $annee, $heure_utc, $minute_utc, $temp_c, $solar_radiation) == false)) {
+                    } elseif ((($apiDatas['relative_humidity']  >= '96') && ($apiDatas['relative_humidity'] < '98')) && ($this->is_sun($longitude, $latitude, $jour, $mois, $annee, $heure_utc, $minute_utc, $temp_c, $apiDatas['solar_radiation']) == false)) {
                         $page = '<div class="large500">' . $this->l->trad('FREEZING_MIST') . '</div><div class="small500">' . $this->l->trad('FROST_MIST') . '</div>';
-                    } elseif ($relative_humidity  < '96' && $rain_day_in > '0') {
+                    } elseif ($apiDatas['relative_humidity']  < '96' && $apiDatas['rain_day_in'] > '0') {
                         $page = $this->l->trad('ICING');
                     } elseif ($this->TimeStation($time) > $this->TimeStation($sunrise) && $this->TimeStation($time) < $this->TimeStation($sunset)) {
-                        if ($this->is_sun($longitude, $latitude, $jour, $mois, $annee, $heure_utc, $minute_utc, $temp_c, $solar_radiation) == true) {
+                        if ($this->is_sun($longitude, $latitude, $jour, $mois, $annee, $heure_utc, $minute_utc, $temp_c, $apiDatas['solar_radiation']) == true) {
                             $page = $this->l->trad('SUNNY');
                         } else {
                             $page = $this->l->trad('CLOUDY');
@@ -2848,13 +2750,13 @@ class StationView extends View
                     } else {
                         $page = $this->l->trad('NOUGHT');
                     }
-                } elseif ($this->is_Temp('32', $temp_f) == false) {
-                    if (($relative_humidity   >= '98') && ($this->is_sun($longitude, $latitude, $jour, $mois, $annee, $heure_utc, $minute_utc, $temp_c, $solar_radiation) == false)) {
+                } elseif ($this->is_Temp('32', $apiDatas['temp_f']) == false) {
+                    if (($apiDatas['relative_humidity']   >= '98') && ($this->is_sun($longitude, $latitude, $jour, $mois, $annee, $heure_utc, $minute_utc, $temp_c, $apiDatas['solar_radiation']) == false)) {
                         $page = $this->l->trad('FOG');
-                    } elseif ((($relative_humidity   >= '96') && ($relative_humidity   < '98')) && ($this->is_sun($longitude, $latitude, $jour, $mois, $annee, $heure_utc, $minute_utc, $temp_c, $solar_radiation) == false)) {
+                    } elseif ((($apiDatas['relative_humidity']   >= '96') && ($apiDatas['relative_humidity']   < '98')) && ($this->is_sun($longitude, $latitude, $jour, $mois, $annee, $heure_utc, $minute_utc, $temp_c, $apiDatas['solar_radiation']) == false)) {
                         $page = $this->l->trad('MIST');
                     } elseif ($this->TimeStation($time) > $this->TimeStation($sunrise) && $this->TimeStation($time) < $this->TimeStation($sunset)) {
-                        if ($this->is_sun($longitude, $latitude, $jour, $mois, $annee, $heure_utc, $minute_utc, $temp_c, $solar_radiation) == true) {
+                        if ($this->is_sun($longitude, $latitude, $jour, $mois, $annee, $heure_utc, $minute_utc, $temp_c, $apiDatas['solar_radiation']) == true) {
                             $page = $this->l->trad('SUNNY');
                         } else {
                             $page = $this->l->trad('CLOUDY');
@@ -2864,32 +2766,32 @@ class StationView extends View
                     }
                 }
             } else {
-                if ($this->is_Temp('32', $temp_f) == true) {
-                    if ($relative_humidity   >= '98') {
+                if ($this->is_Temp('32', $apiDatas['temp_f']) == true) {
+                    if ($apiDatas['relative_humidity']   >= '98') {
                         $page = '<div class="large500">' . $this->l->trad('FREEZING_FOG') . '</div><div class="small500">' . $this->l->trad('FROST_FOG') . '</div>';
-                    } elseif ($relative_humidity   >= '96' && $relative_humidity   < '98') {
+                    } elseif ($apiDatas['relative_humidity']   >= '96' && $apiDatas['relative_humidity']   < '98') {
                         $page =  '<div class="large500">' . $this->l->trad('FREEZING_MIST') . '</div><div class="small500">' . $this->l->trad('FROST_MIST') . '</div>';
-                    } elseif ($relative_humidity   < '96' && $rain_day_in > '0') {
+                    } elseif ($apiDatas['relative_humidity']   < '96' && $apiDatas['rain_day_in'] > '0') {
                         $page = $this->l->trad('ICING');
                     } else {
                         $page = $this->l->trad('NOUGHT');
                     }
-                } elseif ($this->is_Temp('32', $temp_f) == false) {
-                    if ($relative_humidity   >= '98') {
+                } elseif ($this->is_Temp('32', $apiDatas['temp_f']) == false) {
+                    if ($apiDatas['relative_humidity']   >= '98') {
                         $page = $this->l->trad('FOG');
-                    } elseif (($relative_humidity   >= '96') && ($relative_humidity   < '98')) {
+                    } elseif (($apiDatas['relative_humidity']   >= '96') && ($apiDatas['relative_humidity']   < '98')) {
                         $page = $this->l->trad('MIST');
                     } else {
                         $page = $this->l->trad('NOUGHT');
                     }
                 }
             }
-        } elseif ($rain_rate_in_per_hr > '0') {
-            if ($this->is_Temp('37.4', $temp_f) == false) {
+        } elseif ($apiDatas['rain_rate_in_per_hr'] > '0') {
+            if ($this->is_Temp('37.4', $apiDatas['temp_f']) == false) {
                 $page = $this->l->trad('PRECIPITATION');
-            } elseif ($this->is_Temp('32.9', $temp_f) == false && $this->is_Temp('37.4', $temp_f) == true) {
+            } elseif ($this->is_Temp('32.9', $apiDatas['temp_f']) == false && $this->is_Temp('37.4', $apiDatas['temp_f']) == true) {
                 $page = $this->l->trad('RAIN_SNOW');
-            } elseif ($this->is_Temp('32.9', $temp_f) == true) {
+            } elseif ($this->is_Temp('32.9', $apiDatas['temp_f']) == true) {
                 $page = $this->l->trad('SNOW');
             }
         } else {
@@ -2945,9 +2847,10 @@ class StationView extends View
 
     public function incUpSun($switch, $config, $tab, $datas, $info, $livestation)
     {
-        $time = $this->getAPIDatasUp($datas, $info, $livestation)['time'];
-        $sunset = $this->getAPIDatasUp($datas, $info, $livestation)['time_sunset'];
-        $sunrise = $this->getAPIDatasUp($datas, $info, $livestation)['time_sunrise'];
+        $apiDatasUP = $this->getAPIDatasUp($datas, $info, $livestation);
+        $time = $apiDatasUP['time'];
+        $sunset = $apiDatasUP['time_sunset'];
+        $sunrise = $apiDatasUP['time_sunrise'];
 
         if ($config['config_sun'] == 'sun') {
             if ($this->is_tab($tab, '22') == false) {
@@ -3074,15 +2977,12 @@ class StationView extends View
 
     public function incMidSun($switch, $config, $tab, $datas, $info, $livestation)
     {
-        $time = $this->getAPIDatasUp($datas, $info, $livestation)['time'];
-        $sunset = $this->getAPIDatasUp($datas, $info, $livestation)['time_sunset'];
-        $sunrise = $this->getAPIDatasUp($datas, $info, $livestation)['time_sunrise'];
+        $apiDatas = $this->getAPIDatas($datas, $info, $livestation);
+        $apiDatasUP = $this->getAPIDatasUp($datas, $info, $livestation);
 
-        $solar_radiation = $this->getAPIDatas($datas, $info, $livestation)['solar_radiation'];
-        $solar_radiation_day_high = $this->getAPIDatas($datas, $info, $livestation)['solar_radiation_day_high'];
-        $solar_radiation_day_high_time = $this->getAPIDatas($datas, $info, $livestation)['solar_radiation_day_high_time'];
-
-        $uv_index = $this->getAPIDatas($datas, $info, $livestation)['uv_index'];
+        $time = $apiDatasUP['time'];
+        $sunset = $apiDatasUP['time_sunset'];
+        $sunrise = $apiDatasUP['time_sunrise'];
 
         //MOON PREPARATION
         $tmp_date = strtotime($time);
@@ -3136,16 +3036,16 @@ class StationView extends View
         //SUN
         if ($model == '1') {
             $model1 = '<div class="small500 tab_mid_size_20">';
-            $model1 .= '<a data-toggle="tooltip" title="' . $this->l->trad('MAX') . '&nbsp;:&nbsp;' . $solar_radiation_day_high . '&nbsp;W/m² &nbsp;' . $this->l->trad('AT') . '&nbsp;' . $this->l->timeTrad($solar_radiation_day_high_time, $this->l->getLg()) . '">';
-            $model1 .= '<span ' . $this->col->colSun($switch, $solar_radiation, $datas, $info, $livestation) . ' >';
-            $model1 .=  $solar_radiation;
+            $model1 .= '<a data-toggle="tooltip" title="' . $this->l->trad('MAX') . '&nbsp;:&nbsp;' . $apiDatas['solar_radiation_day_high'] . '&nbsp;W/m² &nbsp;' . $this->l->trad('AT') . '&nbsp;' . $this->l->timeTrad($apiDatas['solar_radiation_day_high_time'], $this->l->getLg()) . '">';
+            $model1 .= '<span ' . $this->col->colSun($switch, $apiDatas['solar_radiation'], $datas, $info, $livestation) . ' >';
+            $model1 .=  $apiDatas['solar_radiation'];
             $model1 .= '<span class="unit05">W/m²</span></span>';
             $model1 .= '</a>';
             $model1 .= '</div>';
             $model1 .= '<div class="large500">';
-            $model1 .= '<a data-toggle="tooltip" title="' . $this->l->trad('MAX') . '&nbsp;:&nbsp;' . $solar_radiation_day_high . '&nbsp;W/m² &nbsp;' . $this->l->trad('AT') . '&nbsp;' . $this->l->timeTrad($solar_radiation_day_high_time, $this->l->getLg()) . '">';
-            $model1 .= '<span ' . $this->col->colSun($switch, $solar_radiation, $datas, $info, $livestation) . ' >';
-            $model1 .=  $solar_radiation;
+            $model1 .= '<a data-toggle="tooltip" title="' . $this->l->trad('MAX') . '&nbsp;:&nbsp;' . $apiDatas['solar_radiation_day_high'] . '&nbsp;W/m² &nbsp;' . $this->l->trad('AT') . '&nbsp;' . $this->l->timeTrad($apiDatas['solar_radiation_day_high_time'], $this->l->getLg()) . '">';
+            $model1 .= '<span ' . $this->col->colSun($switch, $apiDatas['solar_radiation'], $datas, $info, $livestation) . ' >';
+            $model1 .=  $apiDatas['solar_radiation'];
             $model1 .= '<span class="unit06">&nbsp;W/m²</span></span>';
             $model1 .= '</a>';
             $model1 .= '</div>';
@@ -3163,12 +3063,12 @@ class StationView extends View
         //UV
         elseif ($model == '3') {
             $model3 = '<div class="small500 tab_mid_size_20">';
-            $model3 .= '<span ' . $this->col->colUV($switch, $uv_index, $datas, $info, $livestation) . '>';
-            $model3 .= $uv_index;
+            $model3 .= '<span ' . $this->col->colUV($switch, $apiDatas['uv_index'], $datas, $info, $livestation) . '>';
+            $model3 .= $apiDatas['uv_index'];
             $model3 .= '</span></div>';
             $model3 .= '<div class="large500">';
-            $model3 .= '<span ' . $this->col->colUV($switch, $uv_index, $datas, $info, $livestation) . '>';
-            $model3 .= $uv_index;
+            $model3 .= '<span ' . $this->col->colUV($switch, $apiDatas['uv_index'], $datas, $info, $livestation) . '>';
+            $model3 .= $apiDatas['uv_index'];
             $model3 .= '</span></div>';
             return $model3;
         }
@@ -3178,11 +3078,12 @@ class StationView extends View
     public function incDownSun($config, $tab, $datas, $info, $livestation)
     {
 
-        $time = $this->getAPIDatasUp($datas, $info, $livestation)['time'];
-        $sunset = $this->getAPIDatasUp($datas, $info, $livestation)['time_sunset'];
-        $sunrise = $this->getAPIDatasUp($datas, $info, $livestation)['time_sunrise'];
+        $apiDatasUP = $this->getAPIDatasUp($datas, $info, $livestation);
+       $apiDatas = $this->getAPIDatas($datas, $info, $livestation);
 
-        $uv_index = $this->getAPIDatas($datas, $info, $livestation)['uv_index'];
+        $time = $apiDatasUP['time'];
+        $sunset = $apiDatasUP['time_sunset'];
+        $sunrise = $apiDatasUP['time_sunrise'];
 
         if ($config['config_sun'] == 'sun') {
             if ($this->is_tab($tab, '22') == false) {
@@ -3282,7 +3183,7 @@ class StationView extends View
         }
         //UV
         elseif ($model == '5') {
-            $model5 = 'UV = ' . $uv_index;
+            $model5 = 'UV = ' . $apiDatas['uv_index'];
             return $model5;
         }
     }

@@ -29,16 +29,14 @@ class InstallView extends View
 
     public function InstallMain8($info, $datas, $livestation)
     {
-      
-        $location = $this->statview->getAPIDatas($datas, $info, $livestation)['location'];
-        $station_id = $this->statview->getAPIDatas($datas, $info, $livestation)['station_id'];
+        $apiDatas = $this->statview->getAPIDatas($datas, $info, $livestation);
 
         $param = array(
             "1" => $info['user_login'],
             "2" => $info['user_email'],
             "3" => $info['stat_type'],
-            "4" => $location,
-            "5" => $station_id,
+            "4" => $apiDatas['location'],
+            "5" => $apiDatas['station_id'],
             "6" => $info['stat_did'],
             "7" => $info['stat_key'],
             "8" => $info['stat_password'],
@@ -49,7 +47,7 @@ class InstallView extends View
             "13" => $info['stat_wxid'],
             "14" => $info['stat_wxkey'],
             "15" => $info['stat_wxsign'],
-            "16" => $this->statview->getAPIDatas($datas, $info, $livestation)['location'],
+            "16" => $apiDatas['location'],
             "VALIDATE" => $this->l->trad('VALIDATE'),
         );
         $this->constructHead();

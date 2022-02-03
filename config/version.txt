@@ -1,7 +1,7 @@
-2.4
+2.41
 // NE PAS DEPLACER OU SUPPRIMER LA 1ere LIGNE, MBELL L'UTLISE COMME CODE
 
-// Version 2.4-0.71 - Février 2022
+// Version 2.41-0.72 - Février 2022
 
 /** VERSION
  * Dernier numéro de version de Mbell
@@ -108,6 +108,9 @@ VERSION 2.3 -0.65 : Update Auto System
 - 0.69 : Ajout ds bdd de config_crontime (crud Install-Change-Patch) - formulaire de crontime dans View CronServer - update config_crontime dans bdd avec formulaire - Test version PHP 7 à 7.4 - Debug case "Cumul de Pluie" avec switch 
 - 0.70 : Script cron_server.php avec crontime - modif activation/désactivation cron avec intéraction cron_server + alert javascript - ajout API évapotranspiration avec Weatherlink Live - ajout données ISS pour Weatherlink IP avec Weatherlink Live (sauf pluie, signalement bug chez weatherlink)
 - 0.71 : Ajout de User ds Api Weewx - Affichage Weewx ds ChangeStation - Uniformisation des APIs WL-V1 avec Weewx - modifs Weewx ds recap station ChangeView-PrefView-InstallView - Résolution bug capteur UV seul - Résolution bug décochage sondes UV - Solaire - Mis à Jour fonction patch 2.3 à 2.4 - test CURL - Résolution bug maj valeur étape fin install - Résolution bug weatherlink live Rain jour-mois-année manquante avec station IP - Harmonisation API Weewx avec Mbell
-
 ___________
 VERSION 2.4 -0.71 : Addon Weewx - Update Cronjob System - Correction Bugs - Optimisation Code
+
+- 0.72 : optimisation code function_array()[] = temps chargement divisé d'1 tiers - Résolution bug dans Configuration avec les choix de cases impossible à valider (sauf avec 10 lignes) - Nouvelle Case (46) : Direction du Vent avec image de direction
+___________
+VERSION 2.41 -0.72 : Correctif 2.4 + Nouvelle Case Direction du vent

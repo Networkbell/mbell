@@ -48,7 +48,7 @@ class HomeView extends View
         $this->page .= '<section class="container-fluid" id="home_main">';
         $this->page .= '<form id="formdmy" method="POST" action="index.php?controller=home&action=s_dmy&lg=' . $param['_LG'] . '">';
         $this->page .= '<input id="inputdmy" name="s_dmy" type="hidden">';
-        $this->page .= $this->getTab($param, $tab, $switch, $config, $datas, $info, $liveStation);
+        $this->page .= $this->getTabHome($param, $tab, $switch, $config, $datas, $info, $liveStation);
         $this->page .= '</form>';
         $this->page .= '</section>';
         $this->page .= '</main>';
@@ -78,7 +78,7 @@ class HomeView extends View
     }
 
 
-    public function getTab($param, $tab, $switch, $config, $datas, $info, $liveStation)
+    public function getTabHome($param, $tab, $switch, $config, $datas, $info, $liveStation)
     {
         $page = '';
         for ($i = 1; $i <= $tab['tab_lines']; $i++) {
@@ -331,6 +331,11 @@ class HomeView extends View
                 $up = $this->modUp2('44', $config, $switch, $datas, $info, $liveStation);
                 $mid = $this->modMid2('44', $switch, $config, $datas, $info, $liveStation);
                 $down = $this->modDown2('44', $switch, $datas, $info, $liveStation);
+                break;
+            case '46':
+                $up = $this->modUp1('46', $config, $switch, $datas, $info, $liveStation);
+                $mid = $this->modMid1('46', $config, $switch, $datas, $info, $liveStation);
+                $down = $this->modDown1('46', $datas, $info, $liveStation);
                 break;
             default:
                 $up = $this->modUp1('0', $config, $switch, $datas, $info, $liveStation);
@@ -834,10 +839,10 @@ class HomeView extends View
 
     public function getCSS($switch, $datas, $info, $liveStation)
     {
-
-        $time = $this->statview->getAPIDatasUp($datas, $info, $liveStation)['time'];
-        $sunset = $this->statview->getAPIDatasUp($datas, $info, $liveStation)['time_sunset'];
-        $sunrise = $this->statview->getAPIDatasUp($datas, $info, $liveStation)['time_sunrise'];
+        $apiDatasUP = $this->statview->getAPIDatasUp($datas, $info, $liveStation);
+        $time = $apiDatasUP['time'];
+        $sunset = $apiDatasUP['time_sunset'];
+        $sunrise = $apiDatasUP['time_sunrise'];
         $Ttime = $this->statview->TimeStation($time);
         $Tsunrise = $this->statview->TimeStation($sunrise);
         $Tsunset = $this->statview->TimeStation($sunset);

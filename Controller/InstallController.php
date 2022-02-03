@@ -234,15 +234,14 @@ class InstallController extends Controller
         //MAJ 2.3 à dernière
         if ($version_installed <= 2.3 && $version_installed <= $version) {
             $response1 = $this->model->Maj23To24();
-
             $ver = ($response1) ? 2.4 : false;
-          /*  $response2 = $this->model->Maj24To25();
-            $ver = ($response2) ? 2.5 : false;*/
+            $response2 = 1;
+            $ver = ($response2) ? 2.41 : false;
          }
         if ($version_installed <= 2.4 && $version_installed <= $version) {
-     /*       $response2 = $this->model->Maj24To25();
-          $ver = ($response2) ? 2.5 : false;
-    */      }
+           $response2 = 1;
+          $ver = ($response2) ? 2.41 : false;
+          }
 
 
         if ($ver) {

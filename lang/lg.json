@@ -1293,6 +1293,18 @@
       "en": "UV"
     }
   ],
+  "WIND_DIR": [
+    {
+      "fr": "Dir. Vent",
+      "en": "Wind Dir."
+    }
+  ],
+  "WIND_DIRECTION": [
+    {
+      "fr": "Direction du Vent",
+      "en": "Wind Direction"
+    }
+  ],
   "MOON": [
     {
       "fr": "Lune",

@@ -17,10 +17,11 @@ class Color
         $daynight = $switch['s_daynight'];
 
         $this->statview = new StationView();
+        $apiDatasUP = $this->statview->getAPIDatasUp($datas, $info, $livestation);
 
-        $time = $this->statview->getAPIDatasUp($datas, $info, $livestation)['time'];
-        $sunset = $this->statview->getAPIDatasUp($datas, $info, $livestation)['time_sunset'];
-        $sunrise = $this->statview->getAPIDatasUp($datas, $info, $livestation)['time_sunrise'];
+        $time = $apiDatasUP['time'];
+        $sunset = $apiDatasUP['time_sunset'];
+        $sunrise = $apiDatasUP['time_sunrise'];
 
         $Ttime = $this->statview->TimeStation($time);
         $Tsunrise = $this->statview->TimeStation($sunrise);
@@ -427,10 +428,11 @@ class Color
     public function colSun($switch, $value, $datas, $info, $livestation)
     {
         $this->statview = new StationView();
-        
-        $time = $this->statview->getAPIDatasUp($datas, $info, $livestation)['time'];
-        $sunset = $this->statview->getAPIDatasUp($datas, $info, $livestation)['time_sunset'];
-        $sunrise = $this->statview->getAPIDatasUp($datas, $info, $livestation)['time_sunrise'];
+        $apiDatasUP = $this->statview->getAPIDatasUp($datas, $info, $livestation);
+
+        $time = $apiDatasUP['time'];
+        $sunset = $apiDatasUP['time_sunset'];
+        $sunrise = $apiDatasUP['time_sunrise'];
 
         $col = $this->arrColor($switch, $datas, $info, $livestation);
 
@@ -515,10 +517,11 @@ class Color
     public function colUV($switch, $value, $datas, $info, $livestation)
     {
         $this->statview = new StationView();
-        
-        $time = $this->statview->getAPIDatasUp($datas, $info, $livestation)['time'];
-        $sunset = $this->statview->getAPIDatasUp($datas, $info, $livestation)['time_sunset'];
-        $sunrise = $this->statview->getAPIDatasUp($datas, $info, $livestation)['time_sunrise'];
+        $apiDatasUP = $this->statview->getAPIDatasUp($datas, $info, $livestation);
+
+        $time = $apiDatasUP['time'];
+        $sunset = $apiDatasUP['time_sunset'];
+        $sunrise = $apiDatasUP['time_sunrise'];
 
         $col = $this->arrColor($switch, $datas, $info, $livestation);
 

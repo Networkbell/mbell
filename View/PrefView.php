@@ -33,16 +33,16 @@ class PrefView extends View
 
     public function displayList($info, $datas, $config, $tab, $livestation)
     {
-        $location = $this->statview->getAPIDatas($datas, $info, $livestation)['location'];
-        $station_id = $this->statview->getAPIDatas($datas, $info, $livestation)['station_id'];
+        $apiDatas = $this->statview->getAPIDatas($datas, $info, $livestation);
+
         $param = array(
             "config_id" => $config['config_id'],
             "tab_id" => $tab['tab_id'],
             "1" => $info['user_login'],
             "2" => $info['user_email'],
             "3" => $info['stat_type'],
-            "4" => $location,
-            "5" => $station_id,
+            "4" => $apiDatas['location'],
+            "5" => $apiDatas['station_id'],
             "6" => $info['stat_did'],
             "7" => $info['stat_key'],
             "8" => $info['stat_password'],
@@ -53,7 +53,7 @@ class PrefView extends View
             "13" => $info['stat_wxid'],
             "14" => $info['stat_wxkey'],
             "15" => $info['stat_wxsign'],
-            "16" => $this->statview->getAPIDatas($datas, $info, $livestation)['location'],
+            "16" => $apiDatas['location'],
             "_LG" => $this->l->getLg(),
             "SAVE" => $this->l->trad('SAVE'),
             "CHANGE_STATION" => $this->l->trad('CHANGE_STATION'),
@@ -75,10 +75,9 @@ class PrefView extends View
         */
         if (!($this->isVersionCompare()) && $this->isExtensionLoaded('curl')) {
             $this->page .= $this->getButton($this->l->getLg(), 'pref', 'patch', $this->l->trad('MAJ_MBELL'));
-        }
-        elseif (!($this->isVersionCompare()) && !($this->isExtensionLoaded('curl'))) {
+        } elseif (!($this->isVersionCompare()) && !($this->isExtensionLoaded('curl'))) {
             $this->page .=  '<div class="pref_btn">';
-            $this->page .='<a class="btn btn-primary" href="https://github.com/Networkbell/mbell" role="button">';
+            $this->page .= '<a class="btn btn-primary" href="https://github.com/Networkbell/mbell" role="button">';
             $this->page .=  $this->l->trad('MAJ_MBELL');
             $this->page .=  '</a>';
             $this->page .= '</div>';
@@ -163,6 +162,13 @@ class PrefView extends View
         $page = '';
         for ($i = 1; $i <= $tab['tab_lines']; $i++) {
             $page .=  $this->addRow($param, $tab, $i, $tab_txt, $options, $config);
+        }
+
+        // Pour update toute la bdd on remodifie aussi les mêmes valeurs
+        for ($i = $tab['tab_lines'] + 1; $i < 11; $i++) {
+            $page .= '<input type="hidden" name="tab_' . $i . 'a" value="' . $tab['tab_' . $i . 'a'] . '">';
+            $page .= '<input type="hidden" name="tab_' . $i . 'b" value="' . $tab['tab_' . $i . 'b'] . '">';
+            $page .= '<input type="hidden" name="tab_' . $i . 'c" value="' . $tab['tab_' . $i . 'c'] . '">';
         }
         return $page;
     }

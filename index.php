@@ -26,7 +26,6 @@ function versionCompare($a, $b)
 }
 
 
-
 /**
  * PATH ABSOLUTE FOR CRON
  */

@@ -46,11 +46,12 @@ class ChangeView extends View
     public function changeList($infoV1, $infoV2, $infoLive, $infoWeewx, $station, $datas, $livestation)
     {
         $lg = $this->l->getLg();
+        $apiDatas = $this->statview->getAPIDatas($datas, $station, $livestation);
 
         $param = array(
             "3" => $station['stat_type'],
-            "4" => $this->statview->getAPIDatas($datas, $station, $livestation)['location'],
-            "5" => $this->statview->getAPIDatas($datas, $station, $livestation)['station_id'],
+            "4" => $apiDatas['location'],
+            "5" => $apiDatas['station_id'],
             "6" => $station['stat_did'],
             "7" => $station['stat_key'],
             "8" => $station['stat_password'],
@@ -61,7 +62,7 @@ class ChangeView extends View
             "13" => $station['stat_wxid'],
             "14" => $station['stat_wxkey'],
             "15" => $station['stat_wxsign'],
-            "16" => $this->statview->getAPIDatas($datas, $station, $livestation)['location'],
+            "16" => $apiDatas['location'],
             "CHANGE_INFO_1" => $this->l->trad('CHANGE_INFO_1'),
             "CHANGE_INFO_2" => $this->l->trad('CHANGE_INFO_2') . $station['stat_id'],
             "UPDATE_INFO" => $this->l->trad('UPDATE_INFO'),

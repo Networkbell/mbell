@@ -255,10 +255,14 @@ class CronModel extends Model
         $station = $this->paramStat->getStationActive();
         $type = (isset($station['stat_type'])) ? $station['stat_type'] : null;
 
+        //API
+        $apiDatasUP = $this->statview->getAPIDatasUp($datas, $info, $livestation);
+        $apiDatas = $this->statview->getAPIDatas($datas, $info, $livestation);
+
         //temps API
         $time_precision = ($type == 'live') ? 15 : 10;
-        $time = $this->stationview->getAPIDatasUp($datas, $station, $livestation)['time'];
-        $timeZone = $this->stationview->getAPIDatasUp($datas, $station, $livestation)['fuseau'];
+        $time = $apiDatasUP['time'];
+        $timeZone = $apiDatasUP['fuseau'];
         $dt = new DateTime($time);
         // API live ne se met à jour que toutes les 15mn et donne un ts = entre 2 valeurs de 15mn, donc on arrondis avec ceil (peut générer un décalage de plus de 5-10mn par rapport à time_cron)
         // API v1 le décalage est minime mais est plus variable + ou - (donc on arrondis avec round)
@@ -267,21 +271,21 @@ class CronModel extends Model
         $data_time_api = $this->DateCreateCron($tstamp, $timeZone);
         //$data_time_api = $time; // pour heure exacte
 
-        $data_temp = $this->floaVal($this->stationview->getAPIDatasUp($datas, $station, $livestation)['c_temp']);
-        $data_heat = $this->floaVal($this->stationview->getTempFtoC($this->stationview->getAPIDatas($datas, $station, $livestation)['heat_index_f']));
-        $data_windchill = $this->floaVal($this->stationview->getTempFtoC($this->stationview->getAPIDatas($datas, $station, $livestation)['windchill_f']));
-        $data_dewpoint = $this->floaVal($this->stationview->getTempFtoC($this->stationview->getAPIDatas($datas, $station, $livestation)['dewpoint_f']));
-        $data_hum = $this->floaVal($this->stationview->getAPIDatas($datas, $station, $livestation)['relative_humidity']);
-        $data_press = $this->floaVal($this->stationview->getAPIDatasUp($datas, $station, $livestation)['mb_pressure']);
-        $data_wind_dir = $this->floaVal($this->stationview->getAPIDatas($datas, $station, $livestation)['wind_degrees']);
-        $data_wind_moy = $this->floaVal($this->stationview->getWindMphToKph($this->stationview->getAPIDatas($datas, $station, $livestation)['wind_ten_min_avg_mph']));
-        $data_wind_raf = $this->floaVal($this->stationview->getWindMphToKph($this->stationview->getAPIDatas($datas, $station, $livestation)['wind_ten_min_gust_mph']));
-        $data_rain_day = $this->floaVal($this->stationview->getRainInToMm($this->stationview->getAPIDatas($datas, $station, $livestation)['rain_day_in']));
-        $data_rr_high_15mn = $this->floaVal($this->stationview->getAPIDatas($datas, $station, $livestation)['rain_rate_hi_last_15_min_mm']);
-        $data_rr_high_hour = $this->floaVal($this->stationview->getRainInToMm($this->stationview->getAPIDatas($datas, $station, $livestation)['rain_rate_hour_high_in_per_hr']));
-        $data_rr_last = $this->floaVal($this->stationview->getRainInToMm($this->stationview->getAPIDatas($datas, $station, $livestation)['rain_rate_in_per_hr']));
-        $data_solar = $this->floaVal($this->stationview->getAPIDatas($datas, $station, $livestation)['solar_radiation']);
-        $data_uv = $this->floaVal($this->stationview->getAPIDatas($datas, $station, $livestation)['uv_index']);
+        $data_temp = $this->floaVal($apiDatasUP['c_temp']);
+        $data_heat = $this->floaVal($this->stationview->getTempFtoC($apiDatas['heat_index_f']));
+        $data_windchill = $this->floaVal($this->stationview->getTempFtoC($apiDatas['windchill_f']));
+        $data_dewpoint = $this->floaVal($this->stationview->getTempFtoC($apiDatas['dewpoint_f']));
+        $data_hum = $this->floaVal($apiDatas['relative_humidity']);
+        $data_press = $this->floaVal($apiDatasUP['mb_pressure']);
+        $data_wind_dir = $this->floaVal($apiDatas['wind_degrees']);
+        $data_wind_moy = $this->floaVal($this->stationview->getWindMphToKph($apiDatas['wind_ten_min_avg_mph']));
+        $data_wind_raf = $this->floaVal($this->stationview->getWindMphToKph($apiDatas['wind_ten_min_gust_mph']));
+        $data_rain_day = $this->floaVal($this->stationview->getRainInToMm($apiDatas['rain_day_in']));
+        $data_rr_high_15mn = $this->floaVal($apiDatas['rain_rate_hi_last_15_min_mm']);
+        $data_rr_high_hour = $this->floaVal($this->stationview->getRainInToMm($apiDatas['rain_rate_hour_high_in_per_hr']));
+        $data_rr_last = $this->floaVal($this->stationview->getRainInToMm($apiDatas['rain_rate_in_per_hr']));
+        $data_solar = $this->floaVal($apiDatas['solar_radiation']);
+        $data_uv = $this->floaVal($apiDatas['uv_index']);
         /*
         var_dump($data_time_cron);
         var_dump($data_time_api);

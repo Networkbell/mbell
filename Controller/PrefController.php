@@ -70,6 +70,7 @@ class PrefController extends Controller
     {
         $lg = $this->l->getLg();
         $response = $this->model->updateTab($this->paramPost);
+
         if ($response) {
             header('location:index.php?controller=pref&action=list&lg=' . $lg);
         } else {
