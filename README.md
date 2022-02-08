@@ -55,7 +55,9 @@ NOTE 1 : Si un problème quelconque arrive, ou que vous rencontrez un message d'
 
 ## Re-Installation
 
-Si vous souhaitez réinstaller Mbell dans la même version, vous pouvez soit supprimer le fichier admin.php dans le dossier config, soit changer `$installed = 'yes';` dans le fichier admin.php par 'no'. Cela relancera la procédure d'installation depuis le début. Attention, cela supprimera avant de les recréer aussi vos tables dans votre base de données (sauf mb_data). La table de vos données météos (créés avec le cronjob) n'est en revanche pas touché. La seule façon de supprimer mb_data est de le faire manuellement avec PhpMyAdmin, ceci afin de ne pas perdre vos données météos-climatos.
+Si vous souhaitez réinstaller Mbell (dans la même version), il faut, dans le fichier admin.php du dossier config, changer `$installed = 'yes';` par 'no'. Cela relancera la procédure d'installation depuis le début de manière propre. Attention, cela supprimera avant de les recréer aussi vos tables dans votre base de données (sauf mb_data). La table de vos données météos (créés avec le cronjob) n'est en revanche pas touché. La seule façon de supprimer mb_data est de le faire manuellement avec PhpMyAdmin, ceci afin de ne pas perdre vos données météos-climatos.
+
+Vous pouvez aussi simplement supprimer ce fichier admin.php (ce qui revient aussi à supprimer tout mbell et réinstaller mbell derrière). Cela relancera également la procédure d'installation. En revanche, dans ce cas, vous devrez supprimer manuellement aussi votre bdd avec PHPMyAdmin, car lors de la réinstallation, mbell ne sera plus capable de détecter le chemin à votre bdd (puisque vous aurez supprimer le fichier admin.php qui le permet). Si vous restez alors bloqué à la phase du choix de station, lors de la phase d'installation, c'est dans ce cas normal. Vous devez dans ce cas, soit mettre $installed sur 'no', soit revenir en arrière à la phase 1 ou 2 d'installation (avec le lien URL), soit supprimer manuellement votre bdd avec PHPMyAdmin.
 
 ## Installation Avancée
 
