@@ -91,11 +91,16 @@ $debug = false;
     2.3 (-0.65) - Addon : Auto Update System
     2.4 (-0.71) - Addon : Weewx / Update : Cronjob System
     2.41 (-0.72) - Correctif : Optimisation Code + Addon Wind Direction Box
+    2.42 (-0.73) - Correctif : Cron Bug + Addon Cron Direct
 
-Version actuelle = Publique 2.41 (Développement -0.72)
+Version actuelle = Publique 2.42 (Développement -0.73)
 
 
 # Problèmes connus
+
+## Général
+
+- bug introduit en version 2.41 : En couleur Dynamique, l'icône Direction du Vent fonctionne avec un gradient de couleur en degré qui corepond à la 'Vitesse du Vent'(ex 290° = 290km/h)
 
 ## Avec Weatherlink Live et Weewx :
 
@@ -119,6 +124,7 @@ Version actuelle = Publique 2.41 (Développement -0.72)
 - bug introduit en 2.3 : une fois coché, la Sonde d'Indice UV (6490) et/ou le Capteur de Rayonnement Solaire (6450) étaient impossible à décocher (la nouvelle configuration ne se mettant pas à jour une fois validé) : réparé en 2.4
 - bug introduit en 2.3 : si vous ne disposez pas de l'extension CURL sur votre hébergement, il est possible que vous ne puissez pas patcher automatiquement Mbell dans la version suivante. Vous devez alors passer par Github pour patcher mbell : réparé en patchant la version 2.4 à 2.41
 - bug introduit en version 2.4 : Impossible de modifier les cases dans la zone Configuration (sauf si vous avez choisi le maximum de lignes à 10) : réparé en 2.41
+- bug introduit en version 2.41 : Le cronjob n'enregistre plus les données météos : réparé en 2.42
 
 
 # Remerciement :
