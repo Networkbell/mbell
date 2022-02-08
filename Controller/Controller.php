@@ -74,7 +74,7 @@ abstract class Controller
     public function root()
     {
         $root = (!empty($_SERVER['HTTPS']) ? 'https' : 'http') . '://' . $_SERVER['HTTP_HOST'] . '/';
-        $path = rtrim(dirname($_SERVER['PHP_SELF']), '/\\');
+        $path = rtrim(dirname($_SERVER['PHP_SELF']), '/');
         $response = $root.$path;
         return $response;
     }

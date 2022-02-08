@@ -118,6 +118,7 @@ class CronModel extends Model
      */
     public function activateCron()
     {
+      
         ignore_user_abort(true);
         set_time_limit(0);
 
@@ -133,7 +134,7 @@ class CronModel extends Model
 
             $time_sleep = ($type == 'live') ? 780 : 480; // 780 = 13 minutes / 480 = 8 minutes
             $time_precision = ($type == 'live') ? 15 : 10; // API v2 = 15mn / API v1 = 10mn
-            $time_deviation = ($type == 'live') ? 0 : $this->waitDeviationCron($dateString, $time_precision); // pas de déviation avec API v2 car on utilise time() dans l'API
+            $time_deviation = ($type == 'live' || $type == 'weewx') ? 0 : $this->waitDeviationCron($dateString, $time_precision); // pas de déviation avec API v2 car on utilise time() dans l'API
 
             $time = $this->waitactiveCron($dateString, $time_precision) + $time_deviation;
 
@@ -256,8 +257,8 @@ class CronModel extends Model
         $type = (isset($station['stat_type'])) ? $station['stat_type'] : null;
 
         //API
-        $apiDatasUP = $this->statview->getAPIDatasUp($datas, $info, $livestation);
-        $apiDatas = $this->statview->getAPIDatas($datas, $info, $livestation);
+        $apiDatasUP = $this->stationview->getAPIDatasUp($datas, $station, $livestation);
+        $apiDatas = $this->stationview->getAPIDatas($datas, $station, $livestation);
 
         //temps API
         $time_precision = ($type == 'live') ? 15 : 10;

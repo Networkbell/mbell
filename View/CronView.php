@@ -50,7 +50,7 @@ class CronView extends View
         $param = array(
             "1" => $active['stat_type'],
             "2" => $location,
-            "3" => ($config['config_cron'] == 1) ? $this->l->trad('ACTIVATED') : $this->l->trad('DISABLED'),
+            "3" => ($config['config_cron'] == 1 || $config['config_cron'] == 2|| $config['config_cron'] == 3) ? $this->l->trad('ACTIVATED') : $this->l->trad('DISABLED'),
             "4" => $this->statview->DateCreate($timeCron['data_time_cron'], $this->l->getLg(), $timeZone),
             "5" => ($active['stat_type'] == 'live') ? '15mn' : '10mn',
             "_URL" => 'index.php?controller=pref&action=list&',
@@ -70,13 +70,13 @@ class CronView extends View
         $this->page .= $this->getInfo($this->l->trad('CRON_INFO_4'));
         $this->page .= $this->getInfo($this->l->trad('CRON_INFO_5'));
         $this->page .= '<div id="cronserver_btn">';
-        $this->page .= ($config['config_cron'] == 1) ? $this->getButton($this->l->getLg(), 'cron', 'disactive', $this->l->trad('CRON_DISACTIVE')) : $this->getButton($this->l->getLg(), 'cron', 'active', $this->l->trad('CRON_ACTIVE'));
+        $this->page .= ($config['config_cron'] == 1 || $config['config_cron'] == 2 || $config['config_cron'] == 3) ? $this->getButton($this->l->getLg(), 'cron', 'disactive', $this->l->trad('CRON_DISACTIVE')) : $this->getButton($this->l->getLg(), 'cron', 'active', $this->l->trad('CRON_ACTIVE'));
         $this->page .= '</div><br>';
         $this->page .= $this->getInfo($this->l->trad('CRON_INFO_6'));
         $this->page .= $this->getButton($this->l->getLg(), 'cron', 'server', $this->l->trad('CRON_SERVER'));
         $this->page .= '<br>';
         $this->page .= $this->getInfo($this->l->trad('CRON_INFO_7'));
-
+        $this->page .= $this->getButton($this->l->getLg(), 'cron', 'direct', $this->l->trad('CRON_DIRECT'));
         $this->page .= '</section>';
         $this->page .= '</main>';
         $this->display();
@@ -110,6 +110,34 @@ class CronView extends View
         $this->page .= $this->getInfo($this->l->trad('CRON_SERVER_2'));
         $this->page .= $this->getInfo($this->l->trad('CRON_SERVER_3'));
         $this->page .= $this->getInfo($this->l->trad('CRON_SERVER_4'));
+        $this->page .= '</section>';
+        $this->page .= '</main>';
+        $this->display();
+    }
+
+
+    public function directList($config, $active, $paramJson, $liveStation, $timeCron)
+    {
+   
+        $param = array(
+            "1" => '<a href="https://cron-job.org/en/">cron-job.org</a>',
+            "2" => $this->url().'Model/cron/cron_direct.php',    
+            "3" => ($active['stat_type'] == 'live') ? '15mn' : '10mn',        
+            "_URL" => 'index.php?controller=cron&action=list&',
+        );
+        $this->constructHead($param['_URL']);
+        $this->page .= '<main id="main_installer">';
+        $this->page .= '<section>';
+        $this->page .= '<h1>' . $this->l->trad('CRON_DIRECT') . '</h1>';
+        $this->page .= $this->getListCronDirect($param);
+        $this->page .= '</section>';
+        $this->page .= '<section>';
+        $this->page .= '<h1>' . $this->l->trad('CRON_DIRECT_TITLE') . '</h1>';
+        $this->page .= $this->getInfo($this->l->trad('CRON_DIRECT_1'));
+        $this->page .= $this->getInfo($this->l->trad('CRON_DIRECT_2'));
+        $this->page .= $this->getInfo($this->l->trad('CRON_DIRECT_3'));
+        $this->page .= $this->getInfo($this->l->trad('CRON_DIRECT_4'));
+        $this->page .= $this->getInfo($this->l->trad('CRON_DIRECT_5'));
         $this->page .= '</section>';
         $this->page .= '</main>';
         $this->display();
@@ -159,6 +187,17 @@ class CronView extends View
         $this->page = str_replace('{CRONTAB_TIME}',  $this->l->trad('CRONTAB_TIME'), $this->page);
     }
 
+    public function getListCronDirect($param)
+    {
+        $this->page .= $this->searchHTML('listCronDirect', 'cron');
+        $this->page = str_replace('{_CRON-JOB_URL}',  $param['1'], $this->page);
+        $this->page = str_replace('{_CRON_PATH}',  $param['2'], $this->page);
+        $this->page = str_replace('{_CRONTAB_TIME}', $param['3'], $this->page);
+        $this->page = str_replace('{CRON-JOB_URL}',  $this->l->trad('CRON-JOB_URL'), $this->page);        
+        $this->page = str_replace('{CRON_PATH}',  $this->l->trad('CRON_PATH'), $this->page);
+        $this->page = str_replace('{CRONTAB_TIME}',  $this->l->trad('CRONTAB_TIME'), $this->page);
+    }
+   
     public function getListInfoCron($param)
     {
         $this->page .= $this->searchHTML('listInfoCron', 'cron');
@@ -182,4 +221,17 @@ class CronView extends View
         $page .= '</script>';
         echo $page;
     }
+
+
+
+
+function url(){
+    return sprintf(
+      "%s://%s%s",
+      isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] != 'off' ? 'https' : 'http',
+      $_SERVER['SERVER_NAME'],
+      rtrim(dirname($_SERVER['PHP_SELF']), '/\\').'/'
+    );
+  }
+
 }

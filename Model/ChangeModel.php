@@ -252,7 +252,7 @@ class ChangeModel extends Model
 
         $stat_activate = 1;
         $stat_disabled = 0;
-        $cron_activate = ($cron['config_cron'] == 1) ? 1 : 0;
+        $cron_activate = $cron['config_cron'] ;
 
         $req_stat_disabled = "UPDATE $station_tab SET stat_active = :stat_disabled  WHERE stat_id = :stat_id_disabled";
         $req_stat_activate = "UPDATE $station_tab SET stat_active = :stat_activate  WHERE stat_id = :stat_id_activate";

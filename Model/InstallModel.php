@@ -268,7 +268,7 @@ class InstallModel extends Model
                 config_daynight tinyint(1) NOT NULL default 0,
                 config_color varchar(24) NOT NULL default 'colored',
                 config_icon tinyint(1) NOT NULL default 1,
-                config_cron tinyint(1) NOT NULL default 0,
+                config_cron tinyint(2) NOT NULL default 0,
                 config_crontime tinyint(4) NOT NULL default 0,
                 stat_id int(11) NOT NULL,
                 CONSTRAINT PK_config_id PRIMARY KEY (config_id),
@@ -561,6 +561,31 @@ class InstallModel extends Model
             $result1 = $this->requete->execute();
             $result2 = $this->trim_lines($this->file_admin, 30);
             $row = ($result1 && $result2) ? 1 : null;
+        } catch (Exception $e) {
+            if (MB_DEBUG) {
+                var_dump($e->getMessage());
+            }
+            $row = null;
+        }
+        return $row;
+    }
+
+
+        /**
+     * Maj de 2.41 à 2.42 
+     *
+     * @return boolean
+     */
+    public function Maj241To242()
+    {
+        require $this->file_admin;
+        $config_tab = $table_prefix . 'config';
+        try {
+            $req = "ALTER TABLE $config_tab
+            MODIFY config_cron tinyint(2) NOT NULL default 0";
+            $this->requete = $this->connexion->prepare($req);
+            $result = $this->requete->execute();
+            $row = ($result) ? 1 : null;
         } catch (Exception $e) {
             if (MB_DEBUG) {
                 var_dump($e->getMessage());

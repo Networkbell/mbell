@@ -13,7 +13,7 @@ class InstallController extends Controller
         $this->view = new InstallView();
         $this->model = new InstallModel();
         $this->paramStat = new StationModel();
-        
+
 
         parent::__construct();
     }
@@ -144,12 +144,12 @@ class InstallController extends Controller
     public function step9Action()
     {
         require $this->file_admin;
-       
+
         $response =  $this->model->InstallTrue();
         $lg = $this->l->getLg();
         if ($response) {
             header('Location:index.php?controller=pref&action=sas&lg=' . $lg);
-            exit;         
+            exit;
         }
     }
 
@@ -182,8 +182,8 @@ class InstallController extends Controller
      * @return header
      */
     public function majstepAction()
-    {        
-        require $this->file_admin ;
+    {
+        require $this->file_admin;
         $lg = $this->l->getLg();
 
         $version = $this->dispatcher->versionNumURL(false);
@@ -230,19 +230,23 @@ class InstallController extends Controller
         if (!($version_installed)) {
             header('location:index.php?controller=install&action=step8&lg=' . $lg);
         }
-        
         //MAJ 2.3 à dernière
-        if ($version_installed <= 2.3 && $version_installed <= $version) {
+        elseif ($version_installed <= 2.3 && $version_installed <= $version) {
             $response1 = $this->model->Maj23To24();
             $ver = ($response1) ? 2.4 : false;
             $response2 = 1;
             $ver = ($response2) ? 2.41 : false;
-         }
-        if ($version_installed <= 2.4 && $version_installed <= $version) {
-           $response2 = 1;
-          $ver = ($response2) ? 2.41 : false;
-          }
-
+            $response3 = $this->model->Maj241To242();
+            $ver = ($response3) ? 2.42 : false;
+        } elseif ($version_installed <= 2.4 && $version_installed <= $version) {
+            $response2 = 1;
+            $ver = ($response2) ? 2.41 : false;
+            $response3 = $this->model->Maj241To242();
+            $ver = ($response3) ? 2.42 : false;
+        } elseif ($version_installed <= 2.41 && $version_installed <= $version) {
+            $response3 = $this->model->Maj241To242();
+            $ver = ($response3) ? 2.42 : false;
+        }
 
         if ($ver) {
             $rep = $this->model->InstallNo($ver);
@@ -254,6 +258,5 @@ class InstallController extends Controller
         } else {
             header('location:index.php?controller=install&action=error&lg=' . $lg);
         }
-        
     }
 }

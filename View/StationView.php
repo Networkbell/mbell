@@ -276,7 +276,7 @@ class StationView extends View
             "soil_moisture_1" => ($type == 'live' || $type == 'weewx') ?  $zero : (isset($dat->soil_moisture_1) ? $dat->soil_moisture_1 : $zero),
             "soil_moisture_2" => ($type == 'live' || $type == 'weewx') ?  $zero : (isset($dat->soil_moisture_2) ? $dat->soil_moisture_2 : $zero),
             "soil_moisture_3" => ($type == 'live' || $type == 'weewx') ?  $zero : (isset($dat->soil_moisture_3) ? $dat->soil_moisture_3 : $zero),
-            "soil_moisture_4" => ($type == 'live' || $type == 'weewx') ?  $zero : (isset($dat->soil_moisture_4) ? $dat->soil_moisture_4 : $zero),            
+            "soil_moisture_4" => ($type == 'live' || $type == 'weewx') ?  $zero : (isset($dat->soil_moisture_4) ? $dat->soil_moisture_4 : $zero),
 
             "pressure_day_low_in" => ($type == 'live' || $type == 'weewx') ?  $zero : (isset($dat->pressure_day_low_in) ? $dat->pressure_day_low_in : $zero),
             "pressure_month_low_in" => ($type == 'live' || $type == 'weewx') ?  $zero : (isset($dat->pressure_month_low_in) ? $dat->pressure_month_low_in : $zero),
@@ -545,7 +545,7 @@ class StationView extends View
             "solar_radiation_day_high" => ($type == 'live' || $type == 'weewx') ?  $zero : (isset($dat->solar_radiation_day_high) ? $dat->solar_radiation_day_high : $zero),
             "solar_radiation_day_high_time" => ($type == 'live' || $type == 'weewx') ?  $zero : (isset($dat->solar_radiation_day_high_time) ? $dat->solar_radiation_day_high_time : $zero),
             "uv_index_day_high" => ($type == 'live' || $type == 'weewx') ?  $zero : (isset($dat->uv_index_day_high) ? $dat->uv_index_day_high : $zero),
-            "uv_index_day_high_time" => ($type == 'live' || $type == 'weewx') ?  $zero : (isset($dat->uv_index_day_high_time) ? $dat->uv_index_day_high_time : $zero),         
+            "uv_index_day_high_time" => ($type == 'live' || $type == 'weewx') ?  $zero : (isset($dat->uv_index_day_high_time) ? $dat->uv_index_day_high_time : $zero),
             "solar_radiation_month_high" => ($type == 'live' || $type == 'weewx') ?  $zero : (isset($dat->solar_radiation_month_high) ? $dat->solar_radiation_month_high : $zero),
             "solar_radiation_year_high" => ($type == 'live' || $type == 'weewx') ?  $zero : (isset($dat->solar_radiation_year_high) ? $dat->solar_radiation_year_high : $zero),
             "uv_index_month_high" => ($type == 'live' || $type == 'weewx') ?  $zero : (isset($dat->uv_index_month_high) ? $dat->uv_index_month_high : $zero),
@@ -1408,7 +1408,7 @@ class StationView extends View
                 "color" => $this->col->colHumidity($switch, $apiDatas['relative_humidity_in'], $datas, $info, $livestation)
             ),
             "46" => array(
-                "_VALUE_MAIN" =>'<a data-toggle="tooltip" title="' . $this->l->degToCompass($apiDatas['wind_degrees'], $this->l->getLg()) . '"><i class="boussole wi wi-wind from-'.$apiDatas['wind_degrees'].'-deg"></i></a>',
+                "_VALUE_MAIN" => '<a data-toggle="tooltip" title="' . $this->l->degToCompass($apiDatas['wind_degrees'], $this->l->getLg()) . '"><i class="boussole wi wi-wind from-' . $apiDatas['wind_degrees'] . '-deg"></i></a>',
                 "_UNIT" =>  '',
                 "_CLASS_UNIT_SMALL" => '',
                 "_CLASS_UNIT_LARGE" => '',
@@ -1525,8 +1525,8 @@ class StationView extends View
             ),
             "46" => array(
                 "CSS_DOWN" => '800',
-                "_VALUE_DOWN_S" => $apiDatas['wind_degrees'].'°',
-                "_VALUE_DOWN_L" => $apiDatas['wind_degrees'].'°'
+                "_VALUE_DOWN_S" => $apiDatas['wind_degrees'] . '°',
+                "_VALUE_DOWN_L" => $apiDatas['wind_degrees'] . '°'
             ),
         );
 
@@ -1542,26 +1542,6 @@ class StationView extends View
     public function incDown2($datas, $switch, $info, $livestation)
     {
         $apiDatas = $this->getAPIDatas($datas, $info, $livestation);
-
-        $pressure_day_low_in = $apiDatas['pressure_day_low_in'];
-        $pressure_month_low_in = $apiDatas['pressure_month_low_in'];
-        $pressure_year_low_in = $apiDatas['pressure_year_low_in'];
-        $pressure_day_high_in = $apiDatas['pressure_day_high_in'];
-        $pressure_month_high_in = $apiDatas['pressure_month_high_in'];
-        $pressure_year_high_in = $apiDatas['pressure_year_high_in'];
-
-        $pressure_day_low_time = $apiDatas['pressure_day_low_time'];
-        $pressure_day_high_time = $apiDatas['pressure_day_high_time'];
-
-        $dewpoint_day_low_f = $apiDatas['dewpoint_day_low_f'];
-        $dewpoint_month_low_f = $apiDatas['dewpoint_month_low_f'];
-        $dewpoint_year_low_f = $apiDatas['dewpoint_year_low_f'];
-        $dewpoint_day_high_f = $apiDatas['dewpoint_day_high_f'];
-        $dewpoint_month_high_f = $apiDatas['dewpoint_month_high_f'];
-        $dewpoint_year_high_f = $apiDatas['dewpoint_year_high_f'];
-
-        $dewpoint_day_low_time = $apiDatas['dewpoint_day_low_time'];
-        $dewpoint_day_high_time = $apiDatas['dewpoint_day_high_time'];
 
         $relative_humidity_day_low = $apiDatas['relative_humidity_day_low'];
         $relative_humidity_month_low = $apiDatas['relative_humidity_month_low'];
@@ -1881,10 +1861,10 @@ class StationView extends View
                 "CLASS_UNIT_DOWN_LARGE" => '08',
                 "_UNIT_DOWN_SMALL" => '',
                 "_UNIT_DOWN_LARGE" => $this->getUnit($switch, 'press'),
-                "_DMY_VALUE_n" => $this->getDMY($switch, $this->getPress($switch, $pressure_day_low_in), $this->getPress($switch, $pressure_month_low_in), $this->getPress($switch, $pressure_year_low_in)),
-                "_DMY_VALUE_x" => $this->getDMY($switch, $this->getPress($switch, $pressure_day_high_in), $this->getPress($switch, $pressure_month_high_in), $this->getPress($switch, $pressure_year_high_in)),
-                "DMY_OF_DOWN_n" =>  $this->getDMY($switch, $this->l->trad('AT') . ' ' . $this->l->timeTrad($pressure_day_low_time, $this->l->getLg()), $this->l->trad('OF_THE_MONTH'), $this->l->trad('OF_THE_YEAR')),
-                "DMY_OF_DOWN_x" =>  $this->getDMY($switch, $this->l->trad('AT') . ' ' . $this->l->timeTrad($pressure_day_high_time, $this->l->getLg()), $this->l->trad('OF_THE_MONTH'), $this->l->trad('OF_THE_YEAR')),
+                "_DMY_VALUE_n" => $this->getDMY($switch, $this->getPress($switch, $apiDatas['pressure_day_low_in']), $this->getPress($switch, $apiDatas['pressure_month_low_in']), $this->getPress($switch,  $apiDatas['pressure_year_low_in'])),
+                "_DMY_VALUE_x" => $this->getDMY($switch, $this->getPress($switch, $apiDatas['pressure_day_high_in']), $this->getPress($switch, $apiDatas['pressure_month_high_in']), $this->getPress($switch, $apiDatas['pressure_year_high_in'])),
+                "DMY_OF_DOWN_n" =>  $this->getDMY($switch, $this->l->trad('AT') . ' ' . $this->l->timeTrad($apiDatas['pressure_day_low_time'], $this->l->getLg()), $this->l->trad('OF_THE_MONTH'), $this->l->trad('OF_THE_YEAR')),
+                "DMY_OF_DOWN_x" =>  $this->getDMY($switch, $this->l->trad('AT') . ' ' . $this->l->timeTrad($apiDatas['pressure_day_high_time'], $this->l->getLg()), $this->l->trad('OF_THE_MONTH'), $this->l->trad('OF_THE_YEAR')),
                 "DMY_TXT_TOOLTIP" => $this->getDMY($switch, $this->l->trad('DAILY'), $this->l->trad('MONTHLY'), $this->l->trad('YEARLY'))
             ),
             "11" => array(
@@ -1897,10 +1877,10 @@ class StationView extends View
                 "CLASS_UNIT_DOWN_LARGE" => '09',
                 "_UNIT_DOWN_SMALL" => '°',
                 "_UNIT_DOWN_LARGE" => $this->getUnit($switch, 'temp'),
-                "_DMY_VALUE_n" => $this->getDMY($switch, $this->getTemp($switch, $dewpoint_day_low_f), $this->getTemp($switch, $dewpoint_month_low_f), $this->getTemp($switch, $dewpoint_year_low_f)),
-                "_DMY_VALUE_x" => $this->getDMY($switch, $this->getTemp($switch, $dewpoint_day_high_f), $this->getTemp($switch, $dewpoint_month_high_f), $this->getTemp($switch, $dewpoint_year_high_f)),
-                "DMY_OF_DOWN_n" =>  $this->getDMY($switch, $this->l->trad('AT') . ' ' . $this->l->timeTrad($dewpoint_day_low_time, $this->l->getLg()), $this->l->trad('OF_THE_MONTH'), $this->l->trad('OF_THE_YEAR')),
-                "DMY_OF_DOWN_x" =>  $this->getDMY($switch, $this->l->trad('AT') . ' ' . $this->l->timeTrad($dewpoint_day_high_time, $this->l->getLg()), $this->l->trad('OF_THE_MONTH'), $this->l->trad('OF_THE_YEAR')),
+                "_DMY_VALUE_n" => $this->getDMY($switch, $this->getTemp($switch, $apiDatas['dewpoint_day_low_f']), $this->getTemp($switch, $apiDatas['dewpoint_month_low_f']), $this->getTemp($switch, $apiDatas['dewpoint_year_low_f'])),
+                "_DMY_VALUE_x" => $this->getDMY($switch, $this->getTemp($switch, $apiDatas['dewpoint_day_high_f']), $this->getTemp($switch, $apiDatas['dewpoint_month_high_f']), $this->getTemp($switch, $apiDatas['dewpoint_year_high_f'])),
+                "DMY_OF_DOWN_n" =>  $this->getDMY($switch, $this->l->trad('AT') . ' ' . $this->l->timeTrad($apiDatas['dewpoint_day_low_time'], $this->l->getLg()), $this->l->trad('OF_THE_MONTH'), $this->l->trad('OF_THE_YEAR')),
+                "DMY_OF_DOWN_x" =>  $this->getDMY($switch, $this->l->trad('AT') . ' ' . $this->l->timeTrad($apiDatas['dewpoint_day_high_time'], $this->l->getLg()), $this->l->trad('OF_THE_MONTH'), $this->l->trad('OF_THE_YEAR')),
                 "DMY_TXT_TOOLTIP" => $this->getDMY($switch, $this->l->trad('DAILY'), $this->l->trad('MONTHLY'), $this->l->trad('YEARLY'))
             ),
             "12" => array(
@@ -2413,7 +2393,7 @@ class StationView extends View
         $apiDatas = $this->getAPIDatas($datas, $info, $livestation);
 
         $et_month = $apiDatas['et_month'];
-       
+
         $et_year = $apiDatas['et_year'];
 
         $solar_radiation_month_high = $apiDatas['solar_radiation_month_high'];
@@ -2624,7 +2604,7 @@ class StationView extends View
             "42" => $this->tabTxt($config)['42'],
             "43" => $this->tabTxt($config)['43'],
             "44" => $this->tabTxt($config)['44'],
-           
+
             "46" => $this->tabTxt($config)['46'],
         );
         return $optionValue;
@@ -2668,7 +2648,7 @@ class StationView extends View
             $page .= '</a>';
             $page .= '</div>';
         }
-        if ($this->is_Temp('59', $this->getDMY($switch, $apiDatas['temp_day_low_f'], $apiDatas['temp_month_low_f'], $apiDatas['temp_year_low_f'])) == true && $this->is_Temp('59', $this->getDMY($switch, $apiDatas['temp_day_high_f'],$apiDatas['temp_month_high_f'], $apiDatas['temp_year_high_f'])) == false) {
+        if ($this->is_Temp('59', $this->getDMY($switch, $apiDatas['temp_day_low_f'], $apiDatas['temp_month_low_f'], $apiDatas['temp_year_low_f'])) == true && $this->is_Temp('59', $this->getDMY($switch, $apiDatas['temp_day_high_f'], $apiDatas['temp_month_high_f'], $apiDatas['temp_year_high_f'])) == false) {
             $page  .= '<div class="small500">';
             $page .= '<div class="dmy_display_on">';
             $page .= '<a data-toggle="tooltip" title="' . $this->getDMY($switch, $this->l->trad('DAILY'), $this->l->trad('MONTHLY'), $this->l->trad('YEARLY')) . '">';
@@ -2731,7 +2711,7 @@ class StationView extends View
         $heure_utc = date_format($utc_date, "H");
         $minute_utc = date_format($utc_date, "i");
 
-      
+
         if ($apiDatas['rain_rate_in_per_hr'] == '0') {
             if ($config['config_sun'] == 'sun' || $config['config_sun'] == 'sun_uv') {
                 if ($this->is_Temp('32', $apiDatas['temp_f']) == true) {
@@ -3079,7 +3059,7 @@ class StationView extends View
     {
 
         $apiDatasUP = $this->getAPIDatasUp($datas, $info, $livestation);
-       $apiDatas = $this->getAPIDatas($datas, $info, $livestation);
+        $apiDatas = $this->getAPIDatas($datas, $info, $livestation);
 
         $time = $apiDatasUP['time'];
         $sunset = $apiDatasUP['time_sunset'];

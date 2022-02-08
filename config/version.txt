@@ -1,7 +1,7 @@
-2.41
+2.42
 // NE PAS DEPLACER OU SUPPRIMER LA 1ere LIGNE, MBELL L'UTLISE COMME CODE
 
-// Version 2.41-0.72 - Février 2022
+// Version 2.42-0.73 - Février 2022
 
 /** VERSION
  * Dernier numéro de version de Mbell
@@ -114,3 +114,7 @@ VERSION 2.4 -0.71 : Addon Weewx - Update Cronjob System - Correction Bugs - Opti
 - 0.72 : optimisation code function_array()[] = temps chargement divisé d'1 tiers - Résolution bug dans Configuration avec les choix de cases impossible à valider (sauf avec 10 lignes) - Nouvelle Case (46) : Direction du Vent avec image de direction
 ___________
 VERSION 2.41 -0.72 : Correctif 2.4 + Nouvelle Case Direction du vent
+
+- 0.73 : correction de bug cron - view CronDirect - script CronDirect - tests avec cron-job.org
+___________
+VERSION 2.42 -0.73 : Correctif 2.4 + Cron Direct Expert

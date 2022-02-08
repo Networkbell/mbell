@@ -41,7 +41,7 @@ function activateCron()
     set_time_limit($time_cron_limit);
 
     $i = 1;
-    while ($cron == 1 && $i <= $nbr_cron_server) {
+    while ($cron == 2 && $i <= $nbr_cron_server) {
 
         //on va chercher les valeurs dans la boucle plutôt que le controller en amont pour que les données de l'API se mettent bien à jour une fois le cron lancé
         $liveStation1 = ($type == 'live') ? $station_model->getLiveAPIStation($station['stat_livekey'], $station['stat_livesecret']) : '';
@@ -50,7 +50,7 @@ function activateCron()
 
         $time_sleep = ($type == 'live') ? 780 : 480; // 780 = 13 minutes / 480 = 8 minutes
         $time_precision = ($type == 'live') ? 15 : 10; // API v2 = 15mn / API v1 = 10mn
-        $time_deviation = ($type == 'live') ? 0 : $cron_model->waitDeviationCron($dateString, $time_precision); // pas de déviation avec API v2 car on utilise time() dans l'API
+        $time_deviation = ($type == 'live' || $type == 'weewx') ? 0 : $cron_model->waitDeviationCron($dateString, $time_precision); // pas de déviation avec API v2 car on utilise time() dans l'API
 
         $time = $cron_model->waitactiveCron($dateString, $time_precision) + $time_deviation;
 
@@ -72,19 +72,21 @@ function activateCron()
 $cron_model = new CronModel();
 $config = $cron_model->getConfigActiveCron();
 
-if ($config['config_crontime'] != 0) {
-    $status_cron = 1;
+if ($config['config_crontime'] != 0 && ($config['config_cron'] != 1 || $config['config_cron'] != 3) ) {
+    $status_cron = 2;
     $response =  $cron_model->UpdateConfigCron($config, $status_cron);
     if ($response) {
-        var_dump($response);
-        $response2 = activateCron();
-        //  
+        var_dump('config_cron updated to 2');
+        $response2 = activateCron(); 
         if ($response2) {
-            var_dump($response2);
+            var_dump('cronjob loop activated');
+        }
+        else {
+            var_dump('cronjob loop failed');
         }
     }
 } else {
-    var_dump('Veuillez choisir une durée de crontab dans Mbell et désactiver le cronjob PHP de Mbell');
+    var_dump('Cronjob server failed. Absence of cron server duration (choose 20-30-60mn) or other cronjob (1. easy / 3. expert) activated');
 }
 
 
