@@ -98,19 +98,22 @@ Version actuelle = Publique 2.42 (Développement -0.73)
 
 # Problèmes connus
 
-## Général
+## Général :
 
 - bug introduit en version 2.41 : En couleur Dynamique, l'icône Direction du Vent fonctionne avec un gradient de couleur en degré qui corepond à la 'Vitesse du Vent'(ex 290° = 290km/h)
+- Lors d'une réinstallation, si vous ne respectez pas la procédure du lisez-moi (exemple : supprimer simplement mbell puis le réinstaller - ce qui n'est pas recommandé) et qu'entre temps un patch à mis à jour la bdd, vous restez bloquer en phase 6 de l'installation (choix de station)
 
 ## Avec Weatherlink Live et Weewx :
 
 - Toutes les infos de stations ne sont pas proposés, les sondes auxiliaires suivantes ne sont pas encore prise en compte :
-
 1. Station Météo Auxiliaire de Température Air-Eau-Sol (6372)
 2. Station Météo Auxiliaire de Température & Humidité de l'Air (6382)
 3. Station Météo Auxiliaire Humectation du Feuillage / Température & Humidité du Sol (6345)
-
 - L'API Weatherlink Live (version gratuite) et Weewx sont encore en phase d'expérimentation et nécéssitent un cronjob pour fonctionner aussi bien que les API précédentes. Elles possèdent donc beaucoup moins d'informations et le template de Mbell a été donc allégé en conséquence.
+
+## Avec Weatherlink Live (seul)
+
+- Si vous disposez de plusieurs stations sur un même compte WL (api-key et api-signature identiques), seul la première station de votre compte WL peut être installé avec mbell
 
 
 # Bugs corrigés
