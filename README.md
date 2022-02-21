@@ -91,21 +91,29 @@ $debug = false;
     2.3 (-0.65) - Addon : Auto Update System
     2.4 (-0.71) - Addon : Weewx / Update : Cronjob System
     2.41 (-0.72) - Correctif : Optimisation Code + Addon Wind Direction Box
+    2.42 (-0.73) - Correctif : Cron Bug + Addon Cron Direct
 
-Version actuelle = Publique 2.41 (Développement -0.72)
+Version actuelle = Publique 2.42 (Développement -0.73)
 
 
 # Problèmes connus
 
+## Général :
+
+- bug introduit en version 2.41 : En couleur Dynamique, l'icône Direction du Vent fonctionne avec un gradient de couleur en degré qui corepond à la 'Vitesse du Vent'(ex 290° = 290km/h)
+- Lors d'une réinstallation, si vous ne respectez pas la procédure du lisez-moi (exemple : supprimer simplement mbell puis le réinstaller - ce qui n'est pas recommandé) et qu'entre temps un patch à mis à jour la bdd, vous restez bloquer en phase 6 de l'installation (choix de station)
+
 ## Avec Weatherlink Live et Weewx :
 
 - Toutes les infos de stations ne sont pas proposés, les sondes auxiliaires suivantes ne sont pas encore prise en compte :
-
 1. Station Météo Auxiliaire de Température Air-Eau-Sol (6372)
 2. Station Météo Auxiliaire de Température & Humidité de l'Air (6382)
 3. Station Météo Auxiliaire Humectation du Feuillage / Température & Humidité du Sol (6345)
-
 - L'API Weatherlink Live (version gratuite) et Weewx sont encore en phase d'expérimentation et nécéssitent un cronjob pour fonctionner aussi bien que les API précédentes. Elles possèdent donc beaucoup moins d'informations et le template de Mbell a été donc allégé en conséquence.
+
+## Avec Weatherlink Live (seul)
+
+- Si vous disposez de plusieurs stations sur un même compte WL (api-key et api-signature identiques), seul la première station de votre compte WL peut être installé avec mbell
 
 
 # Bugs corrigés
@@ -119,6 +127,7 @@ Version actuelle = Publique 2.41 (Développement -0.72)
 - bug introduit en 2.3 : une fois coché, la Sonde d'Indice UV (6490) et/ou le Capteur de Rayonnement Solaire (6450) étaient impossible à décocher (la nouvelle configuration ne se mettant pas à jour une fois validé) : réparé en 2.4
 - bug introduit en 2.3 : si vous ne disposez pas de l'extension CURL sur votre hébergement, il est possible que vous ne puissez pas patcher automatiquement Mbell dans la version suivante. Vous devez alors passer par Github pour patcher mbell : réparé en patchant la version 2.4 à 2.41
 - bug introduit en version 2.4 : Impossible de modifier les cases dans la zone Configuration (sauf si vous avez choisi le maximum de lignes à 10) : réparé en 2.41
+- bug introduit en version 2.41 : Le cronjob n'enregistre plus les données météos : réparé en 2.42
 
 
 # Remerciement :
