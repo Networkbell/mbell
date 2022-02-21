@@ -42,9 +42,10 @@ class CronView extends View
         $this->page = str_replace('{LOGOUT2}',  $this->l->trad('LOGOUT2'), $this->page);
     }
 
-    public function cronList($config, $active, $paramJson, $liveStation, $timeCron, $livenbr,$livetab)
+    public function cronList($config, $active, $paramJson, $liveStation, $timeCron, $livenbr)
     {
         $zero = '&#8709;';
+        $livetab = 0; // pas besoin ici
         $location = $this->statview->getAPIDatas($paramJson, $active, $liveStation, $livenbr,$livetab)['location'];
         $timeZone = $this->statview->getAPIDatasUp($paramJson, $active, $liveStation, $livenbr,$livetab)['fuseau'];
         $timeCron['data_time_cron'] = ($timeCron['data_time_cron']) ?? $zero;

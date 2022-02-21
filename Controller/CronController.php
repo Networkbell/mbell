@@ -25,6 +25,7 @@ class CronController  extends Controller
         $active = $this->paramStat->getStationActive();
         $liveStation = ($active['stat_type'] == 'live') ? $this->model->getLiveAPIStation($active['stat_livekey'], $active['stat_livesecret']) : '';
         $timeCron = $this->model->getLastTimeCron();
+        $livenbr = ($active['stat_type'] == 'live') ? $active['stat_livenbr'] - 1 : 0;
         
         if (($this->model->IsServerCronDisabled() == true) && ($config['config_cron'] == 1 || $config['config_cron'] == 2 || $config['config_cron'] == 3) && (!(isset($_COOKIE['cron'])) || empty($_COOKIE['cron']))) {
             $status_cron = 0;
@@ -38,7 +39,7 @@ class CronController  extends Controller
             }
         }
 
-        $this->view->cronList($config, $active, $paramJson, $liveStation, $timeCron);
+        $this->view->cronList($config, $active, $paramJson, $liveStation, $timeCron, $livenbr);
     }
 
     public function activeAction()
