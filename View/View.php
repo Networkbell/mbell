@@ -336,6 +336,7 @@ abstract class View
         $this->page = str_replace('{_VAL_STAT_ID}',  $param['_VAL_STAT_ID'], $this->page);
         $this->page = str_replace('{_VAL_STAT_LIVEKEY}',  $param['_VAL_STAT_LIVEKEY'], $this->page);
         $this->page = str_replace('{_VAL_STAT_LIVESECRET}',  $param['_VAL_STAT_LIVESECRET'], $this->page);
+        $this->page = str_replace('{_VAL_STAT_LIVENBR}',  $param['_VAL_STAT_LIVENBR'], $this->page);
         $this->page = str_replace('{_VAL_STAT_LIVEID}',  $param['_VAL_STAT_LIVEID'], $this->page);
         $this->page = str_replace('{_VAL_STAT_WXURL}',  $param['_VAL_STAT_WXURL'], $this->page);
         $this->page = str_replace('{_VAL_STAT_WXID}',  $param['_VAL_STAT_WXID'], $this->page);
@@ -362,6 +363,7 @@ abstract class View
         $this->page = str_replace('{_VAL_STAT_ID}',  $param['_VAL_STAT_ID'], $this->page);
         $this->page = str_replace('{_VAL_STAT_LIVEKEY}',  $param['_VAL_STAT_LIVEKEY'], $this->page);
         $this->page = str_replace('{_VAL_STAT_LIVESECRET}',  $param['_VAL_STAT_LIVESECRET'], $this->page);
+        $this->page = str_replace('{_VAL_STAT_LIVENBR}',  $param['_VAL_STAT_LIVENBR'], $this->page);
         $this->page = str_replace('{_VAL_STAT_LIVEID}',  $param['_VAL_STAT_LIVEID'], $this->page);
         $this->page = str_replace('{_VAL_STAT_WXURL}',  $param['_VAL_STAT_WXURL'], $this->page);
         $this->page = str_replace('{_VAL_STAT_WXID}',  $param['_VAL_STAT_WXID'], $this->page);
@@ -372,11 +374,13 @@ abstract class View
     {
         $this->page .= $this->searchHTML('stationlive', 'install');
         $this->page = str_replace('{CASE_SENSITIVE}',  $this->l->trad('CASE_SENSITIVE'), $this->page);
-        /* $this->page = str_replace('{UPPERCASE}',  $this->l->trad('UPPERCASE'), $this->page);*/
+        $this->page = str_replace('{NBR}',  $this->l->trad('NBR'), $this->page);
         $this->page = str_replace('{DAVIS_LIVEKEY}',  $this->l->trad('DAVIS_LIVEKEY'), $this->page);
         $this->page = str_replace('{DAVIS_LIVEKEY_TEXT}',  $this->l->trad('DAVIS_LIVEKEY_TEXT'), $this->page);
         $this->page = str_replace('{DAVIS_LIVESECRET}',  $this->l->trad('DAVIS_LIVESECRET'), $this->page);
         $this->page = str_replace('{DAVIS_LIVESECRET_TEXT}',  $this->l->trad('DAVIS_LIVESECRET_TEXT'), $this->page);
+        $this->page = str_replace('{DAVIS_LIVENBR}',  $this->l->trad('DAVIS_LIVENBR'), $this->page);
+        $this->page = str_replace('{DAVIS_LIVENBR_TEXT}',  $this->l->trad('DAVIS_LIVENBR_TEXT'), $this->page);
         $this->page = str_replace('{_USER_ID}',  $param['_USER_ID'], $this->page);
         $this->page = str_replace('{_VAL_STAT_DID}',  $param['_VAL_STAT_DID'], $this->page);
         $this->page = str_replace('{_VAL_STAT_KEY}',  $param['_VAL_STAT_KEY'], $this->page);
@@ -386,6 +390,7 @@ abstract class View
         $this->page = str_replace('{_VAL_STAT_ID}',  $param['_VAL_STAT_ID'], $this->page);
         $this->page = str_replace('{_VAL_STAT_LIVEKEY}',  $param['_VAL_STAT_LIVEKEY'], $this->page);
         $this->page = str_replace('{_VAL_STAT_LIVESECRET}',  $param['_VAL_STAT_LIVESECRET'], $this->page);
+        $this->page = str_replace('{_VAL_STAT_LIVENBR}',  $param['_VAL_STAT_LIVENBR'], $this->page);
         $this->page = str_replace('{_VAL_STAT_LIVEID}',  $param['_VAL_STAT_LIVEID'], $this->page);
         $this->page = str_replace('{_VAL_STAT_WXURL}',  $param['_VAL_STAT_WXURL'], $this->page);
         $this->page = str_replace('{_VAL_STAT_WXID}',  $param['_VAL_STAT_WXID'], $this->page);
@@ -414,6 +419,7 @@ abstract class View
         $this->page = str_replace('{_VAL_STAT_ID}',  $param['_VAL_STAT_ID'], $this->page);
         $this->page = str_replace('{_VAL_STAT_LIVEKEY}',  $param['_VAL_STAT_LIVEKEY'], $this->page);
         $this->page = str_replace('{_VAL_STAT_LIVESECRET}',  $param['_VAL_STAT_LIVESECRET'], $this->page);
+        $this->page = str_replace('{_VAL_STAT_LIVENBR}',  $param['_VAL_STAT_LIVENBR'], $this->page);
         $this->page = str_replace('{_VAL_STAT_LIVEID}',  $param['_VAL_STAT_LIVEID'], $this->page);
         $this->page = str_replace('{_VAL_STAT_WXURL}',  $param['_VAL_STAT_WXURL'], $this->page);
         $this->page = str_replace('{_VAL_STAT_WXID}',  $param['_VAL_STAT_WXID'], $this->page);

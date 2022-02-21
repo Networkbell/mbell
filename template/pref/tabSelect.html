@@ -1,7 +1,7 @@
 <div class="col-4 px-0 px-sm-1 px-md-2 px-lg-4 px-xl-8">
     <div class="form-group tab_option">
 
-        <select name="tab_{_ID_ROW}{_ID_SELECT}" class="form-control" id="choose_tab_{_ID_ROW}{_ID_SELECT}">
+        <select name="tab_{_ID_ROW}{_ID_SELECT}" class="form-control {choose_tab_ajax}" id="choose_tab_{_ID_ROW}{_ID_SELECT}">
             <option selected value="{_VAL_ACTU}">{CHOOSE_SELECT}</option>
             <option value="0">{ANY}</option>
             {_OPTIONS}
@@ -9,9 +9,8 @@
 
     </div>
 
-    <div class="tab_select_pref" id="result_tab_{_ID_ROW}{_ID_SELECT}">
-        <div class="small1000">{_TAB_CHOICE_SELECT_TXT}</div>
-        <div class="large1000">{_TAB_CHOICE_SELECT_TEXT}</div>
+    <div class="tab_select_pref {tab_select_pref_live}" id="result_tab_{_ID_ROW}{_ID_SELECT}">
+        {_ITAB_SELECT}
     </div>
 </div>
-<input type="hidden" name="tab_id" value="{tab_id}">
+<input type="hidden" id="tab_id" name="tab_id" value="{tab_id}">

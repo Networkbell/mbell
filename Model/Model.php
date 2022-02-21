@@ -207,36 +207,36 @@ abstract class Model
 
         //DEFAULT VALUE
         $tab_lines = 4;
-        $tab_1a = 1;
-        $tab_1b = 2;
-        $tab_1c = 3;
-        $tab_2a = 4;
-        $tab_2b = 5;
-        $tab_2c = 6;
-        $tab_3a = ($type == "live" || $type == "weewx") ? 12 : 7; //12 hum relative / 7 +forte rafale
-        $tab_3b = 8;
-        $tab_3c = ($type == "live" || $type == "weewx") ? 13 : 9; //13 precip mois / 9 évapo
-        $tab_4a = 10;
-        $tab_4b = 11;
-        $tab_4c = ($type == "live" || $type == "weewx") ? 14 :  12;  // 14 precip annuel / 12 hum relative
-        $tab_5a = 43;
-        $tab_5b = 44;
-        $tab_5c = ($type == "live" || $type == "weewx") ? 9 : 13; //9 évapo / 13 precip mois
-        $tab_6a = ($type == "live" || $type == "weewx") ? 7 : 14; //7 +forte rafale / 14 precip annuel
-        $tab_6b = 15;
-        $tab_6c = 16;
-        $tab_7a = 30;
-        $tab_7b = 31;
-        $tab_7c = 24;
-        $tab_8a = 25;
-        $tab_8b = 37;
-        $tab_8c = 38;
-        $tab_9a = 26;
-        $tab_9b = 27;
-        $tab_9c = 28;
-        $tab_10a = 39;
-        $tab_10b = 40;
-        $tab_10c = 41;
+        $tab_1a = '1-0';
+        $tab_1b = '2-0';
+        $tab_1c = '3-0';
+        $tab_2a = '4-0';
+        $tab_2b = '5-0';
+        $tab_2c = '6-0';
+        $tab_3a = ($type == "live" || $type == "weewx") ? '12-0' : '7-0'; //12 hum relative / 7 +forte rafale
+        $tab_3b = '8-0';
+        $tab_3c = ($type == "live" || $type == "weewx") ? '13-0' : '9-0'; //13 precip mois / 9 évapo
+        $tab_4a = '10-0';
+        $tab_4b = '11-0';
+        $tab_4c = ($type == "live" || $type == "weewx") ? '14-0' :  '12-0';  // 14 precip annuel / 12 hum relative
+        $tab_5a = '43-0';
+        $tab_5b = '44-0';
+        $tab_5c = ($type == "live" || $type == "weewx") ? '9-0' : '13-0'; //9 évapo / 13 precip mois
+        $tab_6a = ($type == "live" || $type == "weewx") ? '7-0' : '14-0'; //7 +forte rafale / 14 precip annuel
+        $tab_6b = '15-0';
+        $tab_6c = '16-0';
+        $tab_7a = '30-0';
+        $tab_7b = '31-0';
+        $tab_7c = '24-0';
+        $tab_8a = '25-0';
+        $tab_8b = '37-0';
+        $tab_8c = '38-0';
+        $tab_9a = '26-0';
+        $tab_9b = '27-0';
+        $tab_9c = '28-0';
+        $tab_10a = '39-0';
+        $tab_10b = '40-0';
+        $tab_10c = '41-0';
         $stat_id = $info['stat_id'];
 
         $req = "INSERT INTO $tab_tab VALUES(NULL, :tab_lines, :tab_1a, :tab_1b, :tab_1c, :tab_2a, :tab_2b, :tab_2c, :tab_3a, :tab_3b, :tab_3c, :tab_4a, :tab_4b, :tab_4c, :tab_5a, :tab_5b, :tab_5c, :tab_6a, :tab_6b, :tab_6c, :tab_7a, :tab_7b, :tab_7c, :tab_8a, :tab_8b, :tab_8c, :tab_9a, :tab_9b, :tab_9c,:tab_10a, :tab_10b, :tab_10c, :stat_id)";
@@ -336,13 +336,14 @@ abstract class Model
      * 
      *
      */
-    public function getStationID($key, $secret, $type)
+    public function getStationID($key, $secret, $type, $nbr)
     {
         $zero = '';
+        $nombre = $nbr - 1;
         if ($type == 'live') {
             $stationDatas = $this->getLiveAPIStation($key, $secret);
 
-            $station_id = isset($stationDatas['stations'][0]['station_id']) ? $stationDatas['stations'][0]['station_id'] : $zero;
+            $station_id = isset($stationDatas['stations'][$nombre]['station_id']) ? $stationDatas['stations'][$nombre]['station_id'] : $zero;
         } else {
             $station_id = $zero;
         }
@@ -422,11 +423,11 @@ abstract class Model
 
 
 
-    /**
-     * Selection d'un élément dans la BDD tab et de la station associé
-     * 
-     * @return type(string, int)
-     */
+/**
+ * Selection d'un élément dans la BDD tab de la station associé
+ *
+ * @return array
+ */
     public function getTabActive()
     {
 

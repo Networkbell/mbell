@@ -138,13 +138,12 @@ class InstallController extends Controller
         $active = $this->paramStat->getStationActive();
         $paramJson = $this->paramStat->getAPI();
         $liveStation = ($active['stat_type'] == 'live') ? $this->model->getLiveAPIStation($active['stat_livekey'], $active['stat_livesecret']) : '';
-        $this->view->InstallMain8($active, $paramJson, $liveStation);
+        $livenbr = ($active['stat_type'] == 'live') ? $active['stat_livenbr'] - 1 : 0;
+        $this->view->InstallMain8($active, $paramJson, $liveStation, $livenbr);
     }
 
     public function step9Action()
-    {
-        require $this->file_admin;
-
+    {      
         $response =  $this->model->InstallTrue();
         $lg = $this->l->getLg();
         if ($response) {
@@ -188,6 +187,8 @@ class InstallController extends Controller
 
         $version = $this->dispatcher->versionNumURL(false);
         $version_installed = (isset($version_installed)) ? floatval($version_installed) : ($version + 1);
+        $active = $this->paramStat->getStationActive();
+
 
         //EXEMPLE SI SYSTEME DE PATCH AVAIT ETE MIS DES LA V2.0
         /*
@@ -238,16 +239,56 @@ class InstallController extends Controller
             $ver = ($response2) ? 2.41 : false;
             $response3 = $this->model->Maj241To242();
             $ver = ($response3) ? 2.42 : false;
+            $response4a = $this->model->Maj242To25a();
+            if ($response4a) {
+                $this->model->truncateTable('tab');
+                $response4b = $this->model->Maj242To25b();
+                if ($response4b) {
+                    $response4c = $this->model->addTable($active);
+                    $this->model->Maj242To25c();
+                }
+            }
+            $ver = ($response4c) ? 2.5 : false;
         } elseif ($version_installed <= 2.4 && $version_installed <= $version) {
             $response2 = 1;
             $ver = ($response2) ? 2.41 : false;
             $response3 = $this->model->Maj241To242();
             $ver = ($response3) ? 2.42 : false;
+            $response4a = $this->model->Maj242To25a();
+            if ($response4a) {
+                $this->model->truncateTable('tab');
+                $response4b = $this->model->Maj242To25b();
+                if ($response4b) {
+                    $response4c = $this->model->addTable($active);
+                    $this->model->Maj242To25c();
+                }
+            }
+            $ver = ($response4c) ? 2.5 : false;
         } elseif ($version_installed <= 2.41 && $version_installed <= $version) {
             $response3 = $this->model->Maj241To242();
             $ver = ($response3) ? 2.42 : false;
+            $response4a = $this->model->Maj242To25a();
+            if ($response4a) {
+                $this->model->truncateTable('tab');
+                $response4b = $this->model->Maj242To25b();
+                if ($response4b) {
+                    $response4c = $this->model->addTable($active);
+                    $this->model->Maj242To25c();
+                }
+            }
+            $ver = ($response4c) ? 2.5 : false;
+        } elseif ($version_installed <= 2.42 && $version_installed <= $version) {
+            $response4a = $this->model->Maj242To25a();
+            if ($response4a) {
+                $this->model->truncateTable('tab');
+                $response4b = $this->model->Maj242To25b();
+                if ($response4b) {
+                    $response4c = $this->model->addTable($active);
+                    $this->model->Maj242To25c();
+                }
+            }
+            $ver = ($response4c) ? 2.5 : false;
         }
-
         if ($ver) {
             $rep = $this->model->InstallNo($ver);
             if ($rep) {

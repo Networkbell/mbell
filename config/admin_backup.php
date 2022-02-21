@@ -104,14 +104,14 @@ $version_installed = '{version}';
  * INSTALLED
  * Défini si Mbell a été installé
  *
- * Devient défini sur $installed = 'yes';  à l'étape 8 de l'installation 
+ * Devient défini sur $installed='yes';  à l'étape 8 de l'installation 
  * afin d'empécher l'accès aux liens relatifs à index.php?controller=install à quiconque
  * et donc empécher la réinitialisation de l'installation par une personne extérieure
  * 
  * Pour relancer l'installation, changez dans admin.php :
- * $installed = 'yes'; 
+ * $installed='yes'; 
  * par 
- * $installed = 'no';
+ * $installed='no';
  * 
  * ATTENTION : relancer l'installation supprimera totalement aussi toutes les tables (sauf mb_data) de votre base de données avec le prefixe de votre fichier admin.php 
  * Pour ajouter une nouvelle station active, installez plutôt un nouveau dossier mbell et changez le prefixe des tables au moment de l'installation

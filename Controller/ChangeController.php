@@ -26,8 +26,9 @@ class ChangeController  extends Controller
         $weewx = $this->model->getAllStationUserLogin('weewx');
         $active = $this->paramStat->getStationActive();
         $liveStation = ($active['stat_type'] == 'live') ? $this->model->getLiveAPIStation($active['stat_livekey'], $active['stat_livesecret']) : '';
-
-        $this->view->changeList($v1, $v2, $live, $weewx, $active, $paramJson, $liveStation);
+        $livenbr = ($active['stat_type'] == 'live') ? $active['stat_livenbr'] - 1 : 0;
+        
+        $this->view->changeList($v1, $v2, $live, $weewx, $active, $paramJson, $liveStation, $livenbr);
     }
 
     public function chooseAction()

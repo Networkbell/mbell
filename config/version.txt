@@ -1,7 +1,7 @@
-2.42
+2.5
 // NE PAS DEPLACER OU SUPPRIMER LA 1ere LIGNE, MBELL L'UTLISE COMME CODE
 
-// Version 2.42-0.73 - Février 2022
+// Version 2.5-0.80 - Février 2022
 
 /** VERSION
  * Dernier numéro de version de Mbell
@@ -118,3 +118,13 @@ VERSION 2.41 -0.72 : Correctif 2.4 + Nouvelle Case Direction du vent
 - 0.73 : correction de bug cron - view CronDirect - script CronDirect - tests avec cron-job.org
 ___________
 VERSION 2.42 -0.73 : Correctif 2.4 + Cron Direct Expert
+
+- 0.74 : ajout du type cron dans CronView - Ajout du nombre de station avec WLive (modif bdd et formulaire install-change) pour récupération stationid - Utilisation de nbr_station dans API Live et récupération id station corepondante - Ajout nbr_station dans toutes les functions() utiles avec MVC
+- 0.75 : correction bug intensité pluie avec WL - correction bug image variation pression à 0 - ajout température feuillage 3 et 4 - ajout humectation feuillage 3 et 4
+- 0.76 : Ajout paramètre dans bdd itab (install-change-update) - restitution get avec parametre itab à 0 - formulaire Configuration Général avec paramètre itab à 0
+- 0.77 : Correction is_tab() avec soleil + moon - Optimisation function()[array] - Correction UpdateTab avec paramètres itab à 0 - API avec paramètre itab
+- 0.78 : formulaire View Sélection de Capteur avec WL - count disponible par valeur de tab - Model update formulaire paramètre itab et affichage avec paramètre itab - Corection paramètre itab pour Cron
+- 0.79 : updateTab Model avec Ajax (1 case) - affichage résultat updateTab avec Ajax (1 case) - affichage formulaire itab avec Ajax (1 case)
+- 0.80 : automatisation/optimisation Ajax multicases - corrections updateTab sans WL suite à modifs ajax - ajout Weewx bar_trend - correction Color Direction du Vent - modif patch maj - correction str_replace (yes-no) pour admin.php
+___________
+VERSION 2.5 : Update Weatherlink Live : Nouveau Système Multi-API et Multi-Sensors / Nouveaux Capteurs Extras / Ajax sur double formulaire pour WL en zone Configuration 

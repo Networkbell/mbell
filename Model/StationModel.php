@@ -186,8 +186,7 @@ class StationModel extends Model
         $user_userid = $user_tab . '.user_id';
         $stat_active = 1;
 
-        $req = "SELECT stat_id, stat_type, stat_did, stat_key, stat_users, stat_password, 
-        stat_token, stat_livekey, stat_livesecret, stat_liveid, stat_wxurl, stat_wxid, stat_wxkey, stat_wxsign, stat_active, $stat_userid, user_login, user_password, user_email 
+        $req = "SELECT * 
         FROM $station_tab 
         INNER JOIN $user_tab 
         ON $stat_userid = $user_userid 

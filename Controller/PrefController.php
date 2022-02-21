@@ -14,6 +14,7 @@ class PrefController extends Controller
         $this->view = new PrefView();
         $this->model = new PrefModel();
         $this->paramStat = new StationModel();
+        $this->stationview = new StationView();
 
         parent::__construct();
     }
@@ -22,10 +23,11 @@ class PrefController extends Controller
     {
         $active = $this->paramStat->getStationActive();
         $liveStation = ($active['stat_type'] == 'live') ? $this->model->getLiveAPIStation($active['stat_livekey'], $active['stat_livesecret']) : '';
+        $livenbr = ($active['stat_type'] == 'live') ? $active['stat_livenbr'] - 1 : 0;
         $paramJson = $this->paramStat->getAPI();
         $config = $this->model->getConfigActive();
         $tab = $this->model->getTabActive();
-        $this->view->displayList($active, $paramJson, $config, $tab, $liveStation);
+        $this->view->displayList($active, $paramJson, $config, $tab, $liveStation, $livenbr);
     }
 
     public function configAction()
@@ -78,6 +80,31 @@ class PrefController extends Controller
         }
     }
 
+    public function tabAjaxAction()
+    {
+        $response =  $this->model->updateTabAjax($this->paramPost);
+        if ($response) {
+            $id = $this->paramPost['tab'];
+            $tab = $this->model->getTabAjaxActive($id);
+            $config = $this->model->getConfigActive();
+            $station = $this->paramStat->getStationActive();
+            $type = $station['stat_type'];
+            $datas = $this->paramStat->getAPI();
+            $result = $this->stationview->liveiTab($datas);
+            $tab_txt = $this->stationview->tabTxt($config, $tab);
+                       
+            $tab_n_abc = 'tab_' . $id;
+            $ntab = $tab[$tab_n_abc];
+            $nexplod = explode('-', $ntab);
+            $n_tab = $nexplod[0];
+            $itab = $nexplod[1];
+
+            echo $this->view->addicountTab($tab_n_abc, $itab, $n_tab, $result, $tab_txt, $type);
+        } else {
+            echo "BUG : Echec Modif Ajax (UpdateTab), contacter l'administrateur";
+        }
+    }
+
     public function errorAction()
     {
         $lg = $this->l->getLg();
@@ -118,8 +145,7 @@ class PrefController extends Controller
     }
 
     public function sasAction()
-    {    
-        $this->view->sasPref();                 
+    {
+        $this->view->sasPref();
     }
-
 }

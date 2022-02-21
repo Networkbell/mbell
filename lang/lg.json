@@ -534,6 +534,12 @@
       "en": "Case-Sensitive"
     }
   ],
+  "NBR": [
+    {
+      "fr": "Sélectionner un nombre",
+      "en": "Select a number"
+    }
+  ],
   "ANY": [
     {
       "fr": "Aucune",
@@ -618,6 +624,18 @@
     {
       "fr": "Le numéro d'API Secret (appelé aussi Live API-Secret) doit être généré sur <a target=\"_blank\" href=\"https://www.weatherlink.com/account\">weatherlink.com</a>.",
       "en": "The Secret API (also called Live API-Secret) must be generated on <a target=\"_blank\" href=\"https://www.weatherlink.com/account\">weatherlink.com</a>."
+    }
+  ],
+  "DAVIS_LIVENBR": [
+    {
+      "fr": "Numéro de Station (Optionnel)",
+      "en": "Station Number (Optional)"
+    }
+  ],
+  "DAVIS_LIVENBR_TEXT": [
+    {
+      "fr": "Si vous ne disposez que d'une seule station, ce paramètre n'est pas nécéssaire (par défaut = 1). Si vous disposez de plusieurs stations sur un même compte Weatherlink Live, vous ne pouvez en sélectionner qu'un seul par installation de mbell. L'ordre de vos différentes stations est configuré sur votre compte Weatherlink Live. Choisissez le numéro de station qui corespond à l'installation que vous souhaitez pour mbell. Ex : 2 = station numéro 2.",
+      "en": "If you have only one station, this parameter is not necessary (default = 1). If you have multiple stations on a single Weatherlink Live account, you can select only one per mbell installation. The order of your different stations is configured on your Weatherlink Live account. Choose the station number that corresponds to the installation you want for mbell. Ex: 2 = station number 2."
     }
   ],
   "WEEWX_URL": [
@@ -1957,8 +1975,8 @@
   ],
   "CRON_TIMER": [
     {
-      "fr": "Dernier Cron",
-      "en": "Last Cron"
+      "fr": "Dernier Enregistrement",
+      "en": "Last Record"
     }
   ],
 
@@ -2044,10 +2062,35 @@
   ],
   "CRON_TYPE": [
     {
-      "fr": "Intervalle de Temps",
-      "en": "Time Interval"
+      "fr": "Type de Cron",
+      "en": "Type of Cron"
     }
-  ]  ,
+  ],
+
+  "CRON_TYPE_1": [
+    {
+      "fr": "1. Facile - Cronjob PHP",
+      "en": "1. Easy - Cronjob PHP"
+    }
+  ],
+  "CRON_TYPE_2": [
+    {
+      "fr": "2. Intermédiaire - Crontab Basique",
+      "en": "2. Intermediate - Crontab Basic"
+    }
+  ],
+  "CRON_TYPE_3": [
+    {
+      "fr": "3. Expert - Crontab Avancé",
+      "en": "3. Expert - Advanced Crontab"
+    }
+  ],
+  "CRON_TYPE_0": [
+    {
+      "fr": "Aucun Cronjob Détecté (attendez 10-15mn, si vous l'avez tout de même lancé)",
+      "en": "No Cronjob Detected (wait 10-15mn, if you launched it anyway)"
+    }
+  ],
   "CRON_PATH": [
     {
       "fr": "Chemin d'Accès",
@@ -2163,5 +2206,32 @@
       "fr": "Mettre à Jour MBell",
       "en": "Update MBell"
     }
+  ],
+  "ITAB_SELECT_TXT": [
+    {
+      "fr": "Sélection de Capteur",
+      "en": "Sensor Selection"
+    }
+  ],
+  "DEFAUT": [
+    {
+      "fr": "Par Défaut",
+      "en": "By Default"
+    }
   ]
+  ,
+  "SENSOR": [
+    {
+      "fr": "Capteur",
+      "en": "Sensor"
+    }
+  ]
+  ,
+  "ANY_SENSOR": [
+    {
+      "fr": "Aucun Capteur",
+      "en": "No Sensor"
+    }
+  ]
+  
 }

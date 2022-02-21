@@ -67,7 +67,8 @@ class InstallModel extends Model
         $stat_type = $paramPost['stat_type'];
         $live_key = $paramPost['stat_livekey'];
         $live_secret = $paramPost['stat_livesecret'];
-        $live_id = $this->getStationID($live_key, $live_secret, $stat_type);
+        $live_nbr = $paramPost['stat_livenbr'];
+        $live_id = $this->getStationID($live_key, $live_secret, $stat_type, $live_nbr);
         $stat_active = 1;
 
 
@@ -75,7 +76,7 @@ class InstallModel extends Model
             $req = "INSERT INTO $station_tab VALUES(
             NULL, :stat_type, :stat_did, :stat_key,  
             :stat_users, :stat_password, :stat_token, 
-            :stat_livekey, :stat_livesecret, :stat_liveid, 
+            :stat_livekey, :stat_livesecret, :stat_livenbr, :stat_liveid, 
             :stat_wxurl, :stat_wxid, :stat_wxkey, :stat_wxsign,
             :stat_active, :user_id
             )";
@@ -89,6 +90,7 @@ class InstallModel extends Model
             $this->requete->bindParam(':stat_token', $paramPost['stat_token']);
             $this->requete->bindParam(':stat_livekey', $live_key);
             $this->requete->bindParam(':stat_livesecret', $live_secret);
+            $this->requete->bindParam(':stat_livenbr', $live_nbr);
             $this->requete->bindParam(':stat_liveid', $live_id);
             $this->requete->bindParam(':stat_wxurl', $paramPost['stat_wxurl']);
             $this->requete->bindParam(':stat_wxid', $paramPost['stat_wxid']);
@@ -235,6 +237,7 @@ class InstallModel extends Model
                 stat_token varchar(60) NOT NULL default '',
                 stat_livekey varchar(60) NOT NULL default '',
                 stat_livesecret varchar(60) NOT NULL default '',
+                stat_livenbr tinyint(2) NOT NULL default 1,
                 stat_liveid varchar(60) NOT NULL default '',
                 stat_wxurl varchar(60) NOT NULL default '', 
                 stat_wxid varchar(60) NOT NULL default '', 
@@ -285,37 +288,37 @@ class InstallModel extends Model
         $constraint = "FK_" . $tab . "_" . $tab2;
         $create_tab = "CREATE TABLE IF NOT EXISTS  $tab (
                 tab_id int(11) NOT NULL auto_increment,
-                tab_lines int(11) NOT NULL default 4,
-                tab_1a int(11) NOT NULL default 1,
-                tab_1b int(11) NOT NULL default 2,
-                tab_1c int(11) NOT NULL default 3,
-                tab_2a int(11) NOT NULL default 4,
-                tab_2b int(11) NOT NULL default 5,
-                tab_2c int(11) NOT NULL default 6,
-                tab_3a int(11) NOT NULL default 12,
-                tab_3b int(11) NOT NULL default 8,
-                tab_3c int(11) NOT NULL default 13,
-                tab_4a int(11) NOT NULL default 10,
-                tab_4b int(11) NOT NULL default 11,
-                tab_4c int(11) NOT NULL default 14,
-                tab_5a int(11) NOT NULL default 43,
-                tab_5b int(11) NOT NULL default 44,
-                tab_5c int(11) NOT NULL default 9,
-                tab_6a int(11) NOT NULL default 7,
-                tab_6b int(11) NOT NULL default 15,
-                tab_6c int(11) NOT NULL default 16,
-                tab_7a int(11) NOT NULL default 30,
-                tab_7b int(11) NOT NULL default 31,
-                tab_7c int(11) NOT NULL default 24,
-                tab_8a int(11) NOT NULL default 25,
-                tab_8b int(11) NOT NULL default 37,
-                tab_8c int(11) NOT NULL default 38,
-                tab_9a int(11) NOT NULL default 26,
-                tab_9b int(11) NOT NULL default 27,
-                tab_9c int(11) NOT NULL default 28,
-                tab_10a int(11) NOT NULL default 39,
-                tab_10b int(11) NOT NULL default 40,
-                tab_10c int(11) NOT NULL default 41,
+                tab_lines tinyint(4) NOT NULL default 4,
+                tab_1a varchar(8) NOT NULL default '1-0',
+                tab_1b varchar(8) NOT NULL default '2-0',
+                tab_1c varchar(8) NOT NULL default '3-0',
+                tab_2a varchar(8) NOT NULL default '4-0',
+                tab_2b varchar(8) NOT NULL default '5-0',
+                tab_2c varchar(8) NOT NULL default '6-0',
+                tab_3a varchar(8) NOT NULL default '12-0',
+                tab_3b varchar(8) NOT NULL default '8-0',
+                tab_3c varchar(8) NOT NULL default '13-0',
+                tab_4a varchar(8) NOT NULL default '10-0',
+                tab_4b varchar(8) NOT NULL default '11-0',
+                tab_4c varchar(8) NOT NULL default '14-0',
+                tab_5a varchar(8) NOT NULL default '43-0',
+                tab_5b varchar(8) NOT NULL default '44-0',
+                tab_5c varchar(8) NOT NULL default '9-0',
+                tab_6a varchar(8) NOT NULL default '7-0',
+                tab_6b varchar(8) NOT NULL default '15-0',
+                tab_6c varchar(8) NOT NULL default '16-0',
+                tab_7a varchar(8) NOT NULL default '30-0',
+                tab_7b varchar(8) NOT NULL default '31-0',
+                tab_7c varchar(8) NOT NULL default '24-0',
+                tab_8a varchar(8) NOT NULL default '25-0',
+                tab_8b varchar(8) NOT NULL default '37-0',
+                tab_8c varchar(8) NOT NULL default '38-0',
+                tab_9a varchar(8) NOT NULL default '26-0',
+                tab_9b varchar(8) NOT NULL default '27-0',
+                tab_9c varchar(8) NOT NULL default '28-0',
+                tab_10a varchar(8) NOT NULL default '39-0',
+                tab_10b varchar(8) NOT NULL default '40-0',
+                tab_10c varchar(8) NOT NULL default '41-0',
                 stat_id int(11) NOT NULL,
                 CONSTRAINT PK_tab_id PRIMARY KEY (tab_id),
                 CONSTRAINT $constraint FOREIGN KEY (stat_id) REFERENCES $tab2(stat_id),
@@ -436,15 +439,16 @@ class InstallModel extends Model
         $version_string = strval($version);
 
         // Injection dans admin.php de $installed et $version_installed
+
         $file_content = file_get_contents($this->file_admin);
-        $file_content = str_replace($installed, 'yes', $file_content);
-        $file_content = str_replace($version_installed, $version_string, $file_content);
+        $file_content = str_replace("installed = '" . $installed . "';", "installed = 'yes';", $file_content);
+        $file_content = str_replace("version_installed = '" . $version_installed . "';", "version_installed = '" . $version_string . "';", $file_content);
         file_put_contents($this->file_admin, $file_content);
         return $version_installed;
     }
 
     /**
-     * Défini Mbell comme étant installé avec numéro de version installé
+     * Défini Mbell comme étant non installé 
      * 
      * @return void
      */
@@ -454,7 +458,7 @@ class InstallModel extends Model
         // Injection dans admin.php de $version_installed
         $file_content = file_get_contents($this->file_admin);
 
-        $file_content = str_replace($installed, 'no', $file_content);
+        $file_content = str_replace("installed = '" . $installed . "'", "installed = 'no'", $file_content);
         file_put_contents($this->file_admin, $file_content);
         return $installed;
     }
@@ -571,7 +575,7 @@ class InstallModel extends Model
     }
 
 
-        /**
+    /**
      * Maj de 2.41 à 2.42 
      *
      * @return boolean
@@ -593,6 +597,91 @@ class InstallModel extends Model
             $row = null;
         }
         return $row;
+    }
+
+
+    /**
+     * Maj de 2.42 à 2.5 
+     *
+     * @return boolean
+     */
+    public function Maj242To25a()
+    {
+        require $this->file_admin;
+        $station_tab = $table_prefix . 'station';
+        try {
+            $req1 = "ALTER TABLE $station_tab
+            ADD COLUMN stat_livenbr tinyint(2) NOT NULL default 1 AFTER stat_livesecret";
+            $this->requete = $this->connexion->prepare($req1);
+            $result = $this->requete->execute();
+            $row = ($result) ? 1 : null;
+        } catch (Exception $e) {
+            if (MB_DEBUG) {
+                var_dump($e->getMessage());
+            }
+            $row = null;
+        }
+        return $row;
+    }
+    /**
+     * Maj de 2.42 à 2.5 
+     *
+     * @return boolean
+     */
+    public function Maj242To25b()
+    {
+        require $this->file_admin;
+        $tab_tab = $table_prefix . 'tab';
+        try {
+            $req = "ALTER TABLE $tab_tab
+                MODIFY tab_1a varchar(8) NOT NULL default '1-0',
+                MODIFY tab_1b varchar(8) NOT NULL default '2-0',
+                MODIFY tab_1c varchar(8) NOT NULL default '3-0',
+                MODIFY tab_2a varchar(8) NOT NULL default '4-0',
+                MODIFY tab_2b varchar(8) NOT NULL default '5-0',
+                MODIFY tab_2c varchar(8) NOT NULL default '6-0',
+                MODIFY tab_3a varchar(8) NOT NULL default '12-0',
+                MODIFY tab_3b varchar(8) NOT NULL default '8-0',
+                MODIFY tab_3c varchar(8) NOT NULL default '13-0',
+                MODIFY tab_4a varchar(8) NOT NULL default '10-0',
+                MODIFY tab_4b varchar(8) NOT NULL default '11-0',
+                MODIFY tab_4c varchar(8) NOT NULL default '14-0',
+                MODIFY tab_5a varchar(8) NOT NULL default '43-0',
+                MODIFY tab_5b varchar(8) NOT NULL default '44-0',
+                MODIFY tab_5c varchar(8) NOT NULL default '9-0',
+                MODIFY tab_6a varchar(8) NOT NULL default '7-0',
+                MODIFY tab_6b varchar(8) NOT NULL default '15-0',
+                MODIFY tab_6c varchar(8) NOT NULL default '16-0',
+                MODIFY tab_7a varchar(8) NOT NULL default '30-0',
+                MODIFY tab_7b varchar(8) NOT NULL default '31-0',
+                MODIFY tab_7c varchar(8) NOT NULL default '24-0',
+                MODIFY tab_8a varchar(8) NOT NULL default '25-0',
+                MODIFY tab_8b varchar(8) NOT NULL default '37-0',
+                MODIFY tab_8c varchar(8) NOT NULL default '38-0',
+                MODIFY tab_9a varchar(8) NOT NULL default '26-0',
+                MODIFY tab_9b varchar(8) NOT NULL default '27-0',
+                MODIFY tab_9c varchar(8) NOT NULL default '28-0',
+                MODIFY tab_10a varchar(8) NOT NULL default '39-0',
+                MODIFY tab_10b varchar(8) NOT NULL default '40-0',
+                MODIFY tab_10c varchar(8) NOT NULL default '41-0'";
+            $this->requete = $this->connexion->prepare($req);
+            $result = $this->requete->execute();
+            $row = ($result) ? 1 : null;
+        } catch (Exception $e) {
+            if (MB_DEBUG) {
+                var_dump($e->getMessage());
+            }
+            $row = null;
+        }
+        return $row;
+    }
+    public function Maj242To25c()
+    {
+        $path =  $this->file_admin;
+        $file = file_get_contents($path);
+        $file = str_replace(" * Devient défini sur \$installed = '", " * Devient défini sur \$installed='", $file);
+        $file = str_replace(" * \$installed = '", " * \$installed='", $file);        
+        $file = file_put_contents($path, $file);
     }
 
     public function trim_lines($path, $max)

@@ -25,13 +25,13 @@ class CronController  extends Controller
         $active = $this->paramStat->getStationActive();
         $liveStation = ($active['stat_type'] == 'live') ? $this->model->getLiveAPIStation($active['stat_livekey'], $active['stat_livesecret']) : '';
         $timeCron = $this->model->getLastTimeCron();
-
+        
         if (($this->model->IsServerCronDisabled() == true) && ($config['config_cron'] == 1 || $config['config_cron'] == 2 || $config['config_cron'] == 3) && (!(isset($_COOKIE['cron'])) || empty($_COOKIE['cron']))) {
             $status_cron = 0;
             setcookie('cron', 'activated', time() + (600));
             //le cookie permet que UpdateConfigCron fonctionne pendant les 10mn où IsServerCronDisabled est toujours vrai, mais que le cron a été réactivé
             $response = $this->model->UpdateConfigCron($config, $status_cron);
-            if ($response) {
+        if ($response) {
                 header('location:index.php?controller=cron&action=list&lg=' . $lg);
             } else {
                 header('location:index.php?controller=cron&action=error&lg=' . $lg);

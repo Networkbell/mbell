@@ -30,12 +30,13 @@ function activatedCron()
 
     $station = $station_model->getStationActive();
     $type = (isset($station['stat_type'])) ? $station['stat_type'] : null;
+    $livenbr = ($type == 'live') ? $station['stat_livenbr'] - 1 : 0;
     
     
     $datas = $station_model->getAPI();
     
     $liveStation = ($type == 'live') ? $station_model->getLiveAPIStation($station['stat_livekey'], $station['stat_livesecret']) : '';
-    $response = $cron_model->addWeather($datas, $station, $liveStation);
+    $response = $cron_model->addWeather($datas, $station, $liveStation, $livenbr);
     
     return $response;
 }

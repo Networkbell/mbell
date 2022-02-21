@@ -31,9 +31,11 @@ class PrefView extends View
 
 
 
-    public function displayList($info, $datas, $config, $tab, $livestation)
+    public function displayList($info, $datas, $config, $tab, $livestation, $livenbr)
     {
-        $apiDatas = $this->statview->getAPIDatas($datas, $info, $livestation);
+        $livetab = 0; // pas besoin ici
+
+        $apiDatas = $this->statview->getAPIDatas($datas, $info, $livestation, $livenbr, $livetab);
 
         $param = array(
             "config_id" => $config['config_id'],
@@ -122,7 +124,7 @@ class PrefView extends View
         $this->page .= '</form>';
         $this->page .= '<form action="index.php?controller=pref&action=tab&lg=' . $param['_LG'] . '" method="POST">';
         $this->page .= '<div class="container-fluid conteneur_row_pref px-0">';
-        $this->page .= $this->getTab($param, $tab, $this->statview->tabTxt($config), $this->statview->optionValue($config), $config);
+        $this->page .= $this->getTab($param, $tab, $config, $info, $datas);
         $this->page .= '</div>';
         $this->page .= $this->getSubmit('pref', $param['SAVE']);
         $this->page .= '</form>';
@@ -157,35 +159,65 @@ class PrefView extends View
         $this->display();
     }
 
-    public function getTab($param, $tab, $tab_txt, $options, $config)
+    public function getTab($param, $tab, $config, $info, $datas)
     {
         $page = '';
         for ($i = 1; $i <= $tab['tab_lines']; $i++) {
-            $page .=  $this->addRow($param, $tab, $i, $tab_txt, $options, $config);
+            $page .=  $this->addRow($param, $tab, $i, $config, $info, $datas);
         }
 
         // Pour update toute la bdd on remodifie aussi les mêmes valeurs
         for ($i = $tab['tab_lines'] + 1; $i < 11; $i++) {
-            $page .= '<input type="hidden" name="tab_' . $i . 'a" value="' . $tab['tab_' . $i . 'a'] . '">';
-            $page .= '<input type="hidden" name="tab_' . $i . 'b" value="' . $tab['tab_' . $i . 'b'] . '">';
-            $page .= '<input type="hidden" name="tab_' . $i . 'c" value="' . $tab['tab_' . $i . 'c'] . '">';
+
+            $tab_a = 'tab_' . $i . 'a';
+            $tab_b = 'tab_' . $i . 'b';
+            $tab_c = 'tab_' . $i . 'c';
+            $ntab_a = $tab[$tab_a];
+            $ntab_b = $tab[$tab_b];
+            $ntab_c = $tab[$tab_c];
+            $nexplod_a = explode('-', $ntab_a);
+            $nexplod_b = explode('-', $ntab_b);
+            $nexplod_c = explode('-', $ntab_c);
+            $ltab_a = $nexplod_a[0];
+            $ltab_b = $nexplod_b[0];
+            $ltab_c = $nexplod_c[0];
+            $itab_a = $nexplod_a[1];
+            $itab_b = $nexplod_b[1];
+            $itab_c = $nexplod_c[1];
+
+            $page .= '<input type="hidden" name="tab_' . $i . 'a" value="' . $ltab_a . '">';
+            $page .= '<input type="hidden" name="tab_' . $i . 'b" value="' . $ltab_b . '">';
+            $page .= '<input type="hidden" name="tab_' . $i . 'c" value="' . $ltab_c . '">';
+            $page .= '<input type="hidden" name="itab_' . $i . 'a" value="' . $itab_a . '">';
+            $page .= '<input type="hidden" name="itab_' . $i . 'b" value="' . $itab_b . '">';
+            $page .= '<input type="hidden" name="itab_' . $i . 'c" value="' . $itab_c . '">';
         }
         return $page;
     }
 
-    public function addRow($param, $tab, $row_id, $tab_txt, $options, $config)
+    public function addRow($param, $tab, $row_id, $config, $info, $datas)
     {
         $page = '<div class="row row_pref" id="tab_row_' . $row_id . '">';
-        $page .= $this->getSelect($param, $tab, $row_id, 'a', $tab_txt, $options, $config);
-        $page .= $this->getSelect($param, $tab, $row_id, 'b', $tab_txt, $options, $config);
-        $page .= $this->getSelect($param, $tab, $row_id, 'c', $tab_txt, $options, $config);
+        $page .= $this->getSelect($param, $tab, $row_id, 'a',  $config, $info, $datas);
+        $page .= $this->getSelect($param, $tab, $row_id, 'b',  $config, $info, $datas);
+        $page .= $this->getSelect($param, $tab, $row_id, 'c',  $config, $info, $datas);
         $page .= '</div>';
         return $page;
     }
 
-    public function getSelect($param, $tab, $row_id, $select_id, $tab_txt, $options, $config)
+    public function getSelect($param, $tab, $row_id, $select_id, $config, $info, $datas)
     {
-        $result = 'tab_' . $row_id . $select_id;
+        $tab_n_abc = 'tab_' . $row_id . $select_id;
+        $ntab = $tab[$tab_n_abc];
+        $nexplod = explode('-', $ntab);
+        $n_tab = $nexplod[0];
+        $itab = $nexplod[1];
+
+        $type = $info['stat_type'];
+
+        $option_txt = $this->statview->optionValue($config, $tab);
+        $result = ($type == 'live') ? $this->statview->liveiTab($datas) : '';
+        $tab_txt = $this->statview->tabTxt($config, $tab);
 
         $page = $this->searchHTML('tabSelect', 'pref');
         $page = str_replace('{CHOOSE_SELECT}',  $this->l->trad('CHOOSE_SELECT'), $page);
@@ -193,13 +225,75 @@ class PrefView extends View
         $page = str_replace('{_ID_ROW}',  $row_id, $page);
         $page = str_replace('{_ID_SELECT}',  $select_id, $page);
         $page = str_replace('{tab_id}',  $param['tab_id'], $page);
-        $page = str_replace('{_OPTIONS}',  $this->addSelect($options, $config), $page);
-        $page = str_replace('{_TAB_CHOICE_SELECT_TXT}',  $tab_txt[$tab[$result]]['txt'], $page);
-        $page = str_replace('{_TAB_CHOICE_SELECT_TEXT}',  $tab_txt[$tab[$result]]['text'], $page);
-        $page = str_replace('{_VAL_ACTU}',  $tab[$result], $page);
+        $page = str_replace('{_OPTIONS}',  $this->addSelect($option_txt, $config), $page);
+        $page = str_replace('{choose_tab_ajax}', ($type == 'live') ? 'choose_tab_ajax' : '', $page);
+        $page = str_replace('{tab_select_pref_live}', ($type == 'live') ? 'tab_select_pref_live' : '', $page);       
+        $page = str_replace('{_ITAB_SELECT}',  $this->addicountTab($tab_n_abc, $itab, $n_tab, $result, $tab_txt, $type), $page);
+        $page = str_replace('{_VAL_ACTU}', $n_tab, $page);
         return $page;
     }
 
+
+    public function addicountTab($tab_n_abc, $itab, $n_tab, $result, $tab_txt, $type)
+    {
+        if ($tab_txt[$n_tab]['txt'] == '' || $tab_txt[$n_tab]['text'] == '') {
+            $tab_txt[$n_tab]['txt'] = $this->l->trad('ANY');
+            $tab_txt[$n_tab]['text'] = $this->l->trad('NONE_CHOSEN');
+        };
+        if ($type == 'live') {
+            $count_ntab = is_array($result[$n_tab]) ? count($result[$n_tab]) : 0;
+            if ($count_ntab != 0) {
+                $page = $this->addiTab($tab_n_abc, $itab, $n_tab, $result, $count_ntab, $tab_txt);
+            } else {
+                $page = '<div class="small1000">' . $tab_txt[$n_tab]['txt'] . '</div>';
+                $page .= '<div class="large1000">' . $tab_txt[$n_tab]['text'] . '</div>';
+                $page .= '<div class="form-group itab_option">';
+                $page .= '<input id="choose_i' . $tab_n_abc . '" type="hidden" name="i' . $tab_n_abc . '" value="0">';
+                $page .= $this->l->trad('ANY_SENSOR');
+                $page .= '</div>';
+            }
+        } else {
+
+            $page = '<div class="small1000">' . $tab_txt[$n_tab]['txt'] . '</div>';
+            $page .= '<div class="large1000">' . $tab_txt[$n_tab]['text'] . '</div>';
+            $page .= '<input id="choose_i' . $tab_n_abc . '" type="hidden" name="i' . $tab_n_abc . '" value="0">';
+        }
+        return $page;
+    }
+
+
+    public function addiTab($tab_n_abc, $itab, $n_tab, $result, $count_ntab, $tab_txt)
+    {
+
+        $page = $this->searchHTML('itabSelect', 'pref');
+        $page = str_replace('{_TAB_CHOICE_SELECT_TXT}',  $tab_txt[$n_tab]['txt'], $page);
+        $page = str_replace('{_TAB_CHOICE_SELECT_TEXT}',  $tab_txt[$n_tab]['text'], $page);
+        $page = str_replace('{_TAB_N_ABC}',  $tab_n_abc, $page);
+        $page = str_replace('{_VAL_ITAB}',  $itab, $page);
+        $page = str_replace('{_VAL_ITAB_+1}', ($itab + 1), $page);
+        $page = str_replace('{ITAB_SELECT_TXT}', $this->l->trad('ITAB_SELECT_TXT'), $page, $page);
+        $page = str_replace('{DEFAUT}', ($count_ntab > 1) ? '<option value="0">' . $this->l->trad('DEFAUT') . '</option>' : '', $page);
+        $page = str_replace('{_ITAB_OPTIONS}',  $this->addiSelect($result, $n_tab), $page);
+        return $page;
+    }
+
+    public function addiSelect($result, $n_tab)
+    {
+        $i = 0;
+        $addOptions = '';
+        if (is_array($result[$n_tab])) {
+            foreach ($result[$n_tab] as $key => $value) {
+                if (strval($value) == null) {
+                    $addOptions .= '';
+                } else {
+                    $addOptions .= '<option value="' . $key . '">' . ++$i . ' - ' . $this->l->trad('SENSOR') . ' ' . ($key + 1) . ' (valeur brute = ' . $value . ')</option>';
+                }
+            }
+        }
+
+
+        return $addOptions;
+    }
 
 
     public function addSelect($options, $config)
@@ -217,7 +311,7 @@ class PrefView extends View
         if ($config['config_sun'] == 'uv') {
             array_push($arr, '22');
         }
-        if ($config['config_sun'] == '') {
+        if ($config['config_sun'] == null) {
             array_push($arr, '22', '23');
         }
         if ($config['config_aux1'] == '0' && $config['config_aux2'] != '1') {
@@ -227,7 +321,7 @@ class PrefView extends View
             array_push($arr, '30', '31', '32', '33', '34', '35', '36');
         }
         if ($config['config_aux3'] == '0') {
-            array_push($arr, '24', '25', '26', '27', '28', '29', '37', '38', '39', '40', '41', '42');
+            array_push($arr, '24', '25', '26', '27', '28', '29', '37', '38', '39', '40', '41', '42', '47', '48', '49', '50');
         }
 
         //permet de filtrer le tableau $options en enlevant $arr (définis comme clefs)

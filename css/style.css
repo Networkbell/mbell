@@ -369,8 +369,7 @@ header {
 }
 
 .tab_select,
-.tab_select_pref {
-	height: 60px;
+.tab_select_pref {	
 	line-height: 40px;
 	border-radius: 5px;
 	-webkit-border-radius: 5px;
@@ -393,7 +392,9 @@ header {
 }
 
 
-
+.tab_select_pref_live {
+	min-height: 100px;
+}
 /*************************/
 /*PREF ZONE CONFIGURATION*/
 /*************************/

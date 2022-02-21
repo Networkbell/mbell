@@ -22,11 +22,12 @@ class HomeController  extends Controller
         $active = $this->paramStat->getStationActive();
         $paramJson = $this->paramStat->getAPI();
         $liveStation = ($active['stat_type'] == 'live') ? $this->model->getLiveAPIStation($active['stat_livekey'], $active['stat_livesecret']) : '';
+        $livenbr = ($active['stat_type'] == 'live') ? $active['stat_livenbr'] - 1 : 0;
         $config = $this->model->getConfigActive();
         $tab = $this->model->getTabActive();
-        $switch = $this->model->allChoice($config);     
+        $switch = $this->model->allChoice($config);
         
-        $this->view->displayHome($active, $paramJson, $config, $tab, $switch, $liveStation);
+        $this->view->displayHome($active, $paramJson, $config, $tab, $switch, $liveStation, $livenbr);
     }
 
 

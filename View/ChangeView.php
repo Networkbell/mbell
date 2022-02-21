@@ -43,10 +43,11 @@ class ChangeView extends View
         $this->page = str_replace('{LOGOUT2}',  $this->l->trad('LOGOUT2'), $this->page);
     }
 
-    public function changeList($infoV1, $infoV2, $infoLive, $infoWeewx, $station, $datas, $livestation)
+    public function changeList($infoV1, $infoV2, $infoLive, $infoWeewx, $station, $datas, $livestation, $livenbr)
     {
         $lg = $this->l->getLg();
-        $apiDatas = $this->statview->getAPIDatas($datas, $station, $livestation);
+        $livetab = 0; // pas besoin ici
+        $apiDatas = $this->statview->getAPIDatas($datas, $station, $livestation, $livenbr, $livetab);
 
         $param = array(
             "3" => $station['stat_type'],
@@ -101,7 +102,7 @@ class ChangeView extends View
                 $this->page .= "<th scope='col'>TYPE</th>";
                 $this->page .= "<th scope='col'>DID</th>";
                 $this->page .= "<th scope='col'>KEY</th>";
-               /* $this->page .= "<th scope='col'>USER</th>";*/
+                /* $this->page .= "<th scope='col'>USER</th>";*/
                 $this->page .= "<th scope='col'>ACTIONS</th>";
                 $this->page .= "</tr>";
                 $this->page .= "</thead>";
@@ -112,7 +113,7 @@ class ChangeView extends View
             $this->page .= "<td>" . $listv1['stat_type'] . "</td>";
             $this->page .= "<td>" . $listv1['stat_did'] . "</td>";
             $this->page .= "<td>" . $listv1['stat_key'] . "</td>";
-           /* $this->page .= "<td>" . $listv1['stat_users'] . "</td>";*/
+            /* $this->page .= "<td>" . $listv1['stat_users'] . "</td>";*/
             $this->page .= "<td class='td_button' ><a title='" . $param['UPDATE_INFO'] . "' class='text-primary' href='index.php?controller=change&action=update&stat_id=$idv1'><i class='fas fa-pen-square'></i></a> ";
             $this->page .= "<a class='text-secondary' title='" . $param['DELETE_INFO'] . "' href='index.php?controller=change&action=delete&stat_id=$idv1&lg=$lg'><i class='fas fa-trash-alt'></i></a>";
             $this->page .= "<a class='lock_unlock text-danger' title='" . $param['ACTIVE_INFO'] . "' href='index.php?controller=change&action=active&stat_id=$idv1&lg=$lg'><i class='fas fa-toggle-off icon-unlock'></i><i class='fas fa-toggle-on icon-lock'></i></a></td>";
@@ -187,7 +188,7 @@ class ChangeView extends View
         $this->page .= "</table>";
         $this->page .= "<table class='table table-striped table-bordered'>";
         $x4 = 1;
-        
+
         foreach ($infoWeewx as $listweewx) {
             $idweewx  = $listweewx['stat_id'];
             if ($x4  === 1) {
@@ -198,7 +199,7 @@ class ChangeView extends View
                 $this->page .= "<th scope='col'>URL</th>";
                 $this->page .= "<th scope='col'>ID USER</th>";
                 $this->page .= "<th scope='col'>KEY</th>";
-                $this->page .= "<th scope='col'>SIGNATURE</th>";                
+                $this->page .= "<th scope='col'>SIGNATURE</th>";
                 $this->page .= "<th scope='col'>ACTIONS</th>";
                 $this->page .= "</tr>";
                 $this->page .= "</thead>";
@@ -210,7 +211,7 @@ class ChangeView extends View
             $this->page .= "<td>" . $listweewx['stat_wxurl'] . "</td>";
             $this->page .= "<td>" . $listweewx['stat_wxid'] . "</td>";
             $this->page .= "<td>" . $listweewx['stat_wxkey'] . "</td>";
-            $this->page .= "<td>" . $listweewx['stat_wxsign'] . "</td>";           
+            $this->page .= "<td>" . $listweewx['stat_wxsign'] . "</td>";
             $this->page .= "<td class='td_button' ><a title='" . $param['UPDATE_INFO'] . "' class='text-primary' href='index.php?controller=change&action=update&stat_id=$idweewx'><i class='fas fa-pen-square'></i></a> ";
             $this->page .= "<a class='text-secondary' title='" . $param['DELETE_INFO'] . "' href='index.php?controller=change&action=delete&stat_id=$idweewx&lg=$lg'><i class='fas fa-trash-alt'></i></a>";
             $this->page .= "<a class='lock_unlock text-danger' title='" . $param['ACTIVE_INFO'] . "' href='index.php?controller=change&action=active&stat_id=$idweewx&lg=$lg'><i class='fas fa-toggle-off icon-unlock'></i><i class='fas fa-toggle-on icon-lock'></i></a></td>";
@@ -253,6 +254,7 @@ class ChangeView extends View
             "_VAL_STAT_TOKEN" => '',
             "_VAL_STAT_LIVEKEY" => '',
             "_VAL_STAT_LIVESECRET" => '',
+            "_VAL_STAT_LIVENBR" => 1,
             "_VAL_STAT_LIVEID" => '',
             "_VAL_STAT_ID" => '',
             "_VAL_STAT_WXURL" => '',
@@ -305,6 +307,7 @@ class ChangeView extends View
             "_VAL_STAT_TOKEN" => $station['stat_token'],
             "_VAL_STAT_LIVEKEY" => $station['stat_livekey'],
             "_VAL_STAT_LIVESECRET" => $station['stat_livesecret'],
+            "_VAL_STAT_LIVENBR" => $station['stat_livenbr'],
             "_VAL_STAT_LIVEID" => $station['stat_liveid'],
             "_VAL_STAT_ID" => $station['stat_id'],
             "_VAL_STAT_WXURL" => $station['stat_wxurl'],

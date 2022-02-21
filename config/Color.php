@@ -5,11 +5,10 @@ class Color
 
     public function __construct()
     {
-        
     }
 
 
-    public function arrColor($switch, $datas, $info, $livestation)
+    public function arrColor($switch, $datas, $info, $livestation, $livenbr, $livetab)
     {
 
         $css = $switch['s_css'];
@@ -17,7 +16,7 @@ class Color
         $daynight = $switch['s_daynight'];
 
         $this->statview = new StationView();
-        $apiDatasUP = $this->statview->getAPIDatasUp($datas, $info, $livestation);
+        $apiDatasUP = $this->statview->getAPIDatasUp($datas, $info, $livestation, $livenbr, $livetab);
 
         $time = $apiDatasUP['time'];
         $sunset = $apiDatasUP['time_sunset'];
@@ -26,7 +25,7 @@ class Color
         $Ttime = $this->statview->TimeStation($time);
         $Tsunrise = $this->statview->TimeStation($sunrise);
         $Tsunset = $this->statview->TimeStation($sunset);
-        
+
 
         if ($daynight == 'on') {
             if ($css == 'bluelight' || $css == 'bluedark') {
@@ -261,11 +260,30 @@ class Color
         return $result;
     }
 
+    public function colWindDir($switch, $value, $datas, $info, $livestation, $livenbr, $livetab)
+    {
+        $col = $this->arrColor($switch, $datas, $info, $livestation, $livenbr, $livetab);
+        $tcol = $col['wind'] ?? '';
+        $s_col = $switch['s_color'];
+        if ($s_col == 'neutral') {
+            $color = $col['1'];
+        } elseif ($s_col == 'colored') {
+            $color = $col['1'];
+        } elseif ($s_col == 'dynamic') {
+            if ($value == '&#8709;' || $value < '0') {
+                $color =  $col['error'];
+            } else {
+                $color = $tcol['1'];
+            }
+        }
+        $page = 'style="color:' . $color . '"';
+        return $page;
+    }
 
     /* $value = no parseJson / no Celsius */
-    public function colTemp($switch, $value, $datas, $info, $livestation)
+    public function colTemp($switch, $value, $datas, $info, $livestation, $livenbr, $livetab)
     {
-        $col = $this->arrColor($switch, $datas, $info, $livestation);
+        $col = $this->arrColor($switch, $datas, $info, $livestation, $livenbr, $livetab);
         $tcol = $col['temp'] ?? '';
         $s_col = $switch['s_color'];
         if ($s_col == 'neutral') {
@@ -334,9 +352,9 @@ class Color
     }
 
     /* $value = no parseJson / no Celsius */
-    public function colHeat($switch, $value, $datas, $info, $livestation)
+    public function colHeat($switch, $value, $datas, $info, $livestation, $livenbr, $livetab)
     {
-        $col = $this->arrColor($switch, $datas, $info, $livestation);
+        $col = $this->arrColor($switch, $datas, $info, $livestation, $livenbr, $livetab);
         $tcol = $col['heat'] ?? '';
         $s_col = $switch['s_color'];
         if ($s_col == 'neutral') {
@@ -371,9 +389,9 @@ class Color
     }
 
     /* $value = no parseJson / no Celsius */
-    public function colWindchill($switch, $value, $datas, $info, $livestation)
+    public function colWindchill($switch, $value, $datas, $info, $livestation, $livenbr, $livetab)
     {
-        $col = $this->arrColor($switch, $datas, $info, $livestation);
+        $col = $this->arrColor($switch, $datas, $info, $livestation, $livenbr, $livetab);
         $tcol = $col['windchill'] ?? '';
         $s_col = $switch['s_color'];
         if ($s_col == 'neutral') {
@@ -425,23 +443,23 @@ class Color
 
 
     /* $value = no parseJson  */
-    public function colSun($switch, $value, $datas, $info, $livestation)
+    public function colSun($switch, $value, $datas, $info, $livestation, $livenbr, $livetab)
     {
         $this->statview = new StationView();
-        $apiDatasUP = $this->statview->getAPIDatasUp($datas, $info, $livestation);
+        $apiDatasUP = $this->statview->getAPIDatasUp($datas, $info, $livestation, $livenbr, $livetab);
 
         $time = $apiDatasUP['time'];
         $sunset = $apiDatasUP['time_sunset'];
         $sunrise = $apiDatasUP['time_sunrise'];
 
-        $col = $this->arrColor($switch, $datas, $info, $livestation);
+        $col = $this->arrColor($switch, $datas, $info, $livestation, $livenbr, $livetab);
 
         $tcol = $col['solar'] ?? '';
         $s_col = $switch['s_color'];
 
         $Ttime = $this->statview->TimeStation($time);
         $Tsunrise = $this->statview->TimeStation($sunrise);
-        $Tsunset = $this->statview->TimeStation($sunset); 
+        $Tsunset = $this->statview->TimeStation($sunset);
 
         if ($s_col == 'neutral') {
             $color = $col['1'];
@@ -514,23 +532,23 @@ class Color
 
 
     /* $value = no parseJson  */
-    public function colUV($switch, $value, $datas, $info, $livestation)
+    public function colUV($switch, $value, $datas, $info, $livestation, $livenbr, $livetab)
     {
         $this->statview = new StationView();
-        $apiDatasUP = $this->statview->getAPIDatasUp($datas, $info, $livestation);
+        $apiDatasUP = $this->statview->getAPIDatasUp($datas, $info, $livestation, $livenbr, $livetab);
 
         $time = $apiDatasUP['time'];
         $sunset = $apiDatasUP['time_sunset'];
         $sunrise = $apiDatasUP['time_sunrise'];
 
-        $col = $this->arrColor($switch, $datas, $info, $livestation);
+        $col = $this->arrColor($switch, $datas, $info, $livestation, $livenbr, $livetab);
 
         $tcol = $col['uv'] ?? '';
         $s_col = $switch['s_color'];
 
         $Ttime = $this->statview->TimeStation($time);
         $Tsunrise = $this->statview->TimeStation($sunrise);
-        $Tsunset = $this->statview->TimeStation($sunset); 
+        $Tsunset = $this->statview->TimeStation($sunset);
 
         if ($s_col == 'neutral') {
             $color = $col['1'];
@@ -588,9 +606,9 @@ class Color
 
 
     /* $value = no parseJson / no press in */
-    public function colPress($switch, $value, $datas, $info, $livestation)
+    public function colPress($switch, $value, $datas, $info, $livestation, $livenbr, $livetab)
     {
-        $col = $this->arrColor($switch, $datas, $info, $livestation);
+        $col = $this->arrColor($switch, $datas, $info, $livestation, $livenbr, $livetab);
         $tcol = $col['pressure'] ?? '';
         $s_col = $switch['s_color'];
         if ($s_col == 'neutral') {
@@ -659,9 +677,9 @@ class Color
     }
 
     /* $value = no parseJson / no rain mm */
-    public function colRain($switch, $value, $datas, $info, $livestation)
+    public function colRain($switch, $value, $datas, $info, $livestation, $livenbr, $livetab)
     {
-        $col = $this->arrColor($switch, $datas, $info, $livestation);
+        $col = $this->arrColor($switch, $datas, $info, $livestation, $livenbr, $livetab);
         $tcol = $col['rain'] ?? '';
         $s_col = $switch['s_color'];
         if ($s_col == 'neutral') {
@@ -715,9 +733,9 @@ class Color
 
 
     /* $value = no parseJson / no wind kph */
-    public function colWind($switch, $value, $datas, $info, $livestation)
+    public function colWind($switch, $value, $datas, $info, $livestation, $livenbr, $livetab)
     {
-        $col = $this->arrColor($switch, $datas, $info, $livestation);
+        $col = $this->arrColor($switch, $datas, $info, $livestation, $livenbr, $livetab);
         $tcol = $col['wind'] ?? '';
         $s_col = $switch['s_color'];
         if ($s_col == 'neutral') {
@@ -766,9 +784,9 @@ class Color
     }
 
     /* $value = no parseJson  */
-    public function colHumidity($switch, $value, $datas, $info, $livestation)
+    public function colHumidity($switch, $value, $datas, $info, $livestation, $livenbr, $livetab)
     {
-        $col = $this->arrColor($switch, $datas, $info, $livestation);
+        $col = $this->arrColor($switch, $datas, $info, $livestation, $livenbr, $livetab);
         $tcol = $col['humidity'] ?? '';
         $s_col = $switch['s_color'];
         if ($s_col == 'neutral') {
@@ -810,9 +828,9 @@ class Color
 
 
     /* $value = no parseJson  */
-    public function colLeaf($switch, $value, $datas, $info, $livestation)
+    public function colLeaf($switch, $value, $datas, $info, $livestation, $livenbr, $livetab)
     {
-        $col = $this->arrColor($switch, $datas, $info, $livestation);
+        $col = $this->arrColor($switch, $datas, $info, $livestation, $livenbr, $livetab);
         $tcol = $col['humidity'] ?? '';
         $s_col = $switch['s_color'];
         if ($s_col == 'neutral') {
@@ -855,9 +873,9 @@ class Color
 
 
     /* $value = no parseJson  */
-    public function colSoil($switch, $value, $datas, $info, $livestation)
+    public function colSoil($switch, $value, $datas, $info, $livestation, $livenbr, $livetab)
     {
-        $col = $this->arrColor($switch, $datas, $info, $livestation);
+        $col = $this->arrColor($switch, $datas, $info, $livestation, $livenbr, $livetab);
         $tcol = $col['humidity'] ?? '';
         $s_col = $switch['s_color'];
         if ($s_col == 'neutral') {
@@ -896,7 +914,4 @@ class Color
         $page = 'style="color:' . $color . '"';
         return $page;
     }
-
-
-
 }

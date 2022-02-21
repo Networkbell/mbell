@@ -26,7 +26,7 @@ class ChangeModel extends Model
 
             $req = "SELECT stat_id, stat_type, stat_did, stat_key, 
             stat_users, stat_password, stat_token, 
-            stat_livekey, stat_livesecret, stat_liveid, 
+            stat_livekey, stat_livesecret, stat_livenbr, stat_liveid, 
             stat_wxurl, stat_wxid, stat_wxkey, stat_wxsign, 
             $id_stat_station FROM $station_tab INNER JOIN $user_tab ON $id_stat_station = $id_stat_user 
             WHERE user_login = :user_login AND stat_active = :stat_active AND stat_type = :stat_type
@@ -93,14 +93,15 @@ class ChangeModel extends Model
         $stat_type = $paramPost['stat_type'];
         $live_key = $paramPost['stat_livekey'];
         $live_secret = $paramPost['stat_livesecret'];
-        $live_id = $this->getStationID($live_key, $live_secret, $stat_type);
+        $live_nbr = $paramPost['stat_livenbr'];
+        $live_id = $this->getStationID($live_key, $live_secret, $stat_type, $live_nbr);
         $stat_active = 0;
 
         try {
             $req = "INSERT INTO $station_tab VALUES(
             NULL, :stat_type, :stat_did, :stat_key, 
             :stat_users, :stat_password, :stat_token,  
-            :stat_livekey, :stat_livesecret, :stat_liveid, :stat_wxurl, :stat_wxid, :stat_wxkey, :stat_wxsign, :stat_active, :user_id
+            :stat_livekey, :stat_livesecret, :stat_livenbr, :stat_liveid, :stat_wxurl, :stat_wxid, :stat_wxkey, :stat_wxsign, :stat_active, :user_id
             )";
 
             $this->requete = $this->connexion->prepare($req);
@@ -112,6 +113,7 @@ class ChangeModel extends Model
             $this->requete->bindParam(':stat_token', $paramPost['stat_token']);
             $this->requete->bindParam(':stat_livekey', $live_key);
             $this->requete->bindParam(':stat_livesecret', $live_secret);
+            $this->requete->bindParam(':stat_livenbr', $live_nbr);
             $this->requete->bindParam(':stat_liveid', $live_id);
             $this->requete->bindParam(':stat_wxurl', $paramPost['stat_wxurl']);
             $this->requete->bindParam(':stat_wxid', $paramPost['stat_wxid']);
@@ -197,11 +199,12 @@ class ChangeModel extends Model
         $stat_type = $paramPost['stat_type'];
         $live_key = $paramPost['stat_livekey'];
         $live_secret = $paramPost['stat_livesecret'];
-        $live_id = $this->getStationID($live_key, $live_secret, $stat_type);
+        $live_nbr = $paramPost['stat_livenbr'];
+        $live_id = $this->getStationID($live_key, $live_secret, $stat_type, $live_nbr);
 
         $req = "UPDATE $station_tab SET stat_did = :stat_did, stat_key = :stat_key, stat_users = :stat_users, 
         stat_password = :stat_password, stat_token = :stat_token,
-        stat_livekey = :stat_livekey, stat_livesecret = :stat_livesecret, stat_liveid = :stat_liveid,
+        stat_livekey = :stat_livekey, stat_livesecret = :stat_livesecret, stat_livenbr = :stat_livenbr, stat_liveid = :stat_liveid,
         stat_wxurl = :stat_wxurl, stat_wxid = :stat_wxid, stat_wxkey = :stat_wxkey, stat_wxsign = :stat_wxsign
         WHERE stat_id = :stat_id";
 
@@ -216,6 +219,7 @@ class ChangeModel extends Model
             $this->requete->bindParam(':stat_token', $paramPost['stat_token']);
             $this->requete->bindParam(':stat_livekey', $live_key);
             $this->requete->bindParam(':stat_livesecret', $live_secret);
+            $this->requete->bindParam(':stat_livenbr', $live_nbr);
             $this->requete->bindParam(':stat_liveid', $live_id);
             $this->requete->bindParam(':stat_wxurl', $paramPost['stat_wxurl']);
             $this->requete->bindParam(':stat_wxid', $paramPost['stat_wxid']);

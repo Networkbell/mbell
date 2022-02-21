@@ -118,7 +118,7 @@ class CronModel extends Model
      */
     public function activateCron()
     {
-      
+
         ignore_user_abort(true);
         set_time_limit(0);
 
@@ -127,10 +127,12 @@ class CronModel extends Model
             //on va chercher les valeurs dans la boucle plutôt que le controller en amont pour que les données de l'API se mettent bien à jour une fois le cron lancé
             $station = $this->paramStat->getStationActive();
             $type = (isset($station['stat_type'])) ? $station['stat_type'] : null;
+            $livenbr = ($type == 'live') ? $station['stat_livenbr'] - 1 : 0;
+            $livetab = 0; // pas besoin ici
 
             $liveStation1 = ($type == 'live') ? $this->getLiveAPIStation($station['stat_livekey'], $station['stat_livesecret']) : '';
             $datas1 = $this->paramStat->getAPI();
-            $dateString = $this->stationview->getAPIDatasUp($datas1, $station, $liveStation1)['time'];
+            $dateString = $this->stationview->getAPIDatasUp($datas1, $station, $liveStation1, $livenbr, $livetab)['time'];
 
             $time_sleep = ($type == 'live') ? 780 : 480; // 780 = 13 minutes / 480 = 8 minutes
             $time_precision = ($type == 'live') ? 15 : 10; // API v2 = 15mn / API v1 = 10mn
@@ -142,7 +144,7 @@ class CronModel extends Model
 
             $datas2 = $this->paramStat->getAPI(); //on remet à jour les datas après le temps d'attente
             $liveStation2 = ($type == 'live') ? $this->getLiveAPIStation($station['stat_livekey'], $station['stat_livesecret']) : '';
-            $response = $this->addWeather($datas2, $station, $liveStation2);
+            $response = $this->addWeather($datas2, $station, $liveStation2, $livenbr);
             sleep($time_sleep);
         }
         return $response;
@@ -235,6 +237,41 @@ class CronModel extends Model
         return $rep;
     }
 
+
+    /**
+     * Pour WL avec plusieurs capteurs -> permet l'enregistrement mb_data CRON avec data unique
+     * Ne garde que les choix uniques dans la bdd mb_tab 
+     * 1. Tri en fonction du nombre de ligne choisi (array_slice)
+     * 2. Tri sur le 1er paramètre. Doit être unique (en gardant en info le 2e parametre associé). Exemple : 1 seule valeur de vent moyen
+     * 3. On ne garde que la référence unique la plus faible dans le nombre de capteur. Exemple : si vent moyen capteur 1 et 2 existent, on garde seulement le capteur 1
+     * 4. le Tri sur le capteur se fait sur le 1er trouvé (foreach traite à l'envers en gardant le dernier d'où array_reverse)
+     * 5. on donne comme clef le type de case et comme valeur le capteur associé
+     */
+    public function uniqueArrayTab($tab)
+    {
+        $tab_line = ($tab['tab_lines'] * 3);
+        unset($tab['tab_id']);
+        unset($tab['tab_lines']);
+        unset($tab['stat_id']);
+        $array = $newarray = $finalarray = array();
+        $slice = array_slice($tab, 0, $tab_line);
+        foreach ($slice as $key => $value) {
+            $nexplod = explode('-', $value);
+            $ltab = $nexplod[0];
+            $itab = $nexplod[1];
+            $new_array = array($ltab, $itab);
+            $array[$key] = $new_array;
+        }
+        foreach (array_reverse($array) as $v) {
+            $newarray[$v[0]] = $v;
+        }
+        $data = array_values($newarray);
+        foreach ($data as $i) {
+            $finalarray[$i[0]] = $i[1];
+        }
+        return $finalarray;
+    }
+
     /**
      * Ajout dans la BDD datas
      *
@@ -243,22 +280,59 @@ class CronModel extends Model
      * @param [array] $livestation pour Live API stations
      * @return boolean
      */
-    public function addWeather($datas, $station, $livestation)
+    public function addWeather($datas, $station, $livestation, $livenbr)
     {
-
         require $this->file_admin;
         $data_tab = $table_prefix . 'data';
 
         //temps serveur
         $data_time_cron = time();
 
-        //on arrondi le temps affiché 
+        //
         $station = $this->paramStat->getStationActive();
         $type = (isset($station['stat_type'])) ? $station['stat_type'] : null;
 
-        //API
-        $apiDatasUP = $this->stationview->getAPIDatasUp($datas, $station, $livestation);
-        $apiDatas = $this->stationview->getAPIDatas($datas, $station, $livestation);
+        // pour WL avec plusieurs sensors, on garde que le 1er capteur actif
+        $tab = $this->getTabActive();
+        $uniquetab = $this->uniqueArrayTab($tab);
+
+        // test existance itab et variantes
+        $itabtemp = $uniquetab[2] ?? '0';
+        $itabheat = $uniquetab[5] ?? ($uniquetab[2] ?? '0');
+        $itabwindchill = $uniquetab[5] ?? ($uniquetab[2] ?? '0');
+        $itabdewpoint = $uniquetab[11] ?? '0';
+        $itabhum = $uniquetab[12] ?? '0';
+        $itabpress = $uniquetab[10] ?? '0';
+        $itabwinddir = $uniquetab[1] ?? ($uniquetab[46] ?? '0');
+        $itabwindmoy = $uniquetab[1] ?? '0';
+        $itabwindraf = $uniquetab[4] ?? '0';
+        $itabrainday = $uniquetab[6] ?? ($uniquetab[46] ?? '0');
+        $itabrrhigh15mn = $uniquetab[3] ?? '0';
+        $itabrrhighhour = $uniquetab[3] ?? '0';
+        $itabrrlast = $uniquetab[3] ?? '0';
+        $itabsolar = $uniquetab[8] ?? ($uniquetab[22] ?? '0');
+        $itabuv = $uniquetab[8] ?? ($uniquetab[23] ?? '0');
+
+        //API avec WL (+itab)
+        $WLctemp = $this->stationview->getAPIDatasUp($datas, $station, $livestation, $livenbr, $itabtemp);
+        $WLfheat = $this->stationview->getAPIDatas($datas, $station, $livestation, $livenbr, $itabheat);
+        $WLfwindchill = $this->stationview->getAPIDatas($datas, $station, $livestation, $livenbr, $itabwindchill);
+        $WLfdewpoint = $this->stationview->getAPIDatas($datas, $station, $livestation, $livenbr, $itabdewpoint);
+        $WLhum = $this->stationview->getAPIDatas($datas, $station, $livestation, $livenbr, $itabhum);
+        $WLpress = $this->stationview->getAPIDatasUp($datas, $station, $livestation, $livenbr, $itabpress);
+        $WLwinddir = $this->stationview->getAPIDatas($datas, $station, $livestation, $livenbr, $itabwinddir);
+        $WLwindmoy = $this->stationview->getAPIDatas($datas, $station, $livestation, $livenbr, $itabwindmoy);
+        $WLwindraf = $this->stationview->getAPIDatas($datas, $station, $livestation, $livenbr, $itabwindraf);
+        $WLrainday = $this->stationview->getAPIDatas($datas, $station, $livestation, $livenbr, $itabrainday);
+        $WLrrhigh15mn = $this->stationview->getAPIDatas($datas, $station, $livestation, $livenbr, $itabrrhigh15mn);
+        $WLrrhighhour = $this->stationview->getAPIDatas($datas, $station, $livestation, $livenbr, $itabrrhighhour);
+        $WLrrlast = $this->stationview->getAPIDatas($datas, $station, $livestation, $livenbr, $itabrrlast);
+        $WLsolar = $this->stationview->getAPIDatas($datas, $station, $livestation, $livenbr, $itabsolar);
+        $WLuv = $this->stationview->getAPIDatas($datas, $station, $livestation, $livenbr, $itabuv);
+
+        //API sans WL
+        $apiDatasUP = $this->stationview->getAPIDatasUp($datas, $station, $livestation, $livenbr, '0');
+        $apiDatas = $this->stationview->getAPIDatas($datas, $station, $livestation, $livenbr, '0');
 
         //temps API
         $time_precision = ($type == 'live') ? 15 : 10;
@@ -272,23 +346,23 @@ class CronModel extends Model
         $data_time_api = $this->DateCreateCron($tstamp, $timeZone);
         //$data_time_api = $time; // pour heure exacte
 
-        $data_temp = $this->floaVal($apiDatasUP['c_temp']);
-        $data_heat = $this->floaVal($this->stationview->getTempFtoC($apiDatas['heat_index_f']));
-        $data_windchill = $this->floaVal($this->stationview->getTempFtoC($apiDatas['windchill_f']));
-        $data_dewpoint = $this->floaVal($this->stationview->getTempFtoC($apiDatas['dewpoint_f']));
-        $data_hum = $this->floaVal($apiDatas['relative_humidity']);
-        $data_press = $this->floaVal($apiDatasUP['mb_pressure']);
-        $data_wind_dir = $this->floaVal($apiDatas['wind_degrees']);
-        $data_wind_moy = $this->floaVal($this->stationview->getWindMphToKph($apiDatas['wind_ten_min_avg_mph']));
-        $data_wind_raf = $this->floaVal($this->stationview->getWindMphToKph($apiDatas['wind_ten_min_gust_mph']));
-        $data_rain_day = $this->floaVal($this->stationview->getRainInToMm($apiDatas['rain_day_in']));
-        $data_rr_high_15mn = $this->floaVal($apiDatas['rain_rate_hi_last_15_min_mm']);
-        $data_rr_high_hour = $this->floaVal($this->stationview->getRainInToMm($apiDatas['rain_rate_hour_high_in_per_hr']));
-        $data_rr_last = $this->floaVal($this->stationview->getRainInToMm($apiDatas['rain_rate_in_per_hr']));
-        $data_solar = $this->floaVal($apiDatas['solar_radiation']);
-        $data_uv = $this->floaVal($apiDatas['uv_index']);
-        /*
-        var_dump($data_time_cron);
+        $data_temp = $this->floaVal(($type == 'live') ? $WLctemp['c_temp'] : $apiDatasUP['c_temp']);
+        $data_heat = $this->floaVal($this->stationview->getTempFtoC(($type == 'live') ? $WLfheat['heat_index_f'] : $apiDatas['heat_index_f']));
+        $data_windchill = $this->floaVal($this->stationview->getTempFtoC(($type == 'live') ? $WLfwindchill['windchill_f'] : $apiDatas['windchill_f']));
+        $data_dewpoint = $this->floaVal($this->stationview->getTempFtoC(($type == 'live') ? $WLfdewpoint['dewpoint_f'] : $apiDatas['dewpoint_f']));
+        $data_hum = $this->floaVal(($type == 'live') ? $WLhum['relative_humidity'] : $apiDatas['relative_humidity']);
+        $data_press = $this->floaVal(($type == 'live') ? $WLpress['mb_pressure'] : $apiDatasUP['mb_pressure']);
+        $data_wind_dir = $this->floaVal(($type == 'live') ? $WLwinddir['wind_degrees'] : $apiDatas['wind_degrees']);
+        $data_wind_moy = $this->floaVal($this->stationview->getWindMphToKph(($type == 'live') ? $WLwindmoy['wind_ten_min_avg_mph'] : $apiDatas['wind_ten_min_avg_mph']));
+        $data_wind_raf = $this->floaVal($this->stationview->getWindMphToKph(($type == 'live') ? $WLwindraf['wind_ten_min_gust_mph'] : $apiDatas['wind_ten_min_gust_mph']));
+        $data_rain_day = $this->floaVal($this->stationview->getRainInToMm(($type == 'live') ? $WLrainday['rain_day_in'] : $apiDatas['rain_day_in']));
+        $data_rr_high_15mn = $this->floaVal(($type == 'live') ? $WLrrhigh15mn['rain_rate_hi_last_15_min_mm'] : $apiDatas['rain_rate_hi_last_15_min_mm']);
+        $data_rr_high_hour = $this->floaVal($this->stationview->getRainInToMm(($type == 'live') ? $WLrrhighhour['rain_rate_hour_high_in_per_hr'] : $apiDatas['rain_rate_hour_high_in_per_hr']));
+        $data_rr_last = $this->floaVal($this->stationview->getRainInToMm(($type == 'live') ? $WLrrlast['rain_rate_in_per_hr'] : $apiDatas['rain_rate_in_per_hr']));
+        $data_solar = $this->floaVal(($type == 'live') ? $WLsolar['solar_radiation'] : $apiDatas['solar_radiation']);
+        $data_uv = $this->floaVal(($type == 'live') ? $WLuv['uv_index'] : $apiDatas['uv_index']);
+
+        /*  var_dump($data_time_cron);
         var_dump($data_time_api);
         var_dump($data_temp);
         var_dump($data_press);
@@ -360,9 +434,9 @@ class CronModel extends Model
 
         require $this->file_admin;
         $data_tab = $table_prefix . 'data';
-        $req = "SELECT data_time_cron FROM $data_tab ORDER BY data_id DESC LIMIT 1";
 
         try {
+            $req = "SELECT data_time_cron FROM $data_tab ORDER BY data_id DESC LIMIT 1";
             $this->requete = $this->connexion->query("SET SESSION WAIT_TIMEOUT=3300"); //55mn
             $this->requete = $this->connexion->prepare($req);
             $result = $this->requete->execute();
@@ -371,7 +445,8 @@ class CronModel extends Model
                 $list = $this->requete->fetch(PDO::FETCH_ASSOC);
             }
             $this->close($this->connexion, $this->requete);
-            return $list;
+            $row = ($list) ? $list : null;
+            return $row;
         } catch (Exception $e) {
             die('Erreur:' . $e->getMessage());
         }

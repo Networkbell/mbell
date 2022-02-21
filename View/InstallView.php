@@ -27,9 +27,10 @@ class InstallView extends View
         $this->page .= $this->getHeader($param);
     }
 
-    public function InstallMain8($info, $datas, $livestation)
+    public function InstallMain8($info, $datas, $livestation, $livenbr)
     {
-        $apiDatas = $this->statview->getAPIDatas($datas, $info, $livestation);
+        $livetab = 0; // pas besoin ici
+        $apiDatas = $this->statview->getAPIDatas($datas, $info, $livestation, $livenbr,$livetab);
 
         $param = array(
             "1" => $info['user_login'],
@@ -102,6 +103,7 @@ class InstallView extends View
             "_VAL_STAT_TOKEN" => '',
             "_VAL_STAT_LIVEKEY" => '',
             "_VAL_STAT_LIVESECRET" => '',
+            "_VAL_STAT_LIVENBR" => 1,
             "_VAL_STAT_LIVEID" => '',
             "_VAL_STAT_ID" => '',
             "_VAL_STAT_WXURL" => '',

@@ -32,7 +32,10 @@ function activateCron()
     $crontime = $cron_model->getConfigActiveCron()['config_crontime'];
     $cron = $cron_model->getConfigActiveCron()['config_cron'];
     $station = $station_model->getStationActive();
+    
     $type = (isset($station['stat_type'])) ? $station['stat_type'] : null;
+    $livenbr = ($type == 'live') ? $station['stat_livenbr'] - 1 : 0;
+    $livetab = 0; // pas besoin ici
 
     $nbr_cron_server = ($type == 'live') ? $crontime / 15 : $crontime / 10;
     $time_cron_limit = ($crontime * 60) - (5 * 60);
@@ -46,7 +49,8 @@ function activateCron()
         //on va chercher les valeurs dans la boucle plutôt que le controller en amont pour que les données de l'API se mettent bien à jour une fois le cron lancé
         $liveStation1 = ($type == 'live') ? $station_model->getLiveAPIStation($station['stat_livekey'], $station['stat_livesecret']) : '';
         $datas1 = $station_model->getAPI();
-        $dateString = $station_view->getAPIDatasUp($datas1, $station, $liveStation1)['time'];
+        
+        $dateString = $station_view->getAPIDatasUp($datas1, $station, $liveStation1, $livenbr,$livetab)['time'];
 
         $time_sleep = ($type == 'live') ? 780 : 480; // 780 = 13 minutes / 480 = 8 minutes
         $time_precision = ($type == 'live') ? 15 : 10; // API v2 = 15mn / API v1 = 10mn
@@ -58,7 +62,7 @@ function activateCron()
 
         $datas2 = $station_model->getAPI(); //on remet à jour les datas après le temps d'attente
         $liveStation2 = ($type == 'live') ? $station_model->getLiveAPIStation($station['stat_livekey'], $station['stat_livesecret']) : '';
-        $response = $cron_model->addWeather($datas2, $station, $liveStation2);
+        $response = $cron_model->addWeather($datas2, $station, $liveStation2, $livenbr);
         if ($i < $nbr_cron_server) {
             sleep($time_sleep);
         }

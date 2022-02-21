@@ -42,10 +42,12 @@ class CronView extends View
         $this->page = str_replace('{LOGOUT2}',  $this->l->trad('LOGOUT2'), $this->page);
     }
 
-    public function cronList($config, $active, $paramJson, $liveStation, $timeCron)
+    public function cronList($config, $active, $paramJson, $liveStation, $timeCron, $livenbr,$livetab)
     {
-        $location = $this->statview->getAPIDatas($paramJson, $active, $liveStation)['location'];
-        $timeZone = $this->statview->getAPIDatasUp($paramJson, $active, $liveStation)['fuseau'];
+        $zero = '&#8709;';
+        $location = $this->statview->getAPIDatas($paramJson, $active, $liveStation, $livenbr,$livetab)['location'];
+        $timeZone = $this->statview->getAPIDatasUp($paramJson, $active, $liveStation, $livenbr,$livetab)['fuseau'];
+        $timeCron['data_time_cron'] = ($timeCron['data_time_cron']) ?? $zero;
 
         $param = array(
             "1" => $active['stat_type'],
@@ -53,6 +55,7 @@ class CronView extends View
             "3" => ($config['config_cron'] == 1 || $config['config_cron'] == 2|| $config['config_cron'] == 3) ? $this->l->trad('ACTIVATED') : $this->l->trad('DISABLED'),
             "4" => $this->statview->DateCreate($timeCron['data_time_cron'], $this->l->getLg(), $timeZone),
             "5" => ($active['stat_type'] == 'live') ? '15mn' : '10mn',
+            "6" => $this->cronType($config['config_cron']),
             "_URL" => 'index.php?controller=pref&action=list&',
         );
 
@@ -205,7 +208,8 @@ class CronView extends View
         $this->page = str_replace('{_STATION_LOCATION}',  $param['2'], $this->page);
         $this->page = str_replace('{_CRON_STATUS}',  $param['3'], $this->page);
         $this->page = str_replace('{_CRON_TIMER}',  $param['4'], $this->page);
-        $this->page = str_replace('{_CRON_TYPE}',  $param['5'], $this->page);
+        $this->page = str_replace('{_API_TIME}',  $param['5'], $this->page);
+        $this->page = str_replace('{_CRON_TYPE}',  $param['6'], $this->page);
         $this->page = str_replace('{STATION_TYPE}',  $this->l->trad('STATION_TYPE'), $this->page);
         $this->page = str_replace('{STATION_LOCATION}',  $this->l->trad('STATION_LOCATION'), $this->page);
         $this->page = str_replace('{CRON_STATUS}',  $this->l->trad('CRON_STATUS'), $this->page);
@@ -225,13 +229,34 @@ class CronView extends View
 
 
 
-function url(){
+public function url(){
     return sprintf(
       "%s://%s%s",
       isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] != 'off' ? 'https' : 'http',
       $_SERVER['SERVER_NAME'],
       rtrim(dirname($_SERVER['PHP_SELF']), '/\\').'/'
     );
+  }
+
+
+  public function cronType($type){
+    switch ($type) {
+        case '0':
+            $rep = $this->l->trad('CRON_TYPE_0');
+            break;
+        case '1':
+            $rep = $this->l->trad('CRON_TYPE_1');
+            break;
+        case '2':
+            $rep = $this->l->trad('CRON_TYPE_2');
+            break;
+        case '3':
+            $rep = $this->l->trad('CRON_TYPE_3');
+            break;
+        default:
+        $rep = $this->l->trad('CRON_TYPE_0');
+    }
+    return $rep;
   }
 
 }

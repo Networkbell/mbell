@@ -27,7 +27,7 @@ class PrefModel extends Model
         $aux1 = isset($config['var_aux1']) ? 1 : 0;
         $aux2 = isset($config['var_aux2']) ? 1 : 0;
         $aux3 = isset($config['var_aux3']) ? 1 : 0;
-        
+
         try {
             $this->requete = $this->connexion->prepare($req);
             $this->requete->bindParam(':config_id', $config['config_id']);
@@ -128,7 +128,40 @@ class PrefModel extends Model
         require $this->file_admin;
         $tab_tab = $table_prefix . 'tab';
 
-        $req = "UPDATE $tab_tab SET 
+        $tab1a =  $tab['tab_1a'] . '-' . $tab['itab_1a'];
+        $tab1b =  $tab['tab_1b'] . '-' . $tab['itab_1b'];
+        $tab1c =  $tab['tab_1c'] . '-' . $tab['itab_1c'];
+        $tab2a =  $tab['tab_2a'] . '-' . $tab['itab_2a'];
+        $tab2b =  $tab['tab_2b'] . '-' . $tab['itab_2b'];
+        $tab2c =  $tab['tab_2c'] . '-' . $tab['itab_2c'];
+        $tab3a =  $tab['tab_3a'] . '-' . $tab['itab_3a'];
+        $tab3b =  $tab['tab_3b'] . '-' . $tab['itab_3b'];
+        $tab3c =  $tab['tab_3c'] . '-' . $tab['itab_3c'];
+        $tab4a =  $tab['tab_4a'] . '-' . $tab['itab_4a'];
+        $tab4b =  $tab['tab_4b'] . '-' . $tab['itab_4b'];
+        $tab4c =  $tab['tab_4c'] . '-' . $tab['itab_4c'];
+        $tab5a =  $tab['tab_5a'] . '-' . $tab['itab_5a'];
+        $tab5b =  $tab['tab_5b'] . '-' . $tab['itab_5b'];
+        $tab5c =  $tab['tab_5c'] . '-' . $tab['itab_5c'];
+        $tab6a =  $tab['tab_6a'] . '-' . $tab['itab_6a'];
+        $tab6b =  $tab['tab_6b'] . '-' . $tab['itab_6b'];
+        $tab6c =  $tab['tab_6c'] . '-' . $tab['itab_6c'];
+        $tab7a =  $tab['tab_7a'] . '-' . $tab['itab_7a'];
+        $tab7b =  $tab['tab_7b'] . '-' . $tab['itab_7b'];
+        $tab7c =  $tab['tab_7c'] . '-' . $tab['itab_7c'];
+        $tab8a =  $tab['tab_8a'] . '-' . $tab['itab_8a'];
+        $tab8b =  $tab['tab_8b'] . '-' . $tab['itab_8b'];
+        $tab8c =  $tab['tab_8c'] . '-' . $tab['itab_8c'];
+        $tab9a =  $tab['tab_9a'] . '-' . $tab['itab_9a'];
+        $tab9b =  $tab['tab_9b'] . '-' . $tab['itab_9b'];
+        $tab9c =   $tab['tab_9c'] . '-' . $tab['itab_9c'];
+        $tab10a =   $tab['tab_10a'] . '-' . $tab['itab_10a'];
+        $tab10b =   $tab['tab_10b'] . '-' . $tab['itab_10b'];
+        $tab10c =   $tab['tab_10c'] . '-' . $tab['itab_10c'];
+
+        try {
+
+            $req = "UPDATE $tab_tab SET 
          tab_1a = :tab_1a, tab_1b = :tab_1b, tab_1c = :tab_1c,
          tab_2a = :tab_2a, tab_2b = :tab_2b, tab_2c = :tab_2c, 
          tab_3a = :tab_3a, tab_3b = :tab_3b, tab_3c = :tab_3c, 
@@ -141,39 +174,38 @@ class PrefModel extends Model
          tab_10a = :tab_10a, tab_10b = :tab_10b, tab_10c = :tab_10c 
          WHERE tab_id = :tab_id";
 
-        try {
             $this->requete = $this->connexion->prepare($req);
             $this->requete->bindParam(':tab_id', $tab['tab_id']);
-            $this->requete->bindParam(':tab_1a', $tab['tab_1a']);
-            $this->requete->bindParam(':tab_1b', $tab['tab_1b']);
-            $this->requete->bindParam(':tab_1c', $tab['tab_1c']);
-            $this->requete->bindParam(':tab_2a', $tab['tab_2a']);
-            $this->requete->bindParam(':tab_2b', $tab['tab_2b']);
-            $this->requete->bindParam(':tab_2c', $tab['tab_2c']);
-            $this->requete->bindParam(':tab_3a', $tab['tab_3a']);
-            $this->requete->bindParam(':tab_3b', $tab['tab_3b']);
-            $this->requete->bindParam(':tab_3c', $tab['tab_3c']);
-            $this->requete->bindParam(':tab_4a', $tab['tab_4a']);
-            $this->requete->bindParam(':tab_4b', $tab['tab_4b']);
-            $this->requete->bindParam(':tab_4c', $tab['tab_4c']);
-            $this->requete->bindParam(':tab_5a', $tab['tab_5a']);
-            $this->requete->bindParam(':tab_5b', $tab['tab_5b']);
-            $this->requete->bindParam(':tab_5c', $tab['tab_5c']);
-            $this->requete->bindParam(':tab_6a', $tab['tab_6a']);
-            $this->requete->bindParam(':tab_6b', $tab['tab_6b']);
-            $this->requete->bindParam(':tab_6c', $tab['tab_6c']);
-            $this->requete->bindParam(':tab_7a', $tab['tab_7a']);
-            $this->requete->bindParam(':tab_7b', $tab['tab_7b']);
-            $this->requete->bindParam(':tab_7c', $tab['tab_7c']);
-            $this->requete->bindParam(':tab_8a', $tab['tab_8a']);
-            $this->requete->bindParam(':tab_8b', $tab['tab_8b']);
-            $this->requete->bindParam(':tab_8c', $tab['tab_8c']);
-            $this->requete->bindParam(':tab_9a', $tab['tab_9a']);
-            $this->requete->bindParam(':tab_9b', $tab['tab_9b']);
-            $this->requete->bindParam(':tab_9c', $tab['tab_9c']);
-            $this->requete->bindParam(':tab_10a', $tab['tab_10a']);
-            $this->requete->bindParam(':tab_10b', $tab['tab_10b']);
-            $this->requete->bindParam(':tab_10c', $tab['tab_10c']);
+            $this->requete->bindParam(':tab_1a', $tab1a);
+            $this->requete->bindParam(':tab_1b', $tab1b);
+            $this->requete->bindParam(':tab_1c', $tab1c);
+            $this->requete->bindParam(':tab_2a', $tab2a);
+            $this->requete->bindParam(':tab_2b', $tab2b);
+            $this->requete->bindParam(':tab_2c', $tab2c);
+            $this->requete->bindParam(':tab_3a', $tab3a);
+            $this->requete->bindParam(':tab_3b', $tab3b);
+            $this->requete->bindParam(':tab_3c', $tab3c);
+            $this->requete->bindParam(':tab_4a', $tab4a);
+            $this->requete->bindParam(':tab_4b', $tab4b);
+            $this->requete->bindParam(':tab_4c', $tab4c);
+            $this->requete->bindParam(':tab_5a', $tab5a);
+            $this->requete->bindParam(':tab_5b', $tab5b);
+            $this->requete->bindParam(':tab_5c', $tab5c);
+            $this->requete->bindParam(':tab_6a', $tab6a);
+            $this->requete->bindParam(':tab_6b', $tab6b);
+            $this->requete->bindParam(':tab_6c', $tab6c);
+            $this->requete->bindParam(':tab_7a', $tab7a);
+            $this->requete->bindParam(':tab_7b', $tab7b);
+            $this->requete->bindParam(':tab_7c', $tab7c);
+            $this->requete->bindParam(':tab_8a', $tab8a);
+            $this->requete->bindParam(':tab_8b', $tab8b);
+            $this->requete->bindParam(':tab_8c', $tab8c);
+            $this->requete->bindParam(':tab_9a', $tab9a);
+            $this->requete->bindParam(':tab_9b', $tab9b);
+            $this->requete->bindParam(':tab_9c', $tab9c);
+            $this->requete->bindParam(':tab_10a', $tab10a);
+            $this->requete->bindParam(':tab_10b', $tab10b);
+            $this->requete->bindParam(':tab_10c', $tab10c);
             $result = $this->requete->execute();
             $row = ($result) ? 1 : null;
             return $row;
@@ -185,6 +217,80 @@ class PrefModel extends Model
             return $row;
         }
     }
+
+
+    /**
+     * Modification dans la BDD "tab" des zones tab_1a à tab_10c
+     * 
+     * @return boolean
+     */
+    public function updateTabAjax($data)
+    {
+
+        require $this->file_admin;
+        $tab_tab = $table_prefix . 'tab';
+        $tab = $data['tab'];
+        $tabsql = 'tab_' . $tab;
+        $tabn =  $data['tab_n'] . '-' . $data['itab_n'];
+
+        try {
+            $req = "UPDATE $tab_tab SET 
+         $tabsql = :tab_n 
+         WHERE tab_id = :tab_id";
+
+            $this->requete = $this->connexion->prepare($req);
+            $this->requete->bindParam(':tab_id', $data['tab_id']);
+            $this->requete->bindParam(':tab_n', $tabn);
+            $result = $this->requete->execute();
+            $row = ($result) ? 1 : null;
+            return $row;
+        } catch (Exception $e) {
+            if (MB_DEBUG) {
+                var_dump($e->getMessage());
+            }
+            $row = null;
+            return $row;
+        }
+    }
+
+    /**
+     * Selection d'un élément dans la BDD tab de la station associé
+     *
+     * @return array
+     */
+    public function getTabAjaxActive($id)
+    {
+        require $this->file_admin;
+        $station_tab = $table_prefix . 'station';
+        $tab_tab = $table_prefix . 'tab';
+
+        $stat_statid = $station_tab . '.stat_id';
+        $tab_statid = $tab_tab . '.stat_id';
+        $stat_active = 1;
+        $tab_sql = 'tab_' . $id;
+
+        $req = "SELECT $tab_sql, $tab_statid FROM $tab_tab INNER JOIN $station_tab ON $tab_statid = $stat_statid WHERE stat_active = :stat_active";
+
+        try {
+            $this->requete = $this->connexion->prepare($req);
+            $this->requete->bindParam(':stat_active', $stat_active);
+
+            $result = $this->requete->execute();
+            $list = array();
+            if ($result) {
+                $list = $this->requete->fetch(PDO::FETCH_ASSOC);
+            }
+            return $list;
+        } catch (Exception $e) {
+            if (MB_DEBUG) {
+                die($e->getMessage());
+            }
+        }
+    }
+
+
+
+
     /**
      * CURL de downlaod ZIP
      * MAJ MBELL

@@ -12,6 +12,12 @@
             placeholder="{CASE_SENSITIVE}" required>
         <div class="form-text">{DAVIS_LIVESECRET_TEXT}</div>
     </li>
+    <li class="list-group-item">
+        <label for="stat_livenbr" class="form-label">{DAVIS_LIVENBR}</label>
+        <input type="number" class="form-control" id="stat_livenbr" name="stat_livenbr" value="{_VAL_STAT_LIVENBR}"
+            placeholder="{NBR}" min="1" max="10">
+        <div class="form-text">{DAVIS_LIVENBR_TEXT}</div>
+    </li>
 </ul>
 <input type="hidden" id="stat_type" name="stat_type" value="live">
 <input type="hidden" id="stat_users" name="stat_users" value="{_VAL_STAT_USERS}">

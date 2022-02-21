@@ -204,7 +204,7 @@ class Dispatcher
         } elseif ($true == false) {
             $version_file = (file_exists($pathVersion)) ? file_get_contents($pathVersion) : '';
         }
-        $filed = explode("\n", $version_file);
+        $filed = explode(PHP_EOL, $version_file);
         $version = floatval($filed[0]);
         return $version;
     }
