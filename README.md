@@ -120,6 +120,8 @@ Version actuelle = Publique 2.5 (Développement -0.80)
 - bug introduit en 2.4 : Impossible de modifier les cases dans la zone Configuration (sauf si vous avez choisi le maximum de lignes à 10) : réparé en 2.41
 - bug introduit en 2.41 : Le cronjob n'enregistre plus les données météos : réparé en 2.42
 - bug introduit en 2.1 : Si vous disposez de plusieurs stations sur un même compte WL (api-key et api-signature identiques), seul la première station de votre compte WL peut être installé avec mbell : réparé en 2.5
+- bug introduit en 2.1 : quand la tendance de pression est strictement égal à 0, elle n'affiche aucune image (flèche) ni information : réparé en 2.5
+- bug introduit en 2.1 : dans certaines circonstances, le taux de pluie affiche une valeur nulle (rond barré) : réparé en 2.5
 - bug introduit en 2.41 : L'icône Direction du Vent fonctionne avec un gradient de couleur dynamique faussé corespondant à la 'Vitesse du Vent' en degré : réparé en 2.5
 - Toutes les infos de stations ne sont pas proposés, les sondes auxiliaires Température Air-Eau-Sol (6372), Température & Humidité de l'Air (6382), Humectation du Feuillage / Température & Humidité du Sol (6345), ne sont pas encore prise en compte : corrigé en 2.5 pour Weatherlink Live
 
