@@ -119,9 +119,11 @@ Version actuelle = Publique 2.5 (Développement -0.80)
 - bug introduit en 2.3 : si vous ne disposez pas de l'extension CURL sur votre hébergement, il est possible que vous ne puissez pas patcher automatiquement Mbell dans la version suivante. Vous devez alors passer par Github pour patcher mbell : réparé en patchant la version 2.4 à 2.41
 - bug introduit en 2.4 : Impossible de modifier les cases dans la zone Configuration (sauf si vous avez choisi le maximum de lignes à 10) : réparé en 2.41
 - bug introduit en 2.41 : Le cronjob n'enregistre plus les données météos : réparé en 2.42
+- bug d'origine : mauvaise différenciation dans la zone Configuration entre la Case Capteur Solaire/UV Seul et Case Capteur Solaire/UV Complète avec Information de Lune + Lever-Coucher Soleil : corrigé en 2.5
 - bug introduit en 2.1 : Si vous disposez de plusieurs stations sur un même compte WL (api-key et api-signature identiques), seul la première station de votre compte WL peut être installé avec mbell : réparé en 2.5
 - bug introduit en 2.1 : quand la tendance de pression est strictement égal à 0, elle n'affiche aucune image (flèche) ni information : réparé en 2.5
 - bug introduit en 2.1 : dans certaines circonstances, le taux de pluie affiche une valeur nulle (rond barré) : réparé en 2.5
+- bug introduit en 2.3 : erreur de remplacement de string "yes"-"no" dans admin.php lors d'un patch : réparé en 2.5
 - bug introduit en 2.41 : L'icône Direction du Vent fonctionne avec un gradient de couleur dynamique faussé corespondant à la 'Vitesse du Vent' en degré : réparé en 2.5
 - Toutes les infos de stations ne sont pas proposés, les sondes auxiliaires Température Air-Eau-Sol (6372), Température & Humidité de l'Air (6382), Humectation du Feuillage / Température & Humidité du Sol (6345), ne sont pas encore prise en compte : corrigé en 2.5 pour Weatherlink Live
 
