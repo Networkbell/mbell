@@ -13,6 +13,7 @@ class InstallController extends Controller
         $this->view = new InstallView();
         $this->model = new InstallModel();
         $this->paramStat = new StationModel();
+        
 
 
         parent::__construct();
@@ -249,6 +250,8 @@ class InstallController extends Controller
                 }
             }
             $ver = ($response4c) ? 2.5 : false;
+            $response5 = 1;
+            $ver = ($response5) ? 2.51 : false;
         } elseif ($version_installed <= 2.4 && $version_installed <= $version) {
             $response2 = 1;
             $ver = ($response2) ? 2.41 : false;
@@ -264,6 +267,8 @@ class InstallController extends Controller
                 }
             }
             $ver = ($response4c) ? 2.5 : false;
+            $response5 = 1;
+            $ver = ($response5) ? 2.51 : false;
         } elseif ($version_installed <= 2.41 && $version_installed <= $version) {
             $response3 = $this->model->Maj241To242();
             $ver = ($response3) ? 2.42 : false;
@@ -277,6 +282,8 @@ class InstallController extends Controller
                 }
             }
             $ver = ($response4c) ? 2.5 : false;
+            $response5 = 1;
+            $ver = ($response5) ? 2.51 : false;
         } elseif ($version_installed <= 2.42 && $version_installed <= $version) {
             $response4a = $this->model->Maj242To25a();
             if ($response4a) {
@@ -288,6 +295,12 @@ class InstallController extends Controller
                 }
             }
             $ver = ($response4c) ? 2.5 : false;
+            $response5 = 1;
+            $ver = ($response5) ? 2.51 : false;
+        }
+        elseif ($version_installed <= 2.5 && $version_installed <= $version) {
+            $response5 = 1;
+            $ver = ($response5) ? 2.51 : false;
         }
         if ($ver) {
             $rep = $this->model->InstallNo($ver);

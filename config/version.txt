@@ -1,7 +1,7 @@
-2.5
+2.51
 // NE PAS DEPLACER OU SUPPRIMER LA 1ere LIGNE, MBELL L'UTLISE COMME CODE
 
-// Version 2.5-0.80 - Février 2022
+// Version 2.51-0.80 - Mars 2022
 
 /** VERSION
  * Dernier numéro de version de Mbell
@@ -127,4 +127,6 @@ VERSION 2.42 -0.73 : Correctif 2.4 + Cron Direct Expert
 - 0.79 : updateTab Model avec Ajax (1 case) - affichage résultat updateTab avec Ajax (1 case) - affichage formulaire itab avec Ajax (1 case)
 - 0.80 : automatisation/optimisation Ajax multicases - corrections updateTab sans WL suite à modifs ajax - ajout Weewx bar_trend - correction Color Direction du Vent - modif patch maj - correction str_replace (yes-no) pour admin.php
 ___________
-VERSION 2.5 : Update Weatherlink Live : Nouveau Système Multi-API et Multi-Sensors / Nouveaux Capteurs Extras / Ajax sur double formulaire pour WL en zone Configuration 
+VERSION 2.5 -0.80 : Update Weatherlink Live : Nouveau Système Multi-API et Multi-Sensors / Nouveaux Capteurs Extras / Ajax sur double formulaire pour WL en zone Configuration 
+___________
+VERSION 2.51 -0.80 : Correctif 2.51 - Bug Température Ressentie
