@@ -1241,7 +1241,7 @@ class StationView extends View
                 "_UNIT" => $this->getUnit($switch, 'temp'),
                 "_CLASS_UNIT_SMALL" => '08',
                 "_CLASS_UNIT_LARGE" => '09',
-                "color" => ($this->is_Temp('59', $apiDatas['temp_f']) == true) ? $this->col->colWindchill($switch, $apiDatas['windchill_f'], $datas, $info, $livestation, $livenbr, $livetab) : $this->col->colHeat($switch, $apiDatas['heat_index_f'], $datas, $info, $livestation, $livenbr)
+                "color" => ($this->is_Temp('59', $apiDatas['temp_f']) == true) ? $this->col->colWindchill($switch, $apiDatas['windchill_f'], $datas, $info, $livestation, $livenbr, $livetab) : $this->col->colHeat($switch, $apiDatas['heat_index_f'], $datas, $info, $livestation, $livenbr, $livetab)
             ),
             "6" => array(
                 "_VALUE_MAIN" => $this->getRain($switch, $apiDatas['rain_day_in']),
