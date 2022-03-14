@@ -76,7 +76,7 @@ Il vous suffit d'installer plusieurs mbell avec des préfixes de tables différe
 etc...
 
 NOTE 1 : Vous pouvez aussi faire cela avec une seule station météo et des mbell avec plusieurs configurations, langues, design etc différentes.
-
+NOTE 2 : Ajout version 2.5 pour Weatherlink Live : A l'installation, vous pouvez choisir une station en particulier (Numéro de Station - Optionnel). De même, si vous disposez d'une multitude de capteurs intégrés à votre station Weatherlink Live (exemple : 2 stations ISS + 2 déports anémomètres), vous pouvez choisir dans la zone de Configuration, maintenant, à quel capteur vous voulez affilier telle case.
 
 # Debug
 
