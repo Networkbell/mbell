@@ -93,8 +93,9 @@ $debug = false;
     2.41 (-0.72) - Correctif : Optimisation Code + Addon Wind Direction Box
     2.42 (-0.73) - Correctif : Cron Bug + Addon Cron Direct
     2.5 (-0.80) - Update Weatherlink Live Multi-Sensors
+    2.51 (-0.80) - Correctif : Bug Température Ressentie 
 
-Version actuelle = Publique 2.5 (Développement -0.80)
+Version actuelle = Publique 2.51 (Développement -0.80)
 
 
 # Problèmes connus
@@ -126,6 +127,7 @@ Version actuelle = Publique 2.5 (Développement -0.80)
 - bug introduit en 2.3 : erreur de remplacement de string "yes"-"no" dans admin.php lors d'un patch : réparé en 2.5
 - bug introduit en 2.41 : L'icône Direction du Vent fonctionne avec un gradient de couleur dynamique faussé corespondant à la 'Vitesse du Vent' en degré : réparé en 2.5
 - Toutes les infos de stations ne sont pas proposés, les sondes auxiliaires Température Air-Eau-Sol (6372), Température & Humidité de l'Air (6382), Humectation du Feuillage / Température & Humidité du Sol (6345), ne sont pas encore prise en compte : corrigé en 2.5 pour Weatherlink Live
+- bug introduit en version 2.5 : erreur fatal PHP lorsque la température ressentie dépasse les 15°C en couleur dynamique : réparé en 2.51 
 
 
 
