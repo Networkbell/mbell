@@ -2,11 +2,11 @@
 
 class Color
 {
+    protected $statview;
 
     public function __construct()
     {
     }
-
 
     public function arrColor($switch, $datas, $info, $livestation, $livenbr, $livetab)
     {
@@ -15,7 +15,10 @@ class Color
         $col = $switch['s_color'];
         $daynight = $switch['s_daynight'];
 
-        $this->statview = new StationView();
+        if (!$this->statview) {
+            $this->statview = new StationView();
+        }
+
         $apiDatasUP = $this->statview->getAPIDatasUp($datas, $info, $livestation, $livenbr, $livetab);
 
         $time = $apiDatasUP['time'];
@@ -243,6 +246,7 @@ class Color
                 "12" => (($css == 'bluedark') || ($css == 'black')) ? '#514edf' : '#0000b2'
 
             ),
+
 
         );
 

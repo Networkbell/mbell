@@ -1,7 +1,7 @@
-2.51
+2.6
 // NE PAS DEPLACER OU SUPPRIMER LA 1ere LIGNE, MBELL L'UTLISE COMME CODE
 
-// Version 2.51-0.80 - Mars 2022
+// Version 2.6-0.90 - Juillet 2026
 
 /** VERSION
  * Dernier numéro de version de Mbell
@@ -130,3 +130,7 @@ ___________
 VERSION 2.5 -0.80 : Update Weatherlink Live : Nouveau Système Multi-API et Multi-Sensors / Nouveaux Capteurs Extras / Ajax sur double formulaire pour WL en zone Configuration 
 ___________
 VERSION 2.51 -0.80 : Correctif 2.51 - Bug Température Ressentie
+___________
+VERSION 2.6 -0.90 : PHP 8.4+
+
+- 0.90 : passage du PHP de version 7.4 à 8.4+ - Optimisation du code pour compatibilité PHP 8.4+ - Correction de bugs mineurs - Mise à jour des dépendances et bibliothèques pour compatibilité avec PHP 8.4+ - Amélioration de la sécurité et de la performance globale de l'application
