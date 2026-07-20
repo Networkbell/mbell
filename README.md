@@ -13,7 +13,7 @@ Exemple de station météo utilisant mbell à cette adresse : http://www.meteobe
 # Prérequis
 
 - Disposer d'une station météo de la marque Davis Instruments avec datalogger IP (weatherlink v1 et v2), connexion USB (weatherlink v2), Weatherlink Live ou Weewx.
-- Disposer d'un hébergement internet (en PHP 7 à 7.4)
+- Disposer d'un hébergement internet (en PHP 7 à 8.4)
 - Disposer d'1 base de données sur son hébergement internet
 
 NOTE 1 : Si vous ne disposez ni d'hébergement internet et/ou ni de base de données, vous pouvez cependant installer Mbell sur votre ordinateur en local. Suivre dans ce cas la procédure d'installation avec localhost.
