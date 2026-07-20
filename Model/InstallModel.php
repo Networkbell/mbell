@@ -684,6 +684,8 @@ class InstallModel extends Model
         $file = file_put_contents($path, $file);
     }
 
+
+
     public function trim_lines($path, $max)
     {
         $lines = file($path);

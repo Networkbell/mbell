@@ -7,34 +7,46 @@ abstract class Model
     protected $requete;
     protected $file_admin;
     protected $paramStat;
+    protected $dispatcher;
+    protected $l;
 
     public function __construct()
     {
-        $this->dispatcher = new Dispatcher;
+        $this->dispatcher = new Dispatcher();
         $this->l = new Lang();
         $this->file_admin = dirname(dirname(__FILE__)) . '/config/admin.php';
 
-        //CONNEXION BDD
+        /* Database connection */
         if (file_exists($this->file_admin)) {
             require $this->file_admin;
+
             try {
-                $this->connexion = new PDO("mysql:host=" .
-                    DB_HOST . ";dbname=" .
-                    DB_NAME, DB_USER, DB_PASSWORD);
-                // Activation des erreurs PDO
+                $dsn = 'mysql:host=' . DB_HOST . ';dbname=' . DB_NAME;
+                if (defined('DB_CHARSET') && DB_CHARSET !== '') {
+                    $dsn .= ';charset=' . DB_CHARSET;
+                }
+
+                $this->connexion = new PDO($dsn, DB_USER, DB_PASSWORD);
+
+                /* Enable PDO errors */
                 $this->connexion->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-                // mode de fetch par défaut : FETCH_ASSOC / FETCH_OBJ / FETCH_BOTH
-                //$this->connexion->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
+
+                /* Default fetch mode examples: FETCH_ASSOC / FETCH_OBJ / FETCH_BOTH */
+                /* $this->connexion->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC); */
             } catch (Exception $e) {
-                if ($_GET['controller'] == "install") {
-                    if (MB_DEBUG) {
+                if (($_GET['controller'] ?? null) == 'install') {
+                    if (defined('MB_DEBUG') && MB_DEBUG) {
                         die($e->getMessage());
                     }
-                    unlink($this->file_admin);
-                    $response = 2;
-                    return ($response);
+
+                    if (file_exists($this->file_admin)) {
+                        unlink($this->file_admin);
+                    }
+
+                    return;
                 }
-                if (MB_DEBUG) {
+
+                if (defined('MB_DEBUG') && MB_DEBUG) {
                     die($e->getMessage());
                 }
             }
@@ -44,10 +56,10 @@ abstract class Model
     public function __destruct()
     {
         try {
-            $this->connexion = null; //Closes connection
+            $this->connexion = null; /* Closes connection */
             $this->requete = null;
         } catch (PDOException $e) {
-            if (MB_DEBUG) {
+            if (defined('MB_DEBUG') && MB_DEBUG) {
                 die($e->getMessage());
             }
         }
@@ -56,10 +68,10 @@ abstract class Model
     public function close($connexion, $requete)
     {
         try {
-            $connexion = null; //Closes connection
+            $connexion = null; /* Closes connection */
             $requete = null;
         } catch (PDOException $e) {
-            if (MB_DEBUG) {
+            if (defined('MB_DEBUG') && MB_DEBUG) {
                 die($e->getMessage());
             }
         }
@@ -87,7 +99,7 @@ abstract class Model
      */
     public function hexaKey()
     {
-        $crypt = bin2hex(openssl_random_pseudo_bytes(32));
+        $crypt = bin2hex(random_bytes(32));
         return $crypt;
     }
 
@@ -100,8 +112,8 @@ abstract class Model
     public function pepperKey($paramPost)
     {
         require $this->file_admin;
-        $pwd = $paramPost['user_password'];
-        $pwd_peppered = hash_hmac("sha256", $pwd, KEY_CRYPT);
+        $pwd = $paramPost['user_password'] ?? '';
+        $pwd_peppered = hash_hmac('sha256', $pwd, KEY_CRYPT);
         return $pwd_peppered;
     }
 
@@ -115,19 +127,20 @@ abstract class Model
      */
     public function getUserSession()
     {
-
-
         require $this->file_admin;
         $user_tab = $table_prefix . 'user';
+        $userLogin = $_SESSION['user_login'] ?? '';
 
         try {
             $this->requete = $this->connexion->prepare("SELECT * FROM $user_tab WHERE user_login = :user_login");
-            $this->requete->bindParam(':user_login', $_SESSION['user_login']);
+            $this->requete->bindParam(':user_login', $userLogin);
             $result = $this->requete->execute();
             $list = array();
+
             if ($result) {
                 $list = $this->requete->fetch(PDO::FETCH_ASSOC);
             }
+
             return $list;
         } catch (Exception $e) {
             die(var_dump($e->getMessage()));
@@ -325,9 +338,10 @@ abstract class Model
     public function getLiveAPIStation($key, $secret)
     {
         $data = @file_get_contents($this->getLiveURLStation($key, $secret));
-        $json = json_decode($data, true);
+        $json = json_decode($data ?: '', true);
         $this->jsonDebug();
-        return $json;
+
+        return is_array($json) ? $json : array();
     }
 
     /**
@@ -354,36 +368,44 @@ abstract class Model
 
     public function jsonDebug()
     {
-        require $this->file_admin;
-        if (MB_DEBUG) {
-            if (json_last_error()) {
-                $jsDebug = '';
-                switch (json_last_error()) {
-                    case JSON_ERROR_NONE:
-                        $jsDebug .= ' - Aucune erreur';
-                        break;
-                    case JSON_ERROR_DEPTH:
-                        $jsDebug .= ' - Profondeur maximale atteinte';
-                        break;
-                    case JSON_ERROR_STATE_MISMATCH:
-                        $jsDebug .= ' - Inadéquation des modes ou underflow';
-                        break;
-                    case JSON_ERROR_CTRL_CHAR:
-                        $jsDebug .= ' - Erreur lors du contrôle des caractères';
-                        break;
-                    case JSON_ERROR_SYNTAX:
-                        $jsDebug .= " - Erreur de syntaxe ; JSON malformé ; Erreur d'API ; Mauvais identifiants vers votre API";
-                        break;
-                    case JSON_ERROR_UTF8:
-                        $jsDebug .= ' - Caractères UTF-8 malformés, probablement une erreur d\'encodage';
-                        break;
-                    default:
-                        $jsDebug .= ' - Erreur inconnue';
-                        break;
-                }
-                return var_dump($jsDebug);
-            }
+        if (!file_exists($this->file_admin)) {
+            return;
         }
+
+        require $this->file_admin;
+
+        if (!defined('MB_DEBUG') || !MB_DEBUG) {
+            return;
+        }
+
+        if (json_last_error() === JSON_ERROR_NONE) {
+            return;
+        }
+
+        $jsDebug = '';
+
+        switch (json_last_error()) {
+            case JSON_ERROR_DEPTH:
+                $jsDebug .= ' - Maximum stack depth exceeded';
+                break;
+            case JSON_ERROR_STATE_MISMATCH:
+                $jsDebug .= ' - Invalid or malformed JSON state';
+                break;
+            case JSON_ERROR_CTRL_CHAR:
+                $jsDebug .= ' - Control character error';
+                break;
+            case JSON_ERROR_SYNTAX:
+                $jsDebug .= ' - Syntax error; malformed JSON; API error; invalid API credentials';
+                break;
+            case JSON_ERROR_UTF8:
+                $jsDebug .= ' - Malformed UTF-8 characters, possibly an encoding issue';
+                break;
+            default:
+                $jsDebug .= ' - Unknown error';
+                break;
+        }
+
+        var_dump($jsDebug);
     }
 
 
@@ -446,14 +468,18 @@ abstract class Model
 
             $result = $this->requete->execute();
             $list = array();
+
             if ($result) {
                 $list = $this->requete->fetch(PDO::FETCH_ASSOC);
             }
+
             return $list;
         } catch (Exception $e) {
-            if (MB_DEBUG) {
+            if (defined('MB_DEBUG') && MB_DEBUG) {
                 die($e->getMessage());
             }
+
+            return array();
         }
     }
 }

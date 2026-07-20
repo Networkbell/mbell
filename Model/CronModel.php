@@ -1,9 +1,11 @@
 <?php
 class CronModel extends Model
 {
+    protected $stationview;
+
     public function __construct()
     {
-        session_write_close(); //permet de débloquer le script avec la boucle infini généré par le cron pour permettre aux autres scripts de s'exécuter
+        session_write_close(); /* Unlocks the script when the cron infinite loop is running so other scripts can execute */
 
         parent::__construct();
         $this->stationview = new StationView();
@@ -110,43 +112,52 @@ class CronModel extends Model
 
 
     /**
-     * Boucle Cron, 
-     * le 1er temps d'attente corrige les déviations. 
-     * Le 2eme, on attend 8 minutes avant de relancer le 1er
+     * Cron loop.
+     * The first waiting time corrects deviations.
+     * The second waits 8 minutes before restarting the first one.
      *
      * @return boolean
      */
     public function activateCron()
     {
-
         ignore_user_abort(true);
         set_time_limit(0);
 
-        while ($this->getConfigActiveCron()['config_cron'] == 1 && $this->getConfigActiveCron()['config_crontime'] == 0) {
+        $response = false;
+        $config = $this->getConfigActiveCron();
 
-            //on va chercher les valeurs dans la boucle plutôt que le controller en amont pour que les données de l'API se mettent bien à jour une fois le cron lancé
+        while (($config['config_cron'] ?? null) == 1 && ($config['config_crontime'] ?? null) == 0) {
+            /* Values are loaded inside the loop so API data is refreshed while cron is running */
             $station = $this->paramStat->getStationActive();
-            $type = (isset($station['stat_type'])) ? $station['stat_type'] : null;
-            $livenbr = ($type == 'live') ? $station['stat_livenbr'] - 1 : 0;
-            $livetab = 0; // pas besoin ici
+            $type = isset($station['stat_type']) ? $station['stat_type'] : null;
+            $livenbr = ($type == 'live') ? (($station['stat_livenbr'] ?? 1) - 1) : 0;
+            $livetab = 0; /* Not needed here */
 
             $liveStation1 = ($type == 'live') ? $this->getLiveAPIStation($station['stat_livekey'], $station['stat_livesecret']) : '';
             $datas1 = $this->paramStat->getAPI();
-            $dateString = $this->stationview->getAPIDatasUp($datas1, $station, $liveStation1, $livenbr, $livetab)['time'];
+            $apiDataUp = $this->stationview->getAPIDatasUp($datas1, $station, $liveStation1, $livenbr, $livetab);
+            $dateString = $apiDataUp['time'] ?? '&#8709;';
 
-            $time_sleep = ($type == 'live') ? 780 : 480; // 780 = 13 minutes / 480 = 8 minutes
-            $time_precision = ($type == 'live') ? 15 : 10; // API v2 = 15mn / API v1 = 10mn
-            $time_deviation = ($type == 'live' || $type == 'weewx') ? 0 : $this->waitDeviationCron($dateString, $time_precision); // pas de déviation avec API v2 car on utilise time() dans l'API
+            if ($dateString == '&#8709;') {
+                break;
+            }
+
+            $time_sleep = ($type == 'live') ? 780 : 480; /* 780 = 13 minutes / 480 = 8 minutes */
+            $time_precision = ($type == 'live') ? 15 : 10; /* v2 API = 15 min / v1 API = 10 min */
+            $time_deviation = ($type == 'live' || $type == 'weewx') ? 0 : $this->waitDeviationCron($dateString, $time_precision); /* No deviation with v2 API because time() is used in the API */
 
             $time = $this->waitactiveCron($dateString, $time_precision) + $time_deviation;
 
             time_sleep_until($time);
 
-            $datas2 = $this->paramStat->getAPI(); //on remet à jour les datas après le temps d'attente
+            $datas2 = $this->paramStat->getAPI(); /* Refresh data after waiting time */
             $liveStation2 = ($type == 'live') ? $this->getLiveAPIStation($station['stat_livekey'], $station['stat_livesecret']) : '';
             $response = $this->addWeather($datas2, $station, $liveStation2, $livenbr);
             sleep($time_sleep);
+
+            $config = $this->getConfigActiveCron();
         }
+
         return $response;
     }
 
@@ -218,23 +229,22 @@ class CronModel extends Model
     }
 
     /**
-     * Transforme en float les résultats (0 différent de null)
+     * Converts results to float while keeping 0 different from null.
      *
      * @param [int, string, float] $data
      * @return float
      */
     public function floaVal($data)
     {
-        if ($data == '&#8709;' && ($data != '0' || $data != 0.0 || $data != 0)) {
-            $rep = null;
-        } else {
-            if ($data == '0' || $data == 0.0 || $data == 0) {
-                $rep = 0.0;
-            } else {
-                $rep = floatval($data);
-            }
+        if ($data === '&#8709;') {
+            return null;
         }
-        return $rep;
+
+        if ($data === '0' || $data === 0 || $data === 0.0) {
+            return 0.0;
+        }
+
+        return floatval($data);
     }
 
 
