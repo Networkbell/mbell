@@ -16,13 +16,15 @@ abstract class View
 {
 
 
-    protected $page;
+    protected $page = '';
     protected $col;
     protected $moon;
+    protected $l;
+    protected $file_admin;
+    protected $dispatcher;
 
     public function __construct()
     {
-
         $this->l = new Lang();
         $this->col = new Color();
         $this->file_admin = dirname(dirname(__FILE__)) . '/config/admin.php';
@@ -49,13 +51,16 @@ abstract class View
     }
     
     /**
-     * Lien vers racine du site 
-     * 
+     * Link to the site root.
+     *
      * @return string
      */
     public function getRoot()
     {
-        $root = (!empty($_SERVER['HTTPS']) ? 'https' : 'http') . '://' . $_SERVER['HTTP_HOST'] . '/';
+        $scheme = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
+        $host = $_SERVER['HTTP_HOST'] ?? 'localhost';
+        $root = $scheme . '://' . $host . '/';
+
         return $root;
     }
 
@@ -81,9 +86,9 @@ abstract class View
 
     public function langDrapActive($array, $lg)
     {
-
-
+        $page = '';
         $numb = '2';
+
         foreach ($array as $key => $lang) {
             if ($lang == $lg) {
                 $page = '<a href="index.php?lg=' . $lang . '" class="active">';

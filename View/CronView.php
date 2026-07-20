@@ -1,6 +1,9 @@
 <?php
+
 class CronView extends View
 {
+
+    protected $statview;
 
     public function __construct()
     {

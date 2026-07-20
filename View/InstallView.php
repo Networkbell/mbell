@@ -3,9 +3,10 @@
 class InstallView extends View
 {
 
+    protected $statview;
+
     public function __construct()
     {
-
         $this->statview = new StationView();
         parent::__construct();
     }

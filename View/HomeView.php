@@ -1,6 +1,9 @@
 <?php
+
 class HomeView extends View
 {
+
+    protected $statview;
 
     public function __construct()
     {

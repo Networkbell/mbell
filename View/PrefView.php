@@ -1,8 +1,9 @@
 <?php
+
 class PrefView extends View
 {
 
-
+    protected $statview;
 
     public function __construct()
     {
@@ -458,10 +459,7 @@ class PrefView extends View
 
     public function checkLines($id, $tab)
     {
-        if ($tab['tab_lines'] == $id) {
-            $checked = 'checked';
-            return $checked;
-        }
+        return ($tab['tab_lines'] == $id) ? 'checked' : '';
     }
 
 

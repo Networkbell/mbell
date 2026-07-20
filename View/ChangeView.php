@@ -1,6 +1,9 @@
 <?php
+
 class ChangeView extends View
 {
+
+    protected $statview;
 
     public function __construct()
     {

@@ -20,111 +20,139 @@ class StationView extends View
     }
 
     /**
-     * Pour Weatherlink Live
-     * calcul sunset-sunrise à partir de timestamp
+     * For Weatherlink Live.
+     * Calculates sunrise or sunset from a timestamp.
      */
     public function liveDateSun($time, $latitude, $longitude, $fuseau, $type)
     {
-        if ($time != '&#8709;') {
-            date_default_timezone_set($fuseau);
-            $date = date("h:i a", date_sun_info($time, $latitude, $longitude)[$type]);
-            return $date;
+        $zero = '&#8709;';
+
+        if ($time != $zero) {
+            date_default_timezone_set($fuseau ?: 'UTC');
+            $sunInfo = date_sun_info((int) $time, (float) $latitude, (float) $longitude);
+
+            if (isset($sunInfo[$type]) && $sunInfo[$type] !== false) {
+                $date = date('h:i a', $sunInfo[$type]);
+                return $date;
+            }
         }
+
+        return $zero;
     }
 
 
     /**
-     * Pour API v1
-     * calcul time format RCF822 à partir de timestamp
+     * For v1 API.
+     * Calculates RFC822 time format from a timestamp.
      */
     public function liveDateRFC822($time, $fuseau)
     {
-        if ($time != '&#8709;') {
-            date_default_timezone_set($fuseau);
-            $date = date(DATE_RFC822, $time);
+        $zero = '&#8709;';
+
+        if ($time != $zero) {
+            date_default_timezone_set($fuseau ?: 'UTC');
+            $date = date(DATE_RFC822, (int) $time);
             return $date;
         }
+
+        return $zero;
     }
 
     /**
-     * Pour API weewx UTC
-     * calcul time format RCF822 à partir de timestamp 
-     * avec offset sous forme "CET +0100"
+     * For Weewx UTC API.
+     * Calculates RFC822 time format from a timestamp
+     * using an offset string such as "CET +0100".
      */
     public function weewxDateRFC822($time, $offset)
     {
         $zero = '&#8709;';
-        if ($time != $zero  && $offset != $zero) {
-            // CET +0100
-            $gmt = substr($offset, 0, -6); // CET
-            $off = substr($offset, -5); // +0100
 
-            $dt = new DateTime();
-            $dt->setTimeZone(new DateTimeZone($gmt));
-            $dt->setTimestamp($time);
-            $dt->setTimeZone(new DateTimeZone($off));
+        if ($time != $zero && $offset != $zero) {
+            $timezone = $this->timeZoneWeewx($offset);
+            $dt = new DateTime('@' . (int) $time);
+            $dt->setTimezone(new DateTimeZone($timezone));
             $date = $dt->format(DATE_RFC822);
+
             return $date;
         }
+
+        return $zero;
     }
 
     /**
-     * Pour API weewx
-     * calcul fuseau horaire à partir de offset
+     * For Weewx API.
+     * Calculates the timezone from an offset string.
      */
     public function timeZoneWeewx($offset)
     {
         $zero = '&#8709;';
+
         if ($offset != $zero) {
-            // CET +0100
-            $gmt = substr($offset, 0, -6); // CET
-            $off = substr($offset, -5); // +0100
-            $date1 = DateTime::createFromFormat('O', $gmt)->getOffset();
-            $date2 = DateTime::createFromFormat('O', $off)->getOffset();
-            $date = $date1 + $date2;
-            $timezone = timezone_name_from_abbr("", $date, 0);
-            return $timezone;
+            /* Example: CET +0100 */
+            $gmt = trim(substr($offset, 0, -6));
+            $off = trim(substr($offset, -5));
+
+            $date = DateTime::createFromFormat('O', $off);
+            $seconds = $date instanceof DateTime ? $date->getOffset() : 0;
+
+            $timezone = timezone_name_from_abbr($gmt, $seconds, 0);
+            if ($timezone === false) {
+                $timezone = timezone_name_from_abbr('', $seconds, 0);
+            }
+
+            if ($timezone !== false && !empty($timezone)) {
+                return $timezone;
+            }
         }
+
+        return 'UTC';
     }
 
 
 
     /**
-     * Pour API v1
-     * calcul fuseau horaire à partir de time format RCF822 
+     * For v1 API.
+     * Calculates the timezone from RFC822 time format.
      */
     public function timeZone($timeRFC822)
     {
         if ($timeRFC822 != '&#8709;') {
             $dt = new DateTime($timeRFC822);
+
             /* $tz = $dt->getTimezone();
-            $fus = $tz->getName();*/
-            $offset =  $dt->getOffset();
-            $timezone = timezone_name_from_abbr("", $offset, 0);
-            return $timezone;
+            $fus = $tz->getName(); */
+
+            $offset = $dt->getOffset();
+            $timezone = timezone_name_from_abbr('', $offset, 0);
+
+            if ($timezone !== false && !empty($timezone)) {
+                return $timezone;
+            }
         }
-    }
+
+        return 'UTC';
+    }   
 
 
 
     /**
-     * Création de date à partir de timestamp
+     * Creates a date from a timestamp.
      */
-
     public function DateCreate($datas, $lg, $timeZone)
     {
         $zero = '&#8709;';
+        $date_time = $zero;
+
         if (isset($datas) && $datas != $zero) {
-            date_default_timezone_set($timeZone);
+            date_default_timezone_set($timeZone ?: 'UTC');
             $date = new DateTime();
-            $date->setTimestamp($datas);
-            if ($lg == "fr") {
-                $date_time =  $date->format('d.m.Y à H:i');
-            } elseif ($lg == "en") {
+            $date->setTimestamp((int) $datas);
+
+            if ($lg == 'fr') {
+                $date_time = $date->format('d.m.Y à H:i');
+            } elseif ($lg == 'en') {
                 $date_time = $date->format('m/d/Y @ h:ia');
             }
-        } else {
-            $date_time =  $zero;
         }
 
         return $date_time;
@@ -132,76 +160,85 @@ class StationView extends View
 
 
     /**
-     * Création de date à partir de format RFC822
+     * Creates a date from RFC822 format.
      */
-
     public function DateStation($datas, $lg)
     {
         $zero = '&#8709;';
+        $date_time = $zero;
+
         if ($datas != $zero) {
             $tmp_date = date_create($datas);
-            if (isset($tmp_date)) {
-                if ($lg == "fr") {
-                    $date_time = date_format($tmp_date, "d.m.Y à H:i");
-                } elseif ($lg == "en") {
-                    $date_time = date_format($tmp_date, "m/d/Y @ h:ia");
+
+            if ($tmp_date instanceof DateTime) {
+                if ($lg == 'fr') {
+                    $date_time = date_format($tmp_date, 'd.m.Y à H:i');
+                } elseif ($lg == 'en') {
+                    $date_time = date_format($tmp_date, 'm/d/Y @ h:ia');
                 }
             }
-            return $date_time;
         }
+
+        return $date_time;
     }
 
 
     /**
-     * format de $datas doit être "h:i a"
-     *
-     * */
-
+     * The format of $datas must be "h:i a".
+     */
     public function TimeStation($datas)
     {
         $zero = '&#8709;';
+        $time = $zero;
+
         if ($datas != $zero) {
             $tmp_date = date_create($datas);
-            if (isset($tmp_date)) {
-                $time = date_format($tmp_date, "Hi");
+
+            if ($tmp_date instanceof DateTime) {
+                $time = date_format($tmp_date, 'Hi');
             }
-            return $time;
         }
+
+        return $time;
     }
 
     /* 
-    Pour Weatherlink Live
-    Calcul pressure string au format Api v1 à partir de bar_trend
-    
-    if bar_trend >= 0.060 then it is Rising Rapidly
-        if bar_trend >= 0.020 then it is Rising Slowly
-        if bar_trend < 0.020 and bar_trend > -0.020 then it is Steady
-        if bar_trend <= -0.020 then it is Falling Slowly
-        if bar_trend <= -0.060 then it is Falling Rapidly
+    For Weatherlink Live.
+    Calculates the pressure string in v1 API format from bar_trend.
+
+    If bar_trend >= 0.060 then it is Rising Rapidly
+    If bar_trend >= 0.020 then it is Rising Slowly
+    If bar_trend < 0.020 and bar_trend > -0.020 then it is Steady
+    If bar_trend <= -0.020 then it is Falling Slowly
+    If bar_trend <= -0.060 then it is Falling Rapidly
     */
     public function livePressTrend($value)
     {
-
         $zero = '&#8709;';
-        $value = strval($value);
+
         if ($value != $zero) {
-            if ($value >= '0.060') {
-                $value = str_replace($value, "Rising Rapidly", $value);
+            $value = (float) $value;
+
+            if ($value >= 0.060) {
+                return 'Rising Rapidly';
             }
-            if ($value >= '0.020' && $value < '0.060') {
-                $value = str_replace($value, "Rising Slowly", $value);
+
+            if ($value >= 0.020) {
+                return 'Rising Slowly';
             }
-            if ($value > '-0.020' && $value < '0.020') {
-                $value = str_replace($value, "Steady", $value);
+
+            if ($value > -0.020) {
+                return 'Steady';
             }
-            if ($value > '-0.060' && $value <= '-0.020') {
-                $value = str_replace($value, "Falling Slowly", $value);
+
+            if ($value > -0.060) {
+                return 'Falling Slowly';
             }
-            if ($value <= '-0.060') {
-                $value = str_replace($value, "Falling Rapidly", $value);
-            }
-            return $value;
+
+            return 'Falling Rapidly';
         }
+
+        return $zero;
     }
 
     /* 
@@ -3660,3 +3697,4 @@ class StationView extends View
         return $inc;
     }
 }
+
