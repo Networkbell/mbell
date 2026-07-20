@@ -1,11 +1,10 @@
 <?php
 
 
-
 class ChangeController  extends Controller
 {
 
-
+protected $paramCron;
 
     public function __construct()
     {

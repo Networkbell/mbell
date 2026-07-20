@@ -1,13 +1,9 @@
 <?php
 
-
-
-
-
 class PrefController extends Controller
 {
 
-
+    protected $stationview;
 
     public function __construct()
     {

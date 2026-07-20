@@ -17,19 +17,19 @@ require MBELLPATH . 'Model/CronModel.php';
 require MBELLPATH . 'config/Color.php';
 require MBELLPATH . 'config/Moon.php';
 
-
 abstract class Controller
 {
-
     protected $model;
     protected $view;
-    protected $paramGet;
-    protected $paramPost;
+    protected $paramGet = array();
+    protected $paramPost = array();
     protected $paramStat;
+    protected $l;
+    protected $dispatcher;
+    protected $file_admin;
 
     public function __construct()
     {
-
         $this->l = new Lang();
         $this->dispatcher = new Dispatcher();
         $this->file_admin = dirname(dirname(__FILE__)) . '/config/admin.php';
@@ -40,15 +40,15 @@ abstract class Controller
             }
         }
 
-        //converti le checkbox avec array (name[] + value) en checkbox normal
-        if (!empty($_POST["var_sun"])) {
-            if ((in_array('sun', $_POST["var_sun"])) && (in_array('uv', $_POST["var_sun"]))) {
-                $_POST["var_sun"] = 'sun_uv';
+        /* Convert checkbox array input into a single checkbox value. */
+        if (isset($_POST['var_sun']) && is_array($_POST['var_sun'])) {
+            if (in_array('sun', $_POST['var_sun'], true) && in_array('uv', $_POST['var_sun'], true)) {
+                $_POST['var_sun'] = 'sun_uv';
             } else {
-                $_POST["var_sun"] = $_POST["var_sun"][0];
+                $_POST['var_sun'] = $_POST['var_sun'][0] ?? '';
             }
-        } else {
-            $_POST["var_sun"] = '';
+        } elseif (!isset($_POST['var_sun'])) {
+            $_POST['var_sun'] = '';
         }
 
         if (!empty($_POST)) {
@@ -57,25 +57,35 @@ abstract class Controller
             }
         }
 
-
-        if (empty($this->paramPost["metabdd"])) {
-            $this->paramPost["metabdd"] = "mb_";
+        if (empty($this->paramPost['metabdd'])) {
+            $this->paramPost['metabdd'] = 'mb_';
         }
     }
 
     private function protected_values($values)
     {
-        $values = trim($values);
+        if (is_array($values)) {
+            foreach ($values as $key => $value) {
+                $values[$key] = $this->protected_values($value);
+            }
+
+            return $values;
+        }
+
+        $values = trim((string) $values);
         $values = stripslashes($values);
-        $values = htmlspecialchars($values);
+        $values = htmlspecialchars($values, ENT_QUOTES, 'UTF-8');
+
         return $values;
     }
 
     public function root()
     {
-        $root = (!empty($_SERVER['HTTPS']) ? 'https' : 'http') . '://' . $_SERVER['HTTP_HOST'] . '/';
-        $path = rtrim(dirname($_SERVER['PHP_SELF']), '/');
-        $response = $root.$path;
+        $scheme = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
+        $host = $_SERVER['HTTP_HOST'] ?? 'localhost';
+        $path = rtrim(dirname($_SERVER['PHP_SELF'] ?? '/'), '/');
+        $response = $scheme . '://' . $host . $path;
+
         return $response;
     }
 }

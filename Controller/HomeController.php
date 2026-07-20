@@ -1,11 +1,9 @@
 <?php
 
-
-
 class HomeController  extends Controller
 {
 
-
+protected $cron;
 
     public function __construct()
     {
