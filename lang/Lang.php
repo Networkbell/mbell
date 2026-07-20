@@ -2,9 +2,6 @@
 
 class Lang
 {
-
-
-
     public function __construct()
     {
     }
@@ -23,13 +20,13 @@ class Lang
 
     public function getLg()
     {
-
-        /*LANGUE*/
+        /* Language */
         if (isset($_GET['lg'])) {
-            $lg = (in_array($_GET['lg'], $this->lgList())) ? $_GET['lg'] : $this->lgDefaut();
+            $lg = in_array($_GET['lg'], $this->lgList(), true) ? $_GET['lg'] : $this->lgDefaut();
         } else {
-            $lg = substr($_SERVER['HTTP_ACCEPT_LANGUAGE'], 0, 2);
-            $lg = (in_array($lg, $this->lgList())) ? $lg : $this->lgDefaut();
+            $acceptLanguage = $_SERVER['HTTP_ACCEPT_LANGUAGE'] ?? '';
+            $lg = substr($acceptLanguage, 0, 2);
+            $lg = in_array($lg, $this->lgList(), true) ? $lg : $this->lgDefaut();
         }
 
         return $lg;
@@ -37,81 +34,89 @@ class Lang
 
     public function trad($text)
     {
-        $data = file_get_contents( MBELLPATH."lang/lg.json");
-        $json = json_decode($data);
+        $data = file_get_contents(MBELLPATH . 'lang/lg.json');
+        $json = json_decode((string) $data, true);
         $lg = $this->getLg();
 
-        return $json->$text[0]->$lg; // 0 car il n'existe qu'1 seule ligne dans le fichier json pour chaque var $text
+        /* Index 0 is used because only one row exists in lg.json for each translation key. */
+        if (!is_array($json) || !isset($json[$text][0][$lg])) {
+            return $text;
+        }
 
-        //Méthode ARRAY
-        /*$json = json_decode($data, true);
-        return $json[$text][0][$lg];*/
+        return $json[$text][0][$lg];
     }
-
-
 
     public function degToCompass($wind_deg, $lg)
     {
-
         if ($lg == 'fr') {
-            $arr = array("Nord", "Nord-Est", "Est", "Sud-Est", "Sud", "Sud-Ouest", "Ouest", "Nord-Ouest");
+            $arr = array('Nord', 'Nord-Est', 'Est', 'Sud-Est', 'Sud', 'Sud-Ouest', 'Ouest', 'Nord-Ouest');
         } elseif ($lg == 'en') {
-            $arr = array("North", "North-East", "East", "South-East", "South", "South-West", "West", "North-West");
+            $arr = array('North', 'North-East', 'East', 'South-East', 'South', 'South-West', 'West', 'North-West');
+        } else {
+            $arr = array('North', 'North-East', 'East', 'South-East', 'South', 'South-West', 'West', 'North-West');
         }
+
         if ($wind_deg != '&#8709;') {
-            $val = floor(($wind_deg / 45) + .5);
-            return $arr[($val % 8)];
+            $val = floor(($wind_deg / 45) + 0.5);
+            return $arr[$val % 8];
         }
+
+        return null;
     }
 
     public function degToCompassSmall($wind_deg, $lg)
     {
         if ($lg == 'fr') {
-            $arr = array("Nord", "NE", "Est", "SE", "Sud", "SO", "Ouest", "NO");
+            $arr = array('Nord', 'NE', 'Est', 'SE', 'Sud', 'SO', 'Ouest', 'NO');
         } elseif ($lg == 'en') {
-            $arr = array("North", "NE", "East", "SE", "South", "SW", "West", "NW");
+            $arr = array('North', 'NE', 'East', 'SE', 'South', 'SW', 'West', 'NW');
+        } else {
+            $arr = array('North', 'NE', 'East', 'SE', 'South', 'SW', 'West', 'NW');
         }
-        if ($wind_deg != '&#8709;') {
-            $val = floor(($wind_deg / 45) + .5);
-            return $arr[($val % 8)];
-        }
-    }
 
+        if ($wind_deg != '&#8709;') {
+            $val = floor(($wind_deg / 45) + 0.5);
+            return $arr[$val % 8];
+        }
+
+        return null;
+    }
 
     public function timeTrad($timeData, $lg)
     {
         if ($timeData != '&#8709;') {
-            if ($lg == "fr") {
-                $timeData = DateTime::createFromFormat('g:ia', $timeData)->format('H:i');
-            } elseif ($lg == "en") {
+            if ($lg == 'fr') {
+                $date = DateTime::createFromFormat('g:ia', $timeData);
+
+                if ($date instanceof DateTime) {
+                    $timeData = $date->format('H:i');
+                }
+            } elseif ($lg == 'en') {
                 $timeData = substr($timeData, 0, -1);
             }
         }
+
         return $timeData;
     }
-
-
 
     public function pressTrad($value, $lg)
     {
         if ($lg == 'en') {
             $value = $value;
-        } else if ($lg == 'fr') {
-            $value = str_replace("Steady", "Stable", $value);
-            $value = str_replace("Falling Slowly", "Baisse Lentement", $value);
-            $value = str_replace("Rising Slowly", "Augmente Lentement", $value);
-            $value = str_replace("Falling Rapidly", "Baisse Rapidement", $value);
-            $value = str_replace("Rising Rapidly", "Augmente Rapidement", $value);
+        } elseif ($lg == 'fr') {
+            $value = str_replace('Steady', 'Stable', $value);
+            $value = str_replace('Falling Slowly', 'Baisse Lentement', $value);
+            $value = str_replace('Rising Slowly', 'Augmente Lentement', $value);
+            $value = str_replace('Falling Rapidly', 'Baisse Rapidement', $value);
+            $value = str_replace('Rising Rapidly', 'Augmente Rapidement', $value);
         }
 
         return $value;
     }
 
-
-
-    /*function MOON FR-EN
-    //Voir dans config/Moon.php class MoonPhase->function phase_name_EN()
-    //Voir dans config/Moon.php class MoonPhase->function phase_name_FR()
-    //Voir Dans View/StationView.php. function incMidSun() : Moon Prepa
+    /* Moon function FR-EN
+    See config/Moon.php class MoonPhase->function phase_name_EN()
+    See config/Moon.php class MoonPhase->function phase_name_FR()
+    See View/StationView.php function incMidSun() for moon preparation
     */
 }
