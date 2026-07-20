@@ -93,9 +93,10 @@ $debug = false;
     2.41 (-0.72) - Correctif : Optimisation Code + Addon Wind Direction Box
     2.42 (-0.73) - Correctif : Cron Bug + Addon Cron Direct
     2.5 (-0.80) - Update Weatherlink Live Multi-Sensors
-    2.51 (-0.80) - Correctif : Bug Température Ressentie 
+    2.51 (-0.80) - Correctif : Bug Température Ressentie
+    2.6 (-0.90) - Correctifs compatibilité PHP 8.2 + stabilisation locale
 
-Version actuelle = Publique 2.51 (Développement -0.80)
+Version actuelle = Publique 2.6 (Développement -0.90)
 
 
 # Problèmes connus

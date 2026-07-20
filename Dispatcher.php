@@ -198,14 +198,21 @@ class Dispatcher
      */
     public function versionNumURL($true)
     {
-        $pathVersion =  'config/version.txt';
+        $pathVersion = 'config/version.txt';
+        $version_file = '';
+
         if ($true == true) {
-            $version_file = file_get_contents('http://www.meteobell.com/mbell/' . $pathVersion);
-        } elseif ($true == false) {
+            $remoteUrl = 'https://www.meteobell.com/mbell/' . $pathVersion;
+            $version_file = @file_get_contents($remoteUrl);
+        }
+
+        if ($version_file === false || $version_file === '') {
             $version_file = (file_exists($pathVersion)) ? file_get_contents($pathVersion) : '';
         }
-        $filed = explode(PHP_EOL, $version_file);
-        $version = floatval($filed[0]);
+
+        $filed = preg_split('/\R/', trim((string)$version_file));
+        $version = isset($filed[0]) ? floatval($filed[0]) : 0;
+
         return $version;
     }
 
