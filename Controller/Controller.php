@@ -40,26 +40,12 @@ abstract class Controller
             }
         }
 
-        /* Convert checkbox array input into a single checkbox value. */
-        if (isset($_POST['var_sun']) && is_array($_POST['var_sun'])) {
-            if (in_array('sun', $_POST['var_sun'], true) && in_array('uv', $_POST['var_sun'], true)) {
-                $_POST['var_sun'] = 'sun_uv';
-            } else {
-                $_POST['var_sun'] = $_POST['var_sun'][0] ?? '';
-            }
-        } elseif (!isset($_POST['var_sun'])) {
-            $_POST['var_sun'] = '';
-        }
-
         if (!empty($_POST)) {
             foreach ($_POST as $key => $value) {
                 $this->paramPost[$key] = $this->protected_values($value);
             }
         }
 
-        if (empty($this->paramPost['metabdd'])) {
-            $this->paramPost['metabdd'] = 'mb_';
-        }
     }
 
     private function protected_values($values)
@@ -79,13 +65,4 @@ abstract class Controller
         return $values;
     }
 
-    public function root()
-    {
-        $scheme = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
-        $host = $_SERVER['HTTP_HOST'] ?? 'localhost';
-        $path = rtrim(dirname($_SERVER['PHP_SELF'] ?? '/'), '/');
-        $response = $scheme . '://' . $host . $path;
-
-        return $response;
-    }
 }

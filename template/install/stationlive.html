@@ -8,8 +8,14 @@
     </li>
     <li class="list-group-item">
         <label for="stat_livesecret" class="form-label">{DAVIS_LIVESECRET}</label>
+        <div class="input-group">
         <input type="password" class="form-control" id="stat_livesecret" name="stat_livesecret" value="{_VAL_STAT_LIVESECRET}"
             placeholder="{CASE_SENSITIVE}" required>
+            <span class="input-group-text">
+                <i class="fa-solid fa-eye-slash" id="togglePassword" 
+               style="cursor: pointer"></i>
+               </span>
+        </div>
         <div class="form-text">{DAVIS_LIVESECRET_TEXT}</div>
     </li>
     <li class="list-group-item">

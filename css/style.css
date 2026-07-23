@@ -333,6 +333,9 @@ header {
 	margin-top: 20px;
 }
 
+.change_btn {
+	margin-bottom: 20px;
+}
 
 
 /************************/
@@ -471,11 +474,9 @@ header {
 	padding: 0;
 }
 
-.navbar-toggler {
+.navbar-toggler,#stat_did, #stat_token {
 	text-transform: uppercase;
 }
-
-
 
 /******/
 /*MENU*/
@@ -889,5 +890,12 @@ text-transform: capitalize;
 
 .boussole {
 	font-size: 1.3em;
+}
+
+.btn_double_center {
+	display:flex;
+	justify-content: center;
+	width :300px;
+	margin:auto;
 }
 

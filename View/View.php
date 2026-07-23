@@ -50,19 +50,7 @@ abstract class View
         echo $this->page;
     }
     
-    /**
-     * Link to the site root.
-     *
-     * @return string
-     */
-    public function getRoot()
-    {
-        $scheme = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
-        $host = $_SERVER['HTTP_HOST'] ?? 'localhost';
-        $root = $scheme . '://' . $host . '/';
 
-        return $root;
-    }
 
     /**
      * Construction des drapeaux de langues
@@ -278,6 +266,7 @@ abstract class View
                 $page .= $this->getInfo($this->l->trad('STATION_STEP6_P5'));
                 $page .= $this->getInfo($this->l->trad('STATION_STEP6_P6'));
                 $page .= $this->getInfo($this->l->trad('STATION_STEP6_P7'));
+                $page .= $this->getInfo($this->l->trad('STATION_STEP6_P8'));
                 break;
             case 'v1':
                 $page = $this->getStationV1($param);
@@ -301,6 +290,7 @@ abstract class View
                 $page .= $this->getInfo($this->l->trad('STATION_STEP6_P5'));
                 $page .= $this->getInfo($this->l->trad('STATION_STEP6_P6'));
                 $page .= $this->getInfo($this->l->trad('STATION_STEP6_P7'));
+                $page .= $this->getInfo($this->l->trad('STATION_STEP6_P8'));
         }
         return $page;
     }
@@ -406,7 +396,7 @@ abstract class View
     {
         $this->page .= $this->searchHTML('stationwx', 'install');
         $this->page = str_replace('{CASE_SENSITIVE}',  $this->l->trad('CASE_SENSITIVE'), $this->page);
-        /* $this->page = str_replace('{UPPERCASE}',  $this->l->trad('UPPERCASE'), $this->page);*/
+        $this->page = str_replace('{NBR}',  $this->l->trad('NBR'), $this->page);
         $this->page = str_replace('{WEEWX_URL}',  $this->l->trad('WEEWX_URL'), $this->page);
         $this->page = str_replace('{WEEWX_URL_TEXT}',  $this->l->trad('WEEWX_URL_TEXT'), $this->page);
         $this->page = str_replace('{WEEWX_ID}',  $this->l->trad('WEEWX_ID'), $this->page);
@@ -431,4 +421,23 @@ abstract class View
         $this->page = str_replace('{_VAL_STAT_WXKEY}',  $param['_VAL_STAT_WXKEY'], $this->page);
         $this->page = str_replace('{_VAL_STAT_WXSIGN}',  $param['_VAL_STAT_WXSIGN'], $this->page);
     }
+
+
+        public function getFormUser($param)
+    {
+        $this->page .= $this->searchHTML('userInstall', 'install');       
+        $this->page = str_replace('{_VAL_USER_ID}',  $param['_VAL_USER_ID'], $this->page);  
+        $this->page = str_replace('{required}',  $param['required'], $this->page);        
+        $this->page = str_replace('{LOGIN_USER_LABEL}',  $param['1'], $this->page);
+        $this->page = str_replace('{USERNAME}',  $param['2'], $this->page);
+        $this->page = str_replace('{LOGIN_USER_TEXT}',  $param['3'], $this->page);
+        $this->page = str_replace('{LOGIN_PASSWORD_LABEL}',  $param['4'], $this->page);
+        $this->page = str_replace('{PASSWORD}',  $param['5'], $this->page);
+        $this->page = str_replace('{LOGIN_PASSWORD_TEXT}',  $param['6'], $this->page);
+        $this->page = str_replace('{LOGIN_EMAIL_LABEL}',  $param['7'], $this->page);
+        $this->page = str_replace('{EMAIL}',  $param['8'], $this->page);
+        $this->page = str_replace('{LOGIN_EMAIL_TEXT}',  $param['9'], $this->page);
+    }
+
+
 }

@@ -1,4 +1,4 @@
-2.6
+2.61
 // NE PAS DEPLACER OU SUPPRIMER LA 1ere LIGNE, MBELL L'UTLISE COMME CODE
 
 // Version 2.6-0.90 - Juillet 2026
@@ -130,7 +130,12 @@ ___________
 VERSION 2.5 -0.80 : Update Weatherlink Live : Nouveau Système Multi-API et Multi-Sensors / Nouveaux Capteurs Extras / Ajax sur double formulaire pour WL en zone Configuration 
 ___________
 VERSION 2.51 -0.80 : Correctif 2.51 - Bug Température Ressentie
-___________
-VERSION 2.6 -0.90 : PHP 8.4+
 
 - 0.90 : passage du PHP de version 7.4 à 8.4+ - Optimisation du code pour compatibilité PHP 8.4+ - Correction de bugs mineurs - Mise à jour des dépendances et bibliothèques pour compatibilité avec PHP 8.4+ - Amélioration de la sécurité et de la performance globale de l'application
+_________
+VERSION 2.6 -0.90 : PHP 8.4+ 
+
+- 0.91 : refonte de la gestion Utilisateur/Login ; ajout du mot de passe oublié et de la réinitialisation par email ; création et gestion de mb_pass ; corrections de textes et formulaires 
+- 0.92 : sécurisation du relais mail mbell <-> meteobell.com ; amélioration de la maintenance de mb_pass ; ajout de l’affichage mot de passe visible/caché
+___________
+VERSION 2.61 - 0.92 : Finalisation de la zone Utilisateur/Login et du système de réinitialisation de mot de passe

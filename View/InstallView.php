@@ -19,7 +19,7 @@ class InstallView extends View
             "MBELL_TITRE" => $this->l->trad('MBELL_TITRE_INSTALL'),
             "_CSS" => "maincolor",
             "_LOGO" => "1",
-            "_ROOT" => $this->getRoot(),
+            "_ROOT" => $this->dispatcher->getRoot(),
             "_LG" => $this->l->getLg()
         );
         $this->page =  $this->getHead($param);
@@ -72,7 +72,10 @@ class InstallView extends View
         elseif ($info['stat_type'] == 'weewx') {
             $this->page .= $this->getListInfoWx($param);
         }
+        $this->page .= '<div class="btn_double_center">'; 
+        $this->page .= $this->getButton($this->l->getLg(), 'install', 'step6', $this->l->trad('RESTART'));
         $this->page .= $this->getButton($this->l->getLg(), 'install', 'step9', $param['VALIDATE']);
+        $this->page .= '</div>';
         $this->page .= '</section>';
         $this->page .= '</main>';
         $this->display();
@@ -151,6 +154,8 @@ class InstallView extends View
             "LOGIN_STEP4_P3" => $this->l->trad('LOGIN_STEP4_P3'),
             "INSTALL_STEP" => $this->l->trad('CONTINUE'),
             "_LG" => $this->l->getLg(),
+            "required" => 'required',
+            "_VAL_USER_ID" => '',
         );
         $this->page .= '<main id="main_installer">';
         $this->page .= '<section>';
@@ -331,6 +336,7 @@ class InstallView extends View
             "9" => $this->l->trad('BDD_META_TEXT_1'),
             "BDD_STEP1_P1" => $this->l->trad('BDD_STEP1_P1'),
             "BDD_STEP1_P2" => $this->l->trad('BDD_STEP1_P2'),
+            "BDD_STEP1_P2b" => $this->l->trad('BDD_STEP1_P2b'),
             "BDD_STEP1_P3" => $this->l->trad('BDD_STEP1_P3'),
             "BDD_STEP1_P4" => $this->l->trad('BDD_STEP1_P4'),
             "LINK" => $this->l->trad('INSTALL_STEP1')
@@ -345,6 +351,7 @@ class InstallView extends View
         $this->page .= $this->getInfo($param['BDD_STEP1_P1']);
         $this->page .= $this->getList($param);
         $this->page .= $this->getInfo($param['BDD_STEP1_P2']);
+        $this->page .= $this->getInfo($param['BDD_STEP1_P2b']);
         $this->page .= $this->getInfo($param['BDD_STEP1_P3']);
         $this->page .= $this->getInfo($param['BDD_STEP1_P4']);
         $this->page .= $this->getButton($this->l->getLg(), 'install', 'step2', $param['LINK']);
@@ -390,20 +397,6 @@ class InstallView extends View
         $this->page = str_replace('{BDD_META_LABEL}',  $param['13'], $this->page);
         $this->page = str_replace('{TAG_MBELL}',  $param['14'], $this->page);
         $this->page = str_replace('{BDD_META_TEXT_2}',  $param['15'], $this->page);
-    }
-
-    public function getFormUser($param)
-    {
-        $this->page .= $this->searchHTML('userInstall', 'install');
-        $this->page = str_replace('{LOGIN_USER_LABEL}',  $param['1'], $this->page);
-        $this->page = str_replace('{USERNAME}',  $param['2'], $this->page);
-        $this->page = str_replace('{LOGIN_USER_TEXT}',  $param['3'], $this->page);
-        $this->page = str_replace('{LOGIN_PASSWORD_LABEL}',  $param['4'], $this->page);
-        $this->page = str_replace('{PASSWORD}',  $param['5'], $this->page);
-        $this->page = str_replace('{LOGIN_PASSWORD_TEXT}',  $param['6'], $this->page);
-        $this->page = str_replace('{LOGIN_EMAIL_LABEL}',  $param['7'], $this->page);
-        $this->page = str_replace('{EMAIL}',  $param['8'], $this->page);
-        $this->page = str_replace('{LOGIN_EMAIL_TEXT}',  $param['9'], $this->page);
     }
 
 

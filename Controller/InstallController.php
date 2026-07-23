@@ -254,6 +254,8 @@ class InstallController extends Controller
             $ver = ($response5) ? 2.51 : false;
             $response6 = 1;
             $ver = ($response6) ? 2.6 : false;
+            $response7 = $this->model->Maj25cTo26();
+            $ver = ($response7) ? 2.61 : false;
         } elseif ($version_installed <= 2.4 && $version_installed <= $version) {
             $response2 = 1;
             $ver = ($response2) ? 2.41 : false;
@@ -273,6 +275,8 @@ class InstallController extends Controller
             $ver = ($response5) ? 2.51 : false;
             $response6 = 1;
             $ver = ($response6) ? 2.6 : false;
+            $response7 = $this->model->Maj25cTo26();
+            $ver = ($response7) ? 2.61 : false;
         } elseif ($version_installed <= 2.41 && $version_installed <= $version) {
             $response3 = $this->model->Maj241To242();
             $ver = ($response3) ? 2.42 : false;
@@ -290,6 +294,8 @@ class InstallController extends Controller
             $ver = ($response5) ? 2.51 : false;
             $response6 = 1;
             $ver = ($response6) ? 2.6 : false;
+            $response7 = $this->model->Maj25cTo26();
+            $ver = ($response7) ? 2.61 : false;
         } elseif ($version_installed <= 2.42 && $version_installed <= $version) {
             $response4a = $this->model->Maj242To25a();
             if ($response4a) {
@@ -305,14 +311,23 @@ class InstallController extends Controller
             $ver = ($response5) ? 2.51 : false;
             $response6 = 1;
             $ver = ($response6) ? 2.6 : false;
+            $response7 = $this->model->Maj25cTo26();
+            $ver = ($response7) ? 2.61 : false;
         } elseif ($version_installed <= 2.5 && $version_installed <= $version) {
             $response5 = 1;
             $ver = ($response5) ? 2.51 : false;
             $response6 = 1;
             $ver = ($response6) ? 2.6 : false;
+            $response7 = $this->model->Maj25cTo26();
+            $ver = ($response7) ? 2.61 : false;
         } elseif ($version_installed <= 2.51 && $version_installed <= $version) {
             $response6 = 1;
             $ver = ($response6) ? 2.6 : false;
+            $response7 = $this->model->Maj25cTo26();
+            $ver = ($response7) ? 2.61 : false;
+        } elseif ($version_installed <= 2.6 && $version_installed <= $version) {
+            $response7 = $this->model->Maj25cTo26();
+            $ver = ($response7) ? 2.61 : false;
         }
 
         if ($ver) {

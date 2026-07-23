@@ -21,7 +21,7 @@ class ChangeView extends View
             "MBELL_TITRE" => $this->l->trad('MBELL_TITRE_PREF'),
             "_CSS" => "maincolor",
             "_LOGO" => "1",
-            "_ROOT" => $this->getRoot(),
+            "_ROOT" => $this->dispatcher->getRoot(),
             "_URL" => 'index.php?controller=pref&action=list&',
             "_LG" => $this->l->getLg(),
             "HOMEPAGE" => $this->l->trad('SETTINGS'),

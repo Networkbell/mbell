@@ -130,6 +130,12 @@ class InstallModel extends Model
         if (!file_exists($this->file_admin)) {
             $response = 1;
         } else {
+            if (empty($paramPost["metabdd"])) {
+                $mb = "mb_";
+            }
+            else {
+                $mb = $paramPost["metabdd"];
+            }
 
             // Injection dans admin.php des données du form bdd
             $file_content = file_get_contents($this->file_admin);
@@ -137,7 +143,7 @@ class InstallModel extends Model
             $file_content = str_replace('{bdd_identifiant}', $paramPost['userbdd'], $file_content);
             $file_content = str_replace('{bdd_password}', $paramPost['passwordbdd'], $file_content);
             $file_content = str_replace('{bdd_mbell}', $paramPost['namebdd'], $file_content);
-            $file_content = str_replace('{bdd_meta}', $paramPost['metabdd'], $file_content);
+            $file_content = str_replace('{bdd_meta}', $mb, $file_content);
             $file_content = str_replace('{key_crypt}', $this->hexaKey(), $file_content);
             file_put_contents($this->file_admin, $file_content);
 
@@ -154,7 +160,7 @@ class InstallModel extends Model
                 $config_tab = $table_prefix . 'config';
                 $tab_tab = $table_prefix . 'tab';
                 $data_tab = $table_prefix . 'data';
-
+                $pass_tab = $table_prefix . 'pass';
                 // Test Création des tables
                 try {
 
@@ -163,6 +169,7 @@ class InstallModel extends Model
                     $response_config = $this->createConfig($config_tab, DB_CHARSET, $station_tab, $this->l->getLg());
                     $response_tab = $this->createTab($tab_tab, DB_CHARSET, $station_tab);
                     $response_data = $this->createData($data_tab, DB_CHARSET);
+                    $response_pass = $this->createPass($pass_tab, DB_CHARSET);
 
                     $this->requete = $this->connexion->prepare($response_user);
                     $result1 = $this->requete->execute();
@@ -173,9 +180,11 @@ class InstallModel extends Model
                     $this->requete = $this->connexion->prepare($response_tab);
                     $result4 = $this->requete->execute();
                     $this->requete = $this->connexion->prepare($response_data);
-                    $result5 = $this->requete->execute();
+                    $result5 = $this->requete->execute(); 
+                    $this->requete = $this->connexion->prepare($response_pass);
+                    $result6 = $this->requete->execute();
 
-                    if ($result1 && $result2 && $result3 && $result4 && $result5) {
+                    if ($result1 && $result2 && $result3 && $result4 && $result5 && $result6) {
                         $response = 4;
                     } else {
                         if (MB_DEBUG) {
@@ -357,6 +366,18 @@ class InstallModel extends Model
         return $create_tab;
     }
 
+     // Création de la Table *_pass
+    public function createPass($tab, $charset)
+    {
+        $create_tab = "CREATE TABLE IF NOT EXISTS $tab (
+        pass_email varchar(255) NOT NULL,
+        pass_key varchar(255) NOT NULL,
+        pass_expDate datetime NOT NULL
+        ) ENGINE = InnoDB DEFAULT CHARSET = $charset";
+        return $create_tab;
+    }
+
+
     public function dropBDD()
     {
         //on ne supprime jamais la table mb_data
@@ -368,12 +389,17 @@ class InstallModel extends Model
                 $station_tab = $table_prefix . 'station';
                 $config_tab = $table_prefix . 'config';
                 $tab_tab = $table_prefix . 'tab';
+                $pass_tab = $table_prefix . 'pass';
 
+                $response_pass = $this->dropTab($pass_tab);
                 $response_tab = $this->dropTab($tab_tab);
                 $response_config = $this->dropTab($config_tab);
                 $response_station = $this->dropTab($station_tab);
                 $response_user = $this->dropTab($user_tab);
+                
 
+                $this->requete = $this->connexion->prepare($response_pass);
+                $this->requete->execute();
                 $this->requete = $this->connexion->prepare($response_tab);
                 $this->requete->execute();
                 $this->requete = $this->connexion->prepare($response_config);
@@ -684,6 +710,28 @@ class InstallModel extends Model
         $file = file_put_contents($path, $file);
     }
 
+     /**
+     * Maj de 2.6 à 2.61 
+     *
+     * @return boolean
+     */
+    public function Maj25cTo26()
+    {
+        require $this->file_admin;
+        $pass_tab = $table_prefix . 'pass';
+        try {
+            $req = $this->createPass($pass_tab, DB_CHARSET);
+            $this->requete = $this->connexion->prepare($req);
+            $result = $this->requete->execute();
+            $row = ($result) ? 1 : null;
+        } catch (Exception $e) {
+            if (MB_DEBUG) {
+                var_dump($e->getMessage());
+            }
+            $row = null;
+        }
+        return $row;
+    }
 
 
     public function trim_lines($path, $max)

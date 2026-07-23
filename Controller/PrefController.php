@@ -12,6 +12,18 @@ class PrefController extends Controller
         $this->paramStat = new StationModel();
         $this->stationview = new StationView();
 
+        //converti le checkbox avec array (name[] + value) en checkbox normal
+        if (!empty($_POST["var_sun"])) {
+            if ((in_array('sun', $_POST["var_sun"])) && (in_array('uv', $_POST["var_sun"]))) {
+                $_POST["var_sun"] = 'sun_uv';
+            } else {
+                $_POST["var_sun"] = $_POST["var_sun"][0];
+            }
+        } else {
+            $_POST["var_sun"] = '';
+        }
+
+
         parent::__construct();
     }
 

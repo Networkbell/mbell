@@ -168,19 +168,18 @@
   "BDD_NAME_LABEL": [
     { "fr": "Nom de la base de données", "en": "Database name" }
   ],
-
-  "LOCALHOST": [{ "fr": "localhost", "en": "localhost" }],
+  "LOCALHOST": [{ "fr": "host", "en": "host" }],
   "MBELL_MIN": [{ "fr": "mbell", "en": "mbell" }],
   "PASSWORD": [
     {
-      "fr": "Mot de passe",
-      "en": "Password"
+      "fr": "mot de passe",
+      "en": "password"
     }
   ],
   "USERNAME": [
     {
-      "fr": "Identifiant",
-      "en": "Username"
+      "fr": "identifiant",
+      "en": "username"
     }
   ],
   "EMAIL": [
@@ -201,23 +200,22 @@
       "en": "mb_"
     }
   ],
-
   "BDD_USER_TEXT": [
     {
-      "fr": "Votre identifiant MySQL.",
-      "en": "Your database username."
+      "fr": "Votre identifiant MySQL (root en localhost)",
+      "en": "Your database username (root to localhost)"
     }
   ],
   "BDD_PASSWORD_TEXT": [
     {
-      "fr": "Votre mot de passe de base de données.",
-      "en": "Your database password."
+      "fr": "Votre mot de passe de base de données (non nécéssaire en localhost)",
+      "en": "Your database password (not necessary in localhost)"
     }
   ],
   "BDD_NAME_TEXT": [
     {
-      "fr": "Le nom de la base de données avec laquelle vous souhaitez utiliser MBell.",
-      "en": "The name of the database you want to use with MBell."
+      "fr": "Le nom de la base de données avec laquelle vous souhaitez utiliser MBell (si aucune bdd n'existe déjà, il est nécéssaire d'en créer manuellement une nouvelle au préalable)",
+      "en": "The name of the database you want to use with MBell (if no database already exists, it is necessary to manually create a new one beforehand)"
     }
   ],
   "BDD_HOST_TEXT": [
@@ -303,10 +301,16 @@
       "en": "Before getting started, we need some information on your database. You will need to know the following items before proceeding:"
     }
   ],
-  "BDD_STEP1_P2": [
+"BDD_STEP1_P2": [
     {
       "fr": "Nous allons utiliser ces informations pour créer le fichier <code>admin.php</code> situé dans votre dossier <code>/config</code>. Si pour une raison ou une autre, vous deviez réinstaller Mbell, il vous suffit donc de supprimer ce fichier et de relancer la procédure d'installation.",
-      "en": "We will use this information to create a <code>admin.php</code> file located in your <code>/config</code> folder. If for some reason you need to reinstall Mbell, then all you have to do is delete this file and start the installation process again."
+      "en": "We will use this information to create the <code>admin.php</code> file located in your <code>/config</code> folder. If for some reason you need to reinstall Mbell, just therefore delete this file and restart the installation procedure. "
+    }
+  ],
+  "BDD_STEP1_P2b": [
+    {
+      "fr": "Attention toutefois, MBell ne sera alors plus en mesure de se connecter à une base de données déjà existante et donc de la supprimer avant réinstallation (il faudra le faire manuellement). Il est donc préférable dans ce cas, plutôt de suivre la <code>procédure de réinstallation du 'lisez-moi'</code> (= éditer le fichier admin.php et mettre 'no' à la variable $installed permet de prendre en compte automatiquement une bdd déjà installé au préalable et évite les erreurs lors d'une réinstallation).",
+      "en": "Be careful however, MBell will no longer be able to connect to an already existing database and therefore delete it before reinstallation (it will have to be done manually). It's therefore preferable in this case, rather to follow the 'read me' reinstallation procedure (= edit the admin.php file and put 'no' in the $installed variable to automatically take into account a database already installed beforehand and avoids errors during a reinstallation)."
     }
   ],
   "BDD_STEP1_P3": [
@@ -330,8 +334,8 @@
   ],
   "BDD_STEP2_P2": [
     {
-      "fr": "Vérifiez que vous avez bien remplis correctement les champs, avant de valider. Seule la modification du préfixe de table n'est pas obligatoire.",
-      "en": "Check that you have filled in the fields correctly, before validating. Only the modification of the table prefix is not mandatory. "
+      "fr": "Vérifiez que vous avez bien remplis correctement les champs, avant de valider. Seule la modification du préfixe de table n'est pas obligatoire (ainsi que le mot de passe en localhost).",
+      "en": "Check that you have filled in the fields correctly, before validating. Only the modification of the table prefix is not mandatory (as well as the password in localhost)."
     }
   ],
 
@@ -442,8 +446,8 @@
   ],
   "LOGIN_EMAIL_TEXT": [
     {
-      "fr": "L'adresse Email est nécessaire pour le service d'alerte météo ou pour réactiver votre mot de passe en cas d'oubli.",
-      "en": "The Email address is required for the weather alert service or to reactivate your password if you forget it. "
+      "fr": "Nécessaire pour le futur service d'alerte météo ou pour réactiver votre mot de passe en cas d'oubli.",
+      "en": "Required for the future weather alert service or to reset your password if you forget it."
     }
   ],
   "LOGIN_STEP4_P3": [
@@ -462,14 +466,14 @@
 
   "STATION_STEP6_P2": [
     {
-      "fr": "Mbell permet actuellement 3 types de technologie : Weatherlink Version 1 (IP Datalogger), Weatherlink Version 2 (IP Datalogger et USB) et Weatherlink Live. Ne vous inquiétez pas, vous aurez toujours la possibilité de changer de version ou de station par la suite.",
-      "en": "Mbell currently allows 3 types of technology: Weatherlink Version 1 (IP Datalogger), Weatherlink Version 2 (IP Datalogger and USB) and Weatherlink Live. Don't worry, you will always have the option to change version or station later."
+      "fr": "Mbell permet actuellement 4 types de technologie : Weatherlink Version 1 (IP Datalogger), Weatherlink Version 2 (IP Datalogger et USB), Weatherlink Live (version gratuite) et Weewx. Ne vous inquiétez pas, vous aurez toujours la possibilité de changer de version ou de station par la suite.",
+      "en": "Mbell currently allows 4 types of technology: Weatherlink Version 1 (IP Datalogger), Weatherlink Version 2 (IP Datalogger and USB), Weatherlink Live (free version) and Weewx. Don't worry, you'll always be able to change version or station later."
     }
   ],
   "STATION_STEP6_P3": [
     {
-      "fr": "A l'heure actuelle, Weatherlink en version 1 fonctionne parfaitement si vous avez un datalogger IP et aucune date n'a été donné pour son arrêt, vous pouvez donc très bien rester en version 1 sans que vous ne voyez aucun changement. Depuis 2018, cependant, la version 2 fonctionne aussi en parallèle et permet à ceux ne disposant pas de datalogger IP de pouvoir utiliser MBell.",
-      "en": "At present, Weatherlink version 1 works fine if you have an IP datalogger and no date has been given for its shutdown, so you can very well stay in version 1 without seeing any changes. Since 2018, however, version 2 also works in parallel and allows those without an IP datalogger to be able to use MBell."
+      "fr": "A l'heure actuelle, Weatherlink en version 1 fonctionne parfaitement si vous avez un datalogger IP et aucune date n'a été donné pour son arrêt, vous pouvez donc très bien rester en version 1 sans que vous ne voyez aucun changement. Depuis 2018, cependant, la version 2 fonctionne aussi en parallèle et permet à ceux ne disposant pas de datalogger IP de pouvoir utiliser MBell (en connexion USB).",
+      "en": "Currently, Weatherlink in version 1 works perfectly if you have an IP datalogger and no date has been given for its shutdown, so you can very well stay in version 1 without seeing any changes. Since 2018, however, version 2 also works in parallel and allows those who do not have an IP datalogger to be able to use MBell (in USB connection)."
     }
   ],
   "STATION_STEP6_P4": [
@@ -492,8 +496,15 @@
   ],
   "STATION_STEP6_P7": [
     {
-      "fr": "Weatherlink Live en version gratuite est une version très light par rapport aux versions précédentes. Ce sont donc plus de 300 données météos autrefois utilisés par Mbell qui ont disparus, notamment tous les records journaliers, mensuels et annuels. J'ai donc dû adapter le template de Mbell pour afficher moins d'informations avec Weatherlink Live que les versions précédentes. Pour toute réclamation à ce sujet, contactez Davis.",
-      "en": "Weatherlink Live in free version is a very light version compared to previous versions. More than 300 meteorological data formerly used by Mbell have therefore disappeared, including all daily, monthly and annual records. So I had to adapt the Mbell template to display less information with Weatherlink Live than previous versions. If you have any complaints about this, contact Davis. "
+      "fr": "Weatherlink Live en version gratuite est une version très light par rapport aux versions précédentes. Ce sont donc plus de 300 données météos autrefois utilisés par Mbell qui ont disparus, notamment tous les records journaliers, mensuels et annuels. Le template de Mbell a donc été adapté en conséquence pour afficher moins d'informations avec Weatherlink Live que les versions précédentes. Pour toute réclamation à ce sujet, contactez Davis.",
+      "en": "Weatherlink Live in free version is a very light version compared to previous versions. More than 300 meteorological data formerly used by Mbell have therefore disappeared, including all daily, monthly and annual records. So I had to adapt the Mbell template to display less information with Weatherlink Live than previous versions. If you have any complaints about this, contact Davis."
+    }
+  ],
+  
+  "STATION_STEP6_P8": [
+    {
+      "fr": "MBell est compatible avec Weewx (depuis la version mbell 2.4), à condition de générer une API grâce au script suivant : <a href='https://github.com/Bug-Storm/API_Weewx_Mbell'>Api_Weewx_MBELL</a>. Il s'agit encore d'une version expérimentale et toutes les données météos ne sont pas encore disponibles (notamment les stations auxiliaires agricoles et les records journaliers, mensuels et annuels).",
+      "en": "MBell is compatible with Weewx (since version mbell 2.4), provided you generate an API using the following script: <a href='https://github.com/Bug-Storm/API_Weewx_Mbell'>Api_Weewx_MBELL</a>. This is still an experimental version and all weather data is not yet available (including agricultural auxiliary stations and daily, monthly and annual records)."
     }
   ],
 
@@ -520,6 +531,25 @@
     {
       "fr": "Vous allez accéder à l'interface d'administration de MBell. Si vous n'avez pas encore enregistré de stations météos, vous pourrez poursuivre l'installation.",
       "en": "You will access the MBell administration interface. If you have not yet saved any weather stations, you can continue with the installation."
+    }
+  ],
+    
+  "LOGIN_TEXT_3": [
+    {
+      "fr": "Vous pouvez modifier votre profil d'utilisateur en validant ce formulaire : nom, mot-de-passe et email.",
+      "en": "You can modify your user profile by validating this form: name, password and email."
+    }
+  ],
+  "LOGIN_TEXT_4": [
+    {
+      "fr": "Ne remplissez que la case que vous voulez modifier. Laissez vide le champ de formulaire que vous ne voulez pas modifier.",
+      "en": "Only fill in the box you want to modify. Leave empty the form field that you don't want to modify."
+    }
+  ],
+  "LOGIN_TEXT_5": [
+    {
+      "fr": "Après modification, vous serez invité à vous reconnecter.",
+      "en": "After editing, you will be prompted to log in again."
     }
   ],
   "UPPERCASE": [
@@ -2232,6 +2262,118 @@
       "fr": "Aucun Capteur",
       "en": "No Sensor"
     }
-  ]
+  ],
   
+"PROFIL": [
+    {
+      "fr": "Compte",
+      "en": "Account"
+    }
+  ] ,
+  "MODIF_USER": [
+    {
+      "fr": "Compte Utilisateur",
+      "en": "User Account"
+    }
+  ]
+  ,
+  "MODIFY": [
+    {
+      "fr": "Modifier",
+      "en": "Modify"
+    }
+  ]  ,
+  "LOGIN_FORGET": [
+    {
+      "fr": "Mot de Passe Oublié",
+      "en": "Forgot Your Password"
+    }
+  ] ,
+  "LOGIN_EMAIL_VERIF": [
+    {
+      "fr": "Veuillez saisir votre email",
+      "en": "Please enter your email"
+    }
+  ]
+  ,
+  "LOGIN_TEXT_6": [
+    {
+      "fr": "Avant de réinitialiser votre mot de passe, MBell doit vérifier que votre email existe dans sa base de données.",
+      "en": "Before resetting your password, MBell must verify that your email exists in its database."
+    }
+  ]
+  ,
+  "LOGIN_TEXT_7": [
+    {
+      "fr": "Une fois validé, un email vous sera envoyé, avec à l'intérieur, un lien temporaire pour réinitialiser votre mot de passe.",
+      "en": "Once validated, an email will be sent to you, with inside, a temporary link to reset your password."
+    }
+  ]
+  ,
+  "LOGIN_TEXT_8": [
+    {
+      "fr": "Vous pouvez maintenant modifier votre mot de passe en validant ce formulaire.",
+      "en": "Now, you can change your password by validating this form."
+    }
+  ]
+  ,
+  "MAIL_PASS_1": [
+    {
+      "fr": "<p>Bonjour,</p><p>Une demande de réinitialisation de mot de passe pour votre compte MBell a été faite.</p><p>Si vous n'êtes pas à l'origine de cette demande, merci d'ignorer cet email et aucune modification ne sera faite sur votre compte. Si vous avez fait une demande de réinitialisation de mot de passe, veuillez cliquer sur le lien ci-dessous.</p><p>Vous serez redirigé sur le formulaire de réinitialisation de mot de passe de MBell.</p>",
+      "en": "<p>Hello,</p><p>A password reset request for your MBell account has been made.</p><p>If you did not initiate this request, thank you ignore this email and no changes will be made to your account. If you have made a password reset request, please click on the link below.</p><p>You will be redirected to MBell's password reset form.</p> "
+    }
+  ]
+  ,
+  "MAIL_PASS_2": [
+    {
+      "fr": "<p>Assurez-vous de copier l'intégralité du lien dans votre navigateur. Le lien expirera après 1 heure pour des raisons de sécurité.</p>",
+      "en": "<p>Be sure to copy the entire link into your browser. The link will expire after 1 hour for security reasons.</p> "
+    }
+  ]
+  ,
+  "MAIL_PASS_3": [
+    {
+      "fr": "Récupération de Mot de Passe - MBell",
+      "en": "Password Recovery - MBell"
+    }
+    
+  ],
+  "MAIL_PASS_4": [
+    {
+      "fr": "Un lien pour réinitialiser votre mot de passe vous a été envoyé sur votre boite mail.",
+      "en": "A link to reset your password has been sent to your email."
+    }
+  ]
+  ,
+  "PASS_UPDATE_1": [
+    {
+      "fr": "Réinitialisation de Mot de Passe",
+      "en": "Password Reset"
+    }
+  ]
+  ,
+  "MODIF_PASS": [
+    {
+      "fr": "Changer de Mot de Passe",
+      "en": "Password Change"
+    }
+  ],
+    "MAIL_PASS_1": [
+      {
+        "fr": "<p>Bonjour,</p><p>Une demande de réinitialisation de mot de passe a été effectuée pour votre installation MBell.</p><p>Pour choisir un nouveau mot de passe, ouvrez ce lien :</p>",
+        "en": "<p>Hello,</p><p>A password reset request has been made for your MBell installation.</p><p>To choose a new password, open this link:</p>"
+      }
+    ],
+    "MAIL_PASS_2": [
+      {
+        "fr": "<p>Ce lien expirera dans 1 heure.</p><p>Si vous n’êtes pas à l’origine de cette demande, ignorez simplement cet email.</p><p>Cordialement,<br>MBell</p>",
+        "en": "<p>This link will expire in 1 hour.</p><p>If you did not request this, simply ignore this email.</p><p>Best regards,<br>MBell</p>"
+      }
+    ],
+    "MAIL_PASS_3": [
+      {
+        "fr": "Réinitialisation de mot de passe - MBell",
+        "en": "Password reset - MBell"
+      }
+    ]
 }

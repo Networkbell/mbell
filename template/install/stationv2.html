@@ -8,13 +8,19 @@
     </li>
     <li class="list-group-item">
         <label for="stat_password" class="form-label">{DAVIS_PASS}</label>
+        <div class="input-group">
         <input type="password" class="form-control" id="stat_password" name="stat_password" value="{_VAL_STAT_PASSWORD}"
             placeholder="{CASE_SENSITIVE}" required>
+            <span class="input-group-text">
+                <i class="fa-solid fa-eye-slash" id="togglePassword" 
+               style="cursor: pointer"></i>
+               </span>
+        </div>
         <div class="form-text">{DAVIS_PASS_TEXT}</div>
     </li>
     <li class="list-group-item">
         <label for="stat_token" class="form-label">{DAVIS_TOKEN}</label>
-        <input type="password" class="form-control" id="stat_token" name="stat_token" value="{_VAL_STAT_TOKEN}"
+       <input type="text" class="form-control" id="stat_token" name="stat_token" value="{_VAL_STAT_TOKEN}"
             placeholder="{UPPERCASE}" required>
         <div class="form-text">{DAVIS_TOKEN_TEXT}</div>
     </li>

@@ -20,7 +20,7 @@ class CronView extends View
             "MBELL_TITRE" => $this->l->trad('MBELL_TITRE_PREF'),
             "_CSS" => "maincolor",
             "_LOGO" => "1",
-            "_ROOT" => $this->getRoot(),
+            "_ROOT" => $this->dispatcher->getRoot(),
             "_URL" => $url,
             "_LG" => $this->l->getLg(),
             "HOMEPAGE" => $this->l->trad('SETTINGS'),
@@ -89,7 +89,7 @@ class CronView extends View
         $this->display();
     }
 
-    public function serverList($config, $active, $paramJson, $liveStation, $timeCron)
+    public function serverList($config, $active)
     {
         $zero = '&#8709;';
         $param = array(
@@ -123,12 +123,12 @@ class CronView extends View
     }
 
 
-    public function directList($config, $active, $paramJson, $liveStation, $timeCron)
+    public function directList($active)
     {
    
         $param = array(
             "1" => '<a href="https://cron-job.org/en/">cron-job.org</a>',
-            "2" => $this->url().'Model/cron/cron_direct.php',    
+            "2" => $this->dispatcher->url().'Model/cron/cron_direct.php',   
             "3" => ($active['stat_type'] == 'live') ? '15mn' : '10mn',        
             "_URL" => 'index.php?controller=cron&action=list&',
         );
@@ -231,16 +231,6 @@ class CronView extends View
     }
 
 
-
-
-public function url(){
-    return sprintf(
-      "%s://%s%s",
-      isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] != 'off' ? 'https' : 'http',
-      $_SERVER['SERVER_NAME'],
-      rtrim(dirname($_SERVER['PHP_SELF']), '/\\').'/'
-    );
-  }
 
 
   public function cronType($type){

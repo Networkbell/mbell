@@ -32,11 +32,6 @@
  * 
  */
 
-/** DEBUG
- * Pour activer les informations de débuguage de Mbell, changer "false" par "true"
- * $debug = false; --> $debug = true;
- */
-$debug = false;
 
 
 /** Réglages MySQL - Votre hébergeur doit vous fournir ces informations (sinon en local)
@@ -130,7 +125,7 @@ $installed = '{no}';
 /**
  * Pour les développeurs : le mode déboguage de MBell
  *
- * En passant la valeur $debug à "true", vous activez l’affichage des
+ * En passant la valeur $debug à true (sans guillemets), vous activez l’affichage des
  * notifications d’erreurs pendant vos essais. 
  * Attention cela peut vous aider à identifier les erreurs, 
  * mais peut empécher aussi le bon fonctionnement de Mbell dans certaines circonstances. 
@@ -140,6 +135,31 @@ $installed = '{no}';
  */
 if (!defined('MB_DEBUG'))
   define('MB_DEBUG', $debug);
+
+
+/**
+ * CONFIGURATION DE L'ENVOI D'EMAILS
+ *
+ * MBell utilise par défaut un système centralisé d'envoi d'emails
+ * via le service www.meteobell.com, notamment pour la réinitialisation
+ * de mot de passe si l'envoi local échoue.
+ *
+ * Vous pouvez toutefois remplacer ce service par votre propre
+ * relais d'envoi en renseignant ci-dessous l'URL de votre endpoint
+ * HTTPS et la clé secrète associée.
+ *
+ * MB_MAIL_RELAY_URL :
+ * URL complète du relais d'envoi.
+ *
+ * MB_MAIL_RELAY_TOKEN :
+ * Clé secrète partagée entre cette installation MBell et le relais.
+ *
+ * Si ces constantes sont vides, seul l'envoi local sera tenté si votre hébergeur le permet.
+ */
+if (!defined('MB_MAIL_RELAY_URL'))
+  define('MB_MAIL_RELAY_URL', 'https://www.meteobell.com/api/send-reset-mail.php');
+if (!defined('MB_MAIL_RELAY_TOKEN'))
+  define('MB_MAIL_RELAY_TOKEN', 'op4fd2f3d64f8cp2d6fhrpsdjkl58tye2b6bced72d75941b4a0aioph85b98547eduid5d4q2r9t');
 
 
 

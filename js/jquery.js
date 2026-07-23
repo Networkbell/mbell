@@ -149,7 +149,17 @@
       }, 1000);
     });
 
-
+      $("#togglePassword").click(function () {
+      if($(this).hasClass('fa-eye-slash')){          
+        $(this).removeClass('fa-eye-slash');       
+        $(this).addClass('fa-eye');       
+        $('#user_password').attr('type','text');         
+      }else{      
+        $(this).removeClass('fa-eye');        
+        $(this).addClass('fa-eye-slash');         
+        $('#user_password').attr('type','password');
+      }
+    });
 
     $(".dmy_left")
       .on("mouseover", function () {

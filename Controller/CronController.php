@@ -95,24 +95,15 @@ class CronController extends Controller
 
     public function serverAction()
     {
-        $lg = $this->l->getLg();
-        $paramJson = $this->paramStat->getAPI();
         $config = $this->model->getConfigActiveCron();
         $active = $this->paramStat->getStationActive();
-        $liveStation = (($active['stat_type'] ?? '') == 'live') ? $this->model->getLiveAPIStation($active['stat_livekey'], $active['stat_livesecret']) : '';
-        $timeCron = $this->model->getLastTimeCron();
-        $this->view->serverList($config, $active, $paramJson, $liveStation, $timeCron);
+        $this->view->serverList($config, $active);
     }
 
     public function directAction()
-    {
-        $lg = $this->l->getLg();
-        $paramJson = $this->paramStat->getAPI();
-        $config = $this->model->getConfigActiveCron();
+    {    
         $active = $this->paramStat->getStationActive();
-        $liveStation = (($active['stat_type'] ?? '') == 'live') ? $this->model->getLiveAPIStation($active['stat_livekey'], $active['stat_livesecret']) : '';
-        $timeCron = $this->model->getLastTimeCron();
-        $this->view->directList($config, $active, $paramJson, $liveStation, $timeCron);
+        $this->view->directList($active);
     }
 
     public function timerAction()

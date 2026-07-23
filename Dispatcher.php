@@ -202,7 +202,7 @@ class Dispatcher
         $version_file = '';
 
         if ($true == true) {
-            $remoteUrl = 'https://www.meteobell.com/mbell/' . $pathVersion;
+            $remoteUrl = 'https://www.meteobell.com/api/mbell_version.php';
             $version_file = @file_get_contents($remoteUrl);
         }
 
@@ -226,4 +226,34 @@ class Dispatcher
         $version = $this->versionNumURL(false);
         return strval($version);
     }
+
+    /**
+     * Link to the site root.
+     *
+     * @return string
+     */
+    public function getRoot()
+    {
+        $scheme = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
+        $host = $_SERVER['HTTP_HOST'] ?? 'localhost';
+        $root = $scheme . '://' . $host . '/';
+
+        return $root;
+    }
+
+     /**
+     * Lien vers racine du site avec dossiers
+     * 
+     * @return string
+     */
+    
+    public function url(){
+        return sprintf(
+          "%s://%s%s",
+          isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] != 'off' ? 'https' : 'http',
+          $_SERVER['SERVER_NAME'],
+          rtrim(dirname($_SERVER['PHP_SELF']), '/\\').'/'
+        );
+      }
+
 }

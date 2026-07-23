@@ -20,7 +20,7 @@ class PrefView extends View
             "MBELL_TITRE" => $this->l->trad('MBELL_TITRE_PREF'),
             "_CSS" => "maincolor",
             "_LOGO" => "1",
-            "_ROOT" => $this->getRoot(),
+            "_ROOT" => $this->dispatcher->getRoot(),
             "_URL" => 'index.php?',
             "_LG" => $this->l->getLg()
         );
@@ -89,6 +89,7 @@ class PrefView extends View
         $this->page .= $this->titleMenu($this->l->trad('USER_TITLE'), '1');
         $this->page .= '<div class="section_show" id="show_hide1">';
         $this->page .= $this->getListInfov0($param);
+        $this->page .= $this->getButton($this->l->getLg(), 'login', 'user', $this->l->trad('PROFIL'));
         $this->page .= '</div>';
         $this->page .= '</section>';
         $this->page .= '<section>';

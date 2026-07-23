@@ -8,8 +8,14 @@
     </li>
     <li class="list-group-item">
         <label for="stat_key" class="form-label">{DAVIS_KEY}</label>
-        <input type="text" class="form-control" id="stat_key" name="stat_key" value="{_VAL_STAT_KEY}"
+        <div class="input-group">
+        <input type="password" class="form-control" id="stat_key" name="stat_key" value="{_VAL_STAT_KEY}"
             placeholder="{CASE_SENSITIVE}" required>
+            <span class="input-group-text">
+                <i class="fa-solid fa-eye-slash" id="togglePassword" 
+               style="cursor: pointer"></i>
+               </span>
+        </div>
         <div class="form-text">{DAVIS_KEY_TEXT}</div>
     </li>
 </ul>

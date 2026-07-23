@@ -7,7 +7,12 @@
     </li>
     <li class="list-group-item">
       <label for="user_password" class="form-label">{LOGIN_PASSWORD_LABEL}</label>
+     <div class="input-group">
       <input type="password" class="form-control" id="user_password" name="user_password" value="" placeholder="{PASSWORD}" required>
-      
+      <span class="input-group-text">
+        <i class="fa-solid fa-eye-slash" id="togglePassword" 
+       style="cursor: pointer"></i>
+       </span>
+      </div>
     </li>
   </ul>
