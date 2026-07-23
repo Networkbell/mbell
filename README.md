@@ -95,8 +95,9 @@ $debug = false;
     2.5 (-0.80) - Update Weatherlink Live Multi-Sensors
     2.51 (-0.80) - Correctif : Bug Température Ressentie
     2.6 (-0.90) - Correctifs compatibilité PHP 8.2 + stabilisation locale
+	2.61 (-0.92) - Finalisation de la zone Utilisateur/Login et du système de réinitialisation de mot de passe
 
-Version actuelle = Publique 2.6 (Développement -0.90)
+Version actuelle = Publique 2.61 (Développement -0.92)
 
 
 # Problèmes connus
